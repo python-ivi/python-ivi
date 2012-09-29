@@ -24,7 +24,20 @@ THE SOFTWARE.
 
 """
 
-__all__ = ["ivi", "scope", "rfsiggen", "agilent"]
-
-#from . import agilent
+# Oscilloscopes
+# Infiniivision 6000/7000
+from .agilentDSO7012A import agilentDSO7012A
+from .agilentDSO7014A import agilentDSO7014A
+from .agilentDSO7032A import agilentDSO7032A
+from .agilentDSO7034A import agilentDSO7034A
+from .agilentDSO7052A import agilentDSO7052A
+from .agilentDSO7054A import agilentDSO7054A
+from .agilentDSO7104A import agilentDSO7104A
+from .agilentMSO7012A import agilentMSO7012A
+from .agilentMSO7014A import agilentMSO7014A
+from .agilentMSO7032A import agilentMSO7032A
+from .agilentMSO7034A import agilentMSO7034A
+from .agilentMSO7052A import agilentMSO7052A
+from .agilentMSO7054A import agilentMSO7054A
+from .agilentMSO7104A import agilentMSO7104A
 

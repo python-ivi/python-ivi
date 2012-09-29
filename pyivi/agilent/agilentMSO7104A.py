@@ -24,7 +24,20 @@ THE SOFTWARE.
 
 """
 
-__all__ = ["ivi", "scope", "rfsiggen", "agilent"]
+from .agilent7000A import *
 
-#from . import agilent
-
+class agilentMSO7104A(agilent7000A):
+    "Agilent Infiniivision MSO7104A IVI oscilloscope driver"
+    
+    def __init__(self):
+        super(agilentMSO7104A, self).__init__()
+        
+        self._instrument_id = 'AGILENT TECHNOLOGIES,MSO7104A'
+        self._analog_channel_count = 4
+        self._digital_channel_count = 16
+        self._channel_count = 20
+        self._bandwidth = 1e9
+        
+        self._init_channels()
+    
+    
