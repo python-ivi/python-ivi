@@ -117,9 +117,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
             self.utility.reset()
         
     
-    def _get_identity_instrument_manufacturer(self):
-        if 'identity_instrument_manufacturer' in self._cache_valid:
-            return self._identity_instrument_manufacturer
+    def _load_id_string(self):
         if self._driver_operation_simulate:
             self._identity_instrument_manufacturer = "Not available while simulating"
             self._identity_instrument_model = "Not available while simulating"
@@ -129,21 +127,26 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
             self._identity_instrument_manufacturer = lst[0]
             self._identity_instrument_model = lst[1]
             self._identity_instrument_firmware_revision = lst[3]
-            self._cache_valid.append('identity_instrument_manufacturer')
-            self._cache_valid.append('identity_instrument_model')
-            self._cache_valid.append('identity_instrument_firmware_revision')
+            self._set_cache_valid(True, 'identity_instrument_manufacturer')
+            self._set_cache_valid(True, 'identity_instrument_model')
+            self._set_cache_valid(True, 'identity_instrument_firmware_revision')
+    
+    def _get_identity_instrument_manufacturer(self):
+        if self._get_cache_valid():
+            return self._identity_instrument_manufacturer
+        self._load_id_string()
         return self._identity_instrument_manufacturer
     
     def _get_identity_instrument_model(self):
-        if 'identity_instrument_model' in self._cache_valid:
+        if self._get_cache_valid():
             return self._identity_instrument_model
-        self._get_identity_instrument_manufacturer()
+        self._load_id_string()
         return self._identity_instrument_model
     
     def _get_identity_instrument_firmware_revision(self):
-        if 'identity_instrument_firmware_revision' in self._cache_valid:
+        if self._get_cache_valid():
             return self._identity_instrument_firmware_revision
-        self._get_identity_instrument_manufacturer()
+        self._load_id_string()
         return self._identity_instrument_firmware_revision
     
     def _utility_disable(self):
@@ -209,10 +212,9 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
     
     def _get_acquisition_start_time(self):
         pos = 0
-        if not self._driver_operation_simulate and not self._driver_operation_cache \
-                and not 'acquisition_start_time' in self._cache_valid:
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             pos = float(self._ask(":timebase:position?"))
-            self._cache_valid.append('acquisition_start_time')
+            self._set_cache_valid()
         self._acquisition_start_time = pos - self._get_acquisition_time_per_record() * 5 / 10
         return self._acquisition_start_time
     
@@ -222,7 +224,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":timebase:position %e" % value)
         self._acquisition_start_time = value
-        self._cache_valid.append('acquisition_start_time')
+        self._set_cache_valid()
     
     def _get_acquisition_type(self):
         return self._acquisition_type
@@ -240,15 +242,15 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         self._acquisition_number_of_points_minimum = value
     
     def _get_acquisition_record_length(self):
-        if not self._driver_operation_simulate and not self._driver_operation_cache \
-                and not 'acquisition_record_length' in self._cache_valid:
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             self._acquisition_record_length = int(self._ask(":waveform:points?"))
-            self._cache_valid.append('acquisition_record_length')
+            self._set_cache_valid()
         return self._acquisition_record_length
     
     def _get_acquisition_time_per_record(self):
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             self._acquisition_time_per_record = float(self._ask(":timebase:range?"))
+            self._set_cache_valid()
         return self._acquisition_time_per_record
     
     def _set_acquisition_time_per_record(self, value):
@@ -256,11 +258,14 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":timebase:range %e" % value)
         self._acquisition_time_per_record = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'acquisition_start_time')
     
     def _get_channel_enabled(self, index):
         index = ivi.get_index(self._channel_name, index)
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_enabled[index] = bool(int(self._ask(":%s:display?" % self._channel_name[index])))
+            self._set_cache_valid(index=index)
         return self._channel_enabled[index]
     
     def _set_channel_enabled(self, index, value):
@@ -272,15 +277,17 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
             else:
                 self._write(":%s:display off" % self._channel_name[index])
         self._channel_enabled[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_input_impedance(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             val = float(self._ask(":%s:impedance?" % self._channel_name[index]))
             if val == 'ONEM':
                 self._channel_input_impedance[index] = 1000000
             elif val == 'FIFT':
                 self._channel_input_impedance[index] = 50
+            self._set_cache_valid(index=index)
         return self._channel_input_impedance[index]
     
     def _set_channel_input_impedance(self, index, value):
@@ -294,6 +301,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
             elif value == 50:
                 self._write(":%s:impedance fifty" % self._channel_name[index])
         self._channel_input_impedance[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_input_frequency_max(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
@@ -308,11 +316,13 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
             else:
                 self._write(":%s:bwlimit off" % self._channel_name[index])
         self._channel_input_frequency_max[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_probe_attenuation(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_probe_attenuation[index] = float(self._ask(":%s:probe?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
         return self._channel_probe_attenuation[index]
     
     def _set_channel_probe_attenuation(self, index, value):
@@ -321,11 +331,13 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":%s:probe %e" % (self._channel_name[index], value))
         self._channel_probe_attenuation[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_coupling(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_enabled[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
+            self._set_cache_valid(index=index)
         return self._channel_coupling[index]
     
     def _set_channel_coupling(self, index, value):
@@ -335,11 +347,13 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":%s:coupling %s" % (self._channel_name[index], value))
         self._channel_coupling[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_offset(self, index):
         index = ivi.get_index(self._channel_name, index)
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_offset[index] = float(self._ask(":%s:offset?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
         return self._channel_offset[index]
     
     def _set_channel_offset(self, index, value):
@@ -348,11 +362,13 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":%s:offset %e" % (self._channel_name[index], value))
         self._channel_offset[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_range(self, index):
         index = ivi.get_index(self._channel_name, index)
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_range[index] = float(self._ask(":%s:range?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
         return self._channel_range[index]
     
     def _set_channel_range(self, index, value):
@@ -361,6 +377,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":%s:range %e" % (self._channel_name[index], value))
         self._channel_range[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_measurement_status(self):
         return self._measurement_status
@@ -374,8 +391,9 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         self._trigger_coupling = value
     
     def _get_trigger_holdoff(self):
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             self._trigger_holdoff = float(self._ask(":trigger:holdoff?"))
+            self._set_cache_valid()
         return self._trigger_holdoff
     
     def _set_trigger_holdoff(self, value):
@@ -383,10 +401,12 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":trigger:holdoff %e" % value)
         self._trigger_holdoff = value
+        self._set_cache_valid(index=index)
     
     def _get_trigger_level(self):
-        if not self._driver_operation_simulate and not self._driver_operation_cache:
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             self._trigger_level = float(self._ask(":trigger:level?"))
+            self._set_cache_valid()
         return self._trigger_level
     
     def _set_trigger_level(self, value):
@@ -394,6 +414,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":trigger:level %e" % value)
         self._trigger_level = value
+        self._set_cache_valid(index=index)
     
     def _get_trigger_edge_slope(self):
         return self._trigger_edge_slope

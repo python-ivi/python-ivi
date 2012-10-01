@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 """
 
+import inspect
+
 # try importing drivers
 try:
     import vxi11
@@ -564,6 +566,42 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
     initialized = property(_get_initialized)
     
+    def _get_cache_tag(self, tag=None, skip=1):
+        if tag is None:
+            stack = inspect.stack()
+            start = 0 + skip
+            if len(stack) < start + 1:
+                return ''
+            tag = stack[start][3] 
+        
+        if tag[0:4] == "_get": tag = tag[4:]
+        if tag[0:4] == "_set": tag = tag[4:]
+        if tag[0] == "_": tag = tag[1:]
+        
+        return tag
+    
+    def _get_cache_valid(self, tag=None, index=-1, skip_disable=False):
+        if not skip_disable and not self._driver_operation_cache:
+            return False
+        tag = self._get_cache_tag(tag, 2)
+        if index >= 0:
+            tag = tag + '_%d' % index
+        return tag in self._cache_valid
+    
+    def _set_cache_valid(self, valid=True, tag=None, index=-1):
+        tag = self._get_cache_tag(tag, 2)
+        if index >= 0:
+            tag = tag + '_%d' % index
+        if valid:
+            if tag not in self._cache_valid:
+                self._cache_valid.append(tag)
+        else:
+            if tag in self._cache_valid:
+                self._cache_valid.remove(tag)
+    
+    def _driver_operation_invalidate_all_attributes(self):
+        self._cache_valid = list()
+    
     def _write_raw(self, data):
         "Write binary data to instrument"
         if self._driver_operation_simulate:
@@ -617,9 +655,6 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
         return self._interface.ask(data, num, encoding)
-    
-    def _driver_operation_invalidate_all_attributes(self):
-        self._cache_valid = list()
     
     
     
