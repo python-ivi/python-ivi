@@ -790,10 +790,18 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._trigger_continuous = value
     
     def _get_acquisition_number_of_averages(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_number_of_averages = int(self._ask(":acquire:count?"))
+            self._set_cache_valid()
         return self._acquisition_number_of_averages
     
     def _set_acquisition_number_of_averages(self, value):
+        if value < 1 or value > 65536:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write(":acquire:count %d" % value)
         self._acquisition_number_of_averages = value
+        self._set_cache_valid()
     
     def _get_acquisition_sample_mode(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
