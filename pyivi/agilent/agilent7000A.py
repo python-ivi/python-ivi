@@ -27,6 +27,20 @@ THE SOFTWARE.
 from .. import ivi
 from .. import scope
 
+AcquisitionTypeMapping = {
+        'normal': 'norm',
+        'peak_detect': 'peak',
+        'high_resolution': 'hres',
+        'average': 'aver'}
+VerticalCoupling = set(['ac', 'dc'])
+TriggerMapping = {
+        'edge': 'edge',
+        'width': 'glit',
+        #'runt': '',
+        'glitch': 'glit',
+        'tv': 'tv',
+        #'immediate': '',
+        'ac_line': 'edge'}
 TriggerCouplingMapping = {
         'ac': ('ac', 0, 0),
         'dc': ('dc', 0, 0),
@@ -38,8 +52,17 @@ TriggerCouplingMapping = {
         'hf_noise_reject': ('dc', 1, 1),
         'hf_noise_reject_ac': ('ac', 1, 1),
         'lf_noise_reject': ('lfr', 1, 0)}
+TVTriggerEvent = set(['field1', 'field2', 'any_field', 'any_line', 'line_number'])
+TVTriggerFormat = set(['ntsc', 'pal', 'secam'])
+Polarity = set(['positive', 'negative'])
+GlitchCondition = set(['less_than', 'greater_than'])
+WidthCondition = set(['within', 'outside'])
 SampleModeMapping = {'real_time': 'rtim', 'equivalent_time': 'etim'}
-SlopeMapping = {'positive': 'pos', 'negative': 'neg', 'either': 'eith'}
+SlopeMapping = {
+        'positive': 'pos',
+        'negative': 'neg',
+        'either': 'eith',
+        'alternating': 'alt'}
 MeasurementFunctionMapping = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -69,8 +92,11 @@ MeasurementFunctionMappingDigital = {
         'width_positive': 'pwidth',
         'duty_cycle_positive': 'dutycycle'}
 
-class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
-                scope.MinMaxWaveform, scope.SampleMode, scope.AutoSetup):
+class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
+                scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
+                scope.WaveformMeasurement, scope.MinMaxWaveform,
+                scope.ContinuousAcquisition, scope.AverageAcquisition,
+                scope.SampleMode, scope.AutoSetup):
     "Agilent Infiniivision 7000A series IVI oscilloscope driver"
     
     def __init__(self):
@@ -514,6 +540,97 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
     def _measurement_abort(self):
         pass
     
+    def _get_trigger_tv_trigger_event(self):
+        return self._trigger_tv_trigger_event
+    
+    def _set_trigger_tv_trigger_event(self, value):
+        if value not in TVTriggerEvent:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_tv_trigger_event = value
+    
+    def _get_trigger_tv_line_number(self):
+        return self._trigger_tv_line_number
+    
+    def _set_trigger_tv_line_number(self, value):
+        self._trigger_tv_line_number = value
+    
+    def _get_trigger_tv_polarity(self):
+        return self._trigger_tv_polarity
+    
+    def _set_trigger_tv_polarity(self, value):
+        if value not in Polarity:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_tv_polarity = value
+    
+    def _get_trigger_tv_signal_format(self):
+        return self._trigger_tv_signal_format
+    
+    def _set_trigger_tv_signal_format(self, value):
+        if value not in TVTriggerFormat:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_tv_signal_format = value
+    
+    def _get_trigger_glitch_condition(self):
+        return self._trigger_glitch_condition
+    
+    def _set_trigger_glitch_condition(self, value):
+        if value not in GlitchCondition:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_glitch_condition = value
+    
+    def _get_trigger_glitch_polarity(self):
+        return self._trigger_glitch_polarity
+    
+    def _set_trigger_glitch_polarity(self, value):
+        if value not in Polarity:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_glitch_polarity = value
+    
+    def _get_trigger_glitch_width(self):
+        return self._trigger_glitch_width
+    
+    def _set_trigger_glitch_width(self, value):
+        value = float(value)
+        self._trigger_glitch_width = value
+        
+    def _get_trigger_width_condition(self):
+        return self._trigger_width_condition
+    
+    def _set_trigger_width_condition(self, value):
+        if value not in WidthCondition:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_width_condition = value
+    
+    def _get_trigger_width_threshold_high(self):
+        return self._trigger_width_threshold_high
+    
+    def _set_trigger_width_threshold_high(self, value):
+        value = float(value)
+        self._trigger_width_threshold_high = value
+    
+    def _get_trigger_width_threshold_low(self):
+        return self._trigger_width_threshold_low
+    
+    def _set_trigger_width_threshold_low(self, value):
+        value = float(value)
+        self._trigger_width_threshold_low = value
+    
+    def _get_trigger_width_polarity(self):
+        return self._trigger_width_polarity
+    
+    def _set_trigger_width_polarity(self, value):
+        if value not in Polarity:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_width_polarity = value
+    
+    def _get_trigger_ac_line_slope(self):
+        return self._trigger_ac_line_slope
+    
+    def _set_trigger_ac_line_slope(self, value):
+        if value not in Slope:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_ac_line_slope = value
+    
     def _measurement_fetch_waveform(self, index):
         index = ivi.get_index(self._channel_name, index)
         
@@ -665,6 +782,18 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
     
     def _measurement_read_waveform_min_max(self, index, maximum_time):
         return _measurement_fetch_waveform_min_max(index)
+    
+    def _get_trigger_continuous(self):
+        return self._trigger_continuous
+    
+    def _set_trigger_continuous(self, value):
+        self._trigger_continuous = value
+    
+    def _get_acquisition_number_of_averages(self):
+        return self._acquisition_number_of_averages
+    
+    def _set_acquisition_number_of_averages(self, value):
+        self._acquisition_number_of_averages = value
     
     def _get_acquisition_sample_mode(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
