@@ -46,11 +46,11 @@ WidthCondition = set(['within', 'outside'])
 SampleMode = set(['real_time', 'equivalent_time'])
 TriggerModifier = set(['none', 'auto', 'auto_level'])
 MeasurementFunction = set(['rise_time', 'fall_time', 'frequency', 'period',
-                'voltage_rms', 'voltage_peak_to_peak', 'voltage_max',
-                'voltage_min', 'voltage_high', 'voltage_low', 'voltage_average',
-                'width_negative', 'width_positive', 'duty_cycle_negative',
-                'duty_cycle_positive', 'amplitude', 'voltage_cycle_rms',
-                'voltage_cycle_average', 'overshoot', 'preshoot'])
+        'voltage_rms', 'voltage_peak_to_peak', 'voltage_max', 'voltage_min',
+        'voltage_high', 'voltage_low', 'voltage_average', 'width_negative',
+        'width_positive', 'duty_cycle_negative', 'duty_cycle_positive',
+        'amplitude', 'voltage_cycle_rms', 'voltage_cycle_average',
+        'overshoot', 'preshoot'])
 AcquisitionStatus = set(['complete', 'in_progress', 'unknown'])
 
 class Base(object):
