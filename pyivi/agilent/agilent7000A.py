@@ -110,6 +110,9 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._digital_channel_count = 16
         self._channel_label = list()
         self._channel_probe_skew = list()
+        self._channel_invert = list()
+        self._channel_probe_id = list()
+        self._channel_bw_limit = list()
         
         super(agilent7000A, self).__init__()
         
@@ -140,6 +143,14 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self.channels._add_property('probe_skew',
                         self._get_channel_probe_skew,
                         self._set_channel_probe_skew)
+        self.channels._add_property('invert',
+                        self._get_channel_invert,
+                        self._set_channel_invert)
+        self.channels._add_property('probe_id',
+                        self._get_channel_probe_id)
+        self.channels._add_property('bw_limit',
+                        self._get_channel_bw_limit,
+                        self._set_channel_bw_limit)
         
         self._init_channels()
     
@@ -236,6 +247,9 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_name = list()
         self._channel_label = list()
         self._channel_probe_skew = list()
+        self._channel_invert = list()
+        self._channel_probe_id = list()
+        self._channel_bw_limit = list()
         
         self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
@@ -243,6 +257,9 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
             self._channel_label.append("%d" % (i+1))
             self._analog_channel_name.append("channel%d" % (i+1))
             self._channel_probe_skew.append(0)
+            self._channel_invert.append(False)
+            self._channel_probe_id.append("NONE")
+            self._channel_bw_limit.append(False)
         
         # digital channels
         self._digital_channel_name = list()
@@ -385,10 +402,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         value = float(value)
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate:
-            if value < 25e6:
-                self._write(":%s:bwlimit on" % self._channel_name[index])
-            else:
-                self._write(":%s:bwlimit off" % self._channel_name[index])
+            self._set_channel_bw_limit(index, value < 25e6)
         self._channel_input_frequency_max[index] = value
         self._set_cache_valid(index=index)
     
@@ -420,6 +434,43 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate:
             self._write(":%s:probe:skew %e" % (self._channel_name[index], value))
         self._channel_probe_skew[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_channel_invert(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_invert[index] = bool(int(self._ask(":%s:invert?" % self._channel_name[index])))
+            self._set_cache_valid(index=index)
+        return self._channel_invert[index]
+    
+    def _set_channel_invert(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write(":%s:invert %e" % (self._channel_name[index], int(value)))
+        self._channel_invert[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_channel_probe_id(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_probe_id[index] = self._ask(":%s:probe:id?" % self._channel_name[index])
+            self._set_cache_valid(index=index)
+        return self._channel_probe_id[index]
+    
+    def _get_channel_bw_limit(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_bw_limit[index] = bool(int(self._ask(":%s:bwlimit?" % self._channel_name[index])))
+            self._set_cache_valid(index=index)
+        return self._channel_bw_limit[index]
+    
+    def _set_channel_bw_limit(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write(":%s:bwlimit %d" % (self._channel_name[index], int(value)))
+        self._channel_bw_limit[index] = value
         self._set_cache_valid(index=index)
     
     def _get_channel_coupling(self, index):
