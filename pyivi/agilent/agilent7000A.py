@@ -275,12 +275,19 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._set_cache_valid()
     
     def _get_acquisition_type(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":acquire:type?").lower()
+            self._acquisition_type = [k for k,v in AcquisitionTypeMapping.items() if v==value][0]
+            self._set_cache_valid()
         return self._acquisition_type
     
     def _set_acquisition_type(self, value):
-        if value not in scope.AcquisitionType:
+        if value not in AcquisitionTypeMapping:
             raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":acquire:type %s" % AcquisitionTypeMapping[value])
         self._acquisition_type = value
+        self._set_cache_valid()
     
     def _get_acquisition_number_of_points_minimum(self):
         return self._acquisition_number_of_points_minimum
