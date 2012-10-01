@@ -27,13 +27,19 @@ THE SOFTWARE.
 from .. import ivi
 from .. import scope
 
+TriggerCouplingMapping = {
+        'ac': ('ac', 0, 0),
+        'dc': ('dc', 0, 0),
+        'hf_reject': ('dc', 0, 1),
+        'lf_reject': ('lfr', 0, 0),
+        'noise_reject': ('dc', 1, 0),
+        'hf_reject_ac': ('ac', 0, 1),
+        'noise_reject_ac': ('ac', 1, 0),
+        'hf_noise_reject': ('dc', 1, 1),
+        'hf_noise_reject_ac': ('ac', 1, 1),
+        'lf_noise_reject': ('lfr', 1, 0)}
 SampleModeMapping = {'real_time': 'rtim', 'equivalent_time': 'etim'}
 SlopeMapping = {'positive': 'pos', 'negative': 'neg', 'either': 'eith'}
-MeasurementFunction = set(['rise_time', 'fall_time', 'frequency', 'period',
-        'voltage_rms', 'voltage_peak_to_peak', 'voltage_max', 'voltage_min',
-        'voltage_high', 'voltage_low', 'voltage_average', 'width_negative',
-        'width_positive', 'duty_cycle_positive', 'amplitude','voltage_cycle_rms',
-        'voltage_cycle_average', 'overshoot', 'preshoot'])
 MeasurementFunctionMapping = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -429,12 +435,25 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         return self._measurement_status
     
     def _get_trigger_coupling(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            cpl = self._ask(":trigger:coupling?").lower()
+            noise = int(self._ask(":trigger:nreject?"))
+            hf = int(self._ask(":trigger:hfreject?"))
+            for k in TriggerCouplingMapping:
+                if (cpl, noise, hf) == TriggerCouplingMapping[k]:
+                    self._trigger_coupling = k
         return self._trigger_coupling
     
     def _set_trigger_coupling(self, value):
-        if value not in scope.TriggerCoupling:
+        if value not in TriggerCouplingMapping:
             raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            cpl, noise, hf = TriggerCouplingMapping[value]
+            self._write(":trigger:coupling %s" % cpl)
+            self._write(":trigger:nreject %d" % noise)
+            self._write(":trigger:hfreject %d" % hf)
         self._trigger_coupling = value
+        self._set_cache_valid()
     
     def _get_trigger_holdoff(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -470,7 +489,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         return self._trigger_edge_slope
     
     def _set_trigger_edge_slope(self, value):
-        if value not in scope.Slope:
+        if value not in SlopeMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":trigger:edge:slope %s" % SlopeMapping[value])
@@ -655,7 +674,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         return self._acquisition_sample_mode
     
     def _set_acquisition_sample_mode(self, value):
-        if value not in scope.AcquisitionSampleMode:
+        if value not in SampleModeMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":acquire:mode %s" % SampleModeMapping[value])
