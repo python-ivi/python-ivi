@@ -27,6 +27,7 @@ THE SOFTWARE.
 from .. import ivi
 from .. import scope
 
+SampleModeMapping = {'real_time': 'rtim', 'equivalent_time': 'etim'}
 MeasurementFunction = set(['rise_time', 'fall_time', 'frequency', 'period',
         'voltage_rms', 'voltage_peak_to_peak', 'voltage_max', 'voltage_min',
         'voltage_high', 'voltage_low', 'voltage_average', 'width_negative',
@@ -62,7 +63,7 @@ MeasurementFunctionMappingDigital = {
         'duty_cycle_positive': 'dutycycle'}
 
 class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
-                scope.MinMaxWaveform, scope.AutoSetup):
+                scope.MinMaxWaveform, scope.SampleMode, scope.AutoSetup):
     "Agilent Infiniivision 7000A series IVI oscilloscope driver"
     
     def __init__(self):
@@ -637,6 +638,21 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
     
     def _measurement_read_waveform_min_max(self, index, maximum_time):
         return _measurement_fetch_waveform_min_max(index)
+    
+    def _get_acquisition_sample_mode(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":acquire:mode?").lower()
+            self._acquisition_sample_mode = [k for k,v in SampleModeMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._acquisition_sample_mode
+    
+    def _set_acquisition_sample_mode(self, value):
+        if value not in scope.AcquisitionSampleMode:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":acquire:mode %s" % SampleModeMapping[value])
+        self._acquisition_sample_mode = value
+        self._set_cache_valid()
     
     def _measurement_auto_setup(self):
         if not self._driver_operation_simulate:

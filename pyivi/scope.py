@@ -43,7 +43,7 @@ TVTriggerFormat = set(['ntsc', 'pal', 'secam'])
 Polarity = set(['positive', 'negative'])
 GlitchCondition = set(['less_than', 'greater_than'])
 WidthCondition = set(['within', 'outside'])
-SampleMode = set(['real_time', 'equivalent_time'])
+AcquisitionSampleMode = set(['real_time', 'equivalent_time'])
 TriggerModifier = set(['none', 'auto', 'auto_level'])
 MeasurementFunction = set(['rise_time', 'fall_time', 'frequency', 'period',
         'voltage_rms', 'voltage_peak_to_peak', 'voltage_max', 'voltage_min',
@@ -885,6 +885,8 @@ class SampleMode(object):
         return self._acquisition_sample_mode
     
     def _set_acquisition_sample_mode(self, value):
+        if value not in AcquisitionSampleMode:
+            raise ivi.ValueNotSupportedException()
         self._acquisition_sample_mode = value
 
 
@@ -908,6 +910,8 @@ class TriggerModifier(object):
         return self._trigger_modifier
     
     def _set_trigger_modifier(self, value):
+        if value not in TriggerModifier:
+            raise ivi.ValueNotSupportedException()
         self._trigger_modifier = value
 
 
