@@ -28,6 +28,7 @@ from .. import ivi
 from .. import scope
 
 SampleModeMapping = {'real_time': 'rtim', 'equivalent_time': 'etim'}
+SlopeMapping = {'positive': 'pos', 'negative': 'neg', 'either': 'eith'}
 MeasurementFunction = set(['rise_time', 'fall_time', 'frequency', 'period',
         'voltage_rms', 'voltage_peak_to_peak', 'voltage_max', 'voltage_min',
         'voltage_high', 'voltage_low', 'voltage_average', 'width_negative',
@@ -446,7 +447,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":trigger:holdoff %e" % value)
         self._trigger_holdoff = value
-        self._set_cache_valid(index=index)
+        self._set_cache_valid()
     
     def _get_trigger_level(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -459,15 +460,22 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":trigger:level %e" % value)
         self._trigger_level = value
-        self._set_cache_valid(index=index)
+        self._set_cache_valid()
     
     def _get_trigger_edge_slope(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":trigger:edge:slope?").lower()
+            self._trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
+            self._set_cache_valid()
         return self._trigger_edge_slope
     
     def _set_trigger_edge_slope(self, value):
         if value not in scope.Slope:
             raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":trigger:edge:slope %s" % SlopeMapping[value])
         self._trigger_edge_slope = value
+        self._set_cache_valid()
     
     def _get_trigger_source(self):
         return self._trigger_source
