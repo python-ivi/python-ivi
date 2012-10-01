@@ -94,7 +94,6 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         self._identity_supported_instrument_models = list(['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',
                 'MSO7034A','MSO7052A','MSO7054A','MSO7104A'])
-        self._identity_group_capabilities = list()
         
         self._init_channels()
     

@@ -49,6 +49,9 @@ class Base(object):
     def __init__(self):
         super(Base, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenBase')
+        
         self._rf_frequency = 1e8
         self._rf_level = 0
         self._rf_output_enabled = False
@@ -136,6 +139,9 @@ class ModulateAM(object):
     def __init__(self):
         super(ModulateAM, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateAM')
+        
         self._analog_modulation_am_enabled = False
         self._analog_modulation_am_source = ""
         self._analog_modulation_am_scaling = 0
@@ -219,6 +225,9 @@ class ModulateFM(object):
     def __init__(self):
         super(ModulateFM, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateFM')
+        
         self._analog_modulation_fm_enabled = False
         self._analog_modulation_fm_source = ""
         self._analog_modulation_fm_external_coupling = 0
@@ -289,6 +298,9 @@ class ModulatePM(object):
     
     def __init__(self):
         super(ModulatePM, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenModulatePM')
         
         self._analog_modulation_pm_enabled = False
         self._analog_modulation_pm_source = ""
@@ -361,6 +373,9 @@ class AnalogModulationSource(object):
     def __init__(self):
         super(AnalogModulationSource, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenAnalogModulationSource')
+        
         self._analog_modulation_source_count = 0
         self._analog_modulation_source_name = list()
     
@@ -377,6 +392,9 @@ class ModulatePulse:
     
     def __init__(self):
         super(ModulatePulse, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenModulatePulse')
         
         self._pulse_modulation_enabled = False
         self._pulse_modulation_source = ""
@@ -420,6 +438,9 @@ class LFGenerator(object):
     
     def __init__(self):
         super(LFGenerator, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenLFGenerator')
         
         self._lf_generator_active_lf_generator = ""
         self._lf_generator_count = 0
@@ -478,6 +499,9 @@ class LFGeneratorOutput(object):
     def __init__(self):
         super(LFGeneratorOutput, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenLFGeneratorOutput')
+        
         self._lf_generator_output_amplitude = 0
         self._lf_generator_output_enabled = 0
         
@@ -515,6 +539,9 @@ class PulseGenerator(object):
     
     def __init__(self):
         super(ModulatePulse, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenPulseGenerator')
         
         self._pulse_generator_internal_trigger_period = 0
         self._pulse_generator_width = 0
@@ -603,6 +630,9 @@ class PulseDoubleGenerator(object):
     def __init__(self):
         super(PulseDoubleGenerator, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenPulseDoubleGenerator')
+        
         self._pulse_generator_double_pulse_enabled = False
         self._pulse_generator_double_pulse_delay = 0
         
@@ -640,6 +670,9 @@ class PulseGeneratorOutput(object):
     
     def __init__(self):
         super(PulseGenerator, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenPulseGeneratorOutput')
         
         self._pulse_generator_output_polarity = 0
         self._pulse_generator_output_enabled = 0
@@ -679,6 +712,9 @@ class Sweep(object):
     def __init__(self):
         super(Sweep, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenSweep')
+        
         self._sweep_mode = 0
         self._sweep_trigger_source = ""
         
@@ -715,6 +751,9 @@ class FrequencySweep(object):
     
     def __init__(self):
         super(FrequencySweep, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenFrequencySweep')
         
         self._sweep_frequency_sweep_start = 0
         self._sweep_frequency_sweep_stop = 0
@@ -769,6 +808,9 @@ class PowerSweep(object):
     
     def __init__(self):
         super(PowerSweep, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenPowerSweep')
         
         self._sweep_power_sweep_start = 0
         self._sweep_power_sweep_stop = 0

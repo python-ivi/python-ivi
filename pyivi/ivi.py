@@ -335,7 +335,7 @@ class DriverIdentity(object):
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = list()
-        self._identity_group_capabilities = list()
+        self.__dict__.setdefault('_identity_group_capabilities', list())
         
         self.__dict__.setdefault('identity', PropertyCollection())
         self.identity._add_property('description',

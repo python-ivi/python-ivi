@@ -59,6 +59,9 @@ class Base(object):
     def __init__(self):
         super(Base, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeBase')
+        
         self._acquisition_start_time = 0
         self._acquisition_type = 'normal'
         self._acquisition_number_of_points_minimum = 0
@@ -383,6 +386,9 @@ class Interpolation(object):
     def __init__(self):
         super(Interpolation, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.append('IviScopeInterpolation')
+        
         self._acquisition_interpolation = 0
         
         self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
@@ -402,6 +408,9 @@ class TVTrigger(object):
     
     def __init__(self):
         super(TVTrigger, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.append('IviScopeTVTrigger')
         
         self._trigger_tv_trigger_event = 'any_line'
         self._trigger_tv_line_number = 0
@@ -467,6 +476,9 @@ class RuntTrigger(object):
     def __init__(self):
         super(RuntTrigger, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.append('IviScopeRuntTrigger')
+        
         self._trigger_runt_threshold_high = 0
         self._trigger_runt_threshold_low = 0
         self._trigger_runt_polarity = 0
@@ -518,6 +530,9 @@ class GlitchTrigger(object):
     
     def __init__(self):
         super(GlitchTrigger, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeGlitchTrigger')
         
         self._trigger_glitch_condition = 0
         self._trigger_glitch_polarity = 0
@@ -572,6 +587,9 @@ class WidthTrigger(object):
     
     def __init__(self):
         super(WidthTrigger, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeWidthTrigger')
         
         self._trigger_width_condition = 0
         self._trigger_width_threshold_high = 0
@@ -639,6 +657,9 @@ class AcLineTrigger(object):
     def __init__(self):
         super(AcLineTrigger, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeAcLineTrigger')
+        
         self._trigger_ac_line_slope = 0
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
@@ -661,6 +682,9 @@ class WaveformMeasurement(object):
     
     def __init__(self):
         super(WaveformMeasurement, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeWaveformMeasurement')
         
         self._reference_level_high = 90
         self._reference_level_low = 10
@@ -725,6 +749,9 @@ class MinMaxWaveform(object):
     def __init__(self):
         super(MinMaxWaveform, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeMinMaxWaveform')
+        
         self._acquisition_number_of_envelopes = 0
         
         self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
@@ -756,6 +783,9 @@ class ProbeAutoSense(object):
     "Extension IVI methods for oscilloscopes supporting probe attenuation sensing"
     def __init__(self):
         super(ProbeAutoSense, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeProbeAutoSense')
         
         self._channel_probe_attenuation_auto = list()
         self._channel_probe_sense = list()
@@ -795,6 +825,9 @@ class ContinuousAcquisition(object):
     def __init__(self):
         super(ContinuousAcquisition, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeContinuousAcquisition')
+        
         self._trigger_continuous = False
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
@@ -814,6 +847,9 @@ class AverageAcquisition(object):
     
     def __init__(self):
         super(AverageAcquisition, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeAverageAcquisition')
         
         self._acquisition_number_of_averages = 1
         
@@ -835,6 +871,9 @@ class SampleMode(object):
     def __init__(self):
         super(SampleMode, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeSampleMode')
+        
         self._acquisition_sample_mode = 1
         
         self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
@@ -855,6 +894,9 @@ class TriggerModifier(object):
     def __init__(self):
         super(TriggerModifier, self).__init__()
         
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeTriggerModifier')
+        
         self._trigger_modifier = 1
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
@@ -874,6 +916,9 @@ class AutoSetup(object):
     
     def __init__(self):
         super(AutoSetup, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviScopeAutoSetup')
         
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
         self.measurement.auto_setup = self._measurement_auto_setup
