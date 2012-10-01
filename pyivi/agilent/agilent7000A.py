@@ -52,7 +52,11 @@ TriggerCouplingMapping = {
         'hf_noise_reject': ('dc', 1, 1),
         'hf_noise_reject_ac': ('ac', 1, 1),
         'lf_noise_reject': ('lfr', 1, 0)}
-TVTriggerEvent = set(['field1', 'field2', 'any_field', 'any_line', 'line_number'])
+TVTriggerEventMapping = {'field1': 'fie1',
+        'field2': 'fie2',
+        'any_field': 'afi',
+        'any_line': 'ali',
+        'line_number': 'lfi1'}
 TVTriggerFormat = set(['ntsc', 'pal', 'secam'])
 Polarity = set(['positive', 'negative'])
 GlitchCondition = set(['less_than', 'greater_than'])
@@ -427,7 +431,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
     
     def _set_channel_coupling(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
-        if value not in scope.VerticalCoupling:
+        if value not in VerticalCoupling:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":%s:coupling %s" % (self._channel_name[index], value))
