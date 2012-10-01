@@ -70,6 +70,8 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         self._analog_channel_count = 4
         self._digital_channel_name = list()
         self._digital_channel_count = 16
+        self._channel_label = list()
+        self._channel_probe_skew = list()
         
         super(agilent7000A, self).__init__()
         
@@ -93,6 +95,13 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         self._identity_supported_instrument_models = list(['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',
                 'MSO7034A','MSO7052A','MSO7054A','MSO7104A'])
+        
+        self.channels._add_property('label',
+                        self._get_channel_label,
+                        self._set_channel_label)
+        self.channels._add_property('probe_skew',
+                        self._get_channel_probe_skew,
+                        self._set_channel_probe_skew)
         
         self._init_channels()
     
@@ -187,16 +196,22 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         super(agilent7000A, self)._init_channels()
         
         self._channel_name = list()
+        self._channel_label = list()
+        self._channel_probe_skew = list()
         
         self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
             self._channel_name.append("channel%d" % (i+1))
+            self._channel_label.append("%d" % (i+1))
             self._analog_channel_name.append("channel%d" % (i+1))
+            self._channel_probe_skew.append(0)
         
         # digital channels
+        self._digital_channel_name = list()
         if (self._digital_channel_count > 0):
             for i in range(self._digital_channel_count):
                 self._channel_name.append("digital%d" % i)
+                self._channel_label.append("D%d" % i)
                 self._digital_channel_name.append("digital%d" % i)
             
             for i in range(self._analog_channel_count, self._channel_count):
@@ -259,6 +274,21 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         self._acquisition_time_per_record = value
         self._set_cache_valid()
         self._set_cache_valid(False, 'acquisition_start_time')
+    
+    def _get_channel_label(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_label[index] = self._ask(":%s:label?" % self._channel_name[index]).strip('"')
+            self._set_cache_valid(index=index)
+        return self._channel_label[index]
+    
+    def _set_channel_label(self, index, value):
+        value = str(value)
+        index = ivi.get_index(self._channel_name, index)
+        if not self._driver_operation_simulate:
+            self._write(":%s:label \"%s\"" % (self._channel_name[index], value))
+        self._channel_label[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_channel_enabled(self, index):
         index = ivi.get_index(self._channel_name, index)
@@ -330,6 +360,21 @@ class agilent7000A(ivi.Driver, scope.Base, scope.WaveformMeasurement,
         if not self._driver_operation_simulate:
             self._write(":%s:probe %e" % (self._channel_name[index], value))
         self._channel_probe_attenuation[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_channel_probe_skew(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_probe_skew[index] = float(self._ask(":%s:probe:skew?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
+        return self._channel_probe_skew[index]
+    
+    def _set_channel_probe_skew(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":%s:probe:skew %e" % (self._channel_name[index], value))
+        self._channel_probe_skew[index] = value
         self._set_cache_valid(index=index)
     
     def _get_channel_coupling(self, index):
