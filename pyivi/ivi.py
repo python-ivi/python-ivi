@@ -565,6 +565,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
     initialized = property(_get_initialized)
     
     def _write_raw(self, data):
+        "Write binary data to instrument"
         if self._driver_operation_simulate:
             print("[simulating] Call to write_raw")
             return
@@ -573,6 +574,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         self._interface.write_raw(data)
     
     def _read_raw(self, num=-1):
+        "Read binary data from instrument"
         if self._driver_operation_simulate:
             print("[simulating] Call to read_raw")
             return b''
@@ -581,6 +583,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         return self._interface.read_raw(num)
     
     def _ask_raw(self, data, num=-1):
+        "Write then read binary data"
         if self._driver_operation_simulate:
             print("[simulating] Call to ask_raw")
             return b''
@@ -589,6 +592,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         return self._interface.ask_raw(data, num)
     
     def _write(self, data, encoding = 'utf-8'):
+        "Write string to instrument"
         if self._driver_operation_simulate:
             print("[simulating] Write (%s) '%s'" % (encoding, data))
             return
@@ -597,6 +601,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         self._interface.write(data, encoding)
     
     def _read(self, num=-1, encoding = 'utf-8'):
+        "Read string from instrument"
         if self._driver_operation_simulate:
             print("[simulating] Read (%s)" % encoding)
             return ''
@@ -605,6 +610,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         return self._interface.read(num, encoding)
     
     def _ask(self, data, num=-1, encoding = 'utf-8'):
+        "Write then read string"
         if self._driver_operation_simulate:
             print("[simulating] Ask (%s) '%s'" % (encoding, data))
             return ''
