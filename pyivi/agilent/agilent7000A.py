@@ -101,7 +101,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
                 scope.WaveformMeasurement, scope.MinMaxWaveform,
                 scope.ContinuousAcquisition, scope.AverageAcquisition,
                 scope.SampleMode, scope.AutoSetup):
-    "Agilent Infiniivision 7000A series IVI oscilloscope driver"
+    "Agilent InfiniiVision 7000A series IVI oscilloscope driver"
     
     def __init__(self):
         self._analog_channel_name = list()
@@ -124,7 +124,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_count = 20
         self._bandwidth = 1e9
         
-        self._identity_description = "Agilent Infiniivision 7000A series IVI oscilloscope driver"
+        self._identity_description = "Agilent InfiniiVision 7000A series IVI oscilloscope driver"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""

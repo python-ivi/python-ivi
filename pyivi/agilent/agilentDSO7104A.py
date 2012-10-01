@@ -27,7 +27,7 @@ THE SOFTWARE.
 from .agilent7000A import *
 
 class agilentDSO7104A(agilent7000A):
-    "Agilent Infiniivision DSO7104A IVI oscilloscope driver"
+    "Agilent InfiniiVision DSO7104A IVI oscilloscope driver"
     
     def __init__(self):
         super(agilentDSO7104A, self).__init__()

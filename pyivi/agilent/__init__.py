@@ -25,7 +25,7 @@ THE SOFTWARE.
 """
 
 # Oscilloscopes
-# Infiniivision 6000/7000
+# InfiniiVision 7000A
 from .agilentDSO7012A import agilentDSO7012A
 from .agilentDSO7014A import agilentDSO7014A
 from .agilentDSO7032A import agilentDSO7032A
