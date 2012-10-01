@@ -755,7 +755,7 @@ class MinMaxWaveform(object):
         self._acquisition_number_of_envelopes = 0
         
         self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
-        self.acquisition._add_property('number_of_averages',
+        self.acquisition._add_property('number_of_envelopes',
                         self._get_acquisition_number_of_envelopes,
                         self._set_acquisition_number_of_envelopes)
         self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
