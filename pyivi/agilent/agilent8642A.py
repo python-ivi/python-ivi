@@ -265,7 +265,7 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
     
     def _get_rf_level(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._rf_level = float(self._ask("FROA").split(' ')[1])
+            self._rf_level = float(self._ask("APOA").split(' ')[1])
             self._set_cache_valid()
         return self._rf_level
     
