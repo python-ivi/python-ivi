@@ -539,7 +539,7 @@ class LFGeneratorOutput(object):
     
     
 class PulseGenerator(object):
-    "Extension IVI methods for generators with interal pulse modulation sources"
+    "Extension IVI methods for generators with internal pulse modulation sources"
     
     def __init__(self):
         super(ModulatePulse, self).__init__()
@@ -630,7 +630,7 @@ class PulseGenerator(object):
     
     
 class PulseDoubleGenerator(object):
-    "Extension IVI methods for generators with interal double pulse modulation sources"
+    "Extension IVI methods for generators with internal double pulse modulation sources"
     
     def __init__(self):
         super(PulseDoubleGenerator, self).__init__()
@@ -1123,7 +1123,7 @@ class ALC(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenALC')
         
-        self._alc_source = ''
+        self._alc_source = 'internal'
         self._alc_bandwidth = 0
         
         self.__dict__.setdefault('alc', ivi.PropertyCollection())
@@ -1164,7 +1164,7 @@ class ReferenceOscillator(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenReferenceOscillator')
         
-        self._reference_oscillator_source = ''
+        self._reference_oscillator_source = 'internal'
         self._reference_oscillator_external_frequency = 0
         
         self.__dict__.setdefault('reference_oscillator', ivi.PropertyCollection())
@@ -1217,7 +1217,7 @@ class ModulateIQ(object):
         self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateIQ')
         
         self._iq_enabled = False
-        self._iq_source = ""
+        self._iq_source = 'digital_modulation_base'
         self._iq_nominal_voltage = 0
         self._iq_swap_enabled = False
         
