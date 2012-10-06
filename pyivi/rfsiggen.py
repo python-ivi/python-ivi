@@ -1350,5 +1350,400 @@ class IQImpairment(object):
         self._set_iq_impairment_iq_skew(iq_skew)
     
     
-
+class ArbGenerator(object):
+    "Extension IVI methods for generators with internal arbitrary waveform generators"
+    
+    def __init__(self):
+        super(ArbGenerator, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenArbGenerator')
+        
+        self._digital_modulation_arb_selected_waveform = ''
+        self._digital_modulation_arb_clock_frequency = 0
+        self._digital_modulation_arb_filter_frequency = 0
+        self._digital_modulation_arb_max_number_waveforms = 0
+        self._digital_modulation_arb_waveform_quantum = 0
+        self._digital_modulation_arb_waveform_size_min = 0
+        self._digital_modulation_arb_waveform_size_max = 0
+        self._digital_modulation_arb_trigger_source = 'immediate'
+        self._digital_modulation_arb_external_trigger_slope = 'positive'
+        
+        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
+        self.digital_modulation.__dict__.setdefault('arb', ivi.PropertyCollection())
+        self.digital_modulation.arb._add_property('selected_waveform',
+                        self._get_digital_modulation_arb_selected_waveform,
+                        self._set_digital_modulation_arb_selected_waveform)
+        self.digital_modulation.arb._add_property('clock_frequency',
+                        self._get_digital_modulation_arb_clock_frequency,
+                        self._set_digital_modulation_arb_clock_frequency)
+        self.digital_modulation.arb._add_property('filter_frequency',
+                        self._get_digital_modulation_arb_filter_frequency,
+                        self._set_digital_modulation_arb_filter_frequency)
+        self.digital_modulation.arb._add_property('max_number_waveforms',
+                        self._get_digital_modulation_arb_max_number_waveforms)
+        self.digital_modulation.arb._add_property('waveform_quantum',
+                        self._get_digital_modulation_arb_waveform_quantum)
+        self.digital_modulation.arb._add_property('waveform_size_min',
+                        self._get_digital_modulation_arb_waveform_size_min)
+        self.digital_modulation.arb._add_property('waveform_size_max',
+                        self._get_digital_modulation_arb_waveform_size_max)
+        self.digital_modulation.arb._add_property('trigger_source',
+                        self._get_digital_modulation_arb_trigger_source,
+                        self._set_digital_modulation_arb_trigger_source)
+        self.digital_modulation.arb._add_property('external_trigger_slope',
+                        self._get_digital_modulation_arb_external_trigger_slope,
+                        self._set_digital_modulation_arb_external_trigger_slope)
+        self.digital_modulation.arb.configure = self._digital_modulation_arb_configure
+        self.digital_modulation.arb.write_waveform = self._digital_modulation_arb_write_waveform
+        self.digital_modulation.arb.clear_all_waveforms = self._digital_modulation_arb_clear_all_waveforms
+    
+    def _get_digital_modulation_arb_selected_waveform(self):
+        return self._digital_modulation_arb_selected_waveform
+    
+    def _set_digital_modulation_arb_selected_waveform(self, value):
+        value = str(value)
+        self._digital_modulation_arb_selected_waveform = value
+    
+    def _get_digital_modulation_arb_clock_frequency(self):
+        return self._digital_modulation_arb_clock_frequency
+    
+    def _set_digital_modulation_arb_clock_frequency(self, value):
+        value = float(value)
+        self._digital_modulation_arb_clock_frequency = value
+    
+    def _get_digital_modulation_arb_filter_frequency(self):
+        return self._digital_modulation_arb_filter_frequency
+    
+    def _set_digital_modulation_arb_filter_frequency(self, value):
+        value = float(value)
+        self._digital_modulation_arb_filter_frequency = value
+    
+    def _get_digital_modulation_arb_max_number_waveforms(self):
+        return self._digital_modulation_arb_max_number_waveforms
+    
+    def _get_digital_modulation_arb_waveform_quantum(self):
+        return self._digital_modulation_arb_waveform_quantum
+    
+    def _get_digital_modulation_arb_waveform_size_min(self):
+        return self._digital_modulation_arb_waveform_size_min
+    
+    def _get_digital_modulation_arb_waveform_size_max(self):
+        return self._digital_modulation_arb_waveform_size_max
+    
+    def _get_digital_modulation_arb_trigger_source(self):
+        return self._digital_modulation_arb_trigger_source
+    
+    def _set_digital_modulation_arb_trigger_source(self, value):
+        if value not in TriggerSource:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_arb_trigger_source = value
+    
+    def _get_digital_modulation_arb_external_trigger_slope(self):
+        return self._digital_modulation_arb_external_trigger_slope
+    
+    def _set_digital_modulation_arb_external_trigger_slope(self, value):
+        if value not in Slope:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_arb_external_trigger_slope = value
+    
+    def _digital_modulation_arb_configure(self, clock_frequency, filter_frequency):
+        self._set_digital_modulation_arb_clock_frequency(clock_frequency)
+        self._set_digital_modulation_arb_filter_frequency(filter_frequency)
+    
+    def _digital_modulation_arb_write_waveform(self, name, idata, qdata, more_data_pending):
+        pass
+    
+    def _digital_modulation_arb_clear_all_waveforms(self):
+        pass
+    
+    
+class DigitalModulationBase(object):
+    "Extension IVI methods for generators supporting generation of standard wireless communication signals"
+    
+    def __init__(self):
+        super(DigitalModulationBase, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenDigitalModulationBase')
+        
+        self._digital_modulation_base_standard_names = list()
+        self._digital_modulation_base_selected_standard = ''
+        self._digital_modulation_base_data_source = 'prbs'
+        self._digital_modulation_base_prbs_type = 'prbs9'
+        self._digital_modulation_base_selected_bit_sequence = ''
+        self._digital_modulation_base_clock_source = 'internal'
+        self._digital_modulation_base_external_clock_type = 'bit'
+        
+        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
+        self.digital_modulation.__dict__.setdefault('base', ivi.PropertyCollection())
+        self.digital_modulation.base._add_property('standard_names',
+                        self._get_digital_modulation_base_standard_names)
+        self.digital_modulation.base._add_property('selected_standard',
+                        self._get_digital_modulation_base_selected_standard,
+                        self._set_digital_modulation_base_selected_standard)
+        self.digital_modulation.base._add_property('data_source',
+                        self._get_digital_modulation_base_data_source,
+                        self._set_digital_modulation_base_data_source)
+        self.digital_modulation.base._add_property('prbs_type',
+                        self._get_digital_modulation_base_prbs_type,
+                        self._set_digital_modulation_base_prbs_type)
+        self.digital_modulation.base._add_property('selected_bit_sequence',
+                        self._get_digital_modulation_base_selected_bit_sequence,
+                        self._set_digital_modulation_base_selected_bit_sequence)
+        self.digital_modulation.base._add_property('clock_source',
+                        self._get_digital_modulation_base_clock_source,
+                        self._set_digital_modulation_base_clock_source)
+        self.digital_modulation.base._add_property('external_clock_type',
+                        self._get_digital_modulation_base_external_clock_type,
+                        self._set_digital_modulation_base_external_clock_type)
+        self.digital_modulation.base.configure_clock_source = self._digital_modulation_base_configure_clock_source
+        self.digital_modulation.base.create_bit_sequence = self._digital_modulation_base_create_bit_sequence
+        self.digital_modulation.base.clear_all_bit_sequences = self._digital_modulation_base_clear_all_bit_sequences
+    
+    def _get_digital_modulation_base_standard_names(self):
+        return self._digital_modulation_base_standard_names
+    
+    def _get_digital_modulation_base_selected_standard(self):
+        return self._digital_modulation_base_selected_standard
+    
+    def _set_digital_modulation_base_selected_standard(self, value):
+        value = str(value)
+        self._digital_modulation_base_selected_standard = value
+    
+    def _get_digital_modulation_base_data_source(self):
+        return self._digital_modulation_base_data_source
+    
+    def _set_digital_modulation_base_data_source(self, value):
+        if value not in DigitalModulationBaseDataSource:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_base_data_source = value
+    
+    def _get_digital_modulation_base_prbs_type(self):
+        return self._digital_modulation_base_prbs_type
+    
+    def _set_digital_modulation_base_prbs_type(self, value):
+        if value not in DigitalModulationBasePRBSType:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_base_prbs_type = value
+    
+    def _get_digital_modulation_base_selected_bit_sequence(self):
+        return self._digital_modulation_base_selected_bit_sequence
+    
+    def _set_digital_modulation_base_selected_bit_sequence(self, value):
+        value = str(value)
+        self._digital_modulation_base_selected_bit_sequence = value
+    
+    def _get_digital_modulation_base_clock_source(self):
+        return self._digital_modulation_base_clock_source
+    
+    def _set_digital_modulation_base_clock_source(self, value):
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_base_clock_source = value
+    
+    def _get_digital_modulation_base_external_clock_type(self):
+        return self._digital_modulation_base_external_clock_type
+    
+    def _set_digital_modulation_base_external_clock_type(self, value):
+        if value not in ClockType:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_base_external_clock_type = value
+    
+    def _digital_modulation_base_configure_clock_source(self, source, type):
+        self._set_digital_modulation_base_clock_source(source)
+        self._set_digital_modulation_base_external_clock_type(type)
+    
+    def _digital_modulation_base_create_bit_sequence(self, name, bit_count, sequence, more_data_pending):
+        pass
+    
+    def _digital_modulation_base_clear_all_bit_sequences(self):
+        pass
+    
+    
+class CDMABase(object):
+    "Extension IVI methods for generators supporting generation of CDMA wireless communication signals"
+    
+    def __init__(self):
+        super(CDMABase, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenCDMABase')
+        
+        self._digital_modulation_cdma_standard_names = list()
+        self._digital_modulation_cdma_selected_standard = ''
+        self._digital_modulation_cdma_trigger_source = 'immediate'
+        self._digital_modulation_cdma_external_trigger_slope = 'positive'
+        self._digital_modulation_cdma_test_model_names = list()
+        self._digital_modulation_cdma_selected_test_model = ''
+        self._digital_modulation_cdma_clock_source = 'internal'
+        
+        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
+        self.digital_modulation.__dict__.setdefault('cdma', ivi.PropertyCollection())
+        self.digital_modulation.cdma._add_property('standard_names',
+                        self._get_digital_modulation_cdma_standard_names)
+        self.digital_modulation.cdma._add_property('selected_standard',
+                        self._get_digital_modulation_cdma_selected_standard,
+                        self._set_digital_modulation_cdma_selected_standard)
+        self.digital_modulation.cdma._add_property('trigger_source',
+                        self._get_digital_modulation_cdma_trigger_source,
+                        self._set_digital_modulation_cdma_trigger_source)
+        self.digital_modulation.cdma._add_property('external_trigger_slope',
+                        self._get_digital_modulation_cdma_external_trigger_slope,
+                        self._set_digital_modulation_cdma_external_trigger_slope)
+        self.digital_modulation.cdma._add_property('test_model_names',
+                        self._get_digital_modulation_cdma_test_model_names)
+        self.digital_modulation.cdma._add_property('selected_test_model',
+                        self._get_digital_modulation_cdma_selected_test_model,
+                        self._set_digital_modulation_cdma_selected_test_model)
+        self.digital_modulation.cdma._add_property('clock_source',
+                        self._get_digital_modulation_cdma_clock_source,
+                        self._set_digital_modulation_cdma_clock_source)
+    
+    def _get_digital_modulation_cdma_standard_names(self):
+        return self._digital_modulation_cdma_standard_names
+    
+    def _get_digital_modulation_cdma_selected_standard(self):
+        return self._digital_modulation_cdma_selected_standard
+    
+    def _set_digital_modulation_cdma_selected_standard(self, value):
+        value = str(value)
+        self._digital_modulation_cdma_selected_standard = value
+    
+    def _get_digital_modulation_cdma_trigger_source(self):
+        return self._digital_modulation_cdma_trigger_source
+    
+    def _set_digital_modulation_cdma_trigger_source(self, value):
+        if value not in TriggerSource:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_cdma_trigger_source = value
+    
+    def _get_digital_modulation_cdma_external_trigger_slope(self):
+        return self._digital_modulation_cdma_external_trigger_slope
+    
+    def _set_digital_modulation_cdma_external_trigger_slope(self, value):
+        if value not in Slope:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_cdma_external_trigger_slope = value
+    
+    def _get_digital_modulation_cdma_test_model_names(self):
+        return self._digital_modulation_cdma_test_model_names
+    
+    def _get_digital_modulation_cdma_selected_test_model(self):
+        return self._digital_modulation_cdma_selected_test_model
+    
+    def _set_digital_modulation_cdma_selected_test_model(self, value):
+        value = str(value)
+        self._digital_modulation_cdma_selected_test_model = value
+    
+    def _get_digital_modulation_cdma_clock_source(self):
+        return self._digital_modulation_cdma_clock_source
+    
+    def _set_digital_modulation_cdma_clock_source(self, value):
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_cdma_clock_source = value
+    
+    
+class TDMABase(object):
+    "Extension IVI methods for generators supporting generation of TDMA wireless communication signals"
+    
+    def __init__(self):
+        super(TDMABase, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenTDMABase')
+        
+        self._digital_modulation_tdma_standard_names = list()
+        self._digital_modulation_tdma_selected_standard = ''
+        self._digital_modulation_tdma_trigger_source = 'immediate'
+        self._digital_modulation_tdma_external_trigger_slope = 'positive'
+        self._digital_modulation_tdma_frame_names = list()
+        self._digital_modulation_tdma_selected_frame = ''
+        self._digital_modulation_tdma_clock_source = 'internal'
+        self._digital_modulation_tdma_external_clock_type = 'bit'
+        
+        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
+        self.digital_modulation.__dict__.setdefault('tdma', ivi.PropertyCollection())
+        self.digital_modulation.tdma._add_property('standard_names',
+                        self._get_digital_modulation_tdma_standard_names)
+        self.digital_modulation.tdma._add_property('selected_standard',
+                        self._get_digital_modulation_tdma_selected_standard,
+                        self._set_digital_modulation_tdma_selected_standard)
+        self.digital_modulation.tdma._add_property('trigger_source',
+                        self._get_digital_modulation_tdma_trigger_source,
+                        self._set_digital_modulation_tdma_trigger_source)
+        self.digital_modulation.tdma._add_property('external_trigger_slope',
+                        self._get_digital_modulation_tdma_external_trigger_slope,
+                        self._set_digital_modulation_tdma_external_trigger_slope)
+        self.digital_modulation.tdma._add_property('frame_names',
+                        self._get_digital_modulation_tdma_frame_names)
+        self.digital_modulation.tdma._add_property('selected_frame',
+                        self._get_digital_modulation_tdma_selected_frame,
+                        self._set_digital_modulation_tdma_selected_frame)
+        self.digital_modulation.tdma._add_property('clock_source',
+                        self._get_digital_modulation_tdma_clock_source,
+                        self._set_digital_modulation_tdma_clock_source)
+        self.digital_modulation.tdma._add_property('external_clock_type',
+                        self._get_digital_modulation_tdma_external_clock_type,
+                        self._set_digital_modulation_tdma_external_clock_type)
+        self.digital_modulation.tdma.configure_clock_source = self._digital_modulation_tdma_configure_clock_source
+    
+    def _get_digital_modulation_tdma_standard_names(self):
+        return self._digital_modulation_tdma_standard_names
+    
+    def _get_digital_modulation_tdma_selected_standard(self):
+        return self._digital_modulation_tdma_selected_standard
+    
+    def _set_digital_modulation_tdma_selected_standard(self, value):
+        value = str(value)
+        self._digital_modulation_tdma_selected_standard = value
+    
+    def _get_digital_modulation_tdma_trigger_source(self):
+        return self._digital_modulation_tdma_trigger_source
+    
+    def _set_digital_modulation_tdma_trigger_source(self, value):
+        if value not in TriggerSource:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_tdma_trigger_source = value
+    
+    def _get_digital_modulation_tdma_external_trigger_slope(self):
+        return self._digital_modulation_tdma_external_trigger_slope
+    
+    def _set_digital_modulation_tdma_external_trigger_slope(self, value):
+        if value not in Slope:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_tdma_external_trigger_slope = value
+    
+    def _get_digital_modulation_tdma_frame_names(self):
+        return self._digital_modulation_tdma_frame_names
+    
+    def _get_digital_modulation_tdma_selected_frame(self):
+        return self._digital_modulation_tdma_selected_frame
+    
+    def _set_digital_modulation_tdma_selected_frame(self, value):
+        value = str(value)
+        self._digital_modulation_tdma_selected_frame = value
+    
+    def _get_digital_modulation_tdma_clock_source(self):
+        return self._digital_modulation_tdma_clock_source
+    
+    def _set_digital_modulation_tdma_clock_source(self, value):
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_tdma_clock_source = value
+    
+    def _get_digital_modulation_tdma_external_clock_type(self):
+        return self._digital_modulation_tdma_external_clock_type
+    
+    def _set_digital_modulation_tdma_external_clock_type(self, value):
+        if value not in ClockType:
+            raise ivi.ValueNotSupportedException()
+        self._digital_modulation_tdma_external_clock_type = value
+    
+    def _digital_modulation_tdma_configure_clock_source(self, source, type):
+        self._set_digital_modulation_tdma_clock_source(source)
+        self._set_digital_modulation_tdma_external_clock_type(type)
+    
+    
 
