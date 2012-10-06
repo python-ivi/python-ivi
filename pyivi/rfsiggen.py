@@ -182,7 +182,8 @@ class ModulateAM(object):
         return self._analog_modulation_am_source
     
     def _set_analog_modulation_am_source(self, value):
-        value = str(value)
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
         self._analog_modulation_am_source = value
     
     def _get_analog_modulation_am_scaling(self):
@@ -264,7 +265,8 @@ class ModulateFM(object):
         return self._analog_modulation_fm_source
     
     def _set_analog_modulation_fm_source(self, value):
-        value = str(value)
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
         self._analog_modulation_fm_source = value
     
     def _get_analog_modulation_fm_external_coupling(self):
@@ -338,7 +340,8 @@ class ModulatePM(object):
         return self._analog_modulation_pm_source
     
     def _set_analog_modulation_pm_source(self, value):
-        value = str(value)
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
         self._analog_modulation_pm_source = value
     
     def _get_analog_modulation_pm_external_coupling(self):
@@ -422,7 +425,8 @@ class ModulatePulse:
         return self._pulse_modulation_source
     
     def _set_pulse_modulation_source(self, value):
-        value = str(value)
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
         self._pulse_modulation_source = value
     
     def _get_pulse_modulation_external_polarity(self):
@@ -597,7 +601,8 @@ class PulseGenerator(object):
         return self._pulse_generator_trigger_source
     
     def _set_pulse_generator_trigger_source(self, value):
-        value = str(value)
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
         self._pulse_generator_trigger_source = value
     
     def _get_pulse_generator_external_trigger_slope(self):
@@ -738,7 +743,8 @@ class Sweep(object):
         return self._sweep_trigger_source
     
     def _set_sweep_trigger_source(self, value):
-        value = str(value)
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
         self._sweep_trigger_source = value
     
     def _sweep_configure(self, mode, trigger_source):
