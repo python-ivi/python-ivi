@@ -861,6 +861,494 @@ class PowerSweep(object):
         self._set_sweep_power_sweep_stop(stop)
     
     
-# frequency step
+class FrequencyStep(object):
+    "Extension IVI methods for generators that support frequency sweeping in steps"
+    
+    def __init__(self):
+        super(FrequencyStep, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenFrequencyStep')
+        
+        self._sweep_frequency_step_start = 0
+        self._sweep_frequency_step_stop = 0
+        self._sweep_frequency_step_scaling = 'linear'
+        self._sweep_frequency_step_size = 0
+        self._sweep_frequency_step_single_step_enabled = False
+        self._sweep_frequency_step_dwell = 0
+        
+        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
+        self.sweep.__dict__.setdefault('frequency_step', ivi.PropertyCollection())
+        self.sweep.frequency_step._add_property('start',
+                        self._get_sweep_frequency_step_start,
+                        self._set_sweep_frequency_step_start)
+        self.sweep.frequency_step._add_property('stop',
+                        self._get_sweep_frequency_step_stop,
+                        self._set_sweep_frequency_step_stop)
+        self.sweep.frequency_step._add_property('scaling',
+                        self._get_sweep_frequency_step_scaling,
+                        self._set_sweep_frequency_step_scaling)
+        self.sweep.frequency_step._add_property('size',
+                        self._get_sweep_frequency_step_size,
+                        self._set_sweep_frequency_step_size)
+        self.sweep.frequency_step._add_property('single_step_enabled',
+                        self._get_sweep_frequency_step_single_step_enabled,
+                        self._set_sweep_frequency_step_single_step_enabled)
+        self.sweep.frequency_step._add_property('dwell',
+                        self._get_sweep_frequency_step_dwell,
+                        self._set_sweep_frequency_step_dwell)
+        self.sweep.frequency_step.configure_start_stop = self._sweep_frequency_step_configure_start_stop
+        self.sweep.frequency_step.configure_dwell = self._sweep_frequency_step_configure_dwell
+        self.sweep.frequency_step.reset = self._sweep_frequency_step_reset
+    
+    def _get_sweep_frequency_step_start(self):
+        return self._sweep_frequency_step_start
+    
+    def _set_sweep_frequency_step_start(self, value):
+        value = float(value)
+        self._sweep_frequency_step_start = value
+    
+    def _get_sweep_frequency_step_stop(self):
+        return self._sweep_frequency_step_stop
+    
+    def _set_sweep_frequency_step_stop(self, value):
+        value = float(value)
+        self._sweep_frequency_step_stop = value
+    
+    def _get_sweep_frequency_step_scaling(self):
+        return self._sweep_frequency_step_scaling
+    
+    def _set_sweep_frequency_step_scaling(self, value):
+        if value not in Scaling:
+            raise ivi.ValueNotSupportedException()
+        self._sweep_frequency_step_scaling = value
+    
+    def _get_sweep_frequency_step_size(self):
+        return self._sweep_frequency_step_size
+    
+    def _set_sweep_frequency_step_size(self, value):
+        value = float(value)
+        self._sweep_frequency_step_size = value
+    
+    def _get_sweep_frequency_step_single_step_enabled(self):
+        return self._sweep_frequency_step_single_step_enabled
+    
+    def _set_sweep_frequency_step_single_step_enabled(self, value):
+        value = bool(value)
+        self._sweep_frequency_step_single_step_enabled = value
+    
+    def _get_sweep_frequency_step_dwell(self):
+        return self._sweep_frequency_step_dwell
+    
+    def _set_sweep_frequency_step_dwell(self, value):
+        value = float(value)
+        self._sweep_frequency_step_dwell = value
+    
+    def _sweep_frequency_step_configure_start_stop(self, start, stop, scaling, size):
+        self._set_sweep_frequency_step_start(start)
+        self._set_sweep_frequency_step_stop(stop)
+        self._set_sweep_frequency_step_scaling(scaling)
+        self._set_sweep_frequency_step_size(size)
+    
+    def _sweep_frequency_step_configure_dwell(self, single_step_enabled, dwell):
+        self._set_sweep_frequency_step_single_step_enabled(single_step_enabled)
+        self._set_sweep_frequency_step_dwell(dwell)
+    
+    def _sweep_frequency_step_reset(self):
+        pass
+    
+    
+class PowerStep(object):
+    "Extension IVI methods for generators that support power sweeping in steps"
+    
+    def __init__(self):
+        super(PowerStep, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenPowerStep')
+        
+        self._sweep_power_step_start = 0
+        self._sweep_power_step_stop = 0
+        self._sweep_power_step_size = 0
+        self._sweep_power_step_single_step_enabled = False
+        self._sweep_power_step_dwell = 0
+        
+        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
+        self.sweep.__dict__.setdefault('power_step', ivi.PropertyCollection())
+        self.sweep.power_step._add_property('start',
+                        self._get_sweep_power_step_start,
+                        self._set_sweep_power_step_start)
+        self.sweep.power_step._add_property('stop',
+                        self._get_sweep_power_step_stop,
+                        self._set_sweep_power_step_stop)
+        self.sweep.power_step._add_property('size',
+                        self._get_sweep_power_step_size,
+                        self._set_sweep_power_step_size)
+        self.sweep.power_step._add_property('single_step_enabled',
+                        self._get_sweep_power_step_single_step_enabled,
+                        self._set_sweep_power_step_single_step_enabled)
+        self.sweep.power_step._add_property('dwell',
+                        self._get_sweep_power_step_dwell,
+                        self._set_sweep_power_step_dwell)
+        self.sweep.power_step.configure_start_stop = self._sweep_power_step_configure_start_stop
+        self.sweep.power_step.configure_dwell = self._sweep_power_step_configure_dwell
+        self.sweep.power_step.reset = self._sweep_power_step_reset
+    
+    def _get_sweep_power_step_start(self):
+        return self._sweep_power_step_start
+    
+    def _set_sweep_power_step_start(self, value):
+        value = float(value)
+        self._sweep_power_step_start = value
+    
+    def _get_sweep_power_step_stop(self):
+        return self._sweep_power_step_stop
+    
+    def _set_sweep_power_step_stop(self, value):
+        value = float(value)
+        self._sweep_power_step_stop = value
+    
+    def _get_sweep_power_step_size(self):
+        return self._sweep_power_step_size
+    
+    def _set_sweep_power_step_size(self, value):
+        value = float(value)
+        self._sweep_power_step_size = value
+    
+    def _get_sweep_power_step_single_step_enabled(self):
+        return self._sweep_power_step_single_step_enabled
+    
+    def _set_sweep_power_step_single_step_enabled(self, value):
+        value = bool(value)
+        self._sweep_power_step_single_step_enabled = value
+    
+    def _get_sweep_power_step_dwell(self):
+        return self._sweep_power_step_dwell
+    
+    def _set_sweep_power_step_dwell(self, value):
+        value = float(value)
+        self._sweep_power_step_dwell = value
+    
+    def _sweep_power_step_configure_start_stop(self, start, stop, size):
+        self._set_sweep_power_step_start(start)
+        self._set_sweep_power_step_stop(stop)
+        self._set_sweep_power_step_size(size)
+    
+    def _sweep_power_step_configure_dwell(self, single_step_enabled, dwell):
+        self._set_sweep_power_step_single_step_enabled(single_step_enabled)
+        self._set_sweep_power_step_dwell(dwell)
+    
+    def _sweep_power_step_reset(self):
+        pass
+    
+    
+class List(object):
+    "Extension IVI methods for generators that support frequency and power selection a list"
+    
+    def __init__(self):
+        super(List, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenList')
+        
+        self._sweep_list_selected_list = ''
+        self._sweep_list_single_step_enabled = False
+        self._sweep_list_dwell = 0
+        
+        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
+        self.sweep.__dict__.setdefault('list', ivi.PropertyCollection())
+        self.sweep.list._add_property('selected_list',
+                        self._get_sweep_list_selected_list,
+                        self._set_sweep_list_selected_list)
+        self.sweep.list._add_property('single_step_enabled',
+                        self._get_sweep_list_single_step_enabled,
+                        self._set_sweep_list_single_step_enabled)
+        self.sweep.list._add_property('dwell',
+                        self._get_sweep_list_dwell,
+                        self._set_sweep_list_dwell)
+        self.sweep.list.create_frequency = self._sweep_list_create_frequency
+        self.sweep.list.create_power = self._sweep_list_create_power
+        self.sweep.list.create_frequency_power = self._sweep_list_create_frequency_power
+        self.sweep.list.clear_all = self._sweep_list_clear_all
+        self.sweep.list.configure_dwell = self._sweep_list_configure_dwell
+        self.sweep.list.reset = self._sweep_list_reset
+    
+    def _get_sweep_list_selected_list(self):
+        return self._sweep_list_selected_list
+    
+    def _set_sweep_list_selected_list(self, value):
+        value = str(value)
+        self._sweep_list_selected_list = value
+    
+    def _get_sweep_list_single_step_enabled(self):
+        return self._sweep_list_single_step_enabled
+    
+    def _set_sweep_list_single_step_enabled(self, value):
+        value = bool(value)
+        self._sweep_list_single_step_enabled = value
+    
+    def _get_sweep_list_dwell(self):
+        return self._sweep_list_dwell
+    
+    def _set_sweep_list_dwell(self, value):
+        value = float(value)
+        self._sweep_list_dwell = value
+    
+    def _sweep_list_create_frequency(self, name, frequency):
+        pass
+    
+    def _sweep_list_create_power(self, name, power):
+        pass
+    
+    def _sweep_list_create_frequency_power(self, name, frequency, power):
+        pass
+    
+    def _sweep_list_clear_all(self):
+        pass
+    
+    def _sweep_list_configure_dwell(self, single_step_enabled, dwell):
+        self._set_sweep_list_single_step_enabled(single_step_enabled)
+        self._set_sweep_list_dwell(dwell)
+    
+    def _sweep_list_reset(self):
+        pass
+    
+    
+class ALC(object):
+    "Extension IVI methods for generators that support automatic level control"
+    
+    def __init__(self):
+        super(ALC, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenALC')
+        
+        self._alc_source = ''
+        self._alc_bandwidth = 0
+        
+        self.__dict__.setdefault('alc', ivi.PropertyCollection())
+        self.alc._add_property('source',
+                        self._get_alc_source,
+                        self._set_alc_source)
+        self.alc._add_property('bandwidth',
+                        self._get_alc_bandwidth,
+                        self._set_alc_bandwidth)
+        self.alc.configure = self._alc_configure
+    
+    def _get_alc_source(self):
+        return self._alc_source
+    
+    def _set_alc_source(self, value):
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
+        self._alc_source = value
+    
+    def _get_alc_bandwidth(self):
+        return self._alc_bandwidth
+    
+    def _set_alc_bandwidth(self, bandwidth):
+        value = float(value)
+        self._alc_bandwidth = value
+    
+    def _alc_configure(self, source, bandwidth):
+        self._set_alc_source = source
+        self._set_alc_bandwidth = bandwidth
+    
+    
+class ReferenceOscillator(object):
+    "Extension IVI methods for generators that support a configurable frequency reference"
+    
+    def __init__(self):
+        super(ReferenceOscillator, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenReferenceOscillator')
+        
+        self._reference_oscillator_source = ''
+        self._reference_oscillator_external_frequency = 0
+        
+        self.__dict__.setdefault('reference_oscillator', ivi.PropertyCollection())
+        self.reference_oscillator._add_property('source',
+                        self._get_reference_oscillator_source,
+                        self._set_reference_oscillator_source)
+        self.reference_oscillator._add_property('external_frequency',
+                        self._get_reference_oscillator_external_frequency,
+                        self._set_reference_oscillator_external_frequency)
+        self.reference_oscillator.configure = self._reference_oscillator_configure
+    
+    def _get_reference_oscillator_source(self):
+        return self._reference_oscillator_source
+    
+    def _set_reference_oscillator_source(self, value):
+        if value not in Source:
+            raise ivi.ValueNotSupportedException()
+        self._reference_oscillator_source = value
+    
+    def _get_reference_oscillator_external_frequency(self):
+        return self._reference_oscillator_external_frequency
+    
+    def _set_reference_oscillator_external_frequency(self, external_frequency):
+        value = float(value)
+        self._reference_oscillator_external_frequency = value
+    
+    def _reference_oscillator_configure(self, source, external_frequency):
+        self._set_reference_oscillator_source = source
+        self._set_reference_oscillator_external_frequency = external_frequency
+    
+    
+class SoftwareTrigger(object):
+    "Extension IVI methods for generators that support software triggering"
+    
+    def __init__(self):
+        super(SoftwareTrigger, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenSoftwareTrigger')
+        
+    
+    
+class ModulateIQ(object):
+    "Extension IVI methods for generators supporting IQ (vector) modulation"
+    
+    def __init__(self):
+        super(ModulateIQ, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateIQ')
+        
+        self._iq_enabled = False
+        self._iq_source = ""
+        self._iq_nominal_voltage = 0
+        self._iq_swap_enabled = False
+        
+        self.__dict__.setdefault('iq', ivi.PropertyCollection())
+        self.iq._add_property('enabled',
+                        self._get_iq_enabled,
+                        self._set_iq_enabled)
+        self.iq._add_property('source',
+                        self._get_iq_source,
+                        self._set_iq_source)
+        self.iq._add_property('nominal_voltage',
+                        self._get_iq_nominal_voltage,
+                        self._set_iq_nominal_voltage)
+        self.iq._add_property('swap_enabled',
+                        self._get_iq_swap_enabled,
+                        self._set_iq_swap_enabled)
+        self.iq.configure = self._iq_configure
+        self.iq.calibrate = self._iq_calibrate
+    
+    def _get_iq_enabled(self):
+        return self._iq_enabled
+    
+    def _set_iq_enabled(self, value):
+        value = bool(value)
+        self._iq_enabled = value
+    
+    def _get_iq_source(self):
+        return self._iq_source
+    
+    def _set_iq_source(self, value):
+        if value not in IQSource:
+            raise ivi.ValueNotSupportedException()
+        self._iq_source = value
+    
+    def _get_iq_nominal_voltage(self):
+        return self._iq_nominal_voltage
+    
+    def _set_iq_nominal_voltage(self, value):
+        value = float(value)
+        self._iq_nominal_voltage = value
+    
+    def _get_iq_swap_enabled(self):
+        return self._iq_swap_enabled
+    
+    def _set_iq_swap_enabled(self, value):
+        value = bool(value)
+        self._iq_swap_enabled = value
+    
+    def _iq_configure(self, source, swap_enabled):
+        self._set_iq_source(source)
+        self._set_iq_swap_enabled(swap_enabled)
+    
+    def _iq_calibrate(self):
+        pass
+    
+    
+class IQImpairment(object):
+    "Extension IVI methods for generators supporting IQ modulation simulation or correction of IQ impairment"
+    
+    def __init__(self):
+        super(IQImpairment, self).__init__()
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviRFSigGenIQImpairment')
+        
+        self._iq_impairment_enabled = False
+        self._iq_impairment_i_offset = 0
+        self._iq_impairment_q_offset = 0
+        self._iq_impairment_iq_ratio = 0
+        self._iq_impairment_iq_skew = 0
+        
+        self.__dict__.setdefault('iq', ivi.PropertyCollection())
+        self.iq.__dict__.setdefault('impairment', ivi.PropertyCollection())
+        self.iq.impairment._add_property('enabled',
+                        self._get_iq_impairment_enabled,
+                        self._set_iq_impairment_enabled)
+        self.iq.impairment._add_property('i_offset',
+                        self._get_iq_impairment_i_offset,
+                        self._set_iq_impairment_i_offset)
+        self.iq.impairment._add_property('q_offset',
+                        self._get_iq_impairment_q_offset,
+                        self._set_iq_impairment_q_offset)
+        self.iq.impairment._add_property('iq_ratio',
+                        self._get_iq_impairment_iq_ratio,
+                        self._set_iq_impairment_iq_ratio)
+        self.iq.impairment._add_property('iq_skew',
+                        self._get_iq_impairment_iq_skew,
+                        self._set_iq_impairment_iq_skew)
+        self.iq.impairment.configure = self._iq_impairment_configure
+    
+    def _get_iq_impairment_enabled(self):
+        return self._iq_impairment_enabled
+    
+    def _set_iq_impairment_enabled(self, value):
+        value = bool(value)
+        self._iq_impairment_enabled = value
+    
+    def _get_iq_impairment_i_offset(self):
+        return self._iq_impairment_i_offset
+    
+    def _set_iq_impairment_i_offset(self, value):
+        value = float(value)
+        self._iq_impairment_i_offset = value
+    
+    def _get_iq_impairment_q_offset(self):
+        return self._iq_impairment_q_offset
+    
+    def _set_iq_impairment_q_offset(self, value):
+        value = float(value)
+        self._iq_impairment_q_offset = value
+    
+    def _get_iq_impairment_iq_ratio(self):
+        return self._iq_impairment_iq_ratio
+    
+    def _set_iq_impairment_iq_ratio(self, value):
+        value = float(value)
+        self._iq_impairment_iq_ratio = value
+    
+    def _get_iq_impairment_iq_skew(self):
+        return self._iq_impairment_iq_skew
+    
+    def _set_iq_impairment_iq_skew(self, value):
+        value = float(value)
+        self._iq_impairment_iq_skew = value
+    
+    def _iq_impairment_configure(self, i_offset, q_offset, iq_ratio, iq_skew):
+        self._set_iq_impairment_i_offset(i_offset)
+        self._set_iq_impairment_q_offset(q_offset)
+        self._set_iq_impairment_iq_ratio(iq_ratio)
+        self._set_iq_impairment_iq_skew(iq_skew)
+    
+    
 
 
