@@ -41,6 +41,7 @@ Interpolation = set(['none', 'sinex', 'linear'])
 TVTriggerEvent = set(['field1', 'field2', 'any_field', 'any_line', 'line_number'])
 TVTriggerFormat = set(['ntsc', 'pal', 'secam'])
 Polarity = set(['positive', 'negative'])
+Polarity3 = set(['positive', 'negative', 'either'])
 GlitchCondition = set(['less_than', 'greater_than'])
 WidthCondition = set(['within', 'outside'])
 AcquisitionSampleMode = set(['real_time', 'equivalent_time'])
@@ -389,7 +390,7 @@ class Interpolation(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.append('IviScopeInterpolation')
         
-        self._acquisition_interpolation = 0
+        self._acquisition_interpolation = 'none'
         
         self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
         self.acquisition._add_property('interpolation',
@@ -481,7 +482,7 @@ class RuntTrigger(object):
         
         self._trigger_runt_threshold_high = 0
         self._trigger_runt_threshold_low = 0
-        self._trigger_runt_polarity = 0
+        self._trigger_runt_polarity = 'positive'
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('runt', ivi.PropertyCollection())
@@ -534,8 +535,8 @@ class GlitchTrigger(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviScopeGlitchTrigger')
         
-        self._trigger_glitch_condition = 0
-        self._trigger_glitch_polarity = 0
+        self._trigger_glitch_condition = 'less_than'
+        self._trigger_glitch_polarity = 'positive'
         self._trigger_glitch_width = 0
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
@@ -591,10 +592,10 @@ class WidthTrigger(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviScopeWidthTrigger')
         
-        self._trigger_width_condition = 0
+        self._trigger_width_condition = 'within'
         self._trigger_width_threshold_high = 0
         self._trigger_width_threshold_low = 0
-        self._trigger_width_polarity = 0
+        self._trigger_width_polarity = 'positive'
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('width', ivi.PropertyCollection())
@@ -660,7 +661,7 @@ class AcLineTrigger(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviScopeAcLineTrigger')
         
-        self._trigger_ac_line_slope = 0
+        self._trigger_ac_line_slope = 'positive'
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('ac_line', ivi.PropertyCollection())
@@ -874,7 +875,7 @@ class SampleMode(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviScopeSampleMode')
         
-        self._acquisition_sample_mode = 1
+        self._acquisition_sample_mode = 'real_time'
         
         self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
         self.acquisition._add_property('sample_mode',
@@ -899,7 +900,7 @@ class TriggerModifier(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviScopeTriggerModifier')
         
-        self._trigger_modifier = 1
+        self._trigger_modifier = 'none'
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger._add_property('modifier',
