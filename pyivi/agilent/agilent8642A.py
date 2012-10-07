@@ -168,7 +168,7 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         self._identity_instrument_manufacturer = "Agilent Technologies"
         self._identity_instrument_model = ""
         self._identity_instrument_firmware_revision = ""
-        self._identity_specification_major_version = 0
+        self._identity_specification_major_version = 2
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = list(['8642A','8642B'])
     
