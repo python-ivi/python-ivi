@@ -1204,7 +1204,9 @@ class SoftwareTrigger(object):
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenSoftwareTrigger')
-        
+    
+    def send_software_trigger(self):
+        pass
     
     
 class ModulateIQ(object):
