@@ -24,7 +24,13 @@ THE SOFTWARE.
 
 """
 
-__all__ = ["ivi", "scope", "rfsiggen", "agilent"]
+__all__ = [
+        # Base IVI class
+        "ivi",
+        # IVI abstract classes
+        "dcpwr", "scope", "rfsiggen",
+        # IVI drivers
+        "agilent"]
 
 #from . import agilent
 
