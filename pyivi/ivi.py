@@ -656,5 +656,46 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             raise NotInitializedException()
         return self._interface.ask(data, num, encoding)
     
+    def _read_stb(self):
+        "Read status byte"
+        if self._driver_operation_simulate:
+            print("[simulating] Read status")
+            return 0
+        if not self._initialized or self._interface is None:
+            raise NotInitializedException()
+        return self._interface.read_stb()
+    
+    def _trigger(self):
+        "Device trigger"
+        if self._driver_operation_simulate:
+            print("[simulating] Trigger")
+        if not self._initialized or self._interface is None:
+            raise NotInitializedException()
+        return self._interface.trigger()
+    
+    def _clear(self):
+        "Device clear"
+        if self._driver_operation_simulate:
+            print("[simulating] Clear")
+        if not self._initialized or self._interface is None:
+            raise NotInitializedException()
+        return self._interface.clear()
+    
+    def _remote(self):
+        "Device set remote"
+        if self._driver_operation_simulate:
+            print("[simulating] Remote")
+        if not self._initialized or self._interface is None:
+            raise NotInitializedException()
+        return self._interface.remote()
+    
+    def _local(self):
+        "Device set local"
+        if self._driver_operation_simulate:
+            print("[simulating] Local")
+        if not self._initialized or self._interface is None:
+            raise NotInitializedException()
+        return self._interface.local()
+    
     
     
