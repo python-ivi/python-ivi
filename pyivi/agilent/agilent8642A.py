@@ -177,6 +177,10 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         
         super(agilent8642A, self).initialize(resource, id_query, reset, **keywargs)
         
+        # interface clear
+        if not self._driver_operation_simulate:
+            self._clear()
+        
         # check ID
         if id_query and not self._driver_operation_simulate:
             id = self.identity.instrument_model

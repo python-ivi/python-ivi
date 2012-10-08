@@ -161,6 +161,10 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         
         super(agilent7000A, self).initialize(resource, id_query, reset, **keywargs)
         
+        # interface clear
+        if not self._driver_operation_simulate:
+            self._clear()
+        
         # check ID
         if id_query and not self._driver_operation_simulate:
             id = self.identity.instrument_model
