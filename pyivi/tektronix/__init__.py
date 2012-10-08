@@ -24,13 +24,7 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "dcpwr", "scope", "rfsiggen",
-        # IVI drivers
-        "agilent", "tektronix"]
-
-#from . import agilent
+# Power Supplies
+from .tektronixPS2520G import tektronixPS2520G
+from .tektronixPS2521G import tektronixPS2521G
 

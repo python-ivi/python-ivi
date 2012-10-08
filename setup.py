@@ -29,7 +29,7 @@ setup(
         'Topic :: System :: Hardware',
         'Programming Language :: Python 3'
         ],
-    packages = ['pyivi', 'pyivi.agilent'],
+    packages = ['pyivi', 'pyivi.agilent', 'pyivi.tektronix'],
     py_modules = ['ivi']
 )
 

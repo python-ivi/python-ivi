@@ -24,13 +24,21 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "dcpwr", "scope", "rfsiggen",
-        # IVI drivers
-        "agilent", "tektronix"]
+from .tektronixPS2520G import *
 
-#from . import agilent
-
+class tektronixPS2521G(tektronixPS2520G):
+    "Tektronix PS2521G DC power supply driver"
+    
+    def __init__(self):
+        super(tektronixPS2521G, self).__init__()
+        
+        self._instrument_id = 'PS2521G'
+        
+        self._output_count = 3
+        
+        self._output_range = [[(21.0, 2.5)], [(21.0, 2.5)], [(6.5, 5.0)]]
+        self._output_ovp_max = [22.5, 22.5, 7.0]
+        self._output_voltage_max = [21.0, 21.0, 6.5]
+        self._output_current_max = [2.5, 2.5, 5.0]
+    
+    
