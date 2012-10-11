@@ -26,9 +26,6 @@ THE SOFTWARE.
 
 from . import ivi
 
-# Exceptions
-class FrequencyListUnknownException(ivi.IviException): pass
-
 # Parameter Values
 CurrentLimitBehavior = set(['regulate', 'trip'])
 RangeType = set(['current', 'voltage'])
