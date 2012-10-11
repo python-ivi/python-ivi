@@ -799,7 +799,7 @@ class ProbeAutoSense(object):
                         self._get_channel_probe_sense)
     
     def init_channels(self):
-        super(probe_auto_sense, self).init_channels()
+        super(ProbeAutoSense, self).init_channels()
         self._channel_probe_attenuation_auto = list()
         self._channel_probe_sense = list()
         for i in range(self._channel_count):
