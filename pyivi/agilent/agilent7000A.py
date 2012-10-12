@@ -770,6 +770,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
     def _measurement_initiate(self):
         if not self._driver_operation_simulate:
             self._write(":digitize")
+            self._set_cache_valid(False, 'trigger_continuous')
     
     def _get_reference_level_high(self):
         return self._reference_level_high
@@ -850,10 +851,19 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         return _measurement_fetch_waveform_min_max(index)
     
     def _get_trigger_continuous(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._trigger_continuous = (int(self._ask(":oper:cond?")) & 1 << 3) != 0
+            self._set_cache_valid()
         return self._trigger_continuous
     
     def _set_trigger_continuous(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            t = 'stop'
+            if value: t = 'run'
+            self._write(":%s" % t)
         self._trigger_continuous = value
+        self._set_cache_valid()
     
     def _get_acquisition_number_of_averages(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
