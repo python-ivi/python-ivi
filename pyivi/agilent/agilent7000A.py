@@ -133,9 +133,9 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 4
         self._identity_specification_minor_version = 1
-        self._identity_supported_instrument_models = list(['DSO7012A','DSO7014A','DSO7032A',
+        self._identity_supported_instrument_models =['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',
-                'MSO7034A','MSO7052A','MSO7054A','MSO7104A'])
+                'MSO7034A','MSO7052A','MSO7054A','MSO7104A']
         
         self.channels._add_property('label',
                         self._get_channel_label,
@@ -367,10 +367,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         value = bool(value)
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate:
-            if value:
-                self._write(":%s:display on" % self._channel_name[index])
-            else:
-                self._write(":%s:display off" % self._channel_name[index])
+            self._write(":%s:display %d" % (self._channel_name[index], int(value)))
         self._channel_enabled[index] = value
         self._set_cache_valid(index=index)
     
