@@ -130,7 +130,10 @@ class Base(object):
         return True
     
     def _rf_wait_until_settled(self, maximum_time):
-        pass
+        t = 0
+        while not self._rf_is_settled() and t < maximum_time:
+            time.sleep(0.01)
+            t = t + 0.01
     
     
 class ModulateAM(object):
