@@ -28,7 +28,7 @@ __all__ = [
         # Base IVI class
         "ivi",
         # IVI abstract classes
-        "dcpwr", "scope", "rfsiggen",
+        "dcpwr", "fgen", "scope", "rfsiggen",
         # IVI drivers
         "agilent", "tektronix"]
 
