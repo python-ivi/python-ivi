@@ -301,10 +301,15 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         self._alc_enabled = value
     
     def _rf_is_settled(self):
+        if not self._driver_operation_simulate:
+            return self._read_stb() & (1 << 4) != 0
         return True
     
     def _rf_wait_until_settled(self, maximum_time):
-        pass
+        t = 0
+        while not self._rf_is_settled() and t < maximum_time:
+            time.sleep(0.01)
+            t = t + 0.01
     
     def _get_analog_modulation_am_enabled(self):
         return self._analog_modulation_am_enabled
