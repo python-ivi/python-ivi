@@ -769,6 +769,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
     
     def _measurement_initiate(self):
         if not self._driver_operation_simulate:
+            self._write(":acquire:complete 100")
             self._write(":digitize")
             self._set_cache_valid(False, 'trigger_continuous')
     
