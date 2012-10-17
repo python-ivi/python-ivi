@@ -27,6 +27,11 @@ THE SOFTWARE.
 from .. import ivi
 from .. import dcpwr
 
+TrackingMapping = {
+        'none': 'none',
+        'parallel': 'par',
+        'series': 'ser'}
+
 class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     "Tektronix PS2520G DC power supply driver"
     
@@ -42,6 +47,8 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self._output_voltage_max = [37.0, 37.0, 6.5]
         self._output_current_max = [1.5, 1.5, 5.0]
         
+        self._couple_tracking = 'none'
+        
         self._identity_description = "Tektronix PS2520G DC power supply driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -52,6 +59,11 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self._identity_specification_major_version = 3
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['PS2520G','PS2521G']
+        
+        self.__dict__.setdefault('couple', ivi.PropertyCollection())
+        self.couple._add_property('tracking',
+                        self._get_couple_tracking,
+                        self._set_couple_tracking)
         
         self._init_outputs()
     
@@ -344,6 +356,21 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
                 self._write(":instrument:nselect %d" % (index+1))
                 return float(self._ask(":measure:current?"))
         return 0
+    
+    def _get_couple_tracking(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":instrument:couple:tracking?").lower()
+            self._couple_tracking = [k for k,v in TrackingMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._couple_tracking;
+    
+    def _set_couple_tracking(self, value):
+        if value not in TrackingMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":instrument:couple:tracking %s" % TrackingMapping[value])
+        self._couple_tracking = value
+        self._set_cache_valid()
     
     
 
