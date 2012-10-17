@@ -165,10 +165,10 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     
     def _get_output_current_limit(self, index):
         index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._write(":instrument:nselect %d" % (index+1))
             self._output_current_limit[index] = float(self._ask(":source:current:level?"))
-            self._set_cache_valid()
+            self._set_cache_valid(index=index)
         return self._output_current_limit[index]
     
     def _set_output_current_limit(self, index, value):
@@ -180,36 +180,38 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             self._write(":instrument:nselect %d" % (index+1))
             self._write(":source:current:level %e" % value)
         self._output_current_limit[index] = value
-        self._set_cache_valid()
+        self._set_cache_valid(index=index)
     
     def _get_output_current_limit_behavior(self, index):
         index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._write(":instrument:nselect %d" % (index+1))
             value = bool(int(self._ask(":source:current:protection:state?")))
             if value:
                 self._output_current_limit_behavior[index] = 'trip'
             else:
                 self._output_current_limit_behavior[index] = 'regulate'
-            self._set_cache_valid()
+            self._set_cache_valid(index=index)
         return self._output_current_limit_behavior[index]
     
     def _set_output_current_limit_behavior(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        if value not in CurrentLimitBehavior:
+        if value not in dcpwr.CurrentLimitBehavior:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":instrument:nselect %d" % (index+1))
             self._write(":source:current:protection:state %d" % int(value == 'trip'))
         self._output_current_limit_behavior[index] = value
-        self._set_cache_valid()
+        for k in range(self._output_count):
+            self._set_cache_valid(valid=False,index=k)
+        self._set_cache_valid(index=index)
     
     def _get_output_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._write(":instrument:nselect %d" % (index+1))
             self._output_enabled[index] = bool(int(self._ask(":output:state?")))
-            self._set_cache_valid()
+            self._set_cache_valid(index=index)
         return self._output_enabled[index]
     
     def _set_output_enabled(self, index, value):
@@ -219,23 +221,31 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             self._write(":instrument:nselect %d" % (index+1))
             self._write(":output:state %d" % int(value))
         self._output_enabled[index] = value
-        self._set_cache_valid()
+        for k in range(self._output_count):
+            self._set_cache_valid(valid=False,index=k)
+        self._set_cache_valid(index=index)
     
     def _get_output_ovp_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
+        # Cannot disable OVP
+        self._output_ovp_enabled[index] = True
         return self._output_ovp_enabled[index]
     
     def _set_output_ovp_enabled(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = bool(value)
+        if not value:
+            raise ivi.ValueNotSupportedException()
+        # Cannot disable OVP
+        value = True
         self._output_ovp_enabled[index] = value
     
     def _get_output_ovp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._write(":instrument:nselect %d" % (index+1))
             self._output_ovp_limit[index] = float(self._ask(":source:voltage:protection:level?"))
-            self._set_cache_valid()
+            self._set_cache_valid(index=index)
         return self._output_ovp_limit[index]
     
     def _set_output_ovp_limit(self, index, value):
@@ -247,14 +257,14 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             self._write(":instrument:nselect %d" % (index+1))
             self._write(":source:voltage:protection:level %e" % value)
         self._output_ovp_limit[index] = value
-        self._set_cache_valid()
+        self._set_cache_valid(index=index)
     
     def _get_output_voltage_level(self, index):
         index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._write(":instrument:nselect %d" % (index+1))
             self._output_voltage_level[index] = float(self._ask(":source:voltage:level?"))
-            self._set_cache_valid()
+            self._set_cache_valid(index=index)
         return self._output_voltage_level[index]
     
     def _set_output_voltage_level(self, index, value):
@@ -266,7 +276,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             self._write(":instrument:nselect %d" % (index+1))
             self._write(":source:voltage:level %e" % value)
         self._output_voltage_level[index] = value
-        self._set_cache_valid()
+        self._set_cache_valid(index=index)
     
     def _output_configure_range(self, index, range_type, range_val):
         index = ivi.get_index(self._output_name, index)
@@ -301,19 +311,18 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             raise ivi.ValueNotSupportedException()
         status = 0
         if not self._driver_operation_simulate:
-            status = int(self._write(":questionable:instrument:isummary%d:condition?" % (index+1)))
-        ret = False
-        if value == 'constant_voltage':
-            ret = status & (1 << 0) != 0
-        elif value == 'constant_current':
-            ret = status & (1 << 1) != 0
-        elif value == 'over_voltage':
-            ret = status & (1 << 9) != 0
-        elif value == 'over_current':
-            ret = status & (1 << 10) != 0
-        elif value == 'unregulated':
-            ret = status & (3 << 0) != 0
-        return ret
+            status = int(self._ask(":stat:ques:inst:isum%d:cond?" % (index+1)))
+        if state == 'constant_voltage':
+            return status & (1 << 1) != 0
+        elif state == 'constant_current':
+            return status & (1 << 0) != 0
+        elif state == 'over_voltage':
+            return status & (1 << 9) != 0
+        elif state == 'over_current':
+            return status & (1 << 10) != 0
+        elif state == 'unregulated':
+            return status & (3 << 0) != 0
+        return False
     
     def _output_reset_output_protection(self, index):
         if not self._driver_operation_simulate:
@@ -324,14 +333,14 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         index = ivi.get_index(self._output_name, index)
         if type not in dcpwr.MeasurementType:
             raise ivi.ValueNotSupportedException()
-        if value == 'voltage':
+        if type == 'voltage':
             if not self._driver_operation_simulate:
                 self._write(":instrument:nselect %d" % (index+1))
                 return float(self._ask(":measure:voltage?"))
-        elif value == 'current':
+        elif type == 'current':
             if not self._driver_operation_simulate:
                 self._write(":instrument:nselect %d" % (index+1))
-                return float(self._ask(":measure:voltage?"))
+                return float(self._ask(":measure:current?"))
         return 0
     
     
