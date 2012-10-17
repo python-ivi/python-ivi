@@ -697,5 +697,38 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             raise NotInitializedException()
         return self._interface.local()
     
+    def _read_ieee_block(self):
+        "Read IEEE block"
+        # IEEE block binary data is prefixed with #lnnnnnnnn
+        # where l is length of n and n is the
+        # length of the data
+        # ex: #800002000 prefixes 2000 data bytes
+        ch = self._read(1)
+        
+        if len(ch) == 0:
+            return b''
+        
+        while ch != '#':
+            ch = self._read(1)
+        
+        l = int(self._read(1))
+        num = int(self._read_raw(l))
+        
+        # Read data
+        
+        raw_data = self._read_raw(num)
+        
+        return raw_data
+    
+    def _write_ieee_block(self, data):
+        "Write IEEE block"
+        # IEEE block binary data is prefixed with #lnnnnnnnn
+        # where l is length of n and n is the
+        # length of the data
+        # ex: #800002000 prefixes 2000 data bytes
+        
+        self._write('#8%08d' % len(data))
+        self._write_raw(data)
+    
     
     
