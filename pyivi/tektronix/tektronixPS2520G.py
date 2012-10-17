@@ -234,9 +234,11 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     def _set_output_ovp_enabled(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = bool(value)
-        if not value:
-            raise ivi.ValueNotSupportedException()
-        # Cannot disable OVP
+        # Cannot disable OVP, so set limit to max instead
+        if not value and not self._driver_operation_simulate:
+            self._write(":instrument:nselect %d" % (index+1))
+            self._write(":source:voltage:protection:level max")
+            self._set_cache_valid(valid=False,tag='output_ovp_limit',index=index)
         value = True
         self._output_ovp_enabled[index] = value
     
