@@ -729,23 +729,10 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         
         self._write(":waveform:data?")
         
-        # Waveform data is prefixed with #lnnnnnnnn
-        # where l is number of n (8) and n represent the
-        # length of the data
-        # ex: #800002000 prefixes 2000 data bytes
-        
-        ch = self._read(1)
-        
-        while ch != '#':
-            ch = self._read(1)
-        
-        l = int(self._read(1))
-        num = int(self._read(l))
-        
         # Read waveform data
+        raw_data = self._read_ieee_block()
         
-        raw_data = self._read_raw(num)
-        
+        # Clear out end of line marker
         self._read()
         
         # Split out points and convert to time and voltage pairs
