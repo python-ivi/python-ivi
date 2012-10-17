@@ -24,14 +24,16 @@ THE SOFTWARE.
 
 """
 
-# Function Generators
-from .tektronixAWG2005 import tektronixAWG2005
-from .tektronixAWG2020 import tektronixAWG2020
-from .tektronixAWG2021 import tektronixAWG2021
-from .tektronixAWG2040 import tektronixAWG2040
-from .tektronixAWG2041 import tektronixAWG2041
+from .tektronixAWG2000 import *
 
-# Power Supplies
-from .tektronixPS2520G import tektronixPS2520G
-from .tektronixPS2521G import tektronixPS2521G
-
+class tektronixAWG2021(tektronixAWG2000):
+    "Tektronix AWG2021 arbitrary waveform generator driver"
+    
+    def __init__(self):
+        super(tektronixAWG2021, self).__init__()
+        
+        self._instrument_id = 'AWG2021'
+        
+        self._output_count = 1
+    
+    
