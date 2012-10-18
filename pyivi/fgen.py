@@ -49,8 +49,8 @@ TriggerSlope = set(['positive', 'negative', 'either'])
 class Base(object):
     "Base IVI methods for all function generators"
     
-    def __init__(self):
-        super(Base, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviFgenBase')
@@ -162,8 +162,8 @@ class Base(object):
 class StdFunc(object):
     "Extension IVI methods for function generators that can produce manufacturer-supplied periodic waveforms"
     
-    def __init__(self):
-        super(StdFunc, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviFgenStdFunc')
@@ -200,7 +200,7 @@ class StdFunc(object):
         self._init_outputs()
     
     def _init_outputs(self):
-        super(StdFunc, self)._init_outputs()
+        super()._init_outputs()
         
         self._output_standard_waveform_amplitude = list()
         self._output_standard_waveform_dc_offset = list()
@@ -284,8 +284,8 @@ class StdFunc(object):
 class ArbWfm(object):
     "Extension IVI methods for function generators that can produce arbitrary waveforms"
     
-    def __init__(self):
-        super(ArbWfm, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviFgenArbWfm')
@@ -331,7 +331,7 @@ class ArbWfm(object):
         self._init_outputs()
     
     def _init_outputs(self):
-        super(ArbWfm, self)._init_outputs()
+        super()._init_outputs()
         
         self._output_arbitrary_gain = list()
         self._output_arbitrary_offset = list()
@@ -402,8 +402,8 @@ class ArbWfm(object):
 class ArbFrequency(object):
     "Extension IVI methods for function generators that can produce arbitrary waveforms with variable rate"
     
-    def __init__(self):
-        super(ArbFrequency, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviFgenArbFrequency')
@@ -418,7 +418,7 @@ class ArbFrequency(object):
         self._init_outputs()
     
     def _init_outputs(self):
-        super(ArbFrequency, self)._init_outputs()
+        super()._init_outputs()
         
         self._output_arbitrary_frequency = list()
         for i in range(self._output_count):

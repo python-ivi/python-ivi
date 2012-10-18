@@ -156,8 +156,8 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         rfsiggen.Sweep, rfsiggen.FrequencySweep, rfsiggen.PowerSweep):
     "Agilent 8642A IVI RF signal generator driver"
     
-    def __init__(self):
-        super(agilent8642A, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'HP8642A'
     

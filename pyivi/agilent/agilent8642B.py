@@ -29,8 +29,8 @@ from .agilent8642A import *
 class agilent8642B(agilent8642A):
     "Agilent 8642B IVI RF signal generator driver"
     
-    def __init__(self):
-        super(agilent8642B, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'HP8642B'
     

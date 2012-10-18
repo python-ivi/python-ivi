@@ -29,8 +29,8 @@ from .tektronixAWG2000 import *
 class tektronixAWG2020(tektronixAWG2000):
     "Tektronix AWG2020 arbitrary waveform generator driver"
     
-    def __init__(self):
-        super(tektronixAWG2020, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'AWG2020'
         

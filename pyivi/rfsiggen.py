@@ -46,8 +46,8 @@ ClockType = set(['bit', 'symbol'])
 class Base(object):
     "Base IVI methods for all RF signal generators"
     
-    def __init__(self):
-        super(Base, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenBase')
@@ -139,8 +139,8 @@ class Base(object):
 class ModulateAM(object):
     "Extension IVI methods for generators supporting amplitude modulation"
     
-    def __init__(self):
-        super(ModulateAM, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateAM')
@@ -226,8 +226,8 @@ class ModulateAM(object):
 class ModulateFM(object):
     "Extension IVI methods for generators supporting frequency modulation"
     
-    def __init__(self):
-        super(ModulateFM, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateFM')
@@ -301,8 +301,8 @@ class ModulateFM(object):
 class ModulatePM(object):
     "Extension IVI methods for generators supporting phase modulation"
     
-    def __init__(self):
-        super(ModulatePM, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenModulatePM')
@@ -376,8 +376,8 @@ class ModulatePM(object):
 class AnalogModulationSource(object):
     "Extension IVI methods for generators supporting analog modulation"
     
-    def __init__(self):
-        super(AnalogModulationSource, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenAnalogModulationSource')
@@ -396,8 +396,8 @@ class AnalogModulationSource(object):
 class ModulatePulse:
     "Extension IVI methods for generators supporting pulse modulation"
     
-    def __init__(self):
-        super(ModulatePulse, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenModulatePulse')
@@ -443,8 +443,8 @@ class ModulatePulse:
 class LFGenerator(object):
     "Extension IVI methods for generators with internal analog modulation sources"
     
-    def __init__(self):
-        super(LFGenerator, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenLFGenerator')
@@ -503,8 +503,8 @@ class LFGenerator(object):
 class LFGeneratorOutput(object):
     "Extension IVI methods for generators with internal analog modulation sources"
     
-    def __init__(self):
-        super(LFGeneratorOutput, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenLFGeneratorOutput')
@@ -544,8 +544,8 @@ class LFGeneratorOutput(object):
 class PulseGenerator(object):
     "Extension IVI methods for generators with internal pulse modulation sources"
     
-    def __init__(self):
-        super(ModulatePulse, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenPulseGenerator')
@@ -635,8 +635,8 @@ class PulseGenerator(object):
 class PulseDoubleGenerator(object):
     "Extension IVI methods for generators with internal double pulse modulation sources"
     
-    def __init__(self):
-        super(PulseDoubleGenerator, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenPulseDoubleGenerator')
@@ -676,8 +676,8 @@ class PulseDoubleGenerator(object):
 class PulseGeneratorOutput(object):
     "Extension IVI methods for generators with internal pulse modulation sources"
     
-    def __init__(self):
-        super(PulseGenerator, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenPulseGeneratorOutput')
@@ -717,8 +717,8 @@ class PulseGeneratorOutput(object):
 class Sweep(object):
     "Extension IVI methods for generators that support sweeping"
     
-    def __init__(self):
-        super(Sweep, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenSweep')
@@ -758,8 +758,8 @@ class Sweep(object):
 class FrequencySweep(object):
     "Extension IVI methods for generators that support frequency sweeping"
     
-    def __init__(self):
-        super(FrequencySweep, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenFrequencySweep')
@@ -815,8 +815,8 @@ class FrequencySweep(object):
 class PowerSweep(object):
     "Extension IVI methods for generators that support power sweeping"
     
-    def __init__(self):
-        super(PowerSweep, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenPowerSweep')
@@ -867,8 +867,8 @@ class PowerSweep(object):
 class FrequencyStep(object):
     "Extension IVI methods for generators that support frequency sweeping in steps"
     
-    def __init__(self):
-        super(FrequencyStep, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenFrequencyStep')
@@ -964,8 +964,8 @@ class FrequencyStep(object):
 class PowerStep(object):
     "Extension IVI methods for generators that support power sweeping in steps"
     
-    def __init__(self):
-        super(PowerStep, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenPowerStep')
@@ -1048,8 +1048,8 @@ class PowerStep(object):
 class List(object):
     "Extension IVI methods for generators that support frequency and power selection a list"
     
-    def __init__(self):
-        super(List, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenList')
@@ -1120,8 +1120,8 @@ class List(object):
 class ALC(object):
     "Extension IVI methods for generators that support automatic level control"
     
-    def __init__(self):
-        super(ALC, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenALC')
@@ -1161,8 +1161,8 @@ class ALC(object):
 class ReferenceOscillator(object):
     "Extension IVI methods for generators that support a configurable frequency reference"
     
-    def __init__(self):
-        super(ReferenceOscillator, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenReferenceOscillator')
@@ -1202,8 +1202,8 @@ class ReferenceOscillator(object):
 class SoftwareTrigger(object):
     "Extension IVI methods for generators that support software triggering"
     
-    def __init__(self):
-        super(SoftwareTrigger, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenSoftwareTrigger')
@@ -1215,8 +1215,8 @@ class SoftwareTrigger(object):
 class ModulateIQ(object):
     "Extension IVI methods for generators supporting IQ (vector) modulation"
     
-    def __init__(self):
-        super(ModulateIQ, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenModulateIQ')
@@ -1282,8 +1282,8 @@ class ModulateIQ(object):
 class IQImpairment(object):
     "Extension IVI methods for generators supporting IQ modulation simulation or correction of IQ impairment"
     
-    def __init__(self):
-        super(IQImpairment, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenIQImpairment')
@@ -1358,8 +1358,8 @@ class IQImpairment(object):
 class ArbGenerator(object):
     "Extension IVI methods for generators with internal arbitrary waveform generators"
     
-    def __init__(self):
-        super(ArbGenerator, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenArbGenerator')
@@ -1466,8 +1466,8 @@ class ArbGenerator(object):
 class DigitalModulationBase(object):
     "Extension IVI methods for generators supporting generation of standard wireless communication signals"
     
-    def __init__(self):
-        super(DigitalModulationBase, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenDigitalModulationBase')
@@ -1569,8 +1569,8 @@ class DigitalModulationBase(object):
 class CDMABase(object):
     "Extension IVI methods for generators supporting generation of CDMA wireless communication signals"
     
-    def __init__(self):
-        super(CDMABase, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenCDMABase')
@@ -1653,8 +1653,8 @@ class CDMABase(object):
 class TDMABase(object):
     "Extension IVI methods for generators supporting generation of TDMA wireless communication signals"
     
-    def __init__(self):
-        super(TDMABase, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviRFSigGenTDMABase')

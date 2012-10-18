@@ -29,8 +29,8 @@ from .tektronixPS2520G import *
 class tektronixPS2521G(tektronixPS2520G):
     "Tektronix PS2521G DC power supply driver"
     
-    def __init__(self):
-        super(tektronixPS2521G, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'PS2521G'
         

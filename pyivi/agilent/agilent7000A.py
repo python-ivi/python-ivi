@@ -103,7 +103,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
                 scope.SampleMode, scope.AutoSetup):
     "Agilent InfiniiVision 7000A series IVI oscilloscope driver"
     
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()
@@ -114,7 +114,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_probe_id = list()
         self._channel_bw_limit = list()
         
-        super(agilent7000A, self).__init__()
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'AGILENT TECHNOLOGIES'
         self._analog_channel_name = list()
@@ -246,7 +246,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         pass
     
     def _init_channels(self):
-        super(agilent7000A, self)._init_channels()
+        super()._init_channels()
         
         self._channel_name = list()
         self._channel_label = list()

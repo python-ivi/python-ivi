@@ -35,8 +35,8 @@ TrackingMapping = {
 class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     "Tektronix PS2520G DC power supply driver"
     
-    def __init__(self):
-        super(tektronixPS2520G, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'PS2520G'
         

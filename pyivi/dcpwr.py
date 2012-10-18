@@ -52,8 +52,8 @@ def get_range(range_list, offset, val):
 class Base(object):
     "Base IVI methods for all DC power supplies"
     
-    def __init__(self):
-        super(Base, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviDCPwrBase')
@@ -244,8 +244,8 @@ class Base(object):
 class Trigger(object):
     "Extension IVI methods for power supplies supporting trigger based output changes"
     
-    def __init__(self):
-        super(Trigger, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviDCPwrTrigger')
@@ -305,8 +305,8 @@ class Trigger(object):
 class SoftwareTrigger(object):
     "Extension IVI methods for power supplies supporting software triggering"
     
-    def __init__(self):
-        super(SoftwareTrigger, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviDCPwrSoftwareTrigger')
@@ -318,8 +318,8 @@ class SoftwareTrigger(object):
 class Measurement(object):
     "Extension IVI methods for power supplies supporting measurement of the output signal"
     
-    def __init__(self):
-        super(Measurement, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviDCPwrMeasurement')

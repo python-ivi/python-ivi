@@ -202,8 +202,8 @@ class IndexedPropertyCollection(object):
 class DriverOperation(object):
     "Inherent IVI methods for driver operation"
     
-    def __init__(self):
-        super(DriverOperation, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(DriverOperation, self).__init__(*args, **kwargs)
         
         self._driver_operation_cache = True
         self._driver_operation_driver_setup = ""
@@ -324,8 +324,8 @@ class DriverOperation(object):
 class DriverIdentity(object):
     "Inherent IVI methods for identification"
     
-    def __init__(self):
-        super(DriverIdentity, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(DriverIdentity, self).__init__(*args, **kwargs)
         
         self._identity_description = "Base IVI Driver"
         self._identity_identifier = ""
@@ -410,8 +410,8 @@ class DriverIdentity(object):
 class DriverUtility(object):
     "Inherent IVI utility methods"
     
-    def __init__(self):
-        super(DriverUtility, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(DriverUtility, self).__init__(*args, **kwargs)
         
         self.__dict__.setdefault('utility', PropertyCollection())
         self.utility.disable = self._utility_disable
@@ -453,8 +453,8 @@ class DriverUtility(object):
 class Driver(DriverOperation, DriverIdentity, DriverUtility):
     "Inherent IVI methods for all instruments"
     
-    def __init__(self):
-        super(Driver, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(Driver, self).__init__(*args, **kwargs)
         self._interface = None
         self._initialized = False
         self._instrument_id = ''

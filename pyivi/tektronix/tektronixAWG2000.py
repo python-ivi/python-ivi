@@ -30,8 +30,8 @@ from .. import fgen
 class tektronixAWG2000(ivi.Driver, fgen.Base):
     "Tektronix AWG2000 series arbitrary waveform generator driver"
     
-    def __init__(self):
-        super(tektronixAWG2000, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self._instrument_id = 'AWG2000'
         
@@ -146,7 +146,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base):
     
     
     def _init_outputs(self):
-        super(tektronixAWG2000, self)._init_outputs()
+        super()._init_outputs()
         
         self._output_enabled = list()
         for i in range(self._output_count):
