@@ -85,6 +85,10 @@ class Base(object):
         self._init_outputs()
     
     def _init_outputs(self):
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
         self._output_name = list()
         self._output_operation_mode = list()
         self._output_enabled = list()
@@ -200,7 +204,10 @@ class StdFunc(object):
         self._init_outputs()
     
     def _init_outputs(self):
-        super()._init_outputs()
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
         
         self._output_standard_waveform_amplitude = list()
         self._output_standard_waveform_dc_offset = list()
@@ -331,7 +338,10 @@ class ArbWfm(object):
         self._init_outputs()
     
     def _init_outputs(self):
-        super()._init_outputs()
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
         
         self._output_arbitrary_gain = list()
         self._output_arbitrary_offset = list()
@@ -418,7 +428,10 @@ class ArbFrequency(object):
         self._init_outputs()
     
     def _init_outputs(self):
-        super()._init_outputs()
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
         
         self._output_arbitrary_frequency = list()
         for i in range(self._output_count):

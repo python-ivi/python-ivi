@@ -168,6 +168,11 @@ class Base(object):
     
     
     def _init_channels(self):
+        try:
+            super()._init_channels()
+        except AttributeError:
+            pass
+        
         self._channel_name = list()
         self._channel_enabled = list()
         self._channel_input_impedance = list()
@@ -799,7 +804,11 @@ class ProbeAutoSense(object):
                         self._get_channel_probe_sense)
     
     def init_channels(self):
-        super().init_channels()
+        try:
+            super()._init_channels()
+        except AttributeError:
+            pass
+        
         self._channel_probe_attenuation_auto = list()
         self._channel_probe_sense = list()
         for i in range(self._channel_count):

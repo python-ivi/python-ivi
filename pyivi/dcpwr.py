@@ -113,6 +113,11 @@ class Base(object):
     
     
     def _init_outputs(self):
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
+        
         self._output_name = list()
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
