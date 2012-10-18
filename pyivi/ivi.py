@@ -105,6 +105,9 @@ class PropertyCollection(object):
     
     def _lock(self, lock=True):
         object.__setattr__(self, '_locked', lock)
+    
+    def _unlock(self):
+        self._lock(False)
         
     def __getattribute__(self, name):
         if name in object.__getattribute__(self, '_props'):
@@ -198,6 +201,7 @@ class IndexedPropertyCollection(object):
                 obj.__dict__[n] = o2
             elif hasattr(itm, "__call__"):
                 obj.__dict__[n] = partial(itm, i)
+        obj._lock()
         return obj
     
     def _set_list(self, l):
