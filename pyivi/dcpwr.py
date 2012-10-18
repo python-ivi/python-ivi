@@ -273,6 +273,20 @@ class Trigger(object):
         self.trigger.abort = self._trigger_abort
         self.trigger.initiate = self._trigger_initiate
     
+    def _init_outputs(self):
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
+        
+        self._output_trigger_source = list()
+        self._output_triggered_current_limit = list()
+        self._output_triggered_voltage_level = list()
+        for i in range(self._output_count):
+            self._output_trigger_source.append('')
+            self._output_triggered_current_limit.append(0)
+            self._output_triggered_voltage_level.append(0)
+    
     def _get_output_trigger_source(self, index):
         index = ivi.get_index(self._output_name, index)
         return self._output_trigger_source[index]
