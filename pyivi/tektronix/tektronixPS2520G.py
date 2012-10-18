@@ -70,7 +70,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(tektronixPS2520G, self).initialize(resource, id_query, reset, **keywargs)
+        super().initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

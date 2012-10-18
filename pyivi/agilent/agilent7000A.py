@@ -159,7 +159,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         
-        super(agilent7000A, self).initialize(resource, id_query, reset, **keywargs)
+        super().initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:
