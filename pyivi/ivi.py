@@ -453,12 +453,24 @@ class DriverUtility(object):
 class Driver(DriverOperation, DriverIdentity, DriverUtility):
     "Inherent IVI methods for all instruments"
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, resource = None, id_query = False, reset = False, *args, **kwargs):
+        # process out args for initialize
+        kw = {}
+        for k in ('range_check', 'query_instr_status', 'cache', 'simulate', 'record_coercions',
+                'interchange_check', 'driver_setup'):
+            if k in kwargs:
+                kw[k] = kwargs.pop(k)
+        
         super(Driver, self).__init__(*args, **kwargs)
         self._interface = None
         self._initialized = False
         self._instrument_id = ''
         self._cache_valid = list()
+        
+        # call initialize if resource string or other args present
+        if resource is not None or len(kw) > 0:
+            print("Calling initialize")
+            self.initialize(resource, id_query, reset, **kw)
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
