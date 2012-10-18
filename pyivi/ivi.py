@@ -141,25 +141,43 @@ class IndexedPropertyCollection(object):
         self._indicies = list()
         self._objs = list()
     
-    def _add_property(self, name, fget=None, fset=None, fdel=None):
-        self._props[name] = (fget, fset, fdel)
+    def _add_property(self, name, fget=None, fset=None, fdel=None, props = None):
+        if props is None:
+            props = self._props
+        l = name.split('.',1)
+        n = l[0]
+        r = ''
+        if len(l) > 1: r = l[1]
+        if n not in props:
+            props[n] = dict()
+        if type(props[n]) != dict:
+            raise AttributeError("property already defined")
+        if len(r) > 0:
+            self._add_property(r, fget, fset, fdel, props[n])
+        else:
+            props[n] = (fget, fset, fdel)
     
-    def _add_method(self, name, f=None):
-        self._props[name] = f
+    def _add_method(self, name, f=None, props = None):
+        if props is None:
+            props = self._props
+        l = name.split('.',1)
+        n = l[0]
+        r = ''
+        if len(l) > 1: r = l[1]
+        if n not in props:
+            props[n] = dict()
+        if type(props[n]) != dict:
+            raise AttributeError("property already defined")
+        if len(r) > 0:
+            self._add_method(r, f, props[n])
+        else:
+            props[n] = f
     
-    def _add_sub_property(self, sub, name, fget=None, fset=None, fdel=None):
-        if sub not in self._props:
-            self._props[sub] = dict()
-        if type(self._props[sub]) != dict:
-            raise AttributeError("property %s already defined" % sub)
-        self._props[sub][name] = (fget, fset, fdel)
+    def _add_sub_property(self, sub, name, fget=None, fset=None, fdel=None, props = None):
+        self._add_property(sub+'.'+name, fget, fset, fdel)
     
-    def _add_sub_method(self, sub, name, f=None):
-        if sub not in self._props:
-            self._props[sub] = dict()
-        if type(self._props[sub]) != dict:
-            raise AttributeError("property %s already defined" % sub)
-        self._props[sub][name] = f
+    def _add_sub_method(self, sub, name, f=None, props = None):
+        self._add_method(sub+'.'+name, f)
     
     def _del_property(self, name):
         del self._props[name]
