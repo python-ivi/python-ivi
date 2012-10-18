@@ -111,8 +111,12 @@ class tektronixAWG2000(ivi.Driver, fgen.Base):
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_code, error_message = self._ask(":system:error?").split(',')
-            error_code = int(error_code)
+            error_code, error_message = self._ask(":evmsg?").split(',')
+            error_code = int(error_code.split(' ')[1])
+            if error_code == 1:
+                self._ask("*esr?")
+                error_code, error_message = self._ask(":evmsg?").split(',')
+                error_code = int(error_code.split(' ')[1])
             error_message = error_message.strip(' "')
         return (error_code, error_message)
     
