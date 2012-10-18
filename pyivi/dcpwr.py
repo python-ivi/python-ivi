@@ -53,6 +53,9 @@ class Base(object):
     "Base IVI methods for all DC power supplies"
     
     def __init__(self, *args, **kwargs):
+        # needed for _init_outputs calls from other __init__ methods
+        self._output_count = 1
+        
         super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())

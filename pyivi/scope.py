@@ -58,6 +58,9 @@ class Base(object):
     "Base IVI methods for all oscilloscpes"
     
     def __init__(self, *args, **kwargs):
+        # needed for _init_channels calls from other __init__ methods
+        self._channel_count = 1
+        
         super().__init__( *args, **kwargs)
         
         self.__dict__.setdefault('_identity_group_capabilities', list())
