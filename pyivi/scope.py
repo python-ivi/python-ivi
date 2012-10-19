@@ -134,9 +134,9 @@ class Base(object):
                         self._channel_configure)
         self.channels._add_method('configure_characteristics',
                         self._channel_configure_characteristics)
-        self.channels._add_sub_method('measurement', 'fetch_waveform',
+        self.channels._add_method('measurement.fetch_waveform',
                         self._measurement_fetch_waveform)
-        self.channels._add_sub_method('measurement', 'read_waveform',
+        self.channels._add_method('measurement.read_waveform',
                         self._measurement_read_waveform)
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
         self.measurement._add_property('status',
@@ -711,9 +711,9 @@ class WaveformMeasurement(object):
                         self._set_reference_level_low)
         self.reference_level.configure = self._reference_level_configure
         self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_sub_method('measurement', 'fetch_waveform_measurement',
+        self.channels._add_method('measurement.fetch_waveform_measurement',
                         self._measurement_fetch_waveform_measurement)
-        self.channels._add_sub_method('measurement', 'read_waveform_measurement',
+        self.channels._add_method('measurement.read_waveform_measurement',
                         self._measurement_read_waveform_measurement)
     
     def _get_reference_level_high(self):
@@ -768,9 +768,9 @@ class MinMaxWaveform(object):
                         self._get_acquisition_number_of_envelopes,
                         self._set_acquisition_number_of_envelopes)
         self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_sub_method('measurement', 'fetch_waveform_min_max',
+        self.channels._add_method('measurement.fetch_waveform_min_max',
                         self._measurement_fetch_waveform_min_max)
-        self.channels._add_sub_method('measurement', 'read_waveform_min_max',
+        self.channels._add_method('measurement.read_waveform_min_max',
                         self._measurement_read_waveform_min_max)
     
     def _get_acquisition_number_of_envelopes(self):

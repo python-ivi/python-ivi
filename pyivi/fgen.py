@@ -183,25 +183,25 @@ class StdFunc(object):
         self._output_standard_waveform_waveform_function = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_sub_property('standard_waveform', 'amplitude',
+        self.outputs._add_property('standard_waveform.amplitude',
                         self._get_output_standard_waveform_amplitude,
                         self._set_output_standard_waveform_amplitude)
-        self.outputs._add_sub_property('standard_waveform', 'dc_offset',
+        self.outputs._add_property('standard_waveform.dc_offset',
                         self._get_output_standard_waveform_dc_offset,
                         self._set_output_standard_waveform_dc_offset)
-        self.outputs._add_sub_property('standard_waveform', 'duty_cycle_high',
+        self.outputs._add_property('standard_waveform.duty_cycle_high',
                         self._get_output_standard_waveform_duty_cycle_high,
                         self._set_output_standard_waveform_duty_cycle_high)
-        self.outputs._add_sub_property('standard_waveform', 'start_phase',
+        self.outputs._add_property('standard_waveform.start_phase',
                         self._get_output_standard_waveform_start_phase,
                         self._set_output_standard_waveform_start_phase)
-        self.outputs._add_sub_property('standard_waveform', 'frequency',
+        self.outputs._add_property('standard_waveform.frequency',
                         self._get_output_standard_waveform_frequency,
                         self._set_output_standard_waveform_frequency)
-        self.outputs._add_sub_property('standard_waveform', 'waveform_function',
+        self.outputs._add_property('standard_waveform.waveform_function',
                         self._get_output_standard_waveform_waveform_function,
                         self._set_output_standard_waveform_waveform_function)
-        self.outputs._add_sub_method('standard_waveform', 'configure',
+        self.outputs._add_method('standard_waveform.configure',
                         self._output_standard_waveform_configure)
         
         self._init_outputs()
@@ -310,16 +310,16 @@ class ArbWfm(object):
         self._arbitrary_waveform_quantum = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_sub_property('arbitrary', 'gain',
+        self.outputs._add_property('arbitrary.gain',
                         self._get_output_arbitrary_gain,
                         self._set_output_arbitrary_gain)
-        self.outputs._add_sub_property('arbitrary', 'offset',
+        self.outputs._add_property('arbitrary.offset',
                         self._get_output_arbitrary_offset,
                         self._set_output_arbitrary_offset)
-        self.outputs._add_sub_property('arbitrary', 'waveform',
+        self.outputs._add_property('arbitrary.waveform',
                         self._get_output_arbitrary_waveform,
                         self._set_output_arbitrary_waveform)
-        self.outputs._add_sub_method('arbitrary', 'configure',
+        self.outputs._add_method('arbitrary.configure',
                         self._arbitrary_waveform_configure)
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
         self.arbitrary._add_property('sample_rate',
@@ -424,7 +424,7 @@ class ArbFrequency(object):
         self._output_arbitrary_frequency = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_sub_property('arbitrary', 'frequency',
+        self.outputs._add_property('arbitrary.frequency',
                         self._get_output_arbitrary_frequency,
                         self._set_output_arbitrary_frequency)
         
