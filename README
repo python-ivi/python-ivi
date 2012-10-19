@@ -56,8 +56,21 @@ Usage example
 import ivi
 # connect to MSO7104A via LXI
 mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
-# autoset
-mso.measurement.auto_setup()
+# configure timebase
+mso.acquisition.time_per_record = 1e-3
+# configure triggering
+mso.trigger.type = 'edge'
+mso.trigger.source = 'channel1'
+mso.trigger.coupling = 'dc'
+mso.trigger.edge.slope = 'positive'
+mso.trigger.level = 0
+# configure channel
+mso.channels['channel1'].enabled = True
+mso.channels['channel1'].offset = 0
+mso.channels['channel1'].range = 4
+mso.channels['channel1'].coupling = 'dc'
+# initiate measurement
+mso.measurement.initiate()
 # read out channel 1 waveform data
 waveform = mso.channels[0].measurement.fetch_waveform()
 
