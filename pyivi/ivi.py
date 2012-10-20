@@ -491,7 +491,6 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
         # call initialize if resource string or other args present
         if resource is not None or len(kw) > 0:
-            print("Calling initialize")
             self.initialize(resource, id_query, reset, **kw)
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
