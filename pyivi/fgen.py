@@ -118,7 +118,7 @@ class Base(object):
     
     def _set_output_operation_mode(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        if state not in OperationMode:
+        if value not in OperationMode:
             raise ivi.ValueNotSupportedException()
         self._output_operation_mode[index] = value
     
@@ -146,7 +146,7 @@ class Base(object):
     
     def _set_output_mode(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        if state not in OutputMode:
+        if value not in OutputMode:
             raise ivi.ValueNotSupportedException()
         self._output_mode[index] = value
     
@@ -279,7 +279,7 @@ class StdFunc(object):
     
     def _set_output_standard_waveform_waveform_function(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        if state not in StandardWaveform:
+        if value not in StandardWaveform:
             raise ivi.ValueNotSupportedException()
         self._output_standard_waveform_waveform_function[index] = value
     
