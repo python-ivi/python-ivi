@@ -63,8 +63,7 @@ class Base(object):
         
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeBase')
+        self._add_group_capability('IviScopeBase')
         
         self._acquisition_start_time = 0
         self._acquisition_type = 'normal'
@@ -395,8 +394,7 @@ class Interpolation(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.append('IviScopeInterpolation')
+        self._add_group_capability('IviScopeInterpolation')
         
         self._acquisition_interpolation = 'none'
         
@@ -418,8 +416,7 @@ class TVTrigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.append('IviScopeTVTrigger')
+        self._add_group_capability('IviScopeTVTrigger')
         
         self._trigger_tv_trigger_event = 'any_line'
         self._trigger_tv_line_number = 0
@@ -485,8 +482,7 @@ class RuntTrigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.append('IviScopeRuntTrigger')
+        self._add_group_capability('IviScopeRuntTrigger')
         
         self._trigger_runt_threshold_high = 0
         self._trigger_runt_threshold_low = 0
@@ -540,8 +536,7 @@ class GlitchTrigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeGlitchTrigger')
+        self._add_group_capability('IviScopeGlitchTrigger')
         
         self._trigger_glitch_condition = 'less_than'
         self._trigger_glitch_polarity = 'positive'
@@ -597,8 +592,7 @@ class WidthTrigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeWidthTrigger')
+        self._add_group_capability('IviScopeWidthTrigger')
         
         self._trigger_width_condition = 'within'
         self._trigger_width_threshold_high = 0
@@ -666,8 +660,7 @@ class AcLineTrigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeAcLineTrigger')
+        self._add_group_capability('IviScopeAcLineTrigger')
         
         self._trigger_ac_line_slope = 'positive'
         
@@ -692,8 +685,7 @@ class WaveformMeasurement(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeWaveformMeasurement')
+        self._add_group_capability('IviScopeWaveformMeasurement')
         
         self._reference_level_high = 90
         self._reference_level_low = 10
@@ -758,8 +750,7 @@ class MinMaxWaveform(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeMinMaxWaveform')
+        self._add_group_capability('IviScopeMinMaxWaveform')
         
         self._acquisition_number_of_envelopes = 0
         
@@ -793,8 +784,7 @@ class ProbeAutoSense(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeProbeAutoSense')
+        self._add_group_capability('IviScopeProbeAutoSense')
         
         self._channel_probe_attenuation_auto = list()
         self._channel_probe_sense = list()
@@ -838,8 +828,7 @@ class ContinuousAcquisition(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeContinuousAcquisition')
+        self._add_group_capability('IviScopeContinuousAcquisition')
         
         self._trigger_continuous = False
         
@@ -861,8 +850,7 @@ class AverageAcquisition(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeAverageAcquisition')
+        self._add_group_capability('IviScopeAverageAcquisition')
         
         self._acquisition_number_of_averages = 1
         
@@ -884,8 +872,7 @@ class SampleMode(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeSampleMode')
+        self._add_group_capability('IviScopeSampleMode')
         
         self._acquisition_sample_mode = 'real_time'
         
@@ -909,8 +896,7 @@ class TriggerModifier(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeTriggerModifier')
+        self._add_group_capability('IviScopeTriggerModifier')
         
         self._trigger_modifier = 'none'
         
@@ -934,8 +920,7 @@ class AutoSetup(object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviScopeAutoSetup')
+        self._add_group_capability('IviScopeAutoSetup')
         
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
         self.measurement.auto_setup = self._measurement_auto_setup

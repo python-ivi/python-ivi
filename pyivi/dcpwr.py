@@ -58,8 +58,7 @@ class Base(object):
         
         super().__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviDCPwrBase')
+        self._add_group_capability('IviDCPwrBase')
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
@@ -255,8 +254,7 @@ class Trigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviDCPwrTrigger')
+        self._add_group_capability('IviDCPwrTrigger')
         
         self._output_trigger_source = list()
         self._output_triggered_current_limit = list()
@@ -330,8 +328,7 @@ class SoftwareTrigger(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviDCPwrSoftwareTrigger')
+        self._add_group_capability('IviDCPwrSoftwareTrigger')
     
     def send_software_trigger(self):
         pass
@@ -343,8 +340,7 @@ class Measurement(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviDCPwrMeasurement')
+        self._add_group_capability('IviDCPwrMeasurement')
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_method('measure',
