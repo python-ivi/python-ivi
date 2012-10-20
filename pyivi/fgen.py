@@ -1455,5 +1455,320 @@ class ArbWfmBinary(object):
         return 'handle'
     
     
+class DataMarker(object):
+    "Extension IVI methods for function generators that support output of particular waveform data bits as markers"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenDataMarker')
+        
+        self._data_marker_count = 1
+        self._data_marker_name = list()
+        self._data_marker_amplitude = list()
+        self._data_marker_bit_position = list()
+        self._data_marker_delay = list()
+        self._data_marker_destination = list()
+        self._data_marker_polarity = list()
+        self._data_marker_source_channel = list()
+        
+        self.__dict__.setdefault('data_markers', ivi.IndexedPropertyCollection())
+        self.data_markers._add_property('name',
+                        self._get_data_marker_name)
+        self.data_markers._add_property('amplitude',
+                        self._get_data_marker_amplitude,
+                        self._set_data_marker_amplitude)
+        self.data_markers._add_property('bit_position',
+                        self._get_data_marker_bit_position,
+                        self._set_data_marker_bit_position)
+        self.data_markers._add_property('delay',
+                        self._get_data_marker_delay,
+                        self._set_data_marker_delay)
+        self.data_markers._add_property('destination',
+                        self._get_data_marker_destination,
+                        self._set_data_marker_destination)
+        self.data_markers._add_property('polarity',
+                        self._get_data_marker_polarity,
+                        self._set_data_marker_polarity)
+        self.data_markers._add_property('source_channel',
+                        self._get_data_marker_source_channel,
+                        self._set_data_marker_source_channel)
+        self.data_markers._add_method('configure',
+                        self._data_marker_configure)
+        # need clear
+        
+        self._init_data_markers()
+        
+    def _init_data_markers(self):
+        try:
+            super()._init_data_markers()
+        except AttributeError:
+            pass
+        
+        self._data_marker_name = list()
+        self._data_marker_amplitude = list()
+        self._data_marker_bit_position = list()
+        self._data_marker_delay = list()
+        self._data_marker_destination = list()
+        self._data_marker_polarity = list()
+        self._data_marker_source_channel = list()
+        
+        for i in range(self._data_marker_count):
+            self._data_marker_name.append('marker%d' % (i+1))
+            self._data_marker_amplitude.append(0)
+            self._data_marker_bit_position.append(0)
+            self._data_marker_delay.append(0)
+            self._data_marker_destination.append('')
+            self._data_marker_polarity.append('active_high')
+            self._data_marker_source_channel.append(self._output_name[0])
+    
+    def _get_data_marker_name(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_name[index]
+    
+    def _get_data_marker_amplitude(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_amplitude[index]
+    
+    def _set_data_marker_amplitude(self, index, value):
+        index = ivi.get_index(self._data_marker_name, index)
+        value = float(value)
+        self._data_marker_amplitude[index] = value
+    
+    def _get_data_marker_bit_position(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_bit_position[index]
+    
+    def _set_data_marker_bit_position(self, index, value):
+        index = ivi.get_index(self._data_marker_name, index)
+        value = int(value)
+        self._data_marker_bit_position[index] = value
+    
+    def _get_data_marker_delay(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_delay[index]
+    
+    def _set_data_marker_delay(self, index, value):
+        index = ivi.get_index(self._data_marker_name, index)
+        value = float(value)
+        self._data_marker_delay[index] = value
+    
+    def _get_data_marker_destination(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_destination[index]
+    
+    def _set_data_marker_destination(self, index, value):
+        index = ivi.get_index(self._data_marker_name, index)
+        value = str(value)
+        self._data_marker_destination[index] = value
+    
+    def _get_data_marker_polarity(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_polarity[index]
+    
+    def _set_data_marker_polarity(self, index, value):
+        index = ivi.get_index(self._data_marker_name, index)
+        if value not in MarkerPolarity:
+            raise ivi.ValueNotSupportedException()
+        self._data_marker_polarity[index] = value
+    
+    def _get_data_marker_source_channel(self, index):
+        index = ivi.get_index(self._data_marker_name, index)
+        return self._data_marker_source_channel[index]
+    
+    def _set_data_marker_source_channel(self, index, value):
+        index = ivi.get_index(self._data_marker_name, index)
+        value = ivi.get_index(self._output_name, value)
+        value = self._output_name[value]
+        self._data_marker_source_channel[index] = value
+    
+    def _data_marker_configure(self, index, source_channel, bit_position, destination):
+        self._set_data_marker_source_channel(index, source_channel)
+        self._set_data_marker_bit_position(index, bit_position)
+        self._set_data_marker_destination(index, destination)
+    
+    def _data_marker_clear(self):
+        for i in range(self._data_marker_count):
+            self._set_data_marker_destination(i, '')
+    
+    
+class ArbDataMask(object):
+    "Extension IVI methods for function generators that support masking of waveform data bits"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenArbDataMask')
+        
+        self._arbitrary_data_mask = 0xffffffff
+        
+        self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
+        self.arbitrary._add_property('data_mask',
+                        self._get_arbitrary_data_mask,
+                        self._set_arbitrary_data_mask)
+    
+    def _get_arbitrary_data_mask(self):
+        return self._arbitrary_data_mask
+    
+    def _set_arbitrary_data_mask(self, value):
+        value = int(value)
+        self._arbitrary_data_mask = value
+    
+    
+class SparseMarker(object):
+    "Extension IVI methods for function generators that support output of markers associated with output data samples"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenSparseMarker')
+        
+        self._sparse_marker_count = 1
+        self._sparse_marker_name = list()
+        self._sparse_marker_amplitude = list()
+        self._sparse_marker_delay = list()
+        self._sparse_marker_destination = list()
+        self._sparse_marker_polarity = list()
+        self._sparse_marker_waveform_handle = list()
+        
+        self.__dict__.setdefault('sparse_markers', ivi.IndexedPropertyCollection())
+        self.sparse_markers._add_property('name',
+                        self._get_sparse_marker_name)
+        self.sparse_markers._add_property('amplitude',
+                        self._get_sparse_marker_amplitude,
+                        self._set_sparse_marker_amplitude)
+        self.sparse_markers._add_property('delay',
+                        self._get_sparse_marker_delay,
+                        self._set_sparse_marker_delay)
+        self.sparse_markers._add_property('destination',
+                        self._get_sparse_marker_destination,
+                        self._set_sparse_marker_destination)
+        self.sparse_markers._add_property('polarity',
+                        self._get_sparse_marker_polarity,
+                        self._set_sparse_marker_polarity)
+        self.sparse_markers._add_property('waveform_handle',
+                        self._get_sparse_marker_waveform_handle,
+                        self._set_sparse_marker_waveform_handle)
+        self.sparse_markers._add_method('configure',
+                        self._sparse_marker_configure)
+        self.sparse_markers._add_method('get_indexes',
+                        self._sparse_marker_get_indexes)
+        self.sparse_markers._add_method('set_indexes',
+                        self._sparse_marker_set_indexes)
+        # need clear
+        
+        self._init_sparse_markers()
+        
+    def _init_sparse_markers(self):
+        try:
+            super()._init_sparse_markers()
+        except AttributeError:
+            pass
+        
+        self._sparse_marker_name = list()
+        self._sparse_marker_amplitude = list()
+        self._sparse_marker_delay = list()
+        self._sparse_marker_destination = list()
+        self._sparse_marker_polarity = list()
+        self._sparse_marker_waveform_handle = list()
+        
+        for i in range(self._sparse_marker_count):
+            self._sparse_marker_name.append('marker%d' % (i+1))
+            self._sparse_marker_amplitude.append(0)
+            self._sparse_marker_delay.append(0)
+            self._sparse_marker_destination.append('')
+            self._sparse_marker_polarity.append('active_high')
+            self._sparse_marker_waveform_handle.append('')
+    
+    def _get_sparse_marker_name(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return self._sparse_marker_name[index]
+    
+    def _get_sparse_marker_amplitude(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return self._sparse_marker_amplitude[index]
+    
+    def _set_sparse_marker_amplitude(self, index, value):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        value = float(value)
+        self._sparse_marker_amplitude[index] = value
+    
+    def _get_sparse_marker_delay(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return self._sparse_marker_delay[index]
+    
+    def _set_sparse_marker_delay(self, index, value):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        value = float(value)
+        self._sparse_marker_delay[index] = value
+    
+    def _get_sparse_marker_destination(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return self._sparse_marker_destination[index]
+    
+    def _set_sparse_marker_destination(self, index, value):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        value = str(value)
+        self._sparse_marker_destination[index] = value
+    
+    def _get_sparse_marker_polarity(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return self._sparse_marker_polarity[index]
+    
+    def _set_sparse_marker_polarity(self, index, value):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        if value not in MarkerPolarity:
+            raise ivi.ValueNotSupportedException()
+        self._sparse_marker_polarity[index] = value
+    
+    def _get_sparse_marker_waveform_handle(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return self._sparse_marker_waveform_handle[index]
+    
+    def _set_sparse_marker_waveform_handle(self, index, value):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        value = str(value)
+        self._sparse_marker_waveform_handle[index] = value
+    
+    def _sparse_marker_configure(self, index, waveform_handle, indexes, destination):
+        self._set_sparse_marker_waveform_handle(index, waveform_handle)
+        self._set_sparse_marker_set_indexes(index, indexes)
+        self._set_sparse_marker_destination(index, destination)
+    
+    def _sparse_marker_get_indexes(self, index):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        return list()
+    
+    def _sparse_marker_set_indexes(self, index, indexes):
+        index = ivi.get_index(self._sparse_marker_name, index)
+        pass
+    
+    def _sparse_marker_clear(self):
+        for i in range(self._sparse_marker_count):
+            self._set_sparse_marker_destination(i, '')
+    
+    
+class ArbSeqDepth(object):
+    "Extension IVI methods for function generators that support producing sequences of sequences of waveforms"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenArbSeqDepth')
+        
+        self._arbitrary_sequence_depth_max = 1
+        
+        self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
+        self.arbitrary.__dict__.setdefault('sequence', ivi.PropertyCollection())
+        self.arbitrary.sequence._add_property('depth_max',
+                        self._get_arbitrary_sequence_depth_max)
+    
+    def _get_arbitrary_sequence_depth_max(self):
+        return self._arbitrary_sequence_depth_max
+    
     
 
