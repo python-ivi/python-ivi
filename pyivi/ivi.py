@@ -388,6 +388,10 @@ class DriverIdentity(object):
         self.identity.get_supported_instrument_models = self._identity_get_supported_instrument_models
     
     
+    def _add_group_capability(self, name):
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, name)
+    
     def _get_identity_description(self):
         return self._identity_description
     
