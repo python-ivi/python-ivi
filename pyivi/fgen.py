@@ -303,11 +303,11 @@ class ArbWfm(object):
         self._output_arbitrary_gain = list()
         self._output_arbitrary_offset = list()
         self._output_arbitrary_waveform = list()
-        self._arbitrary_sample_rate = list()
-        self._arbitrary_waveform_number_waveforms_max = list()
-        self._arbitrary_waveform_size_max = list()
-        self._arbitrary_waveform_size_min = list()
-        self._arbitrary_waveform_quantum = list()
+        self._arbitrary_sample_rate = 0
+        self._arbitrary_waveform_number_waveforms_max = 0
+        self._arbitrary_waveform_size_max = 0
+        self._arbitrary_waveform_size_min = 0
+        self._arbitrary_waveform_quantum = 0
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_property('arbitrary.gain',
@@ -461,10 +461,10 @@ class ArbSeq(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, 'IviFgenArbSeq')
         
-        self._arbitrary_sequence_number_sequences_max
-        self._arbitrary_sequence_loop_count_max
-        self._arbitrary_sequence_length_max
-        self._arbitrary_sequence_length_min
+        self._arbitrary_sequence_number_sequences_max = 0
+        self._arbitrary_sequence_loop_count_max = 0
+        self._arbitrary_sequence_length_max = 0
+        self._arbitrary_sequence_length_min = 0
         
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
         self.arbitrary.__dict__.setdefault('sequence', ivi.PropertyCollection())
@@ -484,9 +484,6 @@ class ArbSeq(object):
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_method('arbitrary.sequence.configure',
                         self._arbitrary_sequence_configure)
-        
-        
-        self._init_outputs()
     
     def _get_arbitrary_sequence_number_sequences_max(self):
         return self._arbitrary_sequence_number_sequences_max
@@ -1095,9 +1092,6 @@ class Burst(object):
         self._identity_group_capabilities.insert(0, 'IviFgenBurst')
         
         self._output_burst_count = list()
-        self._output_advance_trigger_slope = list()
-        self._output_advance_trigger_source = list()
-        self._output_advance_trigger_threshold = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_property('burst_count',
@@ -1496,7 +1490,7 @@ class DataMarker(object):
                         self._set_data_marker_source_channel)
         self.data_markers._add_method('configure',
                         self._data_marker_configure)
-        # need clear
+        self.data_markers.clear = self._data_marker_clear
         
         self._init_data_markers()
         
@@ -1658,7 +1652,7 @@ class SparseMarker(object):
                         self._sparse_marker_get_indexes)
         self.sparse_markers._add_method('set_indexes',
                         self._sparse_marker_set_indexes)
-        # need clear
+        self.sparse_markers.clear = self._sparse_marker_clear
         
         self._init_sparse_markers()
         
