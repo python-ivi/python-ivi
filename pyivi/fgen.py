@@ -1143,7 +1143,6 @@ class ModulateAM(object):
         self._am_internal_waveform_function = 0
         self._output_am_source = list()
         
-        
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_property('am.enabled',
                         self._get_output_am_enabled,
@@ -1238,7 +1237,6 @@ class ModulateFM(object):
         self._fm_internal_waveform_function = 0
         self._output_fm_source = list()
         
-        
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_property('fm.enabled',
                         self._get_output_fm_enabled,
@@ -1271,23 +1269,23 @@ class ModulateFM(object):
         for i in range(self._output_count):
             self._output_fm_enabled.append(False)
         
-        self.outputs._set_list(self._output_nfme)
+        self.outputs._set_list(self._output_name)
     
     def _get_output_fm_enabled(self, index):
-        index = ivi.get_index(self._output_nfme, index)
+        index = ivi.get_index(self._output_name, index)
         return self._output_fm_enabled[index]
     
     def _set_output_fm_enabled(self, index, value):
-        index = ivi.get_index(self._output_nfme, index)
+        index = ivi.get_index(self._output_name, index)
         value = bool(value)
         self._output_fm_enabled[index] = value
     
     def _get_output_fm_source(self, index):
-        index = ivi.get_index(self._output_nfme, index)
+        index = ivi.get_index(self._output_name, index)
         return self._output_fm_source[index]
     
     def _set_output_fm_source(self, index, value):
-        index = ivi.get_index(self._output_nfme, index)
+        index = ivi.get_index(self._output_name, index)
         value = str(value)
         self._output_fm_source[index] = value
     
@@ -1316,6 +1314,146 @@ class ModulateFM(object):
         self._set_fm_internal_deviation(deviation)
         self._set_fm_internal_waveform_function(waveform_function)
         self._set_fm_internal_frequency(frequency)
+    
+    
+class SampleClock(object):
+    "Extension IVI methods for function generators that support external sample clocks"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenSampleClock')
+        
+        self._sample_clock_source = 'internal'
+        self._sample_clock_output_enabled = ''
+        
+        self.__dict__.setdefault('sample_clock', ivi.PropertyCollection())
+        self.sample_clock._add_property('source',
+                        self._get_sample_clock_source,
+                        self._set_sample_clock_source)
+        self.sample_clock._add_property('output_enabled',
+                        self._get_sample_clock_output_enabled,
+                        self._set_sample_clock_output_enabled)
+        
+    def _get_sample_clock_source(self):
+        return self._sample_clock_source
+    
+    def _set_sample_clock_source(self, value):
+        if value not in SampleClockSource:
+            raise ivi.ValueNotSupportedException()
+        self._sample_clock_source = value
+    
+    def _get_sample_clock_output_enabled(self):
+        return self._sample_clock_output_enabled
+    
+    def _set_sample_clock_output_enabled(self, value):
+        value = bool(value)
+        self._sample_clock_output_enabled = value
+    
+    
+class TerminalConfiguration(object):
+    "Extension IVI methods for function generators that support single ended or differential output selection"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenTerminalConfiguration')
+        
+        self._output_terminal_configuration = list()
+        
+        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
+        self.outputs._add_property('terminal_configuration',
+                        self._get_output_terminal_configuration,
+                        self._set_output_terminal_configuration)
+        
+        self._init_outputs()
+    
+    def _init_outputs(self):
+        try:
+            super()._init_outputs()
+        except AttributeError:
+            pass
+        
+        self._output_terminal_configuration = list()
+        for i in range(self._output_count):
+            self._output_terminal_configuration.append('single_ended')
+        
+        self.outputs._set_list(self._output_name)
+    
+    def _get_output_terminal_configuration(self, index):
+        index = ivi.get_index(self._output_name, index)
+        return self._output_terminal_configuration[index]
+    
+    def _set_output_terminal_configuration(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if value not in TerminalConfiguration:
+            return ivi.ValueNotSupportedException()
+        self._output_terminal_configuration[index] = value
+    
+    
+class ArbChannelWfm(object):
+    "Extension IVI methods for function generators that support user-defined arbitrary waveform generation"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenArbChannelWfm')
+        
+        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
+        self.outputs._add_method('arbitrary.waveform.create_channel_waveform',
+                        self._arbitrary_waveform_create_channel_waveform)
+        self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
+        self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
+        self.arbitrary.waveform.create_channel_waveform = self._arbitrary_waveform_create_channel_waveform
+    
+    def _arbitrary_waveform_create_channel_waveform(self, index, data):
+        index = ivi.get_index(self._output_name, index)
+        return 'handle'
+    
+    
+class ArbWfmBinary(object):
+    "Extension IVI methods for function generators that support user-defined arbitrary binary waveform generation"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenArbWfmBinary')
+        
+        self._arbitrary_binary_alignment = 'right'
+        self._arbitrary_sample_bit_resolution = 16
+        
+        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
+        self.outputs._add_method('arbitrary.waveform.create_channel_waveform_int16',
+                        self._arbitrary_waveform_create_channel_waveform_int16)
+        self.outputs._add_method('arbitrary.waveform.create_channel_waveform_int32',
+                        self._arbitrary_waveform_create_channel_waveform_int32)
+        self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
+        self.arbitrary._add_property('binary_alignment',
+                        self._get_arbitrary_binary_alignment)
+        self.arbitrary._add_property('sample_bit_resolution',
+                        self._get_arbitrary_sample_bit_resolution)
+        self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
+        self.arbitrary.waveform.create_channel_waveform_int16 = self._arbitrary_waveform_create_channel_waveform_int16
+        self.arbitrary.waveform.create_channel_waveform_int32 = self._arbitrary_waveform_create_channel_waveform_int32
+    
+    def _get_arbitrary_binary_alignment(self):
+        return self._arbitrary_binary_alignment
+    
+    def _get_arbitrary_sample_bit_resolution(self):
+        return self._arbitrary_sample_bit_resolution
+    
+    def _arbitrary_waveform_create_channel_waveform_int16(self, index, data):
+        index = ivi.get_index(self._output_name, index)
+        return 'handle'
+    
+    def _arbitrary_waveform_create_channel_waveform_int32(self, index, data):
+        index = ivi.get_index(self._output_name, index)
+        return 'handle'
+    
     
     
 
