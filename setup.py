@@ -30,6 +30,7 @@ setup(
         'Programming Language :: Python 3'
         ],
     packages = ['pyivi', 'pyivi.agilent', 'pyivi.tektronix'],
+    requires = ['numpy'],
     py_modules = ['ivi']
 )
 
