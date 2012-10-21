@@ -468,7 +468,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         self._load_catalog()
         have_handle = False
         while not have_handle:
-            self._arbitrary_waveform_n = self._arbitrary_waveform_n + 1
+            self._arbitrary_waveform_n += 1
             handle = "w%04d.wfm" % self._arbitrary_waveform_n
             have_handle = handle not in self._catalog_names
         self._write(":data:destination \"%s\"" % handle)

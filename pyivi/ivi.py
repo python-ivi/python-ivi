@@ -246,13 +246,13 @@ def decode_ieee_block(data):
     
     ind = 0
     while data[ind] != '#':
-        ind = ind + 1
+        ind += 1
     
-    ind = ind + 1
+    ind += 1
     l = int(data[ind])
-    ind = ind + 1
+    ind += 1
     num = int(data[ind:ind+l])
-    ind = ind + l
+    ind += l
     
     return data[ind:ind+num]
 
