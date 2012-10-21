@@ -245,13 +245,13 @@ def decode_ieee_block(data):
         return b''
     
     ind = 0
-    while data[ind] != '#':
+    while chr(data[ind]) != '#':
         ind += 1
     
     ind += 1
-    l = int(data[ind])
+    l = int(chr(data[ind]))
     ind += 1
-    num = int(data[ind:ind+l])
+    num = int(str(data[ind:ind+l], 'utf-8'))
     ind += l
     
     return data[ind:ind+num]
