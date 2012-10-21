@@ -874,10 +874,8 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
         self._write(":waveform:data?")
         
         # Read waveform data
-        raw_data = self._read_ieee_block()
-        
-        # Clear out end of line marker
-        self._read()
+        raw_data = self._read_raw()
+        raw_data = ivi.decode_ieee_block(raw_data)
         
         # Split out points and convert to time and voltage pairs
         
