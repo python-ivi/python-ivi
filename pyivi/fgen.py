@@ -1379,15 +1379,16 @@ class ArbChannelWfm(object):
         self._add_group_capability('IviFgenArbChannelWfm')
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_method('arbitrary.waveform.create_channel_waveform',
+        self.outputs._add_method('arbitrary.waveform.create',
                         self._arbitrary_waveform_create_channel_waveform)
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
         self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
         self.arbitrary.waveform.create_channel_waveform = self._arbitrary_waveform_create_channel_waveform
     
     def _arbitrary_waveform_create_channel_waveform(self, index, data):
-        index = ivi.get_index(self._output_name, index)
-        return 'handle'
+        handle = self._arbitrary_waveform_create(data)
+        self._set_output_arbitrary_waveform(index, data)
+        return handle
     
     
 class ArbWfmBinary(object):
