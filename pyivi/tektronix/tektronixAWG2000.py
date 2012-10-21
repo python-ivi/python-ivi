@@ -25,6 +25,7 @@ THE SOFTWARE.
 """
 
 import time
+from numpy import *
 
 from .. import ivi
 from .. import fgen
@@ -52,14 +53,19 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         
         self._arbitrary_sample_rate = 0
         self._arbitrary_waveform_number_waveforms_max = 0
-        self._arbitrary_waveform_size_max = 0
-        self._arbitrary_waveform_size_min = 0
-        self._arbitrary_waveform_quantum = 0
+        self._arbitrary_waveform_size_max = 256*1024
+        self._arbitrary_waveform_size_min = 64
+        self._arbitrary_waveform_quantum = 8
         
         self._arbitrary_sequence_number_sequences_max = 0
         self._arbitrary_sequence_loop_count_max = 0
         self._arbitrary_sequence_length_max = 0
         self._arbitrary_sequence_length_min = 0
+        
+        self._catalog_names = list()
+        
+        self._arbitrary_waveform_n = 0
+        self._arbitrary_sequence_n = 0
         
         self._identity_description = "Tektronix AWG2000 series arbitrary waveform generator driver"
         self._identity_identifier = ""
@@ -136,11 +142,11 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         error_message = "No error"
         if not self._driver_operation_simulate:
             error_code, error_message = self._ask(":evmsg?").split(',')
-            error_code = int(error_code.split(' ')[1])
+            error_code = int(error_code.split(' ', 1)[1])
             if error_code == 1:
                 self._ask("*esr?")
                 error_code, error_message = self._ask(":evmsg?").split(',')
-                error_code = int(error_code.split(' ')[1])
+                error_code = int(error_code.split(' ', 1)[1])
             error_message = error_message.strip(' "')
         return (error_code, error_message)
     
@@ -180,6 +186,17 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
             self._output_enabled.append(False)
     
     
+    def _load_catalog(self):
+        self._catalog = list()
+        self._catalog_names = list()
+        if not self._driver_operation_simulate:
+            raw = self._ask(":memory:catalog:all?").lower()
+            raw = raw.split(' ', 1)[1]
+            
+            l = raw.split(',')
+            l = [s.strip('"') for s in l]
+            self._catalog = [l[i:i+3] for i in range(0, len(l), 3)]
+            self._catalog_names = [l[0] for l in self._catalog]
     
     def _get_output_operation_mode(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -194,7 +211,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":output:ch%d:state?" % (index+1)).split(' ')[1]
+            resp = self._ask(":output:ch%d:state?" % (index+1)).split(' ', 1)[1]
             self._output_standard_waveform_amplitude[index] = bool(int(resp))
             self._set_cache_valid(index=index)
         return self._output_enabled[index]
@@ -220,7 +237,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_mode(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":fg:state?").split(' ')[1]
+            resp = self._ask(":fg:state?").split(' ', 1)[1]
             if int(resp):
                 self._output_mode[index] = 'function'
             else:
@@ -260,7 +277,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_standard_waveform_amplitude(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":fg:ch%d:amplitude?" % (index+1)).split(' ')[1]
+            resp = self._ask(":fg:ch%d:amplitude?" % (index+1)).split(' ', 1)[1]
             self._output_standard_waveform_amplitude[index] = float(resp)
             self._set_cache_valid(index=index)
         return self._output_standard_waveform_amplitude[index]
@@ -276,7 +293,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_standard_waveform_dc_offset(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":fg:ch%d:offset?" % (index+1)).split(' ')[1]
+            resp = self._ask(":fg:ch%d:offset?" % (index+1)).split(' ', 1)[1]
             self._output_standard_waveform_dc_offset[index] = float(resp)
             self._set_cache_valid(index=index)
         return self._output_standard_waveform_dc_offset[index]
@@ -310,7 +327,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_standard_waveform_frequency(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":fg:frequency?").split(' ')[1]
+            resp = self._ask(":fg:frequency?").split(' ', 1)[1]
             self._output_standard_waveform_frequency[index] = float(resp)
             self._set_cache_valid(index=index)
         return self._output_standard_waveform_frequency[index]
@@ -328,7 +345,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_standard_waveform_waveform_function(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":fg:ch%d:shape?" % (index+1)).split(' ')[1]
+            resp = self._ask(":fg:ch%d:shape?" % (index+1)).split(' ', 1)[1]
             value = resp.lower()
             value = [k for k,v in StandardWaveformMapping.items() if v==value][0]
             self._output_standard_waveform_waveform_function[index] = value
@@ -347,7 +364,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_arbitrary_gain(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":ch%d:amplitude?" % (index+1)).split(' ')[1]
+            resp = self._ask(":ch%d:amplitude?" % (index+1)).split(' ', 1)[1]
             self._output_arbitrary_gain[index] = float(resp)
             self._set_cache_valid(index=index)
         return self._output_arbitrary_gain[index]
@@ -363,7 +380,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _get_output_arbitrary_offset(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":ch%d:offset?" % (index+1)).split(' ')[1]
+            resp = self._ask(":ch%d:offset?" % (index+1)).split(' ', 1)[1]
             self._output_arbitrary_offset[index] = float(resp)
             self._set_cache_valid(index=index)
         return self._output_arbitrary_offset[index]
@@ -378,11 +395,25 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     
     def _get_output_arbitrary_waveform(self, index):
         index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            resp = self._ask(":ch%d:waveform?" % (index+1)).split(' ', 1)[1]
+            self._output_arbitrary_waveform[index] = resp.strip('"').lower()
+            self._set_cache_valid(index=index)
         return self._output_arbitrary_waveform[index]
     
     def _set_output_arbitrary_waveform(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        value = str(value)
+        value = str(value).lower()
+        # extension must be wfm
+        ext = value.split('.').pop()
+        if ext != 'wfm':
+            raise ivi.ValueNotSupportedException()
+        # waveform must exist on arb
+        self._load_catalog()
+        if value not in self._catalog_names:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":ch%d:waveform \"%s\"" % (index+1, value))
         self._output_arbitrary_waveform[index] = value
     
     def _get_arbitrary_sample_rate(self):
@@ -408,7 +439,67 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         pass
     
     def _arbitrary_waveform_create(self, data):
-        return "handle"
+        y = None
+        x = None
+        if type(data) == list and type(data[0]) == float:
+            # list
+            y = array(data)
+        elif type(data) == ndarray and len(data.shape) == 1:
+            # 1D array
+            y = data
+        elif type(data) == ndarray and len(data.shape) == 2 and data.shape[0] == 1:
+            # 2D array, hieght 1
+            y = data[0]
+        elif type(data) == ndarray and len(data.shape) == 2 and data.shape[1] == 1:
+            # 2D array, width 1
+            y = data[:,0]
+        else:
+            x, y = ivi.get_sig(data)
+        
+        if x is None:
+            x = arange(0,len(y)) / 10e6
+        
+        if len(y) % self._arbitrary_waveform_quantum != 0:
+            raise ivi.ValueNotSupportedException()
+        
+        xincr = ivi.rms(diff(x))
+        
+        # get unused handle
+        self._load_catalog()
+        have_handle = False
+        while not have_handle:
+            self._arbitrary_waveform_n = self._arbitrary_waveform_n + 1
+            handle = "w%04d.wfm" % self._arbitrary_waveform_n
+            have_handle = handle not in self._catalog_names
+        self._write(":data:destination \"%s\"" % handle)
+        self._write(":wfmpre:bit_nr 12")
+        self._write(":wfmpre:bn_fmt rp")
+        self._write(":wfmpre:byt_nr 2")
+        self._write(":wfmpre:byt_or msb")
+        self._write(":wfmpre:encdg bin")
+        self._write(":wfmpre:pt_fmt y")
+        self._write(":wfmpre:yzero 0")
+        self._write(":wfmpre:ymult %e" % (2/(1<<12)))
+        self._write(":wfmpre:xincr %e" % xincr)
+        
+        raw_data = b''
+        
+        for f in y:
+            # clip at -1 and 1
+            if f > 1.0: f = 1.0
+            if f < -1.0: f = -1.0
+            
+            f = (f + 1) / 2
+            
+            # scale to 12 bits
+            i = int(f * ((1 << 12) - 1)) & 0x000fffff
+            
+            # add to raw data, MSB first
+            raw_data = raw_data + bytes([(i >> 8) & 0xff, i & 0xff])
+        
+        self._write_ieee_block(raw_data, ':curve ')
+        
+        return handle
     
     def _get_output_arbitrary_frequency(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -457,8 +548,9 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         self._output_burst_count[index] = value
     
     def _arbitrary_waveform_create_channel_waveform(self, index, data):
-        index = ivi.get_index(self._output_name, index)
-        return 'handle'
+        handle = self._arbitrary_waveform_create(data)
+        self._set_output_arbitrary_waveform(index, data)
+        return handle
     
     
 
