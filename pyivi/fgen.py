@@ -348,6 +348,7 @@ class ArbWfm(object):
         for i in range(self._output_count):
             self._output_arbitrary_gain.append(0)
             self._output_arbitrary_offset.append(0)
+            self._output_arbitrary_waveform.append('')
         
         self.outputs._set_list(self._output_name)
     
