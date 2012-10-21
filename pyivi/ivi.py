@@ -24,20 +24,24 @@ THE SOFTWARE.
 
 """
 
+# import libraries
 import inspect
+from functools import partial
 
 # try importing drivers
+# PyVXI11 for LAN instruments
 try:
     import vxi11
 except:
     pass
 
+# linuxgpib wrapper for linux-gpib Gpib class
+# for GPIB interfaces
 try:
     from . import linuxgpib
 except:
     pass
 
-from functools import partial
 
 class X(object):
     def __init__(self,_d={},**kwargs):
