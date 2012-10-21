@@ -1387,7 +1387,7 @@ class ArbChannelWfm(object):
     
     def _arbitrary_waveform_create_channel_waveform(self, index, data):
         handle = self._arbitrary_waveform_create(data)
-        self._set_output_arbitrary_waveform(index, data)
+        self._set_output_arbitrary_waveform(index, handle)
         return handle
     
     
