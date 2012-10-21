@@ -221,6 +221,37 @@ class IndexedPropertyCollection(object):
         return len(self._indicies)
 
 
+def build_ieee_block(data):
+    "Build IEEE block"
+    # IEEE block binary data is prefixed with #lnnnnnnnn
+    # where l is length of n and n is the
+    # length of the data
+    # ex: #800002000 prefixes 2000 data bytes
+    return bytes('#8%08d' % len(data), 'utf-8') + data
+
+    
+def decode_ieee_block(data):
+    "Decode IEEE block"
+    # IEEE block binary data is prefixed with #lnnnnnnnn
+    # where l is length of n and n is the
+    # length of the data
+    # ex: #800002000 prefixes 2000 data bytes
+    if len(data) == 0:
+        return b''
+    
+    ind = 0
+    while data[ind] != '#':
+        ind = ind + 1
+    
+    ind = ind + 1
+    l = int(data[ind])
+    ind = ind + 1
+    num = int(data[ind:ind+l])
+    ind = ind + l
+    
+    return data[ind:ind+num]
+
+
 class DriverOperation(object):
     "Inherent IVI methods for driver operation"
     
@@ -757,15 +788,23 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
         return raw_data
     
-    def _write_ieee_block(self, data):
+    def _write_ieee_block(self, data, prefix = None, encoding = 'utf-8'):
         "Write IEEE block"
         # IEEE block binary data is prefixed with #lnnnnnnnn
         # where l is length of n and n is the
         # length of the data
         # ex: #800002000 prefixes 2000 data bytes
         
-        self._write('#8%08d' % len(data))
-        self._write_raw(data)
+        block = b''
+        
+        if type(prefix) == str:
+            block = bytes(prefix, encoding)
+        elif type(prefix) == bytes:
+            block = prefix
+        
+        block = block + build_ieee_block(data)
+        
+        self._write_raw(block)
     
     
     
