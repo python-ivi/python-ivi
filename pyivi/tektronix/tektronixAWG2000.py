@@ -510,7 +510,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
             f = (f + 1) / 2
             
             # scale to 12 bits
-            i = int(f * ((1 << 12) - 1)) & 0x000fffff
+            i = int(f * ((1 << 12) - 2) + 0.5) & 0x000fffff
             
             # add to raw data, MSB first
             raw_data = raw_data + bytes([(i >> 8) & 0xff, i & 0xff])
