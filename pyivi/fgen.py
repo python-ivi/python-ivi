@@ -1379,7 +1379,7 @@ class ArbChannelWfm(object):
         self._add_group_capability('IviFgenArbChannelWfm')
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_method('arbitrary.waveform.create',
+        self.outputs._add_method('arbitrary.create_waveform',
                         self._arbitrary_waveform_create_channel_waveform)
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
         self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
