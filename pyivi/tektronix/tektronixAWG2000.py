@@ -40,8 +40,8 @@ StandardWaveformMapping = {
         }
 
 class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
-                fgen.ArbFrequency, fgen.ArbSeq, fgen.SoftwareTrigger,
-                fgen.Burst, fgen.ArbChannelWfm):
+                fgen.ArbSeq, fgen.SoftwareTrigger, fgen.Burst,
+                fgen.ArbChannelWfm):
     "Tektronix AWG2000 series arbitrary waveform generator driver"
     
     def __init__(self, *args, **kwargs):
@@ -500,15 +500,6 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         self._write_ieee_block(raw_data, ':curve ')
         
         return handle
-    
-    def _get_output_arbitrary_frequency(self, index):
-        index = ivi.get_index(self._output_name, index)
-        return self._output_arbitrary_frequency[index]
-    
-    def _set_output_arbitrary_frequency(self, index, value):
-        index = ivi.get_index(self._output_name, index)
-        value = float(value)
-        self._output_arbitrary_frequency[index] = value
     
     def _get_arbitrary_sequence_number_sequences_max(self):
         return self._arbitrary_sequence_number_sequences_max
