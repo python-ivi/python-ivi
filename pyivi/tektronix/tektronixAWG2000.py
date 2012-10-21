@@ -261,12 +261,23 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     
     def _get_output_reference_clock_source(self, index):
         index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            resp = self._ask(":clock:source?").split(' ', 1)[1]
+            value = resp.lower()
+            self._output_reference_clock_source[index] = value
+            self._set_cache_valid(index=index)
         return self._output_reference_clock_source[index]
     
     def _set_output_reference_clock_source(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        value = str(value)
+        if value not in fgen.SampleClockSource:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":clock:source %s" % value)
         self._output_reference_clock_source[index] = value
+        for k in range(self._output_count):
+            self._set_cache_valid(valid=False,index=k)
+        self._set_cache_valid(index=index)
     
     def abort_generation(self):
         pass
@@ -417,11 +428,18 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         self._output_arbitrary_waveform[index] = value
     
     def _get_arbitrary_sample_rate(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            resp = self._ask(":clock:frequency?").split(' ', 1)[1]
+            self._arbitrary_sample_rate = float(resp)
+            self._set_cache_valid()
         return self._arbitrary_sample_rate
     
     def _set_arbitrary_sample_rate(self, value):
         value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":clock:frequency %e" % value)
         self._arbitrary_sample_rate = value
+        self._set_cache_valid()
     
     def _get_arbitrary_waveform_number_waveforms_max(self):
         return self._arbitrary_waveform_number_waveforms_max
