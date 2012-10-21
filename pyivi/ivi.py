@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 # import libraries
 import inspect
+from numpy import *
 from functools import partial
 
 # try importing drivers
@@ -254,6 +255,44 @@ def decode_ieee_block(data):
     ind = ind + l
     
     return data[ind:ind+num]
+
+
+def get_sig(sig):
+    "Parse various signal inputs into x and y components"
+    if type(sig) == tuple and len(sig) == 2:
+        # tuple of two lists or arrays
+        (x, y) = sig
+        x = array(x)
+        y = array(y)
+    elif type(sig) == list and type(sig[0]) == tuple and len(sig[0]) == 2:
+        # list of tuples
+        x = list()
+        y = list()
+        for k in sig:
+            x.append(k[0])
+            y.append(k[1])
+        x = array(x)
+        y = array(y)
+    elif type(sig) == ndarray and len(sig.shape) == 2 and sig.shape[0] == 2:
+        # 2D array, hieght 2
+        x = sig[0]
+        y = sig[1]
+    elif type(sig) == ndarray and len(sig.shape) == 2 and sig.shape[1] == 2:
+        # 2D array, width 2
+        x = sig[:,0]
+        y = sig[:,1]
+    else:
+        raise Exception('Unknown argument')
+    
+    if len(x) != len(y):
+        raise Exception('Signals must be the same length!')
+    
+    return x, y
+
+
+def rms(y):
+    "Calculate the RMS value of the signal"
+    return linalg.norm(y) / sqrt(y.size)
 
 
 class DriverOperation(object):
