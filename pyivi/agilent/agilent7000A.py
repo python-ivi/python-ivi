@@ -123,7 +123,10 @@ MeasurementFunctionMapping = {
         'voltage_cycle_rms': 'vrms cycle',
         'voltage_cycle_average': 'vaverage cycle',
         'overshoot': 'overshoot',
-        'preshoot': 'preshoot'}
+        'preshoot': 'preshoot',
+        'ratio': 'vratio',
+        'phase': 'phase',
+        'delay': 'delay'}
 MeasurementFunctionMappingDigital = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -941,7 +944,7 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
                         self._reference_level_middle,
                         self._reference_level_low))
     
-    def _measurement_fetch_waveform_measurement(self, index, measurement_function):
+    def _measurement_fetch_waveform_measurement(self, index, measurement_function, ref_channel = None):
         index = ivi.get_index(self._channel_name, index)
         if index < self._analog_channel_count:
             if measurement_function not in MeasurementFunctionMapping:
@@ -957,7 +960,11 @@ class agilent7000A(ivi.Driver, scope.Base, scope.TVTrigger,
             if len(l) > 1:
                 l[-1] = l[-1] + ','
             func = ' '.join(l)
-            return float(self._ask(":measure:%s %s" % (func, self._channel_name[index])))
+            query = ":measure:%s %s" % (func, self._channel_name[index])
+            if measurement_function in ['ratio', 'phase', 'delay']:
+                ref_index = ivi.get_index(self._channel_name, ref_channel)
+                query += ", %s" % self._channel_name[ref_index]
+            return float(self._ask(query))
         return 0
     
     def _measurement_read_waveform_measurement(self, index, measurement_function, maximum_time):
