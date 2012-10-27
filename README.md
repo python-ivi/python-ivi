@@ -1,13 +1,13 @@
-# PyIVI Readme
+# Python IVI Readme
 
 For more information and updates:
-http://alexforencich.com/wiki/en/pyivi/start
+http://alexforencich.com/wiki/en/python-ivi/start
 
 GitHub repository:
-https://github.com/alexforencich/pyivi
+https://github.com/alexforencich/python-ivi
 
-PyIVI is a Python-based interpretation of the Interchangeable Virtual Instrument
-standard from the [IVI foundation](http://www.ivifoundation.org/).
+Python IVI is a Python-based interpretation of the Interchangeable Virtual
+Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Included drivers
 
@@ -22,12 +22,12 @@ standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Instrument communication
 
-PyIVI can use linux-gpib and PyVXI11 to connect to instruments.  The
+Python IVI can use linux-gpib and Python VXI11 to connect to instruments.  The
 implementation of the initialize method takes a VISA resource string and
-attempts to connect to an instrument.  If the resource string starts with
-TCPIP, then PyIVI will attempt to use PyVXI11.  If it starts with GPIB, it
-will attempt to use linux-gpib's python interface.  Integration with PyVISA
-is planned, but not currently supported.  
+attempts to connect to an instrument.  If the resource string starts with TCPIP,
+then Python IVI will attempt to use Python VXI11.  If it starts with GPIB, it
+will attempt to use linux-gpib's python interface.  Integration with PyVISA is
+planned, but not currently supported.  
 
 ## A note on standards compliance
 
@@ -49,11 +49,11 @@ specification.
 
 ## Usage example
 
-This sample Python code will connect to an Agilent MSO7104A over LXI (VXI11),
-configure the timebase, trigger, and channel 1, capture a waveform, and
-read it out of the instrument.  
+This sample Python code will use Python IVI to connect to an Agilent MSO7104A
+over LXI (VXI11), configure the timebase, trigger, and channel 1, capture a
+waveform, and read it out of the instrument.  
 
-    # import PyIVI
+    # import Python IVI
     import ivi
     # connect to MSO7104A via LXI
     mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
