@@ -8,14 +8,14 @@ except:
     from distutils.core import setup
 
 setup(
-    name = 'pyivi',
+    name = 'python-ivi',
     description = 'Python Interchangeable Virtual Instrument Library',
     version = '0.1',
     long_description = """A Python-based interpretation of the Interchangeable Virtual Instrument standard""",
     author = 'Alex Forencich',
     author_email = 'alex@alexforencich.com',
-    url = 'http://alexforencich.com/wiki/en/pyivi/start',
-    download_url = 'http://github.com/alexforencich/pyivi',
+    url = 'http://alexforencich.com/wiki/en/python-ivi/start',
+    download_url = 'http://github.com/alexforencich/python-ivi',
     keywords = 'IVI measurement instrument',
     license = 'MIT License',
     classifiers=[
@@ -27,10 +27,9 @@ setup(
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
         'Topic :: System :: Hardware',
-        'Programming Language :: Python 3'
+        'Programming Language :: Python :: 3'
         ],
-    packages = ['pyivi', 'pyivi.agilent', 'pyivi.tektronix'],
-    requires = ['numpy'],
-    py_modules = ['ivi']
+    packages = ['ivi', 'ivi.agilent', 'ivi.tektronix'],
+    requires = ['numpy']
 )
 

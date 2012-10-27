@@ -32,5 +32,6 @@ __all__ = [
         # IVI drivers
         "agilent", "tektronix"]
 
-#from . import agilent
+from .ivi import *
+from . import *
 
