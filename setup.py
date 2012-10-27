@@ -11,11 +11,13 @@ setup(
     name = 'python-ivi',
     description = 'Python Interchangeable Virtual Instrument Library',
     version = '0.1',
-    long_description = """A Python-based interpretation of the Interchangeable Virtual Instrument standard""",
+    long_description = '''This package is a Python-based interpretation of the
+Interchangeable Virtual Instrument standard, a software abstraction for
+electronic test equipment that is remotely controllable.''',
     author = 'Alex Forencich',
     author_email = 'alex@alexforencich.com',
     url = 'http://alexforencich.com/wiki/en/python-ivi/start',
-    download_url = 'http://github.com/alexforencich/python-ivi',
+    download_url = 'http://github.com/alexforencich/python-ivi/tarball/master',
     keywords = 'IVI measurement instrument',
     license = 'MIT License',
     classifiers=[
