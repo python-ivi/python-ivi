@@ -159,7 +159,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     
     
     def _init_outputs(self):
-        super(tektronixPS2520G, self)._init_outputs()
+        super()._init_outputs()
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
