@@ -24,6 +24,23 @@ THE SOFTWARE.
 
 """
 
+# DC Power Supplies
+# E3600A
+from .agilentE3631A import agilentE3631A
+from .agilentE3632A import agilentE3632A
+from .agilentE3633A import agilentE3633A
+from .agilentE3634A import agilentE3634A
+from .agilentE3640A import agilentE3640A
+from .agilentE3641A import agilentE3641A
+from .agilentE3642A import agilentE3642A
+from .agilentE3643A import agilentE3643A
+from .agilentE3644A import agilentE3644A
+from .agilentE3645A import agilentE3645A
+from .agilentE3646A import agilentE3646A
+from .agilentE3647A import agilentE3647A
+from .agilentE3648A import agilentE3648A
+from .agilentE3649A import agilentE3649A
+
 # Oscilloscopes
 # InfiniiVision 7000A
 from .agilentDSO7012A import agilentDSO7012A
