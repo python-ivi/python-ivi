@@ -249,20 +249,20 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     
     def _get_output_ovp_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
-        # Cannot disable OVP
-        self._output_ovp_enabled[index] = True
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._write(":instrument:nselect %d" % (index+1))
+            self._output_ovp_enabled[index] = bool(int(self._ask(":source:voltage:protection:state?")))
+            self._set_cache_valid(index=index)
         return self._output_ovp_enabled[index]
     
     def _set_output_ovp_enabled(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = bool(value)
-        # Cannot disable OVP, so set limit to max instead
-        if not value and not self._driver_operation_simulate:
+        if not self._driver_operation_simulate:
             self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:protection:level max")
-            self._set_cache_valid(valid=False,tag='output_ovp_limit',index=index)
-        value = True
+            self._write(":source:voltage:protection:state %d" % int(value))
         self._output_ovp_enabled[index] = value
+        self._set_cache_valid(index=index)
     
     def _get_output_ovp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -351,7 +351,7 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     def _output_reset_output_protection(self, index):
         if not self._driver_operation_simulate:
             self._write(":instrument:nselect %d" % (index+1))
-            self._write(":output:protection:clear")
+            self._write(":source:voltage:protection:clear")
     
     def _output_measure(self, index, type):
         index = ivi.get_index(self._output_name, index)
