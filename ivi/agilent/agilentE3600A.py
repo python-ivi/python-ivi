@@ -58,7 +58,9 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 3
         self._identity_specification_minor_version = 0
-        self._identity_supported_instrument_models = ['E3631A','E3646A','E3647A','E3648A','E3649A']
+        self._identity_supported_instrument_models = ['E3631A','E3632A','E3633A','E3634A',
+                        'E3640A','E3641A','E3642A','E3643A','E3644A','E3645A','E3646A',
+                        'E3647A','E3648A','E3649A']
         
         self.__dict__.setdefault('couple', ivi.PropertyCollection())
         self.couple._add_property('tracking',
