@@ -13,6 +13,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
   * DC Power Supplies (dcpwr):
     * Tektronix PS2520G/PS2521G
+    * Agilent E3600A series
   * Function Generators (fgen):
     * Tektronix AWG2000 series
   * RF Signal Generators (rfsiggen):
