@@ -47,6 +47,8 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self._output_voltage_max = [61.0, 61.0]
         self._output_current_max = [1.4, 1.4]
         
+        self._memory_size = 5
+        
         self._couple_tracking = 'none'
         
         self._identity_description = "Agilent E3600A series DC power supply driver"
@@ -66,6 +68,12 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self.couple._add_property('tracking',
                         self._get_couple_tracking,
                         self._set_couple_tracking)
+        
+        self.__dict__.setdefault('memory', ivi.PropertyCollection())
+        self.memory.save = self._memory_save
+        self.memory.recall = self._memory_recall
+        self.memory.set_name = self._set_memory_name
+        self.memory.get_name = self._get_memory_name
         
         self._init_outputs()
     
@@ -373,6 +381,36 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             self._write(":instrument:couple:tracking %s" % TrackingMapping[value])
         self._couple_tracking = value
         self._set_cache_valid()
+    
+    def _memory_save(self, index):
+        index = int(index)
+        if index < 1 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("*sav %d" % index)
+    
+    def _memory_recall(self, index):
+        index = int(index)
+        if index < 1 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("*rcl %d" % index)
+    
+    def _get_memory_name(self, index):
+        index = int(index)
+        if index < 1 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            return self._ask("memory:state:name? %d" % index).strip(' "')
+    
+    def _set_memory_name(self, index, value):
+        index = int(index)
+        value = str(value)
+        if index < 1 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("memory:state:name %d, \"%s\"" % (index, value))
+    
     
     
 
