@@ -33,7 +33,7 @@ from functools import partial
 # PyVXI11 for LAN instruments
 try:
     import vxi11
-except:
+except ImportError:
     pass
 
 # linuxgpib wrapper for linux-gpib Gpib class
