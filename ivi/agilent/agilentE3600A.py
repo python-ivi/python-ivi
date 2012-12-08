@@ -82,6 +82,12 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         
         super().initialize(resource, id_query, reset, **keywargs)
         
+        # configure interface
+        if self._interface is not None:
+            if 'dsrdtr' in self._interface.__dict__:
+                self._interface.dsrdtr = True
+                self._interface.update_settings()
+        
         # interface clear
         if not self._driver_operation_simulate:
             self._clear()
