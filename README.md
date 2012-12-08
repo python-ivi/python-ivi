@@ -23,12 +23,13 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Instrument communication
 
-Python IVI can use linux-gpib and Python VXI11 to connect to instruments.  The
-implementation of the initialize method takes a VISA resource string and
-attempts to connect to an instrument.  If the resource string starts with TCPIP,
-then Python IVI will attempt to use Python VXI11.  If it starts with GPIB, it
-will attempt to use linux-gpib's python interface.  Integration with PyVISA is
-planned, but not currently supported.  
+Python IVI can use Python VXI11, pySerial and linux-gpib to connect to
+instruments.  The implementation of the initialize method takes a VISA
+resource string and attempts to connect to an instrument.  If the resource
+string starts with TCPIP, then Python IVI will attempt to use Python VXI11.
+If it starts with GPIB, it will attempt to use linux-gpib's python interface.
+If it starts with ASRL, it attemps to use pySerial.  Integration with PyVISA
+is planned, but not currently supported.  
 
 ## A note on standards compliance
 
