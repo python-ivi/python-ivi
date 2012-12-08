@@ -299,7 +299,7 @@ class DriverOperation(object):
     "Inherent IVI methods for driver operation"
     
     def __init__(self, *args, **kwargs):
-        super(DriverOperation, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         
         self._driver_operation_cache = True
         self._driver_operation_driver_setup = ""
@@ -421,7 +421,7 @@ class DriverIdentity(object):
     "Inherent IVI methods for identification"
     
     def __init__(self, *args, **kwargs):
-        super(DriverIdentity, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         
         self._identity_description = "Base IVI Driver"
         self._identity_identifier = ""
@@ -511,7 +511,7 @@ class DriverUtility(object):
     "Inherent IVI utility methods"
     
     def __init__(self, *args, **kwargs):
-        super(DriverUtility, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         
         self.__dict__.setdefault('utility', PropertyCollection())
         self.utility.disable = self._utility_disable
