@@ -40,9 +40,14 @@ except:
 # for GPIB interfaces
 try:
     from .interface import linuxgpib
-except:
+except ImportError:
     pass
 
+# pyserial wrapper for serial instrument support
+try:
+    from .interface import pyserial
+except ImportError:
+    pass
 
 class X(object):
     def __init__(self,_d={},**kwargs):
@@ -608,6 +613,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # TCPIP0::10.0.0.1::gpib,5::INSTR
             # GPIB::10::INSTR
             # GPIB0::10::INSTR
+            # ASRL1::INSTR
+            # ASRL::COM1,9600,8n1::INSTR
+            # ASRL::/dev/ttyUSB0,9600::INSTR
+            # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
             res = resource.split("::")
             if len(res) == 1:
                 raise IOException('Invalid resource name')
@@ -639,6 +648,28 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 if 'linuxgpib' in globals():
                     # connect with linux-gpib
                     self._interface = linuxgpib.LinuxGpibInstrument(index, addr)
+                else:
+                    raise IOException('Cannot use resource type %s' % t)
+            elif t[:4] == 'ASRL':
+                # Serial connection
+                port = 0
+                baudrate = 9600
+                
+                index = t[4:]
+                if len(index) > 0:
+                    port = int(index)
+                else:
+                    # port[,baud[,nps]]
+                    # n = data bits (5,6,7,8)
+                    # p = parity (n,o,e,m,s)
+                    # s = stop bits (1,1.5,2)
+                    t = res[1].split(',')
+                    port = t[0]
+                    if len(t) > 1:
+                       baudrate = int(t[1])
+                
+                if 'pyserial' in globals():
+                    self._interface = pyserial.SerialInstrument(port,baudrate=baudrate)
                 else:
                     raise IOException('Cannot use resource type %s' % t)
                 
