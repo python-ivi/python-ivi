@@ -39,7 +39,7 @@ except:
 # linuxgpib wrapper for linux-gpib Gpib class
 # for GPIB interfaces
 try:
-    from . import linuxgpib
+    from .interface import linuxgpib
 except:
     pass
 
