@@ -77,14 +77,15 @@ waveform, and read it out of the instrument.
     # read out channel 1 waveform data
     waveform = mso.channels[0].measurement.fetch_waveform()
 
-This sample Python code will use Python IVI to connect to a Tektronix AWG2021
-through a GPIB to VXI11 bridge or serial (pySerial), generate a sinewave with
-numpy, and transfer it to channel 1.  
+This sample Python code will use Python IVI to connect to a Tektronix AWG2021,
+generate a sinewave with numpy, and transfer it to channel 1.  
 
     # import Python IVI
     import ivi
     # import numpy
     from numpy import *
+    # connect to AWG2021 via GPIB
+    #awg = ivi.tektronix.tektronixAWG2021("GPIB0::25::INSTR")
     # connect to AWG2021 via E2050A GPIB to VXI11 bridge
     awg = ivi.tektronix.tektronixAWG2021("TCPIP0::192.168.1.105::gpib,25::INSTR")
     # connect to AWG2021 via serial
@@ -104,3 +105,21 @@ numpy, and transfer it to channel 1.
     arb.arbitrary.sample_rate = 128e6
     # enable ouput
     awg.outputs[0].enabled = True
+
+This sample Python code will use Python IVI to connect to an Agilent E3649A
+and configure an output.
+
+    # import Python IVI
+    import ivi
+    # connect to E3649A via GPIB
+    #awg = ivi.agilent.agilentE3649A("GPIB0::5::INSTR")
+    # connect to E3649A via E2050A GPIB to VXI11 bridge
+    psu = ivi.agilent.agilentE3649A("TCPIP0::192.168.1.105::gpib,5::INSTR")
+    # connect to E3649A via serial
+    #psu = ivi.agilent.agilentE3649A("ASRL::/dev/ttyUSB0,9600::INSTR")
+    # configure output
+    psu.outputs[0].voltage_level = 12.0
+    psu.outputs[0].current_limit = 1.0
+    psu.outputs[0].ovp_limit = 14.0
+    psu.outputs[0].ovp_enabled = True
+    psu.outptus[0].enabled = True
