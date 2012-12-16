@@ -27,10 +27,7 @@ THE SOFTWARE.
 from .. import ivi
 from .. import dcpwr
 
-TrackingMapping = {
-        'none': 'none',
-        'parallel': 'par',
-        'series': 'ser'}
+TrackingType = set(['floating'])
 
 class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     "Agilent E3600A seris IVI DC power supply driver"
@@ -49,7 +46,8 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         
         self._memory_size = 5
         
-        self._couple_tracking = 'none'
+        self._couple_tracking_enabled = False
+        self._couple_tracking_type = 'floating'
         
         self._identity_description = "Agilent E3600A series DC power supply driver"
         self._identity_identifier = ""
@@ -65,9 +63,13 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
                         'E3647A','E3648A','E3649A']
         
         self.__dict__.setdefault('couple', ivi.PropertyCollection())
-        self.couple._add_property('tracking',
-                        self._get_couple_tracking,
-                        self._set_couple_tracking)
+        self.couple.__dict__.setdefault('tracking', ivi.PropertyCollection())
+        self.couple.tracking._add_property('enabled',
+                        self._get_couple_tracking_enabled,
+                        self._set_couple_tracking_enabled)
+        self.couple.tracking._add_property('type',
+                        self._get_couple_tracking_type,
+                        self._set_couple_tracking_type)
         
         self.__dict__.setdefault('memory', ivi.PropertyCollection())
         self.memory.save = self._memory_save
@@ -373,20 +375,28 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
                 return float(self._ask(":measure:current?"))
         return 0
     
-    def _get_couple_tracking(self):
+    def _get_couple_tracking_enabled(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            value = self._ask(":instrument:couple:tracking?").lower()
-            self._couple_tracking = [k for k,v in TrackingMapping.items() if v==value][0]
+            value = self._ask(":output:track:state?").lower()
+            self._couple_tracking_enabled = (value1 == 'on')
             self._set_cache_valid()
-        return self._couple_tracking;
+        return self._couple_tracking_enabled
     
-    def _set_couple_tracking(self, value):
-        if value not in TrackingMapping:
-            raise ivi.ValueNotSupportedException()
+    def _set_couple_tracking_enabled(self, value):
+        value = bool(value)
         if not self._driver_operation_simulate:
-            self._write(":instrument:couple:tracking %s" % TrackingMapping[value])
-        self._couple_tracking = value
+            self._write(":output:track:state %s" % ('off', 'on')[value])
+        self._couple_tracking_enabled = value
         self._set_cache_valid()
+    
+    def _get_couple_tracking_type(self):
+        return self._couple_tracking_type
+    
+    def _set_couple_tracking_type(self, value):
+        value = str(value)
+        if value not in TrackingType:
+            raise ivi.ValueNotSupportedException()
+        self._couple_tracking_type = value
     
     def _memory_save(self, index):
         index = int(index)
