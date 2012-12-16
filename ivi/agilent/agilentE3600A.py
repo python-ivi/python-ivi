@@ -28,9 +28,13 @@ from .. import ivi
 from .. import dcpwr
 
 TrackingType = set(['floating'])
+TriggerSourceMapping = {
+        'immediate': 'imm',
+        'bus': 'bus'}
 
-class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
-    "Agilent E3600A seris IVI DC power supply driver"
+class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger,
+                dcpwr.Measurement):
+    "Agilent E3600A series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,8 +50,11 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         
         self._memory_size = 5
         
+        self._output_trigger_delay = list()
+        
         self._couple_tracking_enabled = False
         self._couple_tracking_type = 'floating'
+        self._couple_trigger = False
         
         self._identity_description = "Agilent E3600A series DC power supply driver"
         self._identity_identifier = ""
@@ -62,7 +69,15 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
                         'E3640A','E3641A','E3642A','E3643A','E3644A','E3645A','E3646A',
                         'E3647A','E3648A','E3649A']
         
+        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
+        self.outputs._add_property('trigger_delay',
+                        self._get_output_trigger_delay,
+                        self._set_output_trigger_delay)
+        
         self.__dict__.setdefault('couple', ivi.PropertyCollection())
+        self.couple._add_property('trigger',
+                        self._get_couple_trigger,
+                        self._set_couple_trigger)
         self.couple.__dict__.setdefault('tracking', ivi.PropertyCollection())
         self.couple.tracking._add_property('enabled',
                         self._get_couple_tracking_enabled,
@@ -185,6 +200,8 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self._output_ovp_enabled = list()
         self._output_ovp_limit = list()
         self._output_voltage_level = list()
+        self._output_trigger_source = list()
+        self._output_trigger_delay = list()
         for i in range(self._output_count):
             self._output_current_limit.append(0)
             self._output_current_limit_behavior.append('trip')
@@ -192,6 +209,8 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             self._output_ovp_enabled.append(True)
             self._output_ovp_limit.append(0)
             self._output_voltage_level.append(0)
+            self._output_trigger_source.append('bus')
+            self._output_trigger_delay.append(0)
     
     def _get_output_current_limit(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -375,6 +394,93 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
                 return float(self._ask(":measure:current?"))
         return 0
     
+    def _get_output_trigger_source(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._write(":instrument:nselect %d" % (index+1))
+            value = self._ask(":trigger:source?").lower()
+            self._output_trigger_source[index] = [k for k,v in TriggerSourceMapping.items() if v==value][0]
+        return self._output_trigger_source[index]
+    
+    def _set_output_trigger_source(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = str(value)
+        if value not in TriggerSourceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":instrument:nselect %d" % (index+1))
+            self._write(":trigger:source %s" % TriggerSourceMapping[value])
+        self._output_trigger_source[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_output_triggered_current_limit(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._write(":instrument:nselect %d" % (index+1))
+            self._output_triggered_current_limit[index] = float(self._ask(":source:current:level:triggered?"))
+            self._set_cache_valid(index=index)
+        return self._output_triggered_current_limit[index]
+    
+    def _set_output_triggered_current_limit(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        if value < 0 or value > self._output_current_max[index]:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write(":instrument:nselect %d" % (index+1))
+            self._write(":source:current:level:triggered %e" % value)
+        self._output_triggered_current_limit[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_output_triggered_voltage_level(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._write(":instrument:nselect %d" % (index+1))
+            self._output_triggered_voltage_level[index] = float(self._ask(":source:voltage:level:triggered?"))
+            self._set_cache_valid(index=index)
+        return self._output_triggered_voltage_level[index]
+    
+    def _set_output_triggered_voltage_level(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        if value < 0 or value > self._output_voltage_max[index]:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write(":instrument:nselect %d" % (index+1))
+            self._write(":source:voltage:level:triggered %e" % value)
+        self._output_triggered_voltage_level[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_output_trigger_delay(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._write(":instrument:nselect %d" % (index+1))
+            self._output_trigger_delay[index] = float(self._ask(":trigger:delay?"))
+            self._set_cache_valid(index=index)
+        return self._output_trigger_delay[index]
+    
+    def _set_output_trigger_delay(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        if value < 0:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write(":instrument:nselect %d" % (index+1))
+            self._write(":trigger:delay %e" % value)
+        self._output_trigger_delay[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _trigger_abort(self):
+        pass
+    
+    def _trigger_initiate(self):
+        if not self._driver_operation_simulate:
+            self._write("initiate")
+    
+    def send_software_trigger(self):
+        if not self._driver_operation_simulate:
+            self._write("*trg")
+    
     def _get_couple_tracking_enabled(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":output:track:state?").lower()
@@ -397,6 +503,20 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         if value not in TrackingType:
             raise ivi.ValueNotSupportedException()
         self._couple_tracking_type = value
+    
+    def _get_couple_trigger(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":instrument:couple:trigger?").lower()
+            self._couple_trigger = (value == 'on')
+            self._set_cache_valid()
+        return self._couple_trigger
+    
+    def _set_couple_trigger(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write(":instrument:couple:trigger %s" % ('off', 'on')[value])
+        self._couple_trigger = value
+        self._set_cache_valid()
     
     def _memory_save(self, index):
         index = int(index)
