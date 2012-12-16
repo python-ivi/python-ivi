@@ -62,3 +62,6 @@ from .agilentMSO7104A import agilentMSO7104A
 from .agilent8642A import agilent8642A
 from .agilent8642B import agilent8642B
 
+# RF Power Meters
+from .agilent436A import agilent436A
+
