@@ -171,7 +171,8 @@ class Base(object):
         pass
     
     def _measurement_read(self, maximum_time):
-        pass
+        self._measurement_initiate()
+        return self._measurement_fetch()
     
     
 class ChannelAcquisition(object):
