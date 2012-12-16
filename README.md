@@ -16,6 +16,8 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent E3600A series
   * Function Generators (fgen):
     * Tektronix AWG2000 series
+  * RF Power Meters (pwrmeter):
+    * Agilent 436A
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
   * Oscilloscopes (scope):
