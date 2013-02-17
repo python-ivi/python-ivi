@@ -27,10 +27,10 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Instrument communication
 
-Python IVI can use Python VXI11, pySerial and linux-gpib to connect to
+Python IVI can use Python VXI-11, pySerial and linux-gpib to connect to
 instruments.  The implementation of the initialize method takes a VISA
 resource string and attempts to connect to an instrument.  If the resource
-string starts with TCPIP, then Python IVI will attempt to use Python VXI11.
+string starts with TCPIP, then Python IVI will attempt to use Python VXI-11.
 If it starts with GPIB, it will attempt to use linux-gpib's python interface.
 If it starts with ASRL, it attemps to use pySerial.  Integration with PyVISA
 is planned, but not currently supported.  
@@ -43,7 +43,7 @@ implementation of the standard, but an interpretation that tries to remain
 as faithful as possibe while presenting a uniform, easy-to-use, sensible,
 python-style interface.
 
-The PyIVI library is a Pythonized version of the .NET and COM IVI API
+The Python IVI library is a Pythonized version of the .NET and COM IVI API
 specifications, with the CamelCase for everything but the class names replaced
 with lowercase_with_underscores.  The library most closely follows the .NET
 standard, with the calls that would require the .NET helper classes follwing
@@ -59,10 +59,10 @@ Extract and run
 
     # python setup.py install
 
-## Usage example
+## Usage examples
 
 This sample Python code will use Python IVI to connect to an Agilent MSO7104A
-over LXI (VXI11), configure the timebase, trigger, and channel 1, capture a
+over LXI (VXI-11), configure the timebase, trigger, and channel 1, capture a
 waveform, and read it out of the instrument.  
 
     # import Python IVI
