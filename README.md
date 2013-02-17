@@ -6,6 +6,8 @@ http://alexforencich.com/wiki/en/python-ivi/start
 GitHub repository:
 https://github.com/alexforencich/python-ivi
 
+## Introduction
+
 Python IVI is a Python-based interpretation of the Interchangeable Virtual
 Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
@@ -50,6 +52,12 @@ the specification in order to be consistent with the spirit of the other IVI
 specifications.  The fgen class is the most obvious example of this, using
 properties instead of the getters and setters as required by the IVI
 specification.  
+
+## Installation
+
+Extract and run
+
+    # python setup.py install
 
 ## Usage example
 
@@ -114,7 +122,7 @@ and configure an output.
     # import Python IVI
     import ivi
     # connect to E3649A via GPIB
-    #awg = ivi.agilent.agilentE3649A("GPIB0::5::INSTR")
+    #psu = ivi.agilent.agilentE3649A("GPIB0::5::INSTR")
     # connect to E3649A via E2050A GPIB to VXI11 bridge
     psu = ivi.agilent.agilentE3649A("TCPIP0::192.168.1.105::gpib,5::INSTR")
     # connect to E3649A via serial
