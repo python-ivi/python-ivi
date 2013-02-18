@@ -43,7 +43,7 @@ try:
 except ImportError:
     pass
 
-# pyserial wrapper for serial instrument support
+# pySerial wrapper for serial instrument support
 try:
     from .interface import pyserial
 except ImportError:
@@ -145,6 +145,8 @@ class PropertyCollection(object):
                 raise AttributeError("can't delete attribute")
             f()
             return
+        if name not in object.__dict__ and self._locked:
+            raise AttributeError("locked")
         del object.__dict__[name]
         
 
@@ -566,7 +568,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             if k in kwargs:
                 kw[k] = kwargs.pop(k)
         
-        super(Driver, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._interface = None
         self._initialized = False
         self._instrument_id = ''
