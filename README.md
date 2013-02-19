@@ -13,17 +13,17 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Included drivers
 
+  * Oscilloscopes (scope):
+    * Agilent InfiniiVision 7000A/B series
+  * Function Generators (fgen):
+    * Tektronix AWG2000 series
   * DC Power Supplies (dcpwr):
     * Tektronix PS2520G/PS2521G
     * Agilent E3600A series
-  * Function Generators (fgen):
-    * Tektronix AWG2000 series
   * RF Power Meters (pwrmeter):
     * Agilent 436A
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
-  * Oscilloscopes (scope):
-    * Agilent InfiniiVision 7000A series
 
 ## Instrument communication
 
