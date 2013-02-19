@@ -55,6 +55,38 @@ from .agilentMSO7034B import agilentMSO7034B
 from .agilentMSO7052B import agilentMSO7052B
 from .agilentMSO7054B import agilentMSO7054B
 from .agilentMSO7104B import agilentMSO7104B
+# Infiniium 90000A
+from .agilentDSO90254A import agilentDSO90254A
+from .agilentDSO90404A import agilentDSO90404A
+from .agilentDSO90604A import agilentDSO90604A
+from .agilentDSO90804A import agilentDSO90804A
+from .agilentDSO91204A import agilentDSO91204A
+from .agilentDSO91304A import agilentDSO91304A
+from .agilentDSA90254A import agilentDSA90254A
+from .agilentDSA90404A import agilentDSA90404A
+from .agilentDSA90604A import agilentDSA90604A
+from .agilentDSA90804A import agilentDSA90804A
+from .agilentDSA91204A import agilentDSA91204A
+from .agilentDSA91304A import agilentDSA91304A
+# Infiniium 90000X
+from .agilentDSOX91304A import agilentDSOX91304A
+from .agilentDSOX91604A import agilentDSOX91604A
+from .agilentDSOX92004A import agilentDSOX92004A
+from .agilentDSOX92504A import agilentDSOX92504A
+from .agilentDSOX92804A import agilentDSOX92804A
+from .agilentDSOX93204A import agilentDSOX93204A
+from .agilentDSAX91304A import agilentDSAX91304A
+from .agilentDSAX91604A import agilentDSAX91604A
+from .agilentDSAX92004A import agilentDSAX92004A
+from .agilentDSAX92504A import agilentDSAX92504A
+from .agilentDSAX92804A import agilentDSAX92804A
+from .agilentDSAX93204A import agilentDSAX93204A
+from .agilentMSOX91304A import agilentMSOX91304A
+from .agilentMSOX91604A import agilentMSOX91604A
+from .agilentMSOX92004A import agilentMSOX92004A
+from .agilentMSOX92504A import agilentMSOX92504A
+from .agilentMSOX92804A import agilentMSOX92804A
+from .agilentMSOX93204A import agilentMSOX93204A
 
 # DC Power Supplies
 # E3600A
