@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 """
 
+import time
+
 from .. import ivi
 from .. import scope
 
@@ -272,9 +274,10 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_code, error_message = self._ask(":system:error?").split(',')
+            error_code = self._ask(":system:error?")
             error_code = int(error_code)
-            error_message = error_message.strip(' "')
+            if error_code != 0:
+                error_message = "Unknown"
         return (error_code, error_message)
     
     def _utility_lock_object(self):
@@ -292,7 +295,10 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         code = 0
         message = "Self test passed"
         if not self._driver_operation_simulate:
-            code = int(self._ask("*TST?"))
+            self._write("*TST?")
+            # wait for test to complete
+            time.sleep(40)
+            code = int(self._read())
             if code != 0:
                 message = "Self test failed"
         return (code, message)
@@ -538,7 +544,7 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
     def _get_channel_common_mode(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_bw_limit[index] = bool(int(self._ask(":%s:commonmode?" % self._channel_name[index])))
+            self._channel_common_mode[index] = bool(int(self._ask(":%s:commonmode?" % self._channel_name[index])))
             self._set_cache_valid(index=index)
         return self._channel_common_mode[index]
     
@@ -547,22 +553,22 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         value = bool(value)
         if not self._driver_operation_simulate:
             self._write(":%s:commonmode %d" % (self._channel_name[index], int(value)))
-        self._channel_bw_limit[index] = value
+        self._channel_common_mode[index] = value
         self._set_cache_valid(index=index)
     
     def _get_channel_differential(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_bw_limit[index] = bool(int(self._ask(":%s:differential?" % self._channel_name[index])))
+            self._channel_differential[index] = bool(int(self._ask(":%s:differential?" % self._channel_name[index])))
             self._set_cache_valid(index=index)
-        return self._channel_common_mode[index]
+        return self._channel_differential[index]
     
     def _set_channel_differential(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = bool(value)
         if not self._driver_operation_simulate:
             self._write(":%s:differential %d" % (self._channel_name[index], int(value)))
-        self._channel_bw_limit[index] = value
+        self._channel_differential[index] = value
         self._set_cache_valid(index=index)
     
     def _get_channel_differential_skew(self, index):
