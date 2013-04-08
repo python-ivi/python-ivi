@@ -37,16 +37,20 @@ MeasurementType = set(['current', 'voltage'])
 def get_range(range_list, offset, val):
     l = list()
     for i in range(len(range_list)):
-        l.append((i, range_list[i][offset]))
+        l.append((i, abs(range_list[i][offset])))
     l.sort(key=lambda x: x[1], reverse=True)
     k = -1
     for i in range(len(l)):
         if l[i][1] >= val:
             k = i
+    #if k < 0:
+    #    return None
+    #else:
+    #    return range_list[l[k][0]]
     if k < 0:
-        return None
+        return -1
     else:
-        return range_list[l[k][0]]
+        return l[k][0]
 
 
 class Base(object):
@@ -70,6 +74,7 @@ class Base(object):
         self._output_count = 1
         
         self._output_range = [[(0, 0)]]
+        self._output_range_name = [['P0V']]
         self._output_ovp_max = [0]
         self._output_voltage_max = [0]
         self._output_current_max = [0]
@@ -215,11 +220,11 @@ class Base(object):
             t = 0
         elif range_type == 'current':
             t = 1
-        r = dcpwr.get_range(self._output_range[index], t, range_val)
-        if r is None:
+        k = dcpwr.get_range(self._output_range[index], t, range_val)
+        if k < 0:
             raise ivi.OutOfRangeException()
-        self._output_voltage_max[index] = r[0]
-        self._output_current_max[index] = r[1]
+        self._output_voltage_max[index] = self._output_range[index][k][0]
+        self._output_current_max[index] = self._output_range[index][k][1]
         pass
     
     def _output_configure_ovp(self, index, enabled, limit):

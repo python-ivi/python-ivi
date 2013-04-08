@@ -87,6 +87,10 @@ waveform, and read it out of the instrument.
     mso.measurement.initiate()
     # read out channel 1 waveform data
     waveform = mso.channels[0].measurement.fetch_waveform()
+    # measure peak-to-peak voltage
+    vpp = mso.channels[0].measurement.fetch_waveform_measurement("voltage_peak_to_peak")
+    # measure phase
+    phase = mso.channels['channel1'].measurement.fetch_waveform_measurement("phase", "channel2")
 
 This sample Python code will use Python IVI to connect to a Tektronix AWG2021,
 generate a sinewave with numpy, and transfer it to channel 1.  
@@ -129,6 +133,7 @@ and configure an output.
     # connect to E3649A via serial
     #psu = ivi.agilent.agilentE3649A("ASRL::/dev/ttyUSB0,9600::INSTR")
     # configure output
+    psu.outputs[0].configure_range('voltage', 12)
     psu.outputs[0].voltage_level = 12.0
     psu.outputs[0].current_limit = 1.0
     psu.outputs[0].ovp_limit = 14.0

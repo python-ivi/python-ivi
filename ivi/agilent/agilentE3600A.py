@@ -41,12 +41,13 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
         
         self._instrument_id = 'E3600A'
         
-        self._output_count = 2
+        self._output_count = 3
         
-        self._output_range = [[(36.0, 1.4), (61.0, 0.8)], [(36.0, 1.4), (61.0, 0.8)]]
-        self._output_ovp_max = [62.0, 62.0]
-        self._output_voltage_max = [61.0, 61.0]
-        self._output_current_max = [1.4, 1.4]
+        self._output_range = [[(7.0, 5.0)], [(26.0, 1.0)], [(-26.0, 1.0)]]
+        self._output_range_name = [['P6V'], ['P25V'], ['N25V']]
+        self._output_ovp_max = [27.0, 27.0]
+        self._output_voltage_max = [7.0, 26.0, -26.0]
+        self._output_current_max = [5.0, 1.0, 1.0]
         
         self._memory_size = 5
         
@@ -337,12 +338,14 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
             t = 0
         elif range_type == 'current':
             t = 1
-        r = dcpwr.get_range(self._output_range[index], t, range_val)
-        if r is None:
+        k = dcpwr.get_range(self._output_range[index], t, range_val)
+        if k < 0:
             raise ivi.OutOfRangeException()
-        self._output_voltage_max[index] = r[0]
-        self._output_current_max[index] = r[1]
-        pass
+        self._output_voltage_max[index] = self._output_range[index][k][0]
+        self._output_current_max[index] = self._output_range[index][k][1]
+        if not self._driver_operation_simulate:
+            self._write(":instrument:nselect %d" % (index+1))
+            self._write(":source:voltage:range %s" % self._output_range_name[index][k])
     
     def _output_query_current_limit_max(self, index, voltage_level):
         index = ivi.get_index(self._output_name, index)

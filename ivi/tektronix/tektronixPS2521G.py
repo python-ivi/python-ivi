@@ -37,6 +37,7 @@ class tektronixPS2521G(tektronixPS2520G):
         self._output_count = 3
         
         self._output_range = [[(21.0, 2.5)], [(21.0, 2.5)], [(6.5, 5.0)]]
+        self._output_range_name = [['P20V'], ['P20V'], ['P6V']]
         self._output_ovp_max = [22.5, 22.5, 7.0]
         self._output_voltage_max = [21.0, 21.0, 6.5]
         self._output_current_max = [2.5, 2.5, 5.0]

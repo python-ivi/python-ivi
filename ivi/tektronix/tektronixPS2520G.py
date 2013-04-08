@@ -42,6 +42,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         self._output_count = 3
         
         self._output_range = [[(37.0, 1.5)], [(37.0, 1.5)], [(6.5, 3.0)]]
+        self._output_range_name = [['P36V'], ['P36V'], ['P6V']]
         self._output_ovp_max = [38.5, 38.5, 7.0]
         self._output_voltage_max = [37.0, 37.0, 6.5]
         self._output_current_max = [1.5, 1.5, 5.0]
@@ -304,11 +305,11 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
             t = 0
         elif range_type == 'current':
             t = 1
-        r = dcpwr.get_range(self._output_range[index], t, range_val)
-        if r is None:
+        k = dcpwr.get_range(self._output_range[index], t, range_val)
+        if k < 0:
             raise ivi.OutOfRangeException()
-        self._output_voltage_max[index] = r[0]
-        self._output_current_max[index] = r[1]
+        self._output_voltage_max[index] = self._output_range[index][k][0]
+        self._output_current_max[index] = self._output_range[index][k][1]
         pass
     
     def _output_query_current_limit_max(self, index, voltage_level):
