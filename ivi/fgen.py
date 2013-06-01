@@ -53,7 +53,7 @@ class Base(object):
         # needed for _init_outputs calls from other __init__ methods
         self._output_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(Base, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenBase')
         
@@ -88,7 +88,7 @@ class Base(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(Base, self)._init_outputs()
         except AttributeError:
             pass
         self._output_name = list()
@@ -169,7 +169,7 @@ class StdFunc(object):
     "Extension IVI methods for function generators that can produce manufacturer-supplied periodic waveforms"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(StdFunc, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenStdFunc')
         
@@ -206,7 +206,7 @@ class StdFunc(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(StdFunc, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -293,7 +293,7 @@ class ArbWfm(object):
     "Extension IVI methods for function generators that can produce arbitrary waveforms"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbWfm, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbWfm')
         
@@ -339,7 +339,7 @@ class ArbWfm(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(ArbWfm, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -414,7 +414,7 @@ class ArbFrequency(object):
     "Extension IVI methods for function generators that can produce arbitrary waveforms with variable rate"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbFrequency, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbFrequency')
         
@@ -429,7 +429,7 @@ class ArbFrequency(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(ArbFrequency, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -453,7 +453,7 @@ class ArbSeq(object):
     "Extension IVI methods for function generators that can produce sequences of arbitrary waveforms"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbSeq, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbSeq')
         
@@ -510,7 +510,7 @@ class Trigger(object):
     "Extension IVI methods for function generators that support triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Trigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenTrigger')
         
@@ -525,7 +525,7 @@ class Trigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(Trigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -549,7 +549,7 @@ class StartTrigger(object):
     "Extension IVI methods for function generators that support start triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(StartTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenStartTrigger')
         
@@ -582,7 +582,7 @@ class StartTrigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(StartTrigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -647,7 +647,7 @@ class StopTrigger(object):
     "Extension IVI methods for function generators that support stop triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(StopTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenStopTrigger')
         
@@ -680,7 +680,7 @@ class StopTrigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(StopTrigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -745,7 +745,7 @@ class HoldTrigger(object):
     "Extension IVI methods for function generators that support hold triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(HoldTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenHoldTrigger')
         
@@ -778,7 +778,7 @@ class HoldTrigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(HoldTrigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -843,7 +843,7 @@ class ResumeTrigger(object):
     "Extension IVI methods for function generators that support resume triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ResumeTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenResumeTrigger')
         
@@ -876,7 +876,7 @@ class ResumeTrigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(ResumeTrigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -941,7 +941,7 @@ class AdvanceTrigger(object):
     "Extension IVI methods for function generators that support advance triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(AdvanceTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenAdvanceTrigger')
         
@@ -974,7 +974,7 @@ class AdvanceTrigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(AdvanceTrigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -1039,7 +1039,7 @@ class InternalTrigger(object):
     "Extension IVI methods for function generators that support internal triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(InternalTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenInternalTrigger')
         
@@ -1062,7 +1062,7 @@ class SoftwareTrigger(object):
     "Extension IVI methods for function generators that support software triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenSoftwareTrigger')
     
@@ -1074,7 +1074,7 @@ class Burst(object):
     "Extension IVI methods for function generators that support triggered burst output"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Burst, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenBurst')
         
@@ -1089,7 +1089,7 @@ class Burst(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(Burst, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -1113,7 +1113,7 @@ class ModulateAM(object):
     "Extension IVI methods for function generators that support amplitude modulation"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ModulateAM, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenModulateAM')
         
@@ -1147,7 +1147,7 @@ class ModulateAM(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(ModulateAM, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -1206,7 +1206,7 @@ class ModulateFM(object):
     "Extension IVI methods for function generators that support frequency modulation"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ModulateFM, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenModulateAM')
         
@@ -1240,7 +1240,7 @@ class ModulateFM(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(ModulateFM, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -1299,7 +1299,7 @@ class SampleClock(object):
     "Extension IVI methods for function generators that support external sample clocks"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SampleClock, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenSampleClock')
         
@@ -1334,7 +1334,7 @@ class TerminalConfiguration(object):
     "Extension IVI methods for function generators that support single ended or differential output selection"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(TerminalConfiguration, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenTerminalConfiguration')
         
@@ -1349,7 +1349,7 @@ class TerminalConfiguration(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(TerminalConfiguration, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -1374,7 +1374,7 @@ class ArbChannelWfm(object):
     "Extension IVI methods for function generators that support user-defined arbitrary waveform generation"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbChannelWfm, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbChannelWfm')
         
@@ -1395,7 +1395,7 @@ class ArbWfmBinary(object):
     "Extension IVI methods for function generators that support user-defined arbitrary binary waveform generation"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbWfmBinary, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbWfmBinary')
         
@@ -1435,7 +1435,7 @@ class DataMarker(object):
     "Extension IVI methods for function generators that support output of particular waveform data bits as markers"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(DataMarker, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenDataMarker')
         
@@ -1477,7 +1477,7 @@ class DataMarker(object):
         
     def _init_data_markers(self):
         try:
-            super()._init_data_markers()
+            super(DataMarker, self)._init_data_markers()
         except AttributeError:
             pass
         
@@ -1572,7 +1572,7 @@ class ArbDataMask(object):
     "Extension IVI methods for function generators that support masking of waveform data bits"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbDataMask, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbDataMask')
         
@@ -1595,7 +1595,7 @@ class SparseMarker(object):
     "Extension IVI methods for function generators that support output of markers associated with output data samples"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SparseMarker, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenSparseMarker')
         
@@ -1637,7 +1637,7 @@ class SparseMarker(object):
         
     def _init_sparse_markers(self):
         try:
-            super()._init_sparse_markers()
+            super(SparseMarker, self)._init_sparse_markers()
         except AttributeError:
             pass
         
@@ -1728,7 +1728,7 @@ class ArbSeqDepth(object):
     "Extension IVI methods for function generators that support producing sequences of sequences of waveforms"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ArbSeqDepth, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviFgenArbSeqDepth')
         

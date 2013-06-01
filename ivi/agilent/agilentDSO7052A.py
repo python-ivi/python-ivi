@@ -30,7 +30,7 @@ class agilentDSO7052A(agilent7000A):
     "Agilent InfiniiVision DSO7052A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilentDSO7052A, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'AGILENT TECHNOLOGIES,DSO7052A'
         self._analog_channel_count = 2

@@ -44,7 +44,7 @@ class Base(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(Base, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterBase')
         
@@ -89,7 +89,7 @@ class Base(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(Base, self)._init_channels()
         except AttributeError:
             pass
         
@@ -182,7 +182,7 @@ class ChannelAcquisition(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(ChannelAcquisition, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterChannelAcquisition')
         
@@ -205,7 +205,7 @@ class ChannelAcquisition(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(ChannelAcquisition, self)._init_channels()
         except AttributeError:
             pass
         
@@ -240,7 +240,7 @@ class ManualRange(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(ManualRange, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterManualRange')
         
@@ -261,7 +261,7 @@ class ManualRange(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(ManualRange, self)._init_channels()
         except AttributeError:
             pass
         
@@ -303,7 +303,7 @@ class TriggerSource(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(TriggerSource, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterTriggerSource')
         
@@ -329,7 +329,7 @@ class InternalTrigger(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(InternalTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterInternalTrigger')
         
@@ -381,7 +381,7 @@ class SoftwareTrigger(object):
     "Extension IVI methods for RF power meters supporting software triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterSoftwareTrigger')
     
@@ -396,7 +396,7 @@ class DutyCycleCorrection(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(DutyCycleCorrection, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterDutyCycleCorrection')
         
@@ -417,7 +417,7 @@ class DutyCycleCorrection(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(DutyCycleCorrection, self)._init_channels()
         except AttributeError:
             pass
         
@@ -459,7 +459,7 @@ class AveragingCount(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(AveragingCount, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterAveragingCount')
         
@@ -474,7 +474,7 @@ class AveragingCount(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(AveragingCount, self)._init_channels()
         except AttributeError:
             pass
         
@@ -501,7 +501,7 @@ class ZeroCorrection(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(ZeroCorrection, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterZeroCorrection')
         
@@ -517,7 +517,7 @@ class ZeroCorrection(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(ZeroCorrection, self)._init_channels()
         except AttributeError:
             pass
         
@@ -547,7 +547,7 @@ class Calibration(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(Calibration, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterCalibration')
         
@@ -563,7 +563,7 @@ class Calibration(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(Calibration, self)._init_channels()
         except AttributeError:
             pass
         
@@ -589,7 +589,7 @@ class ReferenceOscillator(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(ReferenceOscillator, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviPwrMeterReferenceOscillator')
         

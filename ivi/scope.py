@@ -61,7 +61,7 @@ class Base(object):
         # needed for _init_channels calls from other __init__ methods
         self._channel_count = 1
         
-        super().__init__( *args, **kwargs)
+        super(Base, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeBase')
         
@@ -171,7 +171,7 @@ class Base(object):
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(Base, self)._init_channels()
         except AttributeError:
             pass
         
@@ -392,7 +392,7 @@ class Interpolation(object):
     "Extension IVI methods for oscilloscopes supporting interpolation"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(Interpolation, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeInterpolation')
         
@@ -414,7 +414,7 @@ class TVTrigger(object):
     "Extension IVI methods for oscilloscopes supporting TV triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(TVTrigger, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeTVTrigger')
         
@@ -480,7 +480,7 @@ class RuntTrigger(object):
     "Extension IVI methods for oscilloscopes supporting runt triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(RuntTrigger, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeRuntTrigger')
         
@@ -534,7 +534,7 @@ class GlitchTrigger(object):
     "Extension IVI methods for oscilloscopes supporting glitch triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(GlitchTrigger, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeGlitchTrigger')
         
@@ -590,7 +590,7 @@ class WidthTrigger(object):
     "Extension IVI methods for oscilloscopes supporting width triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(WidthTrigger, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeWidthTrigger')
         
@@ -658,7 +658,7 @@ class AcLineTrigger(object):
     "Extension IVI methods for oscilloscopes supporting AC line triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(AcLineTrigger, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeAcLineTrigger')
         
@@ -683,7 +683,7 @@ class WaveformMeasurement(object):
     "Extension IVI methods for oscilloscopes supporting waveform measurements"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(WaveformMeasurement, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeWaveformMeasurement')
         
@@ -748,7 +748,7 @@ class MinMaxWaveform(object):
     "Extension IVI methods for oscilloscopes supporting minimum and maximum waveform acquisition"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(MinMaxWaveform, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeMinMaxWaveform')
         
@@ -782,7 +782,7 @@ class MinMaxWaveform(object):
 class ProbeAutoSense(object):
     "Extension IVI methods for oscilloscopes supporting probe attenuation sensing"
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(ProbeAutoSense, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeProbeAutoSense')
         
@@ -798,7 +798,7 @@ class ProbeAutoSense(object):
     
     def init_channels(self):
         try:
-            super()._init_channels()
+            super(ProbeAutoSense, self)._init_channels()
         except AttributeError:
             pass
         
@@ -826,7 +826,7 @@ class ContinuousAcquisition(object):
     "Extension IVI methods for oscilloscopes supporting continuous acquisition"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(ContinuousAcquisition, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeContinuousAcquisition')
         
@@ -848,7 +848,7 @@ class AverageAcquisition(object):
     "Extension IVI methods for oscilloscopes supporting average acquisition"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(AverageAcquisition, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeAverageAcquisition')
         
@@ -870,7 +870,7 @@ class SampleMode(object):
     "Extension IVI methods for oscilloscopes supporting equivalent and real time acquisition"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(SampleMode, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeSampleMode')
         
@@ -894,7 +894,7 @@ class TriggerModifier(object):
     "Extension IVI methods for oscilloscopes supporting specific triggering subsystem behavior in the absence of a trigger"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(TriggerModifier, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeTriggerModifier')
         
@@ -918,7 +918,7 @@ class AutoSetup(object):
     "Extension IVI methods for oscilloscopes supporting automatic _setup"
     
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super(AutoSetup, self).__init__( *args, **kwargs)
         
         self._add_group_capability('IviScopeAutoSetup')
         

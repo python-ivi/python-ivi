@@ -96,7 +96,7 @@ class SerialInstrument:
         "Write binary data to instrument"
         
         if self.term_char is not None:
-            data += bytes(str(self.term_char), 'utf-8')
+            data += str(self.term_char).encode('utf-8')[0]
         
         self.serial.write(data)
         
@@ -111,7 +111,7 @@ class SerialInstrument:
         "Read binary data from instrument"
         
         data = b''
-        term_char = bytes(str(self.term_char), 'utf-8')
+        term_char = str(self.term_char).encode('utf-8')[0]
         
         while True:
             c = self.serial.read(1)
@@ -134,14 +134,14 @@ class SerialInstrument:
         if message.__class__ is tuple or message.__class__ is list:
             # recursive call for a list of commands
             for message_i in message:
-                self.write(message_i)
+                self.write(message_i, encoding)
             return
         
-        self.write_raw(bytes(message, encoding))
+        self.write_raw(str(message).encode(encoding))
     
     def read(self, num=-1, encoding = 'utf-8'):
         "Read string from instrument"
-        return str(self.read_raw(num), encoding).rstrip('\r\n')
+        return self.read_raw(num).decode(encoding).rstrip('\r\n')
     
     def ask(self, message, num=-1, encoding = 'utf-8'):
         "Write then read string"

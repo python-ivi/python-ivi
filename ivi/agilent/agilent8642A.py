@@ -157,7 +157,7 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
     "Agilent 8642A IVI RF signal generator driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilent8642A, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'HP8642A'
     
@@ -175,7 +175,7 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super().initialize(resource, id_query, reset, **keywargs)
+        super(agilent8642A, self).initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

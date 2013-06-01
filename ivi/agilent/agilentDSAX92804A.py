@@ -30,7 +30,7 @@ class agilentDSAX92804A(agilent90000):
     "Agilent Infiniium DSAX92804A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilentDSAX92804A, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'AGILENT TECHNOLOGIES,DSAX92804A'
         self._analog_channel_count = 4

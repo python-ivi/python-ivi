@@ -30,7 +30,7 @@ class tektronixAWG2040(tektronixAWG2000):
     "Tektronix AWG2040 arbitrary waveform generator driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(tektronixAWG2040, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'AWG2040'
         

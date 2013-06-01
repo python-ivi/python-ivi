@@ -60,7 +60,7 @@ class Base(object):
         # needed for _init_outputs calls from other __init__ methods
         self._output_count = 1
         
-        super().__init__(*args, **kwargs)
+        super(Base, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDCPwrBase')
         
@@ -121,7 +121,7 @@ class Base(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(Base, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -257,7 +257,7 @@ class Trigger(object):
     "Extension IVI methods for power supplies supporting trigger based output changes"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Trigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDCPwrTrigger')
         
@@ -281,7 +281,7 @@ class Trigger(object):
     
     def _init_outputs(self):
         try:
-            super()._init_outputs()
+            super(Trigger, self)._init_outputs()
         except AttributeError:
             pass
         
@@ -331,7 +331,7 @@ class SoftwareTrigger(object):
     "Extension IVI methods for power supplies supporting software triggering"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDCPwrSoftwareTrigger')
     
@@ -343,7 +343,7 @@ class Measurement(object):
     "Extension IVI methods for power supplies supporting measurement of the output signal"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Measurement, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDCPwrMeasurement')
         

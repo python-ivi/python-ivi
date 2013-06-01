@@ -239,7 +239,7 @@ def build_ieee_block(data):
     # where l is length of n and n is the
     # length of the data
     # ex: #800002000 prefixes 2000 data bytes
-    return bytes('#8%08d' % len(data), 'utf-8') + data
+    return str('#8%08d' % len(data)).encode('utf-8') + data
 
     
 def decode_ieee_block(data):
@@ -252,13 +252,14 @@ def decode_ieee_block(data):
         return b''
     
     ind = 0
-    while chr(data[ind]) != '#':
+    while data[ind:ind+1] != '#'.encode('utf-8'):
+        print(data[ind:ind+1])
         ind += 1
     
     ind += 1
-    l = int(chr(data[ind]))
+    l = int(data[ind:ind+1])
     ind += 1
-    num = int(str(data[ind:ind+l], 'utf-8'))
+    num = int(data[ind:ind+l].decode('utf-8'))
     ind += l
     
     return data[ind:ind+num]
@@ -306,7 +307,7 @@ class DriverOperation(object):
     "Inherent IVI methods for driver operation"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(DriverOperation, self).__init__(*args, **kwargs)
         
         self._driver_operation_cache = True
         self._driver_operation_driver_setup = ""
@@ -428,7 +429,7 @@ class DriverIdentity(object):
     "Inherent IVI methods for identification"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(DriverIdentity, self).__init__(*args, **kwargs)
         
         self._identity_description = "Base IVI Driver"
         self._identity_identifier = ""
@@ -518,7 +519,7 @@ class DriverUtility(object):
     "Inherent IVI utility methods"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(DriverUtility, self).__init__(*args, **kwargs)
         
         self.__dict__.setdefault('utility', PropertyCollection())
         self.utility.disable = self._utility_disable
@@ -568,7 +569,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             if k in kwargs:
                 kw[k] = kwargs.pop(k)
         
-        super().__init__(*args, **kwargs)
+        super(Driver, self).__init__(*args, **kwargs)
         self._interface = None
         self._initialized = False
         self._instrument_id = ''
@@ -874,7 +875,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         block = b''
         
         if type(prefix) == str:
-            block = bytes(prefix, encoding)
+            block = prefix.encode(encoding)
         elif type(prefix) == bytes:
             block = prefix
         

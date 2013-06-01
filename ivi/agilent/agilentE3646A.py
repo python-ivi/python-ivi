@@ -30,7 +30,7 @@ class agilentE3646A(agilentE3600A):
     "Agilent E3646A IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilentE3646A, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'E3646A'
         

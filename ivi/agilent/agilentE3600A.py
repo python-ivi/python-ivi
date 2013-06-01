@@ -37,7 +37,7 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
     "Agilent E3600A series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilentE3600A, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'E3600A'
         
@@ -98,7 +98,7 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super().initialize(resource, id_query, reset, **keywargs)
+        super(agilentE3600A, self).initialize(resource, id_query, reset, **keywargs)
         
         # configure interface
         if self._interface is not None:
@@ -193,7 +193,7 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
     
     
     def _init_outputs(self):
-        super()._init_outputs()
+        super(agilentE3600A, self)._init_outputs()
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()

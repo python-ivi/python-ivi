@@ -43,7 +43,7 @@ class Base(object):
     "Base IVI methods for DMMs that take a single measurement at a time"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Base, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDmmBase')
         
@@ -174,7 +174,7 @@ class ACMeasurement(object):
     "Extension IVI methods for DMMs that can take AC voltage or AC current measurements"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ACMeasurement, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDmmACMeasurement')
         
@@ -214,7 +214,7 @@ class FrequencyMeasurement(object):
     "Extension IVI methods for DMMs that can take frequency measurements"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(FrequencyMeasurement, self).__init__(*args, **kwargs)
         
         self._add_group_capability('IviDmmFrequencyMeasurement')
         

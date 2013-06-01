@@ -25,6 +25,7 @@ THE SOFTWARE.
 """
 
 import time
+import struct
 
 from .. import ivi
 from .. import scope
@@ -159,7 +160,7 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_differential = list()
         self._channel_differential_skew = list()
         
-        super().__init__(*args, **kwargs)
+        super(agilent90000, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'AGILENT TECHNOLOGIES'
         self._analog_channel_name = list()
@@ -216,7 +217,7 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         
-        super().initialize(resource, id_query, reset, **keywargs)
+        super(agilent90000, self).initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:
@@ -307,7 +308,7 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         pass
     
     def _init_channels(self):
-        super()._init_channels()
+        super(agilent90000, self)._init_channels()
         
         self._channel_name = list()
         self._channel_label = list()
@@ -958,7 +959,7 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
         for i in range(points):
             x = ((i - xreference) * xincrement) + xorigin
             
-            yval = raw_data[i*2] * 256 + raw_data[i*2+1]
+            yval = struct.unpack(">H", raw_data[i*2:i*2+2])[0]
             y = ((yval - yreference) * yincrement) + yorigin
             
             data.append((x, y))

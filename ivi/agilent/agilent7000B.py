@@ -30,7 +30,7 @@ class agilent7000B(agilent7000):
     "Agilent InfiniiVision 7000B series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilent7000B, self).__init__(*args, **kwargs)
         
         self._identity_description = "Agilent InfiniiVision 7000B series IVI oscilloscope driver"
         self._identity_supported_instrument_models =['DSO7012B','DSO7014B','DSO7032B',

@@ -33,7 +33,7 @@ class agilent436A(ivi.Driver, pwrmeter.Base, pwrmeter.ZeroCorrection, pwrmeter.M
     "Agilent 436A RF power meter"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(agilent436A, self).__init__(*args, **kwargs)
         
         self._instrument_id = '436A'
         
@@ -53,7 +53,7 @@ class agilent436A(ivi.Driver, pwrmeter.Base, pwrmeter.ZeroCorrection, pwrmeter.M
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super().initialize(resource, id_query, reset, **keywargs)
+        super(agilent436A, self).initialize(resource, id_query, reset, **keywargs)
         
         # configure interface
         if self._interface is not None:
@@ -148,7 +148,7 @@ class agilent436A(ivi.Driver, pwrmeter.Base, pwrmeter.ZeroCorrection, pwrmeter.M
     
     def _init_channels(self):
         try:
-            super()._init_channels()
+            super(agilent436A, self)._init_channels()
         except AttributeError:
             pass
         

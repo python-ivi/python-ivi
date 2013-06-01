@@ -25,6 +25,7 @@ THE SOFTWARE.
 """
 
 import time
+import struct
 from numpy import *
 
 from .. import ivi
@@ -45,7 +46,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     "Tektronix AWG2000 series arbitrary waveform generator driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(tektronixAWG2000, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'AWG2000'
         
@@ -83,7 +84,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super().initialize(resource, id_query, reset, **keywargs)
+        super(tektronixAWG2000, self).initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:
@@ -179,7 +180,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     
     
     def _init_outputs(self):
-        super()._init_outputs()
+        super(tektronixAWG2000, self)._init_outputs()
         
         self._output_enabled = list()
         for i in range(self._output_count):
@@ -513,7 +514,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
             i = int(f * ((1 << 12) - 2) + 0.5) & 0x000fffff
             
             # add to raw data, MSB first
-            raw_data = raw_data + bytes([(i >> 8) & 0xff, i & 0xff])
+            raw_data = raw_data + struct.pack('>H', i)
         
         self._write_ieee_block(raw_data, ':curve ')
         

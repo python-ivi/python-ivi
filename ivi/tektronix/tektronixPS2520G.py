@@ -35,7 +35,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     "Tektronix PS2520G DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(tektronixPS2520G, self).__init__(*args, **kwargs)
         
         self._instrument_id = 'PS2520G'
         
@@ -75,7 +75,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super().initialize(resource, id_query, reset, **keywargs)
+        super(tektronixPS2520G, self).initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:
@@ -164,7 +164,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     
     
     def _init_outputs(self):
-        super()._init_outputs()
+        super(tektronixPS2520G, self)._init_outputs()
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
