@@ -31,6 +31,7 @@ electronic test equipment that is remotely controllable.''',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: System :: Hardware :: Hardware Drivers',
         'Topic :: System :: Networking',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3'
         ],
     packages = ['ivi', 'ivi.agilent', 'ivi.tektronix'],
