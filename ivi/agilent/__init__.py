@@ -89,6 +89,13 @@ from .agilentMSOX92804A import agilentMSOX92804A
 from .agilentMSOX93204A import agilentMSOX93204A
 
 # DC Power Supplies
+# 603xA
+from .agilent6030A import agilent6030A
+from .agilent6031A import agilent6031A
+from .agilent6032A import agilent6032A
+from .agilent6033A import agilent6033A
+from .agilent6035A import agilent6035A
+from .agilent6038A import agilent6038A
 # E3600A
 from .agilentE3631A import agilentE3631A
 from .agilentE3632A import agilentE3632A
