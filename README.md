@@ -28,13 +28,14 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Instrument communication
 
-Python IVI can use Python VXI-11, pySerial and linux-gpib to connect to
-instruments.  The implementation of the initialize method takes a VISA
-resource string and attempts to connect to an instrument.  If the resource
+Python IVI can use Python VXI-11, Python USBTMC, pySerial and linux-gpib to
+connect to instruments.  The implementation of the initialize method takes a
+VISA resource string and attempts to connect to an instrument.  If the resource
 string starts with TCPIP, then Python IVI will attempt to use Python VXI-11.
-If it starts with GPIB, it will attempt to use linux-gpib's python interface.
-If it starts with ASRL, it attemps to use pySerial.  Integration with PyVISA
-is planned, but not currently supported.  
+If it starts with USB, it attempts to use Python USBTMC.  If it starts with
+GPIB, it will attempt to use linux-gpib's python interface.  If it starts with
+ASRL, it attemps to use pySerial.  Integration with PyVISA is planned, but not
+currently supported.  
 
 ## A note on standards compliance
 
@@ -71,7 +72,7 @@ waveform, and read it out of the instrument.
     # connect to MSO7104A via LXI
     mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
     # connect to MSO7104A via USBTMC
-    mso = ivi.agilent.agilentMSO7104A("USB0::2391::5973::MY********::INSTR")
+    #mso = ivi.agilent.agilentMSO7104A("USB0::2391::5973::MY********::INSTR")
     # configure timebase
     mso.acquisition.time_per_record = 1e-3
     # configure triggering
