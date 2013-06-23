@@ -30,9 +30,15 @@ from numpy import *
 from functools import partial
 
 # try importing drivers
-# PyVXI11 for LAN instruments
+# python-vxi11 for LAN instruments
 try:
     import vxi11
+except ImportError:
+    pass
+
+# python-usbtmc for USBTMC instrument support
+try:
+    import usbtmc
 except ImportError:
     pass
 
@@ -614,6 +620,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # TCPIP0::10.0.0.1::INSTR
             # TCPIP::10.0.0.1::gpib,5::INSTR
             # TCPIP0::10.0.0.1::gpib,5::INSTR
+            # USB::1234::5678::SERIAL::INSTR
+            # USB0::0x1234::0x5678::SERIAL::INSTR
             # GPIB::10::INSTR
             # GPIB0::10::INSTR
             # ASRL1::INSTR
@@ -636,6 +644,16 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 if 'vxi11' in globals():
                     # connect with VXI-11
                     self._interface = vxi11.Instrument(host, name)
+                else:
+                    raise IOException('Cannot use resource type %s' % t)
+            elif t[:3] == 'USB':
+                # USB connection
+                idVendor = int(res[1], 0)
+                idProduct = int(res[2], 0)
+                iSerial = res[3]
+                
+                if 'usbtmc' in globals():
+                    self._interface = usbtmc.Instrument(idVendor, idProduct, iSerial)
                 else:
                     raise IOException('Cannot use resource type %s' % t)
             elif t[:4] == 'GPIB':

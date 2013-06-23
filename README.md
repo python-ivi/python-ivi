@@ -70,6 +70,8 @@ waveform, and read it out of the instrument.
     import ivi
     # connect to MSO7104A via LXI
     mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
+    # connect to MSO7104A via USBTMC
+    mso = ivi.agilent.agilentMSO7104A("USB0::2391::5973::MY********::INSTR")
     # configure timebase
     mso.acquisition.time_per_record = 1e-3
     # configure triggering
