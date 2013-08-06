@@ -388,7 +388,7 @@ class AnalogModulationSource(object):
         return self._analog_modulation_source_name[index]
     
     
-class ModulatePulse:
+class ModulatePulse(object):
     "Extension IVI methods for generators supporting pulse modulation"
     
     def __init__(self, *args, **kwargs):
