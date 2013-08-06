@@ -1,2 +1,3 @@
 include AUTHORS COPYING MANIFEST.in
 include README.md
+include doc/*.rst doc/Makefile doc/make.bat
