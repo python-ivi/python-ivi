@@ -6,6 +6,9 @@ http://alexforencich.com/wiki/en/python-ivi/start
 GitHub repository:
 https://github.com/alexforencich/python-ivi
 
+Google group:
+https://groups.google.com/d/forum/python-ivi
+
 ## Introduction
 
 Python IVI is a Python-based interpretation of the Interchangeable Virtual
