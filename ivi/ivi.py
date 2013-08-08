@@ -104,25 +104,31 @@ def get_index(l, i):
 
 
 class PropertyCollection(object):
+    "A building block to create hierarchical trees of methods and properties"
     def __init__(self):
         object.__setattr__(self, '_props', dict())
         object.__setattr__(self, '_locked', False)
     
     def _add_property(self, name, fget=None, fset=None, fdel=None):
+        "Add a managed property"
         object.__getattribute__(self, '_props')[name] = (fget, fset, fdel)
         object.__setattr__(self, name, None)
     
     def _add_method(self, name, f=None):
+        "Add a managed method"
         object.__setattr__(self, name, f)
     
     def _del_property(self, name):
+        "Remove managed property or method"
         del object.__getattribute__(self, '_props')[name]
         del object.__dict__[name]
     
     def _lock(self, lock=True):
+        "Set lock state to prevent creation or deletion of unmanaged members"
         object.__setattr__(self, '_locked', lock)
     
     def _unlock(self):
+        "Unlock object to allow creation or deletion of unmanaged members, equivalent to _lock(False)"
         self._lock(False)
         
     def __getattribute__(self, name):
@@ -157,12 +163,14 @@ class PropertyCollection(object):
         
 
 class IndexedPropertyCollection(object):
+    "A building block to create hierarchical trees of methods and properties with an index that is converted to a parameter"
     def __init__(self):
         self._props = dict()
         self._indicies = list()
         self._objs = list()
     
     def _add_property(self, name, fget=None, fset=None, fdel=None, props = None):
+        "Add a managed property"
         if props is None:
             props = self._props
         l = name.split('.',1)
@@ -179,6 +187,7 @@ class IndexedPropertyCollection(object):
             props[n] = (fget, fset, fdel)
     
     def _add_method(self, name, f=None, props = None):
+        "Add a managed method"
         if props is None:
             props = self._props
         l = name.split('.',1)
@@ -195,15 +204,19 @@ class IndexedPropertyCollection(object):
             props[n] = f
     
     def _add_sub_property(self, sub, name, fget=None, fset=None, fdel=None, props = None):
+        "Add a sub-property (equivalent to _add_property('sub.name', ...))"
         self._add_property(sub+'.'+name, fget, fset, fdel)
     
     def _add_sub_method(self, sub, name, f=None, props = None):
+        "Add a sub-method (equivalent to _add_method('sub.name', ...))"
         self._add_method(sub+'.'+name, f)
     
     def _del_property(self, name):
+        "Delete property"
         del self._props[name]
     
     def _build_obj(self, d, i):
+        "Build a tree of PropertyCollection objects with the proper index associations"
         obj = PropertyCollection()
         for n in d:
             itm = d[n]
@@ -223,6 +236,7 @@ class IndexedPropertyCollection(object):
         return obj
     
     def _set_list(self, l):
+        "Set a list of allowable indicies as an associative array"
         self._indicies = list(l)
         self._objs = list()
         for i in range(len(self._indicies)):
