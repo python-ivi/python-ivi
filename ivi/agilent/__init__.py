@@ -25,6 +25,38 @@ THE SOFTWARE.
 """
 
 # Oscilloscopes
+# InfiniiVision 2000A
+from .agilentDSOX2002A import agilentDSOX2002A
+from .agilentDSOX2004A import agilentDSOX2004A
+from .agilentDSOX2012A import agilentDSOX2012A
+from .agilentDSOX2014A import agilentDSOX2014A
+from .agilentDSOX2022A import agilentDSOX2022A
+from .agilentDSOX2024A import agilentDSOX2024A
+from .agilentMSOX2002A import agilentMSOX2002A
+from .agilentMSOX2004A import agilentMSOX2004A
+from .agilentMSOX2012A import agilentMSOX2012A
+from .agilentMSOX2014A import agilentMSOX2014A
+from .agilentMSOX2022A import agilentMSOX2022A
+from .agilentMSOX2024A import agilentMSOX2024A
+# InfiniiVision 3000A
+from .agilentDSOX3012A import agilentDSOX3012A
+from .agilentDSOX3014A import agilentDSOX3014A
+from .agilentDSOX3024A import agilentDSOX3024A
+from .agilentDSOX3032A import agilentDSOX3032A
+from .agilentDSOX3034A import agilentDSOX3034A
+from .agilentDSOX3052A import agilentDSOX3052A
+from .agilentDSOX3054A import agilentDSOX3054A
+from .agilentDSOX3102A import agilentDSOX3102A
+from .agilentDSOX3104A import agilentDSOX3104A
+from .agilentMSOX3012A import agilentMSOX3012A
+from .agilentMSOX3014A import agilentMSOX3014A
+from .agilentMSOX3024A import agilentMSOX3024A
+from .agilentMSOX3032A import agilentMSOX3032A
+from .agilentMSOX3034A import agilentMSOX3034A
+from .agilentMSOX3052A import agilentMSOX3052A
+from .agilentMSOX3054A import agilentMSOX3054A
+from .agilentMSOX3102A import agilentMSOX3102A
+from .agilentMSOX3104A import agilentMSOX3104A
 # InfiniiVision 7000A
 from .agilentDSO7012A import agilentDSO7012A
 from .agilentDSO7014A import agilentDSO7014A
