@@ -60,11 +60,64 @@ specifications.  The fgen class is the most obvious example of this, using
 properties instead of the getters and setters as required by the IVI
 specification.  
 
+## Requirements
+
+* Python 2 or Python 3
+* One or more communication extensions
+
 ## Installation
 
 Extract and run
 
     # python setup.py install
+
+### Instrument Communication Extensions
+
+Python IVI does not contain any IO drivers itself.  In order to communicate
+with an instrument, you must install one or more of the following drivers:
+
+#### Python VXI11
+
+Python VXI11 provides a pure python TCP/IP driver for LAN based instruments
+that support the VXI11 protocol.  This includes most LXI instruments and also
+devices like the Agilent E2050 GPIB to LAN converter.  
+
+Home page:
+http://www.alexforencich.com/wiki/en/python-vxi11/start
+
+GitHub repository:
+https://github.com/alexforencich/python-vxi11
+
+#### Python USBTMC
+
+Python USBTMC provides a pure python USBTMC driver for instruments that
+support the USB Test and Measurement Class.  Python USBTMC uses PyUSB to
+connect to the instrument in a platform-independent manner.
+
+Home page:
+http://alexforencich.com/wiki/en/python-usbtmc/start
+
+GitHub repository:
+https://github.com/alexforencich/python-usbtmc
+
+#### Linux GPIB
+
+Python IVI provides an interface wrapper for the Linux GPIB driver.  If the
+Linux GPIB driver and its included Python interface available, Python IVI can
+use it to communicate with instruments via any GPIB interface supported by
+Linux GPIB.  
+
+Home page:
+http://linux-gpib.sourceforge.net/
+
+#### pySerial
+
+Python IVI provides an interface wrapper for the pySerial library.  If
+pySerial is installed, Python IVI can use it to communicate with instruments
+via the serial port.  
+
+Home page:
+http://pyserial.sourceforge.net/
 
 ## Usage examples
 
