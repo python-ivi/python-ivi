@@ -1,23 +1,30 @@
-.. Python IVI documentation master file, created by
-   sphinx-quickstart on Tue Aug  6 15:42:48 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. Python IVI documentation master file
 
-Welcome to Python IVI's documentation!
-======================================
+Welcome to Python IVI's documentation
+=====================================
+
+Python IVI is a Python-based interpretation of the Interchangeable Virtual
+Instrument standard from the `IVI foundation`_.
+
+See also:
+
+- `Python IVI home page`_
+- `GitHub repository`_
+- `IVI Foundation`_
+
+.. _`Python IVI home page`: http://alexforencich.com/wiki/en/python-ivi/start
+.. _`GitHub repository`: https://github.com/alexforencich/python-ivi
+.. _`IVI Foundation`: http://www.ivifoundation.org/
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: ivi
-   :members:
-
-.. autoclass:: ivi.Driver
-   :members:
-
-
+   intro
+   examples
+   ivi
+   appendix
 
 Indices and tables
 ==================
