@@ -37,9 +37,9 @@ electronic test equipment that is remotely controllable.''',
     packages = ['ivi', 'ivi.interface', 'ivi.agilent', 'ivi.tektronix'],
     requires = ['numpy'],
     extras_require = {
-        'VXI11 instrument support': ['python-vxi11'],
-        'USBTMC instrument support': ['python-usbtmc'],
-        'Serial instrument support': ['pyserial']
+        'VXI11': ['python-vxi11'],
+        'USBTMC': ['python-usbtmc'],
+        'Serial': ['pyserial']
     }
 )
 
