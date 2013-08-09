@@ -396,6 +396,17 @@ class DriverOperation(object):
                         self._set_driver_operation_cache,
                         None,
                         """
+                        If True, the specific driver caches the value of attributes, and the IVI
+                        specific driver keeps track of the current instrument settings so that it
+                        can avoid sending redundant commands to the instrument. If False, the
+                        specific driver does not cache the value of attributes.
+                        
+                        The default value is True. When the user opens an instrument session
+                        through an IVI class driver or uses a logical name to initialize a
+                        specific driver, the user can override this value by specifying a value in
+                        the IVI configuration store. The Initialize function allows the user to
+                        override both the default value and the value that the user specifies in
+                        the IVI configuration store.
                         """)
         self.driver_operation._add_property('driver_setup',
                         self._get_driver_operation_driver_setup,
