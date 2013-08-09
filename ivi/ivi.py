@@ -471,7 +471,8 @@ class DriverOperation(object):
                         If True, the IVI specific driver queries the instrument status at the end
                         of each user operation. If False, the IVI specific driver does not query
                         the instrument status at the end of each user operation. Querying the
-                        instrument status is very useful for debugging. After validating the                        program, the user can set this attribute to False to disable status
+                        instrument status is very useful for debugging. After validating the
+                        program, the user can set this attribute to False to disable status
                         checking and maximize performance. The user specifies this value for the
                         entire IVI driver session.
                         
@@ -548,7 +549,8 @@ class DriverOperation(object):
                         None,
                         None,
                         """
-                        If True, the IVI specific driver simulates instrument driver I/O                        operations. If False, the IVI specific driver communicates directly with
+                        If True, the IVI specific driver simulates instrument driver I/O
+                        operations. If False, the IVI specific driver communicates directly with
                         the instrument.
                         
                         If simulation is enabled, the specific driver functions do not perform
@@ -635,7 +637,8 @@ class DriverOperation(object):
         self.driver_operation._add_method('invalidate_all_attributes',
                         self._driver_operation_invalidate_all_attributes,
                         """
-                        This function invalidates the cached values of all attributes for the                        session.
+                        This function invalidates the cached values of all attributes for the
+                        session.
                         """)
         self.driver_operation._add_method('reset_interchange_check',
                         self._driver_operation_reset_interchange_check,
@@ -785,7 +788,8 @@ class DriverIdentity(object):
                         None,
                         None,
                         """
-                        Returns the case-sensitive unique identifier of the IVI software                        component. The string that this attribute returns contains a maximum of 32
+                        Returns the case-sensitive unique identifier of the IVI software
+                        component. The string that this attribute returns contains a maximum of 32
                         characters including the NULL character.
                         """)
         self.identity._add_property('revision',
