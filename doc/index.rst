@@ -24,6 +24,7 @@ Contents:
    intro
    examples
    ivi
+   dcpwr
    appendix
 
 Indices and tables
