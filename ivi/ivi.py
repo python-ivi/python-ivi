@@ -610,7 +610,7 @@ class DriverOperation(object):
                         * The value that the user specified for the attribute.
                         * The value to which the attribute was coerced.
                         
-                        A recommended format for the coercion record string is as follows:
+                        A recommended format for the coercion record string is as follows::
                         
                             " Attribute " + <attribute name> + [" on <repeated capability> " +
                             <repeated capability identifier>] + " was coerced from " +
@@ -618,10 +618,11 @@ class DriverOperation(object):
                         
                         .
                         
-                        And example coercion record string is as follows:
+                        And example coercion record string is as follows::
                         
                             Attribute TKTDS500_ATTR_VERTICAL_RANGE on channel ch1 was coerced from
                             9.0 to 10.0.
+                        
                         """)
         self.driver_operation._add_method('get_next_interchange_warning',
                         self._driver_operation_get_next_interchange_warning,
@@ -786,11 +787,6 @@ class DriverIdentity(object):
                         None,
                         """
                         Returns a brief description of the IVI software component.
-                        
-                        If the driver is compiled for use in 64-bit applications, the description
-                        shall include the following statement at the end identifying it as 64-bit.
-                        
-                            [Compiled for 64-bit.]
                         
                         The string that this attribute returns has no maximum size.
                         """)
@@ -1137,7 +1133,7 @@ class DriverUtility(object):
                         instrument to complete the test. It then queries the instrument for the
                         results of the self test and returns the results to the user.
                         
-                        If the instrument passes the self test, this function returns the tuple
+                        If the instrument passes the self test, this function returns the tuple::
                         
                             (0, 'Self test passed')
                        
@@ -1263,7 +1259,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                         VXIplug&play specifications for the grammar of VISA resource descriptor
                         strings. 
                         
-                        Example resource strings:
+                        Example resource strings::
                             
                             'TCPIP::10.0.0.1::INSTR'
                             'TCPIP0::10.0.0.1::INSTR'
