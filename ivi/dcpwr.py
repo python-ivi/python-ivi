@@ -229,7 +229,8 @@ class Base(object):
     
     def _output_configure_ovp(self, index, enabled, limit):
         self._set_output_ovp_enabled(index, enabled)
-        self._set_output_ovp_limit(index, limit)
+        if enabled:
+            self._set_output_ovp_limit(index, limit)
     
     def _output_query_current_limit_max(self, index, voltage_level):
         index = ivi.get_index(self._output_name, index)
