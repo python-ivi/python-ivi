@@ -178,7 +178,7 @@ class IndexedPropertyCollection(object):
         "Add a managed property"
         if props is None:
             props = self._props
-        if props is None:
+        if docs is None:
             docs = self._docs
         l = name.split('.',1)
         n = l[0]
@@ -199,7 +199,7 @@ class IndexedPropertyCollection(object):
         "Add a managed method"
         if props is None:
             props = self._props
-        if props is None:
+        if docs is None:
             docs = self._docs
         l = name.split('.',1)
         n = l[0]
