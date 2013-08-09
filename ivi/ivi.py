@@ -1722,6 +1722,11 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             n = l[0]
             r = ''
             
+            # remove brackets
+            k = n.find('[')
+            if k > 0:
+                n = n[:k]
+            
             # if there is more left, need to recurse
             if len(l) > 1:
                 r = l[1]
@@ -1744,12 +1749,17 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             for n in obj.__dict__:
                 o = obj.__dict__[n]
                 
+                # add brackets for indexed property collections
+                extra = ''
+                if type(o) == IndexedPropertyCollection:
+                    extra = '[]'
+                
                 if n == '_docs':
                     # process documentation dict
                     st += self.doc(docs=o, prefix=prefix)
                 elif hasattr(o, '_docs'):
                     # process object that contains a documentation dict
-                    st += self.doc(docs=o._docs, prefix=prefix+n)
+                    st += self.doc(docs=o._docs, prefix=prefix+n+extra)
             
             # if we got something, return it
             if len(st) > 0:
