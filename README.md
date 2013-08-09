@@ -119,6 +119,51 @@ via the serial port.
 Home page:
 http://pyserial.sourceforge.net/
 
+## Built-in Help
+
+Python IVI has a built-in help feature.  This can be used in three ways:
+
+Call the help method with no parameters:
+
+    import ivi
+    instr = ivi.Driver()
+    instr.help()
+
+This will print a list of all of the available methods and properties, like this:
+
+    close
+    initialized
+    initialize
+    identity.get_supported_instrument_models
+    identity.get_group_capabilities
+    identity.specification_major_version
+    ...
+
+The higher level groups can also be passed to the help method:
+
+    import ivi
+    instr = ivi.Driver()
+    instr.help(instr.identity)
+
+This will output everything inside of the sub group:
+
+    get_supported_instrument_models
+    get_group_capabilities
+    specification_major_version
+    ...
+
+Finally, individual methods and properties can be passed as strings:
+
+    import ivi
+    instr = ivi.Driver()
+    instr.help("identity.supported_instrument_models")
+
+This will result in the complete documentation:
+
+    Returns a comma-separated list of names of instrument models with which
+    the IVI specific driver is compatible. The string has no white space
+    ...
+
 ## Usage examples
 
 This sample Python code will use Python IVI to connect to an Agilent MSO7104A
