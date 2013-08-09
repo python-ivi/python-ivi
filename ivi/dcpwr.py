@@ -551,7 +551,7 @@ class SoftwareTrigger(object):
                         only applicable for instruments using interfaces or protocols which
                         support an explicit trigger function. For example, with GPIB this function
                         could send a group execute trigger to the instrument. Other
-                        implementations might send a *TRG command.
+                        implementations might send a ``*TRG`` command.
                         
                         Since instruments interpret a software-generated trigger in a wide variety
                         of ways, the precise response of the instrument to this trigger is not

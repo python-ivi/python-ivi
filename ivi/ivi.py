@@ -1092,7 +1092,7 @@ class DriverUtility(object):
                         This function performs the following actions:
                         
                         * Places the instrument in a known state. In an IEEE 488.2 instrument, the
-                          Reset function sends the command string " *RST " to the instrument.
+                          Reset function sends the command string ``*RST`` to the instrument.
                         * Configures instrument options on which the IVI specific driver depends.
                           A specific driver might enable or disable headers or enable binary mode
                           for waveform transfers.
