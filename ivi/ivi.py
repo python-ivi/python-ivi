@@ -1688,40 +1688,51 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         """Python IVI documentation generator"""
         st = ""
         
+        # add a dot to prefix when needed
         if prefix is None or len(prefix) == 0:
             prefix = ''
         else:
             prefix += '.'
         
+        # if something passed in docs, iterate over it
         if docs is not None:
             for n in docs:
                 d = docs[n]
                 if type(d) == dict:
+                    # recurse into node
                     st += self.doc(docs=d, prefix=prefix)
                 else:
+                    # print leaf (method or property)
                     st += prefix + n + "\n"
             
             return st
         
+        # need an obj, if none specified, use self
         if obj is None:
             obj = self
         
+        # if first arg is a string, put in itm and use self for obj
         if type(obj) == str:
             itm = obj
             obj = self
         
         if itm is not None:
+            # split off first component before the dot
             l = itm.split('.',1)
             n = l[0]
             r = ''
+            
+            # if there is more left, need to recurse
             if len(l) > 1:
                 r = l[1]
                 
+                # hand off to parent
                 if n in obj.__dict__:
                     return self.doc(obj.__dict__[n], r, prefix=prefix+n)
                 
             else:
                 
+                # return documentation if present
                 if hasattr(obj, '_docs') and n in obj._docs:
                     return trim_doc(obj._docs[n])
             
@@ -1729,16 +1740,20 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             
         
         if hasattr(obj, '__dict__'):
+            # if obj has __dict__, iterate over it
             for n in obj.__dict__:
                 o = obj.__dict__[n]
+                
                 if n == '_docs':
+                    # process documentation dict
                     st += self.doc(docs=o, prefix=prefix)
                 elif hasattr(o, '_docs'):
+                    # process object that contains a documentation dict
                     st += self.doc(docs=o._docs, prefix=prefix+n)
+            
+            # if we got something, return it
             if len(st) > 0:
                 return st
-        else:
-            pass
         
         return "error"
     
