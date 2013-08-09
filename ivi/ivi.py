@@ -1767,7 +1767,18 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
         return "error"
     
-    def help(self, obj=None):
+    def help(self, obj=None, complete=False, indent=0):
         """Python IVI help system"""
-        print(self.doc(obj))
+        if complete:
+            l = self.doc(obj).split('\n')
+            l = sorted(filter(None, l))
+            for m in l:
+                print((indent * ' ') + '.. attribute:: ' + m + '\n')
+                #print('-'*len(m)+'\n')
+                doc = self.doc(obj, m)
+                doc = '\n'.join(((indent + 3) * ' ') + x for x in doc.splitlines())
+                print(doc)
+                print('\n')
+        else:
+            print(self.doc(obj))
     

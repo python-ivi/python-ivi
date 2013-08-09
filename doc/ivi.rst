@@ -42,6 +42,11 @@ Functions and Exceptions
 .. autoclass:: Driver
    :members:
    :show-inheritance:
+   
+.. exec::
+   import ivi
+   m = ivi.Driver()
+   m.help(complete=True, indent=3)
 
 Helper Classes
 --------------
