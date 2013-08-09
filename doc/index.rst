@@ -25,6 +25,7 @@ Contents:
    examples
    ivi
    dcpwr
+   newdriver
    appendix
 
 Indices and tables
