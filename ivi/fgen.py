@@ -1586,7 +1586,8 @@ class SoftwareTrigger(object):
     def __init__(self, *args, **kwargs):
         super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviFgenSoftwareTrigger')
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenSoftwareTrigger')
         
         self.__dict__.setdefault('_docs', dict())
         self._docs['send_software_trigger'] = """
@@ -1627,7 +1628,8 @@ class Burst(object):
     def __init__(self, *args, **kwargs):
         super(Burst, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviFgenBurst')
+        self.__dict__.setdefault('_identity_group_capabilities', list())
+        self._identity_group_capabilities.insert(0, 'IviFgenBurst')
         
         self._output_burst_count = list()
         
