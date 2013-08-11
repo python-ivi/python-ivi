@@ -1728,13 +1728,24 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 r = l[1]
                 
                 # hand off to parent
-                if n in obj.__dict__:
+                if type(obj) == dict and n in obj:
+                    return self.doc(obj[n], r, prefix=prefix+n)
+                
+                elif n in obj.__dict__:
                     return self.doc(obj.__dict__[n], r, prefix=prefix+n)
+                
+                elif hasattr(obj, '_docs') and n in obj._docs:
+                    d = obj._docs[n]
+                    if type(d) == dict:
+                        return self.doc(d, r, prefix=prefix+n)
                 
             else:
                 
                 # return documentation if present
-                if hasattr(obj, '_docs') and n in obj._docs:
+                if type(obj) == dict and n in obj:
+                    return trim_doc(obj[n])
+                
+                elif hasattr(obj, '_docs') and n in obj._docs:
                     return trim_doc(obj._docs[n])
             
             return "error"
