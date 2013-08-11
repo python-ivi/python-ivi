@@ -315,40 +315,73 @@ class StdFunc(object):
                         self._set_output_standard_waveform_amplitude,
                         None,
                         """
+                        Specifies the amplitude of the standard waveform the function generator
+                        produces. When the Waveform attribute is set to Waveform DC, this
+                        attribute does not affect signal output. The units are volts.
                         """)
         self.outputs._add_property('standard_waveform.dc_offset',
                         self._get_output_standard_waveform_dc_offset,
                         self._set_output_standard_waveform_dc_offset,
                         None,
                         """
+                        Specifies the DC offset of the standard waveform the function generator
+                        produces. If the Waveform attribute is set to Waveform DC, this attribute
+                        specifies the DC level the function generator produces. The units are
+                        volts.
                         """)
         self.outputs._add_property('standard_waveform.duty_cycle_high',
                         self._get_output_standard_waveform_duty_cycle_high,
                         self._set_output_standard_waveform_duty_cycle_high,
                         None,
                         """
+                        Specifies the duty cycle for a square waveform. This attribute affects
+                        function generator behavior only when the Waveform attribute is set to
+                        Waveform Square. The value is expressed as a percentage.
                         """)
         self.outputs._add_property('standard_waveform.start_phase',
                         self._get_output_standard_waveform_start_phase,
                         self._set_output_standard_waveform_start_phase,
                         None,
                         """
+                        Specifies the start phase of the standard waveform the function generator
+                        produces. When the Waveform attribute is set to Waveform DC, this
+                        attribute does not affect signal output. The units are degrees.
                         """)
         self.outputs._add_property('standard_waveform.frequency',
                         self._get_output_standard_waveform_frequency,
                         self._set_output_standard_waveform_frequency,
                         None,
                         """
+                        Specifies the frequency of the standard waveform the function generator
+                        produces. When the Waveform attribute is set to Waveform DC, this
+                        attribute does not affect signal output. The units are Hertz.
                         """)
         self.outputs._add_property('standard_waveform.waveform',
                         self._get_output_standard_waveform_waveform,
                         self._set_output_standard_waveform_waveform,
                         None,
                         """
+                        Specifies which standard waveform the function generator produces.
+                        
+                        Values for waveform:
+                        
+                        * 'sine'
+                        * 'square'
+                        * 'triangle'
+                        * 'ramp_up'
+                        * 'ramp_down'
+                        * 'dc'
                         """)
         self.outputs._add_method('standard_waveform.configure',
                         self._output_standard_waveform_configure,
                         """
+                        This function configures the attributes of the function generator that
+                        affect standard waveform generation. These attributes are the Waveform,
+                        Amplitude, DC Offset, Frequency, and Start Phase.
+                        
+                        When the Waveform parameter is set to Waveform DC, this function ignores
+                        the Amplitude, Frequency, and Start Phase parameters and does not set the
+                        Amplitude, Frequency, and Start Phase attributes.
                         """)
         
         self._init_outputs()
@@ -463,12 +496,16 @@ class ArbWfm(object):
                         self._set_output_arbitrary_gain,
                         None,
                         """
+                        Specifies the gain of the arbitrary waveform the function generator
+                        produces. This value is unitless.
                         """)
         self.outputs._add_property('arbitrary.offset',
                         self._get_output_arbitrary_offset,
                         self._set_output_arbitrary_offset,
                         None,
                         """
+                        Specifies the offset of the arbitrary waveform the function generator
+                        produces. The units are volts.
                         """)
         self.outputs._add_property('arbitrary.waveform',
                         self._get_output_arbitrary_waveform,
@@ -479,6 +516,9 @@ class ArbWfm(object):
         self.outputs._add_method('arbitrary.configure',
                         self._arbitrary_waveform_configure,
                         """
+                        Configures the attributes of the function generator that affect arbitrary
+                        waveform generation. These attributes are the arbitrary waveform handle,
+                        gain, and offset.
                         """)
         
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
@@ -487,6 +527,8 @@ class ArbWfm(object):
                         self._set_arbitrary_sample_rate,
                         None,
                         """
+                        Specifies the sample rate of the arbitrary waveforms the function
+                        generator produces. The units are samples per second.
                         """)
         self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
         self.arbitrary.waveform._add_property('number_waveforms_max',
@@ -494,36 +536,59 @@ class ArbWfm(object):
                         None,
                         None,
                         """
+                        Returns the maximum number of arbitrary waveforms that the function
+                        generator allows.
                         """)
         self.arbitrary.waveform._add_property('size_max',
                         self._get_arbitrary_waveform_size_max,
                         None,
                         None,
                         """
+                        Returns the maximum number of points the function generator allows in an
+                        arbitrary waveform.
                         """)
         self.arbitrary.waveform._add_property('size_min',
                         self._get_arbitrary_waveform_size_min,
                         None,
                         None,
                         """
+                        Returns the minimum number of points the function generator allows in an
+                        arbitrary waveform.
                         """)
         self.arbitrary.waveform._add_property('quantum',
                         self._get_arbitrary_waveform_quantum,
                         None,
                         None,
                         """
+                        The size of each arbitrary waveform shall be a multiple of a quantum
+                        value. This attribute returns the quantum value the function generator
+                        allows. For example, if this attribute returns a value of 8, all waveform
+                        sizes must be a multiple of 8.
                         """)
         self.arbitrary.waveform._add_method('configure',
                         self._arbitrary_waveform_configure,
                         """
+                        Configures the attributes of the function generator that affect arbitrary
+                        waveform generation. These attributes are the arbitrary waveform handle,
+                        gain, and offset.
                         """)
         self.arbitrary.waveform._add_method('clear',
                         self._arbitrary_waveform_clear,
                         """
+                        Removes a previously created arbitrary waveform from the function
+                        generator's memory and invalidates the waveform's handle.
+                        
+                        If the waveform cannot be cleared because it is currently being generated,
+                        or it is specified as part of an existing arbitrary waveform sequence,
+                        this function returns the Waveform In Use error.
                         """)
         self.arbitrary.waveform._add_method('create',
                         self._arbitrary_waveform_create,
                         """
+                        Creates an arbitrary waveform from an array of data points. The function
+                        returns a handlethat identifies the waveform. You pass a waveform handle
+                        to the Handle parameter of the Configure Arbitrary Waveform function to
+                        produce that waveform.
                         """)
         
         self._init_outputs()
@@ -618,6 +683,8 @@ class ArbFrequency(object):
                         self._set_output_arbitrary_frequency,
                         None,
                         """
+                        Specifies the rate in Hertz at which an entire arbitrary waveform is
+                        generated.
                         """)
         
         self._init_outputs()
@@ -665,45 +732,83 @@ class ArbSeq(object):
                         None,
                         None,
                         """
+                        Returns the maximum number of arbitrary sequences that the function
+                        generator allows.
                         """)
         self.arbitrary.sequence._add_property('loop_count_max',
                         self._get_arbitrary_sequence_loop_count_max,
                         None,
                         None,
                         """
+                        Returns the maximum number of times that the function generator can repeat
+                        a waveform in a sequence.
                         """)
         self.arbitrary.sequence._add_property('length_max',
                         self._get_arbitrary_sequence_length_max,
                         None,
                         None,
                         """
+                        Returns the maximum number of arbitrary waveforms that the function
+                        generator allows in an arbitrary sequence.
                         """)
         self.arbitrary.sequence._add_property('length_min',
                         self._get_arbitrary_sequence_length_min,
                         None,
                         None,
                         """
+                        Returns the minimum number of arbitrary waveforms that the function
+                        generator allows in an arbitrary sequence.
                         """)
         self.arbitrary._add_method('clear_memory',
                         self._arbitrary_clear_memory,
                         """
+                        Removes all previously created arbitrary waveforms and sequences from the
+                        function generator's memory and invalidates all waveform and sequence
+                        handles.
+                        
+                        If a waveform cannot be cleared because it is currently being generated,
+                        this function returns the error Waveform In Use.
+                        
+                        If a sequence cannot be cleared because it is currently being generated,
+                        this function returns the error Sequence In Use.
                         """)
         self.arbitrary.sequence._add_method('clear',
                         self._arbitrary_sequence_clear,
                         """
+                        Removes a previously created arbitrary sequence from the function
+                        generator's memory and invalidates the sequence’s handle.
+                        
+                        If the sequence cannot be cleared because it is currently being generated,
+                        this function returns the error Sequence In Use.
                         """)
         self.arbitrary.sequence._add_method('configure',
                         self._arbitrary_sequence_configure,
                         """
+                        Configures the attributes of the function generator that affect arbitrary
+                        sequence generation. These attributes are the arbitrary sequence handle,
+                        gain, and offset.
                         """)
         self.arbitrary.sequence._add_method('create',
                         self._arbitrary_sequence_create,
                         """
+                        Creates an arbitrary waveform sequence from an array of waveform handles
+                        and a corresponding array of loop counts. The function returns a handle
+                        that identifies the sequence. You pass a sequence handle to the Handle
+                        parameter of the Configure Arbitrary Sequence function to produce that
+                        sequence.
+                        
+                        If the function generator cannot store any more arbitrary sequences, this
+                        function returns the error No Sequences Available.
                         """)
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_method('arbitrary.sequence.configure',
-                        self._arbitrary_sequence_configure)
+                        self._arbitrary_sequence_configure,
+                        """
+                        Configures the attributes of the function generator that affect arbitrary
+                        sequence generation. These attributes are the arbitrary sequence handle,
+                        gain, and offset.
+                        """)
     
     def _get_arbitrary_sequence_number_sequences_max(self):
         return self._arbitrary_sequence_number_sequences_max
@@ -747,6 +852,8 @@ class Trigger(object):
                         self._set_output_trigger_source,
                         None,
                         """
+                        Specifies the trigger source. After the function generator receives a
+                        trigger from this source, it produces a signal.
                         """)
         
         self._init_outputs()
@@ -793,28 +900,41 @@ class StartTrigger(object):
                         self._set_output_start_trigger_delay,
                         None,
                         """
+                        Specifies an additional length of time to delay from the start trigger to
+                        the first point in the waveform generation. The units are seconds.  
                         """)
         self.outputs._add_property('trigger.start.slope',
                         self._get_output_start_trigger_slope,
                         self._set_output_start_trigger_slope,
                         None,
                         """
+                        Specifies the slope of the trigger that starts the generator.
+                        
+                        Values for slope:
+                        
+                        * 'positive'
+                        * 'negative'
+                        * 'either'
                         """)
         self.outputs._add_property('trigger.start.source',
                         self._get_output_start_trigger_source,
                         self._set_output_start_trigger_source,
                         None,
                         """
+                        Specifies the source of the start trigger.
                         """)
         self.outputs._add_property('trigger.start.threshold',
                         self._get_output_start_trigger_threshold,
                         self._set_output_start_trigger_threshold,
                         None,
                         """
+                        Specifies the voltage threshold for the start trigger. The units are
+                        volts.
                         """)
         self.outputs._add_method('trigger.start.configure',
                         self._output_start_trigger_configure,
                         """
+                        This function configures the start trigger properties.
                         """)
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
@@ -822,10 +942,12 @@ class StartTrigger(object):
         self.trigger.start._add_method('configure',
                         self._output_start_trigger_configure,
                         """
+                        This function configures the start trigger properties.
                         """)
         self.trigger.start._add_method('send_software_trigger',
                         self._start_trigger_send_software_trigger,
                         """
+                        This function sends a software-generated start trigger to the instrument.
                         """)
         
         self._init_outputs()
@@ -913,39 +1035,53 @@ class StopTrigger(object):
                         self._set_output_stop_trigger_delay,
                         None,
                         """
+                        Specifies an additional length of time to delay from the stop trigger to
+                        the termination of the generation. The units are seconds.
                         """)
         self.outputs._add_property('trigger.stop.slope',
                         self._get_output_stop_trigger_slope,
                         self._set_output_stop_trigger_slope,
                         None,
                         """
+                        Specifies the slope of the stop trigger.
+                        
+                        Values for slope:
+                        
+                        * 'positive'
+                        * 'negative'
+                        * 'either'
                         """)
         self.outputs._add_property('trigger.stop.source',
                         self._get_output_stop_trigger_source,
                         self._set_output_stop_trigger_source,
                         None,
                         """
+                        Specifies the source of the stop trigger.
                         """)
         self.outputs._add_property('trigger.stop.threshold',
                         self._get_output_stop_trigger_threshold,
                         self._set_output_stop_trigger_threshold,
                         None,
                         """
+                        Specifies the voltage threshold for the stop trigger. The units are volts.
                         """)
         self.outputs._add_method('trigger.stop.configure',
                         self._output_stop_trigger_configure,
                         None,
                         """
+                        This function configures the stop trigger properties.
                         """)
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('stop', ivi.PropertyCollection())
         self.trigger.stop._add_method('configure',
                         self._output_stop_trigger_configure,
                         """
+                        This function configures the stop trigger properties.
                         """)
         self.trigger.stop._add_method('send_software_trigger',
                         self._stop_trigger_send_software_trigger,
                         """
+                        This function sends a software-generated stop trigger to the instrument.
                         """)
         
         self._init_outputs()
@@ -1033,38 +1169,52 @@ class HoldTrigger(object):
                         self._set_output_hold_trigger_delay,
                         None,
                         """
+                        Specifies an additional length of time to delay from the hold trigger to
+                        the pause of the generation. The units are seconds.
                         """)
         self.outputs._add_property('trigger.hold.slope',
                         self._get_output_hold_trigger_slope,
                         self._set_output_hold_trigger_slope,
                         None,
                         """
+                        Specifies the slope of the hold trigger.
+                        
+                        Values for slope:
+                        
+                        * 'positive'
+                        * 'negative'
+                        * 'either'
                         """)
         self.outputs._add_property('trigger.hold.source',
                         self._get_output_hold_trigger_source,
                         self._set_output_hold_trigger_source,
                         None,
                         """
+                        Specifies the source of the hold trigger.
                         """)
         self.outputs._add_property('trigger.hold.threshold',
                         self._get_output_hold_trigger_threshold,
                         self._set_output_hold_trigger_threshold,
                         None,
                         """
+                        Specifies the voltage threshold for the hold trigger. The units are volts.
                         """)
         self.outputs._add_method('trigger.hold.configure',
                         self._output_hold_trigger_configure,
                         """
+                        This function configures the hold trigger properties.
                         """)
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('hold', ivi.PropertyCollection())
         self.trigger.hold._add_method('configure',
                         self._output_hold_trigger_configure,
                         """
+                        This function configures the hold trigger properties.
                         """)
         self.trigger.hold._add_method('send_software_trigger',
                         self._hold_trigger_send_software_trigger,
                         """
+                        This function sends a software-generated hold trigger to the instrument.
                         """)
         
         self._init_outputs()
@@ -1152,38 +1302,53 @@ class ResumeTrigger(object):
                         self._set_output_resume_trigger_delay,
                         None,
                         """
+                        Specifies an additional length of time to delay from the resume trigger to
+                        the resumption of the generation. The units are seconds.
                         """)
         self.outputs._add_property('trigger.resume.slope',
                         self._get_output_resume_trigger_slope,
                         self._set_output_resume_trigger_slope,
                         None,
                         """
+                        Specifies the slope of the resume trigger.
+                        
+                        Values for slope:
+                        
+                        * 'positive'
+                        * 'negative'
+                        * 'either'
                         """)
         self.outputs._add_property('trigger.resume.source',
                         self._get_output_resume_trigger_source,
                         self._set_output_resume_trigger_source,
                         None,
                         """
+                        Specifies the source of the resume trigger.
                         """)
         self.outputs._add_property('trigger.resume.threshold',
                         self._get_output_resume_trigger_threshold,
                         self._set_output_resume_trigger_threshold,
                         None,
                         """
+                        Specifies the voltage threshold for the resume trigger. The units are
+                        volts.
                         """)
         self.outputs._add_method('trigger.resume.configure',
                         self._output_resume_trigger_configure,
                         """
+                        This function configures the resume trigger properties.
                         """)
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('resume', ivi.PropertyCollection())
         self.trigger.resume._add_method('configure',
                         self._output_resume_trigger_configure,
                         """
+                        This function configures the resume trigger properties.
                         """)
         self.trigger.resume._add_method('send_software_trigger',
                         self._resume_trigger_send_software_trigger,
                         """
+                        This function sends a software-generated resume trigger to the instrument.
                         """)
         
         self._init_outputs()
@@ -1271,38 +1436,54 @@ class AdvanceTrigger(object):
                         self._set_output_advance_trigger_delay,
                         None,
                         """
+                        Specifies an additional length of time to delay from the advance trigger
+                        to the advancing to the end of the current waveform. Units are seconds.
                         """)
         self.outputs._add_property('trigger.advance.slope',
                         self._get_output_advance_trigger_slope,
                         self._set_output_advance_trigger_slope,
                         None,
                         """
+                        Specifies the slope of the advance trigger.
+                        
+                        Values for slope:
+                        
+                        * 'positive'
+                        * 'negative'
+                        * 'either'
                         """)
         self.outputs._add_property('trigger.advance.source',
                         self._get_output_advance_trigger_source,
                         self._set_output_advance_trigger_source,
                         None,
                         """
+                        Specifies the source of the advance trigger.
                         """)
         self.outputs._add_property('trigger.advance.threshold',
                         self._get_output_advance_trigger_threshold,
                         self._set_output_advance_trigger_threshold,
                         None,
                         """
+                        Specifies the voltage threshold for the advance trigger. The units are
+                        volts.
                         """)
         self.outputs._add_method('trigger.advance.configure',
                         self._output_advance_trigger_configure,
                         """
+                        This function configures the advance trigger properties.
                         """)
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger.__dict__.setdefault('advance', ivi.PropertyCollection())
         self.trigger.advance._add_method('configure',
                         self._output_advance_trigger_configure,
                         """
+                        This function configures the advance trigger properties.
                         """)
         self.trigger.advance._add_method('send_software_trigger',
                         self._advance_trigger_send_software_trigger,
                         """
+                        This function sends a software-generated advance trigger to the
+                        instrument.
                         """)
         
         self._init_outputs()
@@ -1387,6 +1568,8 @@ class InternalTrigger(object):
                         self._set_internal_trigger_rate,
                         None,
                         """
+                        Specifies the rate at which the function generator’s internal trigger
+                        source produces a trigger, in triggers per second.
                         """)
     
     def _get_internal_trigger_rate(self):
@@ -1454,6 +1637,8 @@ class Burst(object):
                         self._set_output_burst_count,
                         None,
                         """
+                        Specifies the number of waveform cycles that the function generator
+                        produces after it receives a trigger.
                         """)
         
         self._init_outputs()
@@ -1501,12 +1686,23 @@ class ModulateAM(object):
                         self._set_output_am_enabled,
                         None,
                         """
+                        Specifies whether the function generator applies amplitude modulation to
+                        the signal that the function generator produces with the IviFgenStdFunc,
+                        IviFgenArbWfm, or IviFgenArbSeq capability groups. If set to True, the
+                        function generator applies amplitude modulation to the output signal. If
+                        set to False, the function generator does not apply amplitude modulation
+                        to the output signal.
                         """)
         self.outputs._add_property('am.source',
                         self._get_output_am_source,
                         self._set_output_am_source,
                         None,
                         """
+                        Specifies the source of the signal that the function generator uses as the
+                        modulating waveform.
+                        
+                        This attribute affects instrument behavior only when the AM Enabled
+                        attribute is set to True.
                         """)
         
         self.__dict__.setdefault('am', ivi.PropertyCollection())
@@ -1515,22 +1711,49 @@ class ModulateAM(object):
                         self._set_am_internal_depth,
                         None,
                         """
+                        Specifies the extent of modulation the function generator applies to the
+                        carrier waveform when the AM Source attribute is set to AM Internal. The
+                        unit is percentage.
+                        
+                        This attribute affects the behavior of the instrument only when the AM 
+                        ource attribute is set to AM Internal.
                         """)
         self.am._add_property('internal_frequency',
                         self._get_am_internal_frequency,
                         self._set_am_internal_frequency,
                         None,
                         """
+                        Specifies the frequency of the internal modulating waveform source. The
+                        units are Hertz.
+                        
+                        This attribute affects the behavior of the instrument only when the AM 
+                        ource attribute is set to AM Internal.
                         """)
         self.am._add_property('internal_waveform',
                         self._get_am_internal_waveform,
                         self._set_am_internal_waveform,
                         None,
                         """
+                        Specifies the waveform of the internal modulating waveform source.
+                        
+                        This attribute affects the behavior of the instrument only when the AM 
+                        ource attribute is set to AM Internal.
+                        
+                        Values for internal_waveform:
+                        
+                        * 'sine'
+                        * 'square'
+                        * 'triangle'
+                        * 'ramp_up'
+                        * 'ramp_down'
+                        * 'dc'
                         """)
         self.am._add_method('configure_internernal',
                         self._am_configure_internal,
                         """
+                        Configures the attributes that control the function generator's internal
+                        amplitude modulating waveform source. These attributes are the modulation
+                        depth, waveform, and frequency.
                         """)
         
         self._init_outputs()
@@ -1613,6 +1836,10 @@ class ModulateFM(object):
                         self._set_output_fm_enabled,
                         None,
                         """
+                        Specifies whether the function generator applies amplitude modulation to
+                        the carrier waveform. If set to True, the function generator applies
+                        frequency modulation to the output signal. If set to False, the function
+                        generator does not apply frequency modulation to the output signal.
                         """)
         self.outputs._add_property('fm.source',
                         self._get_output_fm_source,
@@ -1627,22 +1854,51 @@ class ModulateFM(object):
                         self._set_fm_internal_deviation,
                         None,
                         """
+                        Specifies the maximum frequency deviation, in Hertz, that the function
+                        generator applies to the carrier waveform when the FM Source attribute is
+                        set to FM Internal.
+                        
+                        This attribute affects the behavior of the instrument only when the FM
+                        Source attribute is set to FM Internal.
                         """)
         self.fm._add_property('internal_frequency',
                         self._get_fm_internal_frequency,
                         self._set_fm_internal_frequency,
                         None,
                         """
+                        Specifies the frequency of the internal modulating waveform source. The
+                        units are hertz.
+                        
+                        This attribute affects the behavior of the instrument only when the FM
+                        Source attribute is set to FM Internal.
                         """)
         self.fm._add_property('internal_waveform',
                         self._get_fm_internal_waveform,
                         self._set_fm_internal_waveform,
                         None,
                         """
+                        Specifies the waveform of the internal modulating waveform source.
+                        
+                        This attribute affects the behavior of the instrument only when the FM
+                        Source attribute is set to FM Internal.
+                        
+                        Values for internal_waveform:
+                        
+                        * 'sine'
+                        * 'square'
+                        * 'triangle'
+                        * 'ramp_up'
+                        * 'ramp_down'
+                        * 'dc'
                         """)
         self.fm._add_method('configure_internernal',
                         self._fm_configure_internal,
                         """
+                        Specifies the source of the signal that the function generator uses as the
+                        modulating waveform.
+                        
+                        This attribute affects instrument behavior only when the FM Enabled
+                        attribute is set to True.
                         """)
         
         self._init_outputs()
@@ -1722,12 +1978,17 @@ class SampleClock(object):
                         self._set_sample_clock_source,
                         None,
                         """
+                        Specifies the clock used for the waveform generation. Note that when using
+                        an external sample clock, the Arbitrary Sample Rate attribute must be set
+                        to the corresponding frequency of the external sample clock.
                         """)
         self.sample_clock._add_property('output_enabled',
                         self._get_sample_clock_output_enabled,
                         self._set_sample_clock_output_enabled,
                         None,
                         """
+                        Specifies whether or not the sample clock appears at the sample clock
+                        output of the generator.
                         """)
         
     def _get_sample_clock_source(self):
@@ -1763,6 +2024,14 @@ class TerminalConfiguration(object):
                         self._set_output_terminal_configuration,
                         None,
                         """
+                        Determines whether the generator will run in single-ended or differential
+                        mode, and whether the output gain and offset values will be analyzed
+                        based on single-ended or differential operation.
+                        
+                        Values for terminal_configuration:
+                        
+                        * 'single_ended'
+                        * 'differential'
                         """)
         
         self._init_outputs()
@@ -1803,12 +2072,42 @@ class ArbChannelWfm(object):
         self.outputs._add_method('arbitrary.create_waveform',
                         self._arbitrary_waveform_create_channel_waveform,
                         """
+                        Creates a channel-specific arbitrary waveform and returns a handle that
+                        identifies that waveform. You pass a waveform handle as the waveformHandle
+                        parameter of the Configure Arbitrary Waveform function to produce that
+                        waveform. You also use the handles this function returns to create a
+                        sequence of arbitrary waveforms with the Create Arbitrary Sequence
+                        function.
+                        
+                        If the instrument has multiple channels, it is possible to create
+                        multi-channel waveforms: the channel names are passed as a
+                        comma-separated list of channel names, and the waveform arrays are
+                        concatenated into a single array. In this case, all waveforms must be of
+                        the same length.
+                        
+                        If the function generator cannot store any more arbitrary waveforms, this
+                        function returns the error No Waveforms Available.
                         """)
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
         self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
         self.arbitrary.waveform._add_method('create_channel_waveform',
                         self._arbitrary_waveform_create_channel_waveform,
                         """
+                        Creates a channel-specific arbitrary waveform and returns a handle that
+                        identifies that waveform. You pass a waveform handle as the waveformHandle
+                        parameter of the Configure Arbitrary Waveform function to produce that
+                        waveform. You also use the handles this function returns to create a
+                        sequence of arbitrary waveforms with the Create Arbitrary Sequence
+                        function.
+                        
+                        If the instrument has multiple channels, it is possible to create
+                        multi-channel waveforms: the channel names are passed as a
+                        comma-separated list of channel names, and the waveform arrays are
+                        concatenated into a single array. In this case, all waveforms must be of
+                        the same length.
+                        
+                        If the function generator cannot store any more arbitrary waveforms, this
+                        function returns the error No Waveforms Available.
                         """)
     
     def _arbitrary_waveform_create_channel_waveform(self, index, data):
@@ -1833,10 +2132,46 @@ class ArbWfmBinary(object):
         self.outputs._add_method('arbitrary.waveform.create_channel_waveform_int16',
                         self._arbitrary_waveform_create_channel_waveform_int16,
                         """
+                        Creates a channel-specific arbitrary waveform and returns a handle that
+                        identifies that waveform. Data is passed in as 16-bit binary data. If the
+                        arbitrary waveform generator supports formats less than 16 bits, call the
+                        BinaryAlignment property to determine whether to left or right justify the
+                        data before passing it to this call. You pass a waveform handle as the
+                        waveformHandle parameter of the Configure Arbitrary Waveform function to
+                        produce that waveform. You also use the handles this function returns to
+                        create a sequence of arbitrary waveforms with the Create Arbitrary
+                        Sequence function.
+                        
+                        If the instrument has multiple channels, it is possible to create
+                        multi-channel waveforms: the channel names are passed as a
+                        comma-separated list of channel names, and the waveform arrays
+                        are concatenated into a single array. In this case, all waveforms
+                        must be of the same length.
+                        
+                        If the function generator cannot store any more arbitrary waveforms, this
+                        function returns the error No Waveforms Available.
                         """)
         self.outputs._add_method('arbitrary.waveform.create_channel_waveform_int32',
                         self._arbitrary_waveform_create_channel_waveform_int32,
                         """
+                        Creates a channel-specific arbitrary waveform and returns a handle that
+                        identifies that waveform. Data is passed in as 32-bit binary data. If the
+                        arbitrary waveform generator supports formats less than 32 bits, call the
+                        BinaryAlignment property to determine whether to left or right justify the
+                        data before passing it to this call. You pass a waveform handle as the
+                        waveformHandle parameter of the Configure Arbitrary Waveform function to
+                        produce that waveform. You also use the handles this function returns to
+                        create a sequence of arbitrary waveforms with the Create Arbitrary
+                        Sequence function.
+                        
+                        If the instrument has multiple channels, it is possible to create
+                        multi-channel waveforms: the channel names are passed as a
+                        comma-separated list of channel names, and the waveform arrays
+                        are concatenated into a single array. In this case, all waveforms
+                        must be of the same length.
+                        
+                        If the function generator cannot store any more arbitrary waveforms, this
+                        function returns the error No Waveforms Available.
                         """)
         self.__dict__.setdefault('arbitrary', ivi.PropertyCollection())
         self.arbitrary._add_property('binary_alignment',
@@ -1844,21 +2179,67 @@ class ArbWfmBinary(object):
                         None,
                         None,
                         """
+                        Identifies whether the arbitrary waveform generator treats binary data
+                        provided to the Create Channel Arbitrary Waveform Int16 or Create Channel
+                        Arbitrary Waveform Int32 functions as left-justified or right-justified.
+                        Binary Alignment is only relevant if the generator supports bit-depths
+                        less than the size of the binarydata type of the create waveform function
+                        being used. For a 16-bit or a 32-bit generator, this function can return
+                        either value.
                         """)
         self.arbitrary._add_property('sample_bit_resolution',
                         self._get_arbitrary_sample_bit_resolution,
                         None,
                         None,
                         """
+                        Returns the number of significant bits that the generator supports in an
+                        arbitrary waveform. Together with the binary alignment, this allows the
+                        user to know the range and resolution of the integers in the waveform.
                         """)
         self.arbitrary.__dict__.setdefault('waveform', ivi.PropertyCollection())
         self.arbitrary.waveform._add_method('create_channel_waveform_int16',
                         self._arbitrary_waveform_create_channel_waveform_int16,
                         """
+                        Creates a channel-specific arbitrary waveform and returns a handle that
+                        identifies that waveform. Data is passed in as 16-bit binary data. If the
+                        arbitrary waveform generator supports formats less than 16 bits, call the
+                        BinaryAlignment property to determine whether to left or right justify the
+                        data before passing it to this call. You pass a waveform handle as the
+                        waveformHandle parameter of the Configure Arbitrary Waveform function to
+                        produce that waveform. You also use the handles this function returns to
+                        create a sequence of arbitrary waveforms with the Create Arbitrary
+                        Sequence function.
+                        
+                        If the instrument has multiple channels, it is possible to create
+                        multi-channel waveforms: the channel names are passed as a
+                        comma-separated list of channel names, and the waveform arrays
+                        are concatenated into a single array. In this case, all waveforms
+                        must be of the same length.
+                        
+                        If the function generator cannot store any more arbitrary waveforms, this
+                        function returns the error No Waveforms Available.
                         """)
         self.arbitrary.waveform._add_method('create_channel_waveform_int32',
                         self._arbitrary_waveform_create_channel_waveform_int32,
                         """
+                        Creates a channel-specific arbitrary waveform and returns a handle that
+                        identifies that waveform. Data is passed in as 32-bit binary data. If the
+                        arbitrary waveform generator supports formats less than 32 bits, call the
+                        BinaryAlignment property to determine whether to left or right justify the
+                        data before passing it to this call. You pass a waveform handle as the
+                        waveformHandle parameter of the Configure Arbitrary Waveform function to
+                        produce that waveform. You also use the handles this function returns to
+                        create a sequence of arbitrary waveforms with the Create Arbitrary
+                        Sequence function.
+                        
+                        If the instrument has multiple channels, it is possible to create
+                        multi-channel waveforms: the channel names are passed as a
+                        comma-separated list of channel names, and the waveform arrays
+                        are concatenated into a single array. In this case, all waveforms
+                        must be of the same length.
+                        
+                        If the function generator cannot store any more arbitrary waveforms, this
+                        function returns the error No Waveforms Available.
                         """)
     
     def _get_arbitrary_binary_alignment(self):
@@ -1900,50 +2281,76 @@ class DataMarker(object):
                         None,
                         None,
                         """
+                        This attribute returns the repeated capability identifier defined by
+                        specific driver for the data marker that corresponds to the index that the
+                        user specifies. If the driver defines a qualified Data Marker name, this
+                        property returns the qualified name.
+                        
+                        If the value that the user passes for the Index parameter is less than
+                        zero or greater than the value of the Data Marker Count, the attribute
+                        returns an empty string for the value and returns an error.
                         """)
         self.data_markers._add_property('amplitude',
                         self._get_data_marker_amplitude,
                         self._set_data_marker_amplitude,
                         None,
                         """
+                        Specifies the amplitude of the data marker output. The units are volts.
                         """)
         self.data_markers._add_property('bit_position',
                         self._get_data_marker_bit_position,
                         self._set_data_marker_bit_position,
                         None,
                         """
+                        Specifies the bit position of the binary representation of the waveform
+                        data that will be output as a data marker. A value of 0 indicates the
+                        least significant bit.
                         """)
         self.data_markers._add_property('delay',
                         self._get_data_marker_delay,
                         self._set_data_marker_delay,
                         None,
                         """
+                        Specifies the amount of delay applied to the data marker output with
+                        respect to the analog data output. A value of zero indicates the marker is
+                        aligned with the analog data output.  The units are seconds.
                         """)
         self.data_markers._add_property('destination',
                         self._get_data_marker_destination,
                         self._set_data_marker_destination,
                         None,
                         """
+                        Specifies the destination terminal for the data marker output.
                         """)
         self.data_markers._add_property('polarity',
                         self._get_data_marker_polarity,
                         self._set_data_marker_polarity,
                         None,
                         """
+                        Specifies the polarity of the data marker output.
+                        
+                        Values for polarity:
+                        
+                        * 'active_high'
+                        * 'active_low'
                         """)
         self.data_markers._add_property('source_channel',
                         self._get_data_marker_source_channel,
                         self._set_data_marker_source_channel,
                         None,
                         """
+                        Specifies the channel whose data bit will be output as a marker.
                         """)
         self.data_markers._add_method('configure',
                         self._data_marker_configure,
                         """
+                        Configures some of the common data marker attributes.
                         """)
         self.data_markers._add_method('clear',
                         self._data_marker_clear,
                         """
+                        Disables all of the data markers by setting their Data Marker Destination
+                        attribute to None.
                         """)
         
         self._init_data_markers()
@@ -2058,6 +2465,15 @@ class ArbDataMask(object):
                         self._set_arbitrary_data_mask,
                         None,
                         """
+                        Determines which bits of the output data are masked out. This is
+                        especially useful when combined with Data Markers so that the bits
+                        embedded with the data to be used for markers are not actually output by
+                        the generator.
+                        
+                        A value of 1 for a particular bit indicates that the data bit should be
+                        output. A value of 0 indicates that the data bit should be masked out. For
+                        example, if the value of this property is 0xFFFFFFFF (all bits are 1), no
+                        masking is applied.
                         """)
     
     def _get_arbitrary_data_mask(self):
@@ -2091,52 +2507,81 @@ class SparseMarker(object):
                         None,
                         None,
                         """
+                        This attribute returns the repeated capability identifier defined by
+                        specific driver for the sparse marker that corresponds to the index that
+                        the user specifies. If the driver defines a qualified Sparse Marker name,
+                        this property returns the qualified name.
+                        
+                        If the value that the user passes for the Index parameter is less than one
+                        or greater than the value of the Sparse Marker Count, the attribute
+                        returns an empty string for the value and returns an error.
                         """)
         self.sparse_markers._add_property('amplitude',
                         self._get_sparse_marker_amplitude,
                         self._set_sparse_marker_amplitude,
                         None,
                         """
+                        Specifies the amplitude of the sparse marker output. The units are volts.
                         """)
         self.sparse_markers._add_property('delay',
                         self._get_sparse_marker_delay,
                         self._set_sparse_marker_delay,
                         None,
                         """
+                        Specifies the amount of delay applied to the sparse marker output with
+                        respect to the analog data output. A value of zero indicates the marker is
+                        aligned with the analog data output. The units are seconds.
                         """)
         self.sparse_markers._add_property('destination',
                         self._get_sparse_marker_destination,
                         self._set_sparse_marker_destination,
                         None,
                         """
+                        Specifies the destination terminal for the sparse marker output.
                         """)
         self.sparse_markers._add_property('polarity',
                         self._get_sparse_marker_polarity,
                         self._set_sparse_marker_polarity,
                         None,
                         """
+                        Specifies the polarity of the sparse marker output.
+                        
+                        Values for polarity:
+                        
+                        * 'active_high'
+                        * 'active_low'
                         """)
         self.sparse_markers._add_property('waveform_handle',
                         self._get_sparse_marker_waveform_handle,
                         self._set_sparse_marker_waveform_handle,
                         None,
                         """
+                        Specifies the waveform whose indexes the sparse marker refers to.
                         """)
         self.sparse_markers._add_method('configure',
                         self._sparse_marker_configure,
                         """
+                        Configures some of the common sparse marker attributes.
                         """)
         self.sparse_markers._add_method('get_indexes',
                         self._sparse_marker_get_indexes,
                         """
+                        Gets the coerced indexes associated with the sparse marker. These indexes
+                        are specified by either the Configure SparseMarker function or the Set
+                        Sparse Marker Indexes function.
                         """)
         self.sparse_markers._add_method('set_indexes',
                         self._sparse_marker_set_indexes,
                         """
+                        Sets the indexes associated with the sparse marker. These indexes may be
+                        coerced by the driver. Use the Get Sparse Marker Indexes function to find
+                        the coerced values.
                         """)
         self.sparse_markers._add_method('clear',
                         self._sparse_marker_clear,
                         """
+                        Disables all of the sparse markers by setting their Sparse Marker
+                        Destination attribute to None.
                         """)
         
         self._init_sparse_markers()
@@ -2248,6 +2693,14 @@ class ArbSeqDepth(object):
                         None,
                         None,
                         """
+                        Returns the maximum sequence depth - that is, the number of times a
+                        sequence can include other sequences recursively. A depth of zero
+                        indicates the generator supports waveforms only. A depth of 1 indicates a
+                        generator supports sequences of waveforms, but not sequences of sequences.
+                        A depth of 2 or greater indicates that the generator supports sequences of
+                        sequences. Note that if the MaxSequenceDepth is 2 or greater, the driver
+                        must return unique handles for waveforms and sequences so that a sequence
+                        may contain both waveform and sequence handles.
                         """)
     
     def _get_arbitrary_sequence_depth_max(self):
