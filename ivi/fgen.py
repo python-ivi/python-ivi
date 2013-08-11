@@ -384,7 +384,6 @@ class StdFunc(object):
                         Amplitude, Frequency, and Start Phase attributes.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -591,7 +590,6 @@ class ArbWfm(object):
                         produce that waveform.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -687,7 +685,6 @@ class ArbFrequency(object):
                         generated.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -856,7 +853,6 @@ class Trigger(object):
                         trigger from this source, it produces a signal.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -950,7 +946,6 @@ class StartTrigger(object):
                         This function sends a software-generated start trigger to the instrument.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1084,7 +1079,6 @@ class StopTrigger(object):
                         This function sends a software-generated stop trigger to the instrument.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1217,7 +1211,6 @@ class HoldTrigger(object):
                         This function sends a software-generated hold trigger to the instrument.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1351,7 +1344,6 @@ class ResumeTrigger(object):
                         This function sends a software-generated resume trigger to the instrument.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1486,7 +1478,6 @@ class AdvanceTrigger(object):
                         instrument.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1643,7 +1634,6 @@ class Burst(object):
                         produces after it receives a trigger.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1758,7 +1748,6 @@ class ModulateAM(object):
                         depth, waveform, and frequency.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -1903,7 +1892,6 @@ class ModulateFM(object):
                         attribute is set to True.
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -2036,7 +2024,6 @@ class TerminalConfiguration(object):
                         * 'differential'
                         """)
         
-        self._init_outputs()
     
     def _init_outputs(self):
         try:
@@ -2355,7 +2342,6 @@ class DataMarker(object):
                         attribute to None.
                         """)
         
-        self._init_data_markers()
         
     def _init_data_markers(self):
         try:
@@ -2586,7 +2572,6 @@ class SparseMarker(object):
                         Destination attribute to None.
                         """)
         
-        self._init_sparse_markers()
         
     def _init_sparse_markers(self):
         try:
