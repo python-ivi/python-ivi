@@ -307,7 +307,7 @@ class StdFunc(object):
         self._output_standard_waveform_duty_cycle_high = list()
         self._output_standard_waveform_frequency = list()
         self._output_standard_waveform_start_phase = list()
-        self._output_standard_waveform_waveform_function = list()
+        self._output_standard_waveform_waveform = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
         self.outputs._add_property('standard_waveform.amplitude',
@@ -340,9 +340,9 @@ class StdFunc(object):
                         None,
                         """
                         """)
-        self.outputs._add_property('standard_waveform.waveform_function',
-                        self._get_output_standard_waveform_waveform_function,
-                        self._set_output_standard_waveform_waveform_function,
+        self.outputs._add_property('standard_waveform.waveform',
+                        self._get_output_standard_waveform_waveform,
+                        self._set_output_standard_waveform_waveform,
                         None,
                         """
                         """)
@@ -364,14 +364,14 @@ class StdFunc(object):
         self._output_standard_waveform_duty_cycle_high = list()
         self._output_standard_waveform_frequency = list()
         self._output_standard_waveform_start_phase = list()
-        self._output_standard_waveform_waveform_function = list()
+        self._output_standard_waveform_waveform = list()
         for i in range(self._output_count):
             self._output_standard_waveform_amplitude.append(0)
             self._output_standard_waveform_dc_offset.append(0)
             self._output_standard_waveform_duty_cycle_high.append(0)
             self._output_standard_waveform_frequency.append(0)
             self._output_standard_waveform_start_phase.append(0)
-            self._output_standard_waveform_waveform_function.append('sine')
+            self._output_standard_waveform_waveform.append('sine')
         
         self.outputs._set_list(self._output_name)
     
@@ -420,22 +420,23 @@ class StdFunc(object):
         value = float(value)
         self._output_standard_waveform_frequency[index] = value
     
-    def _get_output_standard_waveform_waveform_function(self, index):
+    def _get_output_standard_waveform_waveform(self, index):
         index = ivi.get_index(self._output_name, index)
-        return self._output_standard_waveform_waveform_function[index]
+        return self._output_standard_waveform_waveform[index]
     
-    def _set_output_standard_waveform_waveform_function(self, index, value):
+    def _set_output_standard_waveform_waveform(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if value not in StandardWaveform:
             raise ivi.ValueNotSupportedException()
-        self._output_standard_waveform_waveform_function[index] = value
+        self._output_standard_waveform_waveform[index] = value
     
     def _output_standard_waveform_configure(self, index, function, amplitude, dc_offset, frequency, start_phase):
-        self._set_output_standard_waveform_waveform_function(index, function)
-        self._set_output_standard_waveform_amplitude(index, amplitude)
+        self._set_output_standard_waveform_waveform(index, function)
         self._set_output_standard_waveform_dc_offset(index, dc_offset)
-        self._set_output_standard_waveform_frequency(index, frequency)
-        self._set_output_standard_waveform_start_phase(index, start_phase)
+        if function != 'dc':
+            self._set_output_standard_waveform_amplitude(index, amplitude)
+            self._set_output_standard_waveform_frequency(index, frequency)
+            self._set_output_standard_waveform_start_phase(index, start_phase)
     
     
 class ArbWfm(object):
@@ -1491,7 +1492,7 @@ class ModulateAM(object):
         self._output_am_enabled = list()
         self._am_internal_depth = 0
         self._am_internal_frequency = 0
-        self._am_internal_waveform_function = 0
+        self._am_internal_waveform = 0
         self._output_am_source = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
@@ -1521,9 +1522,9 @@ class ModulateAM(object):
                         None,
                         """
                         """)
-        self.am._add_property('internal_waveform_function',
-                        self._get_am_internal_waveform_function,
-                        self._set_am_internal_waveform_function,
+        self.am._add_property('internal_waveform',
+                        self._get_am_internal_waveform,
+                        self._set_am_internal_waveform,
                         None,
                         """
                         """)
@@ -1578,16 +1579,16 @@ class ModulateAM(object):
         value = float(value)
         self._am_internal_frequency = value
     
-    def _get_am_internal_waveform_function(self):
-        return self._am_internal_waveform_function
+    def _get_am_internal_waveform(self):
+        return self._am_internal_waveform
     
-    def _set_am_internal_waveform_function(self, value):
+    def _set_am_internal_waveform(self, value):
         value = float(value)
-        self._am_internal_waveform_function = value
+        self._am_internal_waveform = value
     
-    def _am_configure_internal(self, depth, waveform_function, frequency):
+    def _am_configure_internal(self, depth, waveform, frequency):
         self._set_am_internal_depth(depth)
-        self._set_am_internal_waveform_function(waveform_function)
+        self._set_am_internal_waveform(waveform)
         self._set_am_internal_frequency(frequency)
     
     
@@ -1603,7 +1604,7 @@ class ModulateFM(object):
         self._output_fm_enabled = list()
         self._fm_internal_deviation = 0
         self._fm_internal_frequency = 0
-        self._fm_internal_waveform_function = 0
+        self._fm_internal_waveform = 0
         self._output_fm_source = list()
         
         self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
@@ -1633,9 +1634,9 @@ class ModulateFM(object):
                         None,
                         """
                         """)
-        self.fm._add_property('internal_waveform_function',
-                        self._get_fm_internal_waveform_function,
-                        self._set_fm_internal_waveform_function,
+        self.fm._add_property('internal_waveform',
+                        self._get_fm_internal_waveform,
+                        self._set_fm_internal_waveform,
                         None,
                         """
                         """)
@@ -1690,16 +1691,16 @@ class ModulateFM(object):
         value = float(value)
         self._fm_internal_frequency = value
     
-    def _get_fm_internal_waveform_function(self):
-        return self._fm_internal_waveform_function
+    def _get_fm_internal_waveform(self):
+        return self._fm_internal_waveform
     
-    def _set_fm_internal_waveform_function(self, value):
+    def _set_fm_internal_waveform(self, value):
         value = float(value)
-        self._fm_internal_waveform_function = value
+        self._fm_internal_waveform = value
     
-    def _fm_configure_internal(self, deviation, waveform_function, frequency):
+    def _fm_configure_internal(self, deviation, waveform, frequency):
         self._set_fm_internal_deviation(deviation)
-        self._set_fm_internal_waveform_function(waveform_function)
+        self._set_fm_internal_waveform(waveform)
         self._set_fm_internal_frequency(frequency)
     
     

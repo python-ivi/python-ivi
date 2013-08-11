@@ -354,23 +354,23 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
             self._set_cache_valid(valid=False,index=k)
         self._set_cache_valid(index=index)
     
-    def _get_output_standard_waveform_waveform_function(self, index):
+    def _get_output_standard_waveform_waveform(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             resp = self._ask(":fg:ch%d:shape?" % (index+1)).split(' ', 1)[1]
             value = resp.lower()
             value = [k for k,v in StandardWaveformMapping.items() if v==value][0]
-            self._output_standard_waveform_waveform_function[index] = value
+            self._output_standard_waveform_waveform[index] = value
             self._set_cache_valid(index=index)
-        return self._output_standard_waveform_waveform_function[index]
+        return self._output_standard_waveform_waveform[index]
     
-    def _set_output_standard_waveform_waveform_function(self, index, value):
+    def _set_output_standard_waveform_waveform(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if value not in StandardWaveformMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":fg:ch%d:shape %s" % (index+1, StandardWaveformMapping[value]))
-        self._output_standard_waveform_waveform_function[index] = value
+        self._output_standard_waveform_waveform[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_arbitrary_gain(self, index):
