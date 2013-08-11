@@ -1696,7 +1696,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 d = docs[n]
                 if type(d) == dict:
                     # recurse into node
-                    st += self.doc(docs=d, prefix=prefix)
+                    st += self.doc(docs=d, prefix=prefix+n)
                 else:
                     # print leaf (method or property)
                     st += prefix + n + "\n"
