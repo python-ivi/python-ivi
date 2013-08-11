@@ -24,6 +24,7 @@ Contents:
    intro
    examples
    ivi
+   fgen
    dcpwr
    newdriver
    appendix
