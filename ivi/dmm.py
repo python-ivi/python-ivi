@@ -63,16 +63,24 @@ class Base(object):
         self.trigger._add_property('delay_auto',
                         self._get_trigger_delay_auto,
                         self._set_trigger_delay_auto)
-        self.trigger.configure = self._trigger_configure
+        self.trigger._add_method('configure',
+                        self._trigger_configure)
         
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement.abort = self._measurement_abort
-        self.measurement.fetch = self._measurement_fetch
-        self.measurement.initiate = self._measurement_initiate
-        self.measurement.is_out_of_range = self._measurement_is_out_of_range
-        self.measurement.is_over_range = self._measurement_is_over_range
-        self.measurement.is_under_range = self._measurement_is_under_range
-        self.measurement.read = self._measurement_read
+        self.measurement._add_method('abort',
+                        self._measurement_abort)
+        self.measurement._add_method('fetch',
+                        self._measurement_fetch)
+        self.measurement._add_method('initiate',
+                        self._measurement_initiate)
+        self.measurement._add_method('is_out_of_range',
+                        self._measurement_is_out_of_range)
+        self.measurement._add_method('is_over_range',
+                        self._measurement_is_over_range)
+        self.measurement._add_method('is_under_range',
+                        self._measurement_is_under_range)
+        self.measurement._add_method('read',
+                        self._measurement_read)
     
     def _get_measurement_function(self):
         return self._measurement_function
@@ -188,7 +196,8 @@ class ACMeasurement(object):
         self.ac._add_property('frequency_min',
                         self._get_ac_frequency_min,
                         self._set_ac_frequency_min)
-        self.ac.configure_bandwidth = self._ac_configure_bandwidth
+        self.ac._add_method('configure_bandwidth',
+                        self._ac_configure_bandwidth)
         
     
     def _get_ac_frequency_max(self):

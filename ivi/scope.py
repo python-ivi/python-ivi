@@ -104,7 +104,8 @@ class Base(object):
         self.acquisition._add_property('time_per_record',
                         self._get_acquisition_time_per_record,
                         self._set_acquisition_time_per_record)
-        self.acquisition.configure_record = self._acquisition_configure_record
+        self.acquisition._add_method('configure_record',
+                        self._acquisition_configure_record)
         self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
         self.channels._add_property('name',
                         self._get_channel_name)
@@ -140,8 +141,10 @@ class Base(object):
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
         self.measurement._add_property('status',
                         self._get_measurement_status)
-        self.measurement.abort = self._measurement_abort
-        self.measurement.initiate = self._measurement_initiate
+        self.measurement._add_method('abort',
+                        self._measurement_abort)
+        self.measurement._add_method('initiate',
+                        self._measurement_initiate)
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
         self.trigger._add_property('coupling',
                         self._get_trigger_coupling,
@@ -156,14 +159,16 @@ class Base(object):
         self.trigger.edge._add_property('slope',
                         self._get_trigger_edge_slope,
                         self._set_trigger_edge_slope)
-        self.trigger.edge.configure = self._trigger_edge_configure
+        self.trigger.edge._add_method('configure',
+                        self._trigger_edge_configure)
         self.trigger._add_property('source',
                         self._get_trigger_source,
                         self._set_trigger_source)
         self.trigger._add_property('type',
                         self._get_trigger_type,
                         self._set_trigger_type)
-        self.trigger.configure = self._trigger_configure
+        self.trigger._add_method('configure',
+                        self._trigger_configure)
         
         self._init_channels()
     
@@ -437,7 +442,8 @@ class TVTrigger(object):
         self.trigger.tv._add_property('signal_format',
                         self._get_trigger_tv_signal_format,
                         self._set_trigger_tv_signal_format)
-        self.trigger.tv.configure = self._trigger_tv_configure
+        self.trigger.tv._add_method('configure',
+                        self._trigger_tv_configure)
     
     def _get_trigger_tv_trigger_event(self):
         return self._trigger_tv_trigger_event
@@ -499,7 +505,8 @@ class RuntTrigger(object):
         self.trigger.runt._add_property('polarity',
                         self._get_trigger_runt_polarity,
                         self._set_trigger_runt_polarity)
-        self.trigger.runt.configure = self._trigger_runt_configure
+        self.trigger.runt._add_method('configure',
+                        self._trigger_runt_configure)
     
     def _get_trigger_runt_threshold_high(self):
         return self._trigger_runt_threshold_high
@@ -553,7 +560,8 @@ class GlitchTrigger(object):
         self.trigger.glitch._add_property('width',
                         self._get_trigger_glitch_width,
                         self._set_trigger_glitch_width)
-        self.trigger.glitch.configure = self._trigger_glitch_configure
+        self.trigger.glitch._add_method('configure',
+                        self._trigger_glitch_configure)
     
     def _get_trigger_glitch_condition(self):
         return self._trigger_glitch_condition
@@ -613,7 +621,8 @@ class WidthTrigger(object):
         self.trigger.width._add_property('polarity',
                         self._get_trigger_width_polarity,
                         self._set_trigger_width_polarity)
-        self.trigger.width.configure = self._trigger_width_configure
+        self.trigger.width._add_method('configure',
+                        self._trigger_width_configure)
     
     def _get_trigger_width_condition(self):
         return self._trigger_width_condition
@@ -701,7 +710,8 @@ class WaveformMeasurement(object):
         self.reference_level._add_property('low',
                         self._get_reference_level_low,
                         self._set_reference_level_low)
-        self.reference_level.configure = self._reference_level_configure
+        self.reference_level._add_method('configure',
+                        self._reference_level_configure)
         self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
         self.channels._add_method('measurement.fetch_waveform_measurement',
                         self._measurement_fetch_waveform_measurement)
@@ -923,7 +933,8 @@ class AutoSetup(object):
         self._add_group_capability('IviScopeAutoSetup')
         
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement.auto_setup = self._measurement_auto_setup
+        self.measurement._add_method('auto_setup',
+                        self._measurement_auto_setup)
     
     def _measurement_auto_setup(self):
         pass

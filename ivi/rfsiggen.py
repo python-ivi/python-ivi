@@ -66,10 +66,14 @@ class Base(object):
         self.rf._add_property('output_enabled',
                         self._get_rf_output_enabled,
                         self._set_rf_output_enabled)
-        self.rf.configure = self._rf_configure
-        self.rf.disable_all_modulation = self._rf_disable_all_modulation
-        self.rf.is_settled = self._rf_is_settled
-        self.rf.wait_until_settled = self._rf_wait_until_settled
+        self.rf._add_method('configure',
+                        self._rf_configure)
+        self.rf._add_method('disable_all_modulation',
+                        self._rf_disable_all_modulation)
+        self.rf._add_method('is_settled',
+                        self._rf_is_settled)
+        self.rf._add_method('wait_until_settled',
+                        self._rf_wait_until_settled)
         self.__dict__.setdefault('alc', ivi.PropertyCollection())
         self.alc._add_property('enabled',
                         self._get_alc_enabled,
@@ -170,7 +174,8 @@ class ModulateAM(object):
         self.analog_modulation.am._add_property('depth',
                         self._get_analog_modulation_am_depth,
                         self._set_analog_modulation_am_depth)
-        self.analog_modulation.am.configure = self._analog_modulation_am_configure
+        self.analog_modulation.am._add_method('configure',
+                        self._analog_modulation_am_configure)
     
     def _get_analog_modulation_am_enabled(self):
         return self._analog_modulation_am_enabled
@@ -252,7 +257,8 @@ class ModulateFM(object):
         self.analog_modulation.fm._add_property('deviation',
                         self._get_analog_modulation_fm_deviation,
                         self._set_analog_modulation_fm_deviation)
-        self.analog_modulation.fm.configure = self._analog_modulation_fm_configure
+        self.analog_modulation.fm._add_method('configure',
+                        self._analog_modulation_fm_configure)
     
     def _get_analog_modulation_fm_enabled(self):
         return self._analog_modulation_fm_enabled
@@ -326,7 +332,8 @@ class ModulatePM(object):
         self.analog_modulation.pm._add_property('deviation',
                         self._get_analog_modulation_pm_deviation,
                         self._set_analog_modulation_pm_deviation)
-        self.analog_modulation.pm.configure = self._analog_modulation_pm_configure
+        self.analog_modulation.pm._add_method('configure',
+                        self._analog_modulation_pm_configure)
     
     def _get_analog_modulation_pm_enabled(self):
         return self._analog_modulation_pm_enabled
@@ -458,7 +465,8 @@ class LFGenerator(object):
         self.lf_generator._add_property('waveform',
                         self._get_lf_generator_waveform,
                         self._set_lf_generator_waveform)
-        self.lf_generator.configure = self._lf_generator_configure
+        self.lf_generator._add_method('configure',
+                        self._lf_generator_configure)
     
     def _get_lf_generator_active_lf_generator(self):
         return self._lf_generator_active_lf_generator
@@ -512,7 +520,8 @@ class LFGeneratorOutput(object):
         self.lf_generator.output._add_property('amplitude',
                         self._get_lf_generator_output_amplitude,
                         self._set_lf_generator_output_amplitude)
-        self.lf_generator.output.configure = self._lf_generator_output_configure
+        self.lf_generator.output._add_method('configure',
+                        self._lf_generator_output_configure)
     
     def _get_lf_generator_output_amplitude(self):
         return self._lf_generator_output_amplitude
@@ -567,8 +576,10 @@ class PulseGenerator(object):
         self.pulse_generator._add_property('external_trigger_delay',
                         self._get_pulse_generator_external_trigger_delay,
                         self._set_pulse_generator_external_trigger_delay)
-        self.pulse_generator.configure_external_trigger = self._pulse_generator_configure_external_trigger
-        self.pulse_generator.configure = self._pulse_generator_configure
+        self.pulse_generator._add_method('configure_external_trigger',
+                        self._pulse_generator_configure_external_trigger)
+        self.pulse_generator._add_method('configure',
+                        self._pulse_generator_configure)
     
     def _get_pulse_generator_internal_trigger_period(self):
         return self._pulse_generator_internal_trigger_period
@@ -642,7 +653,8 @@ class PulseDoubleGenerator(object):
         self.pulse_generator.double_pulse._add_property('delay',
                         self._get_pulse_generator_double_pulse_delay,
                         self._set_pulse_generator_double_pulse_delay)
-        self.pulse_generator.double_pulse.configure = self._pulse_generator_double_pulse_configure
+        self.pulse_generator.double_pulse._add_method('configure',
+                        self._pulse_generator_double_pulse_configure)
     
     def _get_pulse_generator_double_pulse_enabled(self):
         return self._pulse_generator_double_pulse_enabled
@@ -682,7 +694,8 @@ class PulseGeneratorOutput(object):
         self.pulse_generator.output._add_property('enabled',
                         self._get_pulse_generator_output_enabled,
                         self._set_pulse_generator_output_enabled)
-        self.pulse_generator.output.configure = self._pulse_generator_output_configure
+        self.pulse_generator.output._add_method('configure',
+                        self._pulse_generator_output_configure)
     
     def _get_pulse_generator_output_polarity(self):
         return self._pulse_generator_output_polarity
@@ -721,7 +734,8 @@ class Sweep(object):
         self.sweep._add_property('trigger_source',
                         self._get_sweep_trigger_source,
                         self._set_sweep_trigger_source)
-        self.sweep.configure = self._sweep_configure
+        self.sweep._add_method('configure',
+                        self._sweep_configure)
     
     def _get_sweep_mode(self):
         return self._sweep_mode
@@ -766,8 +780,10 @@ class FrequencySweep(object):
         self.sweep.frequency_sweep._add_property('time',
                         self._get_sweep_frequency_sweep_time,
                         self._set_sweep_frequency_sweep_time)
-        self.sweep.frequency_sweep.configure_start_stop = self._sweep_frequency_sweep_configure_start_stop
-        self.sweep.frequency_sweep.configure_center_span = self._sweep_frequency_sweep_configure_center_span
+        self.sweep.frequency_sweep._add_method('configure_start_stop',
+                        self._sweep_frequency_sweep_configure_start_stop)
+        self.sweep.frequency_sweep._add_method('configure_center_span',
+                        self._sweep_frequency_sweep_configure_center_span)
     
     def _get_sweep_frequency_sweep_start(self):
         return self._sweep_frequency_sweep_start
@@ -822,7 +838,8 @@ class PowerSweep(object):
         self.sweep.power_sweep._add_property('time',
                         self._get_sweep_power_sweep_time,
                         self._set_sweep_power_sweep_time)
-        self.sweep.power_sweep.configure_start_stop = self._sweep_power_sweep_configure_start_stop
+        self.sweep.power_sweep._add_method('configure_start_stop',
+                        self._sweep_power_sweep_configure_start_stop)
     
     def _get_sweep_power_sweep_start(self):
         return self._sweep_power_sweep_start
@@ -885,9 +902,12 @@ class FrequencyStep(object):
         self.sweep.frequency_step._add_property('dwell',
                         self._get_sweep_frequency_step_dwell,
                         self._set_sweep_frequency_step_dwell)
-        self.sweep.frequency_step.configure_start_stop = self._sweep_frequency_step_configure_start_stop
-        self.sweep.frequency_step.configure_dwell = self._sweep_frequency_step_configure_dwell
-        self.sweep.frequency_step.reset = self._sweep_frequency_step_reset
+        self.sweep.frequency_step._add_method('configure_start_stop',
+                        self._sweep_frequency_step_configure_start_stop)
+        self.sweep.frequency_step._add_method('configure_dwell',
+                        self._sweep_frequency_step_configure_dwell)
+        self.sweep.frequency_step._add_method('reset',
+                        self._sweep_frequency_step_reset)
     
     def _get_sweep_frequency_step_start(self):
         return self._sweep_frequency_step_start
@@ -977,9 +997,12 @@ class PowerStep(object):
         self.sweep.power_step._add_property('dwell',
                         self._get_sweep_power_step_dwell,
                         self._set_sweep_power_step_dwell)
-        self.sweep.power_step.configure_start_stop = self._sweep_power_step_configure_start_stop
-        self.sweep.power_step.configure_dwell = self._sweep_power_step_configure_dwell
-        self.sweep.power_step.reset = self._sweep_power_step_reset
+        self.sweep.power_step._add_method('configure_start_stop',
+                        self._sweep_power_step_configure_start_stop)
+        self.sweep.power_step._add_method('configure_dwell',
+                        self._sweep_power_step_configure_dwell)
+        self.sweep.power_step._add_method('reset',
+                        self._sweep_power_step_reset)
     
     def _get_sweep_power_step_start(self):
         return self._sweep_power_step_start
@@ -1052,12 +1075,18 @@ class List(object):
         self.sweep.list._add_property('dwell',
                         self._get_sweep_list_dwell,
                         self._set_sweep_list_dwell)
-        self.sweep.list.create_frequency = self._sweep_list_create_frequency
-        self.sweep.list.create_power = self._sweep_list_create_power
-        self.sweep.list.create_frequency_power = self._sweep_list_create_frequency_power
-        self.sweep.list.clear_all = self._sweep_list_clear_all
-        self.sweep.list.configure_dwell = self._sweep_list_configure_dwell
-        self.sweep.list.reset = self._sweep_list_reset
+        self.sweep.list._add_method('create_frequency',
+                        self._sweep_list_create_frequency)
+        self.sweep.list._add_method('create_power',
+                        self._sweep_list_create_power)
+        self.sweep.list._add_method('create_frequency_power',
+                        self._sweep_list_create_frequency_power)
+        self.sweep.list._add_method('clear_all',
+                        self._sweep_list_clear_all)
+        self.sweep.list._add_method('configure_dwell',
+                        self._sweep_list_configure_dwell)
+        self.sweep.list._add_method('reset',
+                        self._sweep_list_reset)
     
     def _get_sweep_list_selected_list(self):
         return self._sweep_list_selected_list
@@ -1118,7 +1147,8 @@ class ALC(object):
         self.alc._add_property('bandwidth',
                         self._get_alc_bandwidth,
                         self._set_alc_bandwidth)
-        self.alc.configure = self._alc_configure
+        self.alc._add_method('configure',
+                        self._alc_configure)
     
     def _get_alc_source(self):
         return self._alc_source
@@ -1158,7 +1188,8 @@ class ReferenceOscillator(object):
         self.reference_oscillator._add_property('external_frequency',
                         self._get_reference_oscillator_external_frequency,
                         self._set_reference_oscillator_external_frequency)
-        self.reference_oscillator.configure = self._reference_oscillator_configure
+        self.reference_oscillator._add_method('configure',
+                        self._reference_oscillator_configure)
     
     def _get_reference_oscillator_source(self):
         return self._reference_oscillator_source
@@ -1218,8 +1249,10 @@ class ModulateIQ(object):
         self.iq._add_property('swap_enabled',
                         self._get_iq_swap_enabled,
                         self._set_iq_swap_enabled)
-        self.iq.configure = self._iq_configure
-        self.iq.calibrate = self._iq_calibrate
+        self.iq._add_method('configure',
+                        self._iq_configure)
+        self.iq._add_method('calibrate',
+                        self._iq_calibrate)
     
     def _get_iq_enabled(self):
         return self._iq_enabled
@@ -1289,7 +1322,8 @@ class IQImpairment(object):
         self.iq.impairment._add_property('iq_skew',
                         self._get_iq_impairment_iq_skew,
                         self._set_iq_impairment_iq_skew)
-        self.iq.impairment.configure = self._iq_impairment_configure
+        self.iq.impairment._add_method('configure',
+                        self._iq_impairment_configure)
     
     def _get_iq_impairment_enabled(self):
         return self._iq_impairment_enabled
@@ -1376,9 +1410,12 @@ class ArbGenerator(object):
         self.digital_modulation.arb._add_property('external_trigger_slope',
                         self._get_digital_modulation_arb_external_trigger_slope,
                         self._set_digital_modulation_arb_external_trigger_slope)
-        self.digital_modulation.arb.configure = self._digital_modulation_arb_configure
-        self.digital_modulation.arb.write_waveform = self._digital_modulation_arb_write_waveform
-        self.digital_modulation.arb.clear_all_waveforms = self._digital_modulation_arb_clear_all_waveforms
+        self.digital_modulation.arb._add_method('configure',
+                        self._digital_modulation_arb_configure)
+        self.digital_modulation.arb._add_method('write_waveform',
+                        self._digital_modulation_arb_write_waveform)
+        self.digital_modulation.arb._add_method('clear_all_waveforms',
+                        self._digital_modulation_arb_clear_all_waveforms)
     
     def _get_digital_modulation_arb_selected_waveform(self):
         return self._digital_modulation_arb_selected_waveform
@@ -1478,9 +1515,12 @@ class DigitalModulationBase(object):
         self.digital_modulation.base._add_property('external_clock_type',
                         self._get_digital_modulation_base_external_clock_type,
                         self._set_digital_modulation_base_external_clock_type)
-        self.digital_modulation.base.configure_clock_source = self._digital_modulation_base_configure_clock_source
-        self.digital_modulation.base.create_bit_sequence = self._digital_modulation_base_create_bit_sequence
-        self.digital_modulation.base.clear_all_bit_sequences = self._digital_modulation_base_clear_all_bit_sequences
+        self.digital_modulation.base._add_method('configure_clock_source',
+                        self._digital_modulation_base_configure_clock_source)
+        self.digital_modulation.base._add_method('create_bit_sequence',
+                        self._digital_modulation_base_create_bit_sequence)
+        self.digital_modulation.base._add_method('clear_all_bit_sequences',
+                        self._digital_modulation_base_clear_all_bit_sequences)
     
     def _get_digital_modulation_base_standard_names(self):
         return self._digital_modulation_base_standard_names
@@ -1666,7 +1706,8 @@ class TDMABase(object):
         self.digital_modulation.tdma._add_property('external_clock_type',
                         self._get_digital_modulation_tdma_external_clock_type,
                         self._set_digital_modulation_tdma_external_clock_type)
-        self.digital_modulation.tdma.configure_clock_source = self._digital_modulation_tdma_configure_clock_source
+        self.digital_modulation.tdma._add_method('configure_clock_source',
+                        self._digital_modulation_tdma_configure_clock_source)
     
     def _get_digital_modulation_tdma_standard_names(self):
         return self._digital_modulation_tdma_standard_names

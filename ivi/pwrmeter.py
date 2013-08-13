@@ -77,11 +77,16 @@ class Base(object):
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
         self.measurement._add_property('measurement_state',
                         self._get_measurement_measurement_state)
-        self.measurement.abort = self._measurement_abort
-        self.measurement.configure = self._measurement_configure
-        self.measurement.fetch = self._measurement_fetch
-        self.measurement.initiate = self._measurement_initiate
-        self.measurement.read = self._measurement_read
+        self.measurement._add_method('abort',
+                        self._measurement_abort)
+        self.measurement._add_method('configure',
+                        self._measurement_configure)
+        self.measurement._add_method('fetch',
+                        self._measurement_fetch)
+        self.measurement._add_method('initiate',
+                        self._measurement_initiate)
+        self.measurement._add_method('read',
+                        self._measurement_read)
         
         self._init_channels()
     
@@ -198,8 +203,10 @@ class ChannelAcquisition(object):
                         self._measurement_read_channel)
         
         self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement.fetch_channel = self._measurement_fetch_channel
-        self.measurement.read_channel = self._measurement_read_channel
+        self.measurement._add_method('fetch_channel',
+                        self._measurement_fetch_channel)
+        self.measurement._add_method('read_channel',
+                        self._measurement_read_channel)
         
         self._init_channels()
     
@@ -348,7 +355,8 @@ class InternalTrigger(object):
         self.trigger.internal._add_property('slope',
                         self._get_trigger_internal_slope,
                         self._set_trigger_internal_slope)
-        self.trigger.internal.configure = self._trigger_internal_configure
+        self.trigger.internal._add_method('configure',
+                        self._trigger_internal_configure)
     
     def _get_trigger_internal_event_source(self):
         return self._trigger_internal_event_source
@@ -607,7 +615,8 @@ class ReferenceOscillator(object):
         self.reference_oscillator._add_property('level',
                         self._get_reference_oscillator_level,
                         self._set_reference_oscillator_level)
-        self.reference_oscillator.configure = self._reference_oscillator_configure
+        self.reference_oscillator._add_method('configure',
+                        self._reference_oscillator_configure)
     
     def _get_reference_oscillator_enabled(self):
         return self._reference_oscillator_enabled
