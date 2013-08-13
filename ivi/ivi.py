@@ -275,6 +275,28 @@ class IndexedPropertyCollection(object):
         return len(self._indicies)
 
 
+class Doc(object):
+    "IVI documentation object"
+    def __init__(self, doc = '', name = '', cls = '', grp = '', section = ''):
+        self.doc = trim_doc(doc)
+        self.name = name
+        self.cls = cls
+        self.grp = grp
+        self.section = section
+    
+    def render(self):
+        txt = '.. attribute:: ' + self.name + '\n\n'
+        txt += '   IVI class ' + self.cls + \
+            ', capability group ' + self.cls + self.grp + \
+            ', section ' + self.section + '\n\n'
+        txt += '\n'.join('   ' + x for x in self.doc.splitlines())
+        txt += '\n'
+        return txt
+    
+    def __str__(self):
+        return self.doc
+
+
 def build_ieee_block(data):
     "Build IEEE block"
     # IEEE block binary data is prefixed with #lnnnnnnnn
@@ -348,6 +370,7 @@ def rms(y):
 def trim_doc(docstring):
     if not docstring:
         return ''
+    docstring = str(docstring)
     # Convert tabs to spaces (following the normal Python rules)
     # and split into a list of lines:
     lines = docstring.expandtabs().splitlines()
@@ -1741,12 +1764,19 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 
             else:
                 
+                d = None
+                
                 # return documentation if present
                 if type(obj) == dict and n in obj:
-                    return trim_doc(obj[n])
+                    d = obj[n]
                 
                 elif hasattr(obj, '_docs') and n in obj._docs:
-                    return trim_doc(obj._docs[n])
+                    d = obj._docs[n]
+                
+                if type(d) == Doc:
+                    return d
+                elif type(d) == str:
+                    return trim_doc(d)
             
             return "error"
             
@@ -1780,12 +1810,16 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             l = self.doc(obj).split('\n')
             l = sorted(filter(None, l))
             for m in l:
-                print((indent * ' ') + '.. attribute:: ' + m + '\n')
-                #print('-'*len(m)+'\n')
                 doc = self.doc(obj, m)
-                doc = '\n'.join(((indent + 3) * ' ') + x for x in doc.splitlines())
-                print(doc)
-                print('\n')
+                
+                if type(doc) == Doc:
+                    print(doc.render())
+                if type(doc) == str:
+                    print((indent * ' ') + '.. attribute:: ' + m + '\n')
+                    #print('-'*len(m)+'\n')
+                    doc = '\n'.join(((indent + 3) * ' ') + x for x in doc.splitlines())
+                    print(doc)
+                    print('\n')
         else:
             print(self.doc(obj))
     
