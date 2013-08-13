@@ -277,7 +277,7 @@ class IndexedPropertyCollection(object):
 
 class Doc(object):
     "IVI documentation object"
-    def __init__(self, doc = '', name = '', cls = '', grp = '', section = ''):
+    def __init__(self, doc = '', cls = '', grp = '', section = '', name = ''):
         self.doc = trim_doc(doc)
         self.name = name
         self.cls = cls
@@ -296,6 +296,50 @@ class Doc(object):
     def __str__(self):
         return self.doc
 
+
+def add_attribute(obj, name, attr, doc = None):
+    cur_obj = obj
+    
+    # iterate over name
+    rest = name
+    while len(rest) > 0:
+        # split at first dot
+        l = rest.split('.',1)
+        base = l[0]
+        rest = ''
+        
+        # save the rest
+        if len(l) > 1:
+            rest = l[1]
+            
+            # is it an indexed object?
+            k = base.find('[')
+            if k > 0:
+                # if so, stop here and add an indexed property collection
+                base = base[:k]
+                cur_obj.__dict__.setdefault(base, IndexedPropertyCollection())
+                cur_obj = cur_obj.__dict__[base]
+                base = rest
+                rest = ''
+            else:
+                # if not, add a property collection and keep going
+                cur_obj.__dict__.setdefault(base, PropertyCollection())
+                cur_obj = cur_obj.__dict__[base]
+    
+    if type(doc) == Doc:
+        doc.name = name
+    
+    if type(attr) == tuple:
+        fget, fset, fdel = attr
+        cur_obj._add_property(base, fget, fset, fdel, doc)
+    else:
+        cur_obj._add_method(base, attr, doc)
+
+def add_method(obj, name, f, doc = None):
+    add_attribute(obj, name, f, doc)
+
+def add_property(obj, name, fget, fset = None, fdel = None, doc = None):
+    add_attribute(obj, name, (fget, fset, fdel), doc)
 
 def build_ieee_block(data):
     "Build IEEE block"

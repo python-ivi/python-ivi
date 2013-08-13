@@ -82,8 +82,7 @@ class Base(object):
         self._output_voltage_max = [0]
         self._output_current_max = [0]
         
-        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_property('current_limit',
+        ivi.add_property(self, 'outputs[].current_limit',
                         self._get_output_current_limit,
                         self._set_output_current_limit,
                         None,
@@ -93,8 +92,8 @@ class Base(object):
                         The value of the Current Limit Behavior attribute determines the behavior
                         of the power supply when the output current is equal to or greater than
                         the value of this attribute.
-                        """, 'outputs[].current_limit', cls, grp, '4.2.1'))
-        self.outputs._add_property('current_limit_behavior',
+                        """, cls, grp, '4.2.1'))
+        ivi.add_property(self, 'outputs[].current_limit_behavior',
                         self._get_output_current_limit_behavior,
                         self._set_output_current_limit_behavior,
                         None,
@@ -109,8 +108,8 @@ class Base(object):
                         * 'regulate' - The power supply restricts the output voltage such that the
                           output current is not greater than the value of the Current Limit
                           attribute.
-                        """, 'outputs[].current_limit_behavior', cls, grp, '4.2.2'))
-        self.outputs._add_property('enabled',
+                        """, cls, grp, '4.2.2'))
+        ivi.add_property(self, 'outputs[].enabled',
                         self._get_output_enabled,
                         self._set_output_enabled,
                         None,
@@ -118,8 +117,8 @@ class Base(object):
                         If true, the signal the power supply produces appears at the output
                         connector. If false, the signal the power supply produces does not appear
                         at the output connector.
-                        """, 'outputs[].enabled', cls, grp, '4.2.3'))
-        self.outputs._add_property('ovp_enabled',
+                        """, cls, grp, '4.2.3'))
+        ivi.add_property(self, 'outputs[].ovp_enabled',
                         self._get_output_ovp_enabled,
                         self._set_output_ovp_enabled,
                         None,
@@ -128,8 +127,8 @@ class Base(object):
                         this attribute is set to True, the power supply disables the output when
                         the output voltage is greater than or equal to the value of the OVP
                         Limit attribute.
-                        """, 'outputs[].ovp_enabled', cls, grp, '4.2.4'))
-        self.outputs._add_property('ovp_limit',
+                        """, cls, grp, '4.2.4'))
+        ivi.add_property(self, 'outputs[].ovp_limit',
                         self._get_output_ovp_limit,
                         self._set_output_ovp_limit,
                         None,
@@ -142,16 +141,16 @@ class Base(object):
                         
                         If the OVP Enabled is set to False, this attribute does not affect the
                         behavior of the instrument.
-                        """, 'outputs[].ovp_limit', cls, grp, '4.2.5'))
-        self.outputs._add_property('voltage_level',
+                        """, cls, grp, '4.2.5'))
+        ivi.add_property(self, 'outputs[].voltage_level',
                         self._get_output_voltage_level,
                         self._set_output_voltage_level,
                         None,
                         ivi.Doc("""
                         Specifies the voltage level the DC power supply attempts to generate. The
                         units are Volts.
-                        """, 'outputs[].voltage_level', cls, grp, '4.2.6'))
-        self.outputs._add_property('name',
+                        """, cls, grp, '4.2.6'))
+        ivi.add_property(self, 'outputs[].name',
                         self._get_output_name,
                         None,
                         None,
@@ -164,8 +163,8 @@ class Base(object):
                         If the value that the user passes for the Index parameter is less than
                         zero or greater than the value of the Output Channel Count, the attribute
                         returns an empty string for the value and returns an error.
-                        """, 'outputs[].name', cls, grp, '4.2.9'))
-        self.outputs._add_method('configure_current_limit',
+                        """, cls, grp, '4.2.9'))
+        ivi.add_method(self, 'outputs[].configure_current_limit',
                         self._output_configure_current_limit,
                         ivi.Doc("""
                         This function configures the current limit. It specifies the output
@@ -174,8 +173,8 @@ class Base(object):
                         
                         See the definition of the Current Limit Behavior attribute for defined
                         values for the behavior parameter.
-                        """, 'outputs[].configure_current_limit', cls, grp, '4.3.1'))
-        self.outputs._add_method('configure_range',
+                        """, cls, grp, '4.3.1'))
+        ivi.add_method(self, 'outputs[].configure_range',
                         self._output_configure_range,
                         ivi.Doc("""
                         Configures the power supply’s output range on an output. One parameter
@@ -185,8 +184,8 @@ class Base(object):
                         Setting a voltage range can invalidate a previously configured current
                         range. Setting a current range can invalidate a previously configured
                         voltage range.
-                        """, 'outputs[].configure_range', cls, grp, '4.3.3'))
-        self.outputs._add_method('configure_ovp',
+                        """, cls, grp, '4.3.3'))
+        ivi.add_method(self, 'outputs[].configure_ovp',
                         self._output_configure_ovp,
                         ivi.Doc("""
                         Configures the over-voltage protection. It specifies the over-voltage
@@ -196,20 +195,20 @@ class Base(object):
                         When the Enabled parameter is False, the Limit parameter does not affect
                         the instrument’s behavior, and the driver does not set the OVP Limit
                         attribute.
-                        """, 'outputs[].configure_ovp', cls, grp, '4.3.4'))
-        self.outputs._add_method('query_current_limit_max',
+                        """, cls, grp, '4.3.4'))
+        ivi.add_method(self, 'outputs[].query_current_limit_max',
                         self._output_query_current_limit_max,
                         ivi.Doc("""
                         This function returns the maximum programmable current limit that the
                         power supply accepts for a particular voltage level on an output.
-                        """, 'outputs[].query_current_limit_max', cls, grp, '4.3.7'))
-        self.outputs._add_method('query_voltage_level_max',
+                        """, cls, grp, '4.3.7'))
+        ivi.add_method(self, 'outputs[].query_voltage_level_max',
                         self._output_query_voltage_level_max,
                         ivi.Doc("""
                         This function returns the maximum programmable voltage level that the
                         power supply accepts for a particular current limit on an output.
-                        """, 'outputs[].query_voltage_level_max', cls, grp, '4.3.8'))
-        self.outputs._add_method('query_output_state',
+                        """, cls, grp, '4.3.8'))
+        ivi.add_method(self, 'outputs[].query_output_state',
                         self._output_query_output_state,
                         ivi.Doc("""
                         This function returns whether the power supply is in a particular output
@@ -249,8 +248,8 @@ class Base(object):
                         * 'over_voltage'
                         * 'over_current'
                         * 'unregulated'
-                        """, 'outputs[].query_output_state', cls, grp, '4.3.9'))
-        self.outputs._add_method('reset_output_protection',
+                        """, cls, grp, '4.3.9'))
+        ivi.add_method(self, 'outputs[].reset_output_protection',
                         self._output_reset_output_protection,
                         ivi.Doc("""
                         This function resets the power supply output protection after an
@@ -271,7 +270,7 @@ class Base(object):
                         
                         Use the Query Output State function to determine if the power supply is in
                         an over-voltage or over-current state.
-                        """, 'outputs[].reset_output_protection', cls, grp, '4.3.10'))
+                        """, cls, grp, '4.3.10'))
         
         self._init_outputs()
     
@@ -427,8 +426,7 @@ class Trigger(object):
         self._output_triggered_current_limit = list()
         self._output_triggered_voltage_level = list()
         
-        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_property('trigger_source',
+        ivi.add_property(self, 'outputs[].trigger_source',
                         self._get_output_trigger_source,
                         self._set_output_trigger_source,
                         None,
@@ -438,8 +436,8 @@ class Trigger(object):
                         After a trigger event occurs, the power supply changes the voltage level
                         to the value of the Triggered Voltage Level attribute and the current
                         limit to the value of the Triggered Current Limit attribute.
-                        """, 'outputs[].trigger_source', cls, grp, '5.2.1'))
-        self.outputs._add_property('triggered_current_limit',
+                        """, cls, grp, '5.2.1'))
+        ivi.add_property(self, 'outputs[].triggered_current_limit',
                         self._get_output_triggered_current_limit,
                         self._set_output_triggered_current_limit,
                         None,
@@ -454,8 +452,8 @@ class Trigger(object):
                         
                         After a trigger occurs, the value of the Current Limit attribute reflects
                         the new value to which the current limit has been set.
-                        """, 'outputs[].triggered_current_limit', cls, grp, '5.2.2'))
-        self.outputs._add_property('triggered_voltage_level',
+                        """, cls, grp, '5.2.2'))
+        ivi.add_property(self, 'outputs[].triggered_voltage_level',
                         self._get_output_triggered_voltage_level,
                         self._set_output_triggered_voltage_level,
                         None,
@@ -470,9 +468,9 @@ class Trigger(object):
                         
                         After a trigger occurs, the value of the Voltage Level attribute reflects
                         the new value to which the voltage level has been set.
-                        """, 'outputs[].triggered_voltage_level', cls, grp, '5.2.3'))
+                        """, cls, grp, '5.2.3'))
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger._add_method('abort',
+        ivi.add_method(self, 'trigger.abort',
                         self._trigger_abort,
                         ivi.Doc("""
                         If the power supply is currently waiting for a trigger to change the
@@ -481,8 +479,8 @@ class Trigger(object):
                         
                         If the power supply is not waiting for a trigger, this function does
                         nothing and returns Success.
-                        """, 'outputs[].abort', cls, grp, '5.3.1'))
-        self.trigger._add_method('initiate',
+                        """, cls, grp, '5.3.1'))
+        ivi.add_method(self, 'trigger.initiate',
                         self._trigger_initiate,
                         ivi.Doc("""
                         If the power supply is not currently waiting for a trigger, this function
@@ -490,7 +488,7 @@ class Trigger(object):
                         
                         If the power supply is already waiting for a trigger, this function does
                         nothing and returns Success.
-                        """, 'outputs[].initiate', cls, grp, '5.3.5'))
+                        """, cls, grp, '5.3.5'))
     
     def _init_outputs(self):
         try:
@@ -578,7 +576,7 @@ class SoftwareTrigger(object):
                         setting for this function to work. If the trigger source is not set to
                         Software Trigger, this function does nothing and returns the error Trigger
                         Not Software.
-                        """, 'send_software_trigger', cls, grp, '6.2.1')
+                        """, cls, grp, '6.2.1', 'send_software_trigger')
     
     def send_software_trigger(self):
         pass
@@ -595,8 +593,7 @@ class Measurement(object):
         self.__dict__.setdefault('_identity_group_capabilities', list())
         self._identity_group_capabilities.insert(0, cls+grp)
         
-        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_method('measure',
+        ivi.add_method(self, 'outputs[].measure',
                         self._output_measure,
                         ivi.Doc("""
                         Takes a measurement on the output signal and returns the measured value.
@@ -605,7 +602,7 @@ class Measurement(object):
                         
                         * 'voltage'
                         * 'current'
-                        """, 'outputs[].measure', cls, grp, '7.2.1'))
+                        """, cls, grp, '7.2.1'))
     
     def _output_measure(self, index, type):
         index = ivi.get_index(self._output_name, index)
