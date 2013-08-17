@@ -338,6 +338,9 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
             t = 0
         elif range_type == 'current':
             t = 1
+        if len(self._output_range[index]) < 2:
+            # do not set range if there is only one range
+            return
         k = dcpwr.get_range(self._output_range[index], t, range_val)
         if k < 0:
             raise ivi.OutOfRangeException()
