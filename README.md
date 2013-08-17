@@ -244,4 +244,4 @@ and configure an output.
     psu.outputs[0].current_limit = 1.0
     psu.outputs[0].ovp_limit = 14.0
     psu.outputs[0].ovp_enabled = True
-    psu.outptus[0].enabled = True
+    psu.outputs[0].enabled = True
