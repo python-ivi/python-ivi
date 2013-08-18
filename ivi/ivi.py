@@ -341,6 +341,10 @@ def add_method(obj, name, f, doc = None):
 def add_property(obj, name, fget, fset = None, fdel = None, doc = None):
     add_attribute(obj, name, (fget, fset, fdel), doc)
 
+def add_group_capability(obj, cap):
+    obj.__dict__.setdefault('_identity_group_capabilities', list())
+    obj._identity_group_capabilities.insert(0, cap)
+
 def build_ieee_block(data):
     "Build IEEE block"
     # IEEE block binary data is prefixed with #lnnnnnnnn
