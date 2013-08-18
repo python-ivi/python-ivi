@@ -64,8 +64,7 @@ class Base(object):
         
         cls = 'IviDCPwr'
         grp = 'Base'
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, cls+grp)
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
@@ -419,8 +418,7 @@ class Trigger(object):
         
         cls = 'IviDCPwr'
         grp = 'Trigger'
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, cls+grp)
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_trigger_source = list()
         self._output_triggered_current_limit = list()
@@ -546,8 +544,7 @@ class SoftwareTrigger(object):
         
         cls = 'IviDCPwr'
         grp = 'SoftwareTrigger'
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, cls+grp)
+        ivi.add_group_capability(self, cls+grp)
         
         self.__dict__.setdefault('_docs', dict())
         self._docs['send_software_trigger'] = ivi.Doc("""
@@ -590,8 +587,7 @@ class Measurement(object):
         
         cls = 'IviDCPwr'
         grp = 'Measurement'
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, cls+grp)
+        ivi.add_group_capability(self, cls+grp)
         
         ivi.add_method(self, 'outputs[].measure',
                         self._output_measure,

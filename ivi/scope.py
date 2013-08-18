@@ -63,7 +63,9 @@ class Base(object):
         
         super(Base, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeBase')
+        cls = 'IviScope'
+        grp = 'Base'
+        ivi.add_group_capability(self, cls+grp)
         
         self._acquisition_start_time = 0
         self._acquisition_type = 'normal'
@@ -394,7 +396,9 @@ class Interpolation(object):
     def __init__(self, *args, **kwargs):
         super(Interpolation, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeInterpolation')
+        cls = 'IviScope'
+        grp = 'Interpolation'
+        ivi.add_group_capability(self, cls+grp)
         
         self._acquisition_interpolation = 'none'
         
@@ -415,7 +419,9 @@ class TVTrigger(object):
     def __init__(self, *args, **kwargs):
         super(TVTrigger, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeTVTrigger')
+        cls = 'IviScope'
+        grp = 'TVTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_tv_trigger_event = 'any_line'
         self._trigger_tv_line_number = 0
@@ -480,7 +486,9 @@ class RuntTrigger(object):
     def __init__(self, *args, **kwargs):
         super(RuntTrigger, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeRuntTrigger')
+        cls = 'IviScope'
+        grp = 'RuntTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_runt_threshold_high = 0
         self._trigger_runt_threshold_low = 0
@@ -533,7 +541,9 @@ class GlitchTrigger(object):
     def __init__(self, *args, **kwargs):
         super(GlitchTrigger, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeGlitchTrigger')
+        cls = 'IviScope'
+        grp = 'GlitchTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_glitch_condition = 'less_than'
         self._trigger_glitch_polarity = 'positive'
@@ -588,7 +598,9 @@ class WidthTrigger(object):
     def __init__(self, *args, **kwargs):
         super(WidthTrigger, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeWidthTrigger')
+        cls = 'IviScope'
+        grp = 'WidthTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_width_condition = 'within'
         self._trigger_width_threshold_high = 0
@@ -655,7 +667,9 @@ class AcLineTrigger(object):
     def __init__(self, *args, **kwargs):
         super(AcLineTrigger, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeAcLineTrigger')
+        cls = 'IviScope'
+        grp = 'AcLineTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_ac_line_slope = 'positive'
         
@@ -678,7 +692,9 @@ class WaveformMeasurement(object):
     def __init__(self, *args, **kwargs):
         super(WaveformMeasurement, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeWaveformMeasurement')
+        cls = 'IviScope'
+        grp = 'WaveformMeasurement'
+        ivi.add_group_capability(self, cls+grp)
         
         self._reference_level_high = 90
         self._reference_level_low = 10
@@ -742,7 +758,9 @@ class MinMaxWaveform(object):
     def __init__(self, *args, **kwargs):
         super(MinMaxWaveform, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeMinMaxWaveform')
+        cls = 'IviScope'
+        grp = 'MinMaxWaveform'
+        ivi.add_group_capability(self, cls+grp)
         
         self._acquisition_number_of_envelopes = 0
         
@@ -774,7 +792,9 @@ class ProbeAutoSense(object):
     def __init__(self, *args, **kwargs):
         super(ProbeAutoSense, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeProbeAutoSense')
+        cls = 'IviScope'
+        grp = 'ProbeAutoSense'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_probe_attenuation_auto = list()
         self._channel_probe_sense = list()
@@ -817,7 +837,9 @@ class ContinuousAcquisition(object):
     def __init__(self, *args, **kwargs):
         super(ContinuousAcquisition, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeContinuousAcquisition')
+        cls = 'IviScope'
+        grp = 'ContinuousAcquisition'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_continuous = False
         
@@ -838,7 +860,9 @@ class AverageAcquisition(object):
     def __init__(self, *args, **kwargs):
         super(AverageAcquisition, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeAverageAcquisition')
+        cls = 'IviScope'
+        grp = 'AverageAcquisition'
+        ivi.add_group_capability(self, cls+grp)
         
         self._acquisition_number_of_averages = 1
         
@@ -859,7 +883,9 @@ class SampleMode(object):
     def __init__(self, *args, **kwargs):
         super(SampleMode, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeSampleMode')
+        cls = 'IviScope'
+        grp = 'SampleMode'
+        ivi.add_group_capability(self, cls+grp)
         
         self._acquisition_sample_mode = 'real_time'
         
@@ -882,7 +908,9 @@ class TriggerModifier(object):
     def __init__(self, *args, **kwargs):
         super(TriggerModifier, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeTriggerModifier')
+        cls = 'IviScope'
+        grp = 'TriggerModifier'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_modifier = 'none'
         
@@ -905,7 +933,9 @@ class AutoSetup(object):
     def __init__(self, *args, **kwargs):
         super(AutoSetup, self).__init__( *args, **kwargs)
         
-        self._add_group_capability('IviScopeAutoSetup')
+        cls = 'IviScope'
+        grp = 'AutoSetup'
+        ivi.add_group_capability(self, cls+grp)
         
         ivi.add_method(self, 'measurement.auto_setup',
                         self._measurement_auto_setup)

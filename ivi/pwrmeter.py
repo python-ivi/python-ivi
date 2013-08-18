@@ -46,7 +46,9 @@ class Base(object):
         
         super(Base, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterBase')
+        cls = 'IviPwrMeter'
+        grp = 'Base'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_name = list()
         self._channel_averaging_count_auto = list()
@@ -186,7 +188,9 @@ class ChannelAcquisition(object):
         
         super(ChannelAcquisition, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterChannelAcquisition')
+        cls = 'IviPwrMeter'
+        grp = 'ChannelAcquisition'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_enabled = list()
         
@@ -243,7 +247,9 @@ class ManualRange(object):
         
         super(ManualRange, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterManualRange')
+        cls = 'IviPwrMeter'
+        grp = 'ManualRange'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_range_lower = list()
         self._channel_range_upper = list()
@@ -305,7 +311,9 @@ class TriggerSource(object):
         
         super(TriggerSource, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterTriggerSource')
+        cls = 'IviPwrMeter'
+        grp = 'TriggerSource'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_source = ''
         
@@ -331,7 +339,9 @@ class InternalTrigger(object):
         
         super(InternalTrigger, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterInternalTrigger')
+        cls = 'IviPwrMeter'
+        grp = 'InternalTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._trigger_internal_event_source = ''
         self._trigger_internal_level = 0.0
@@ -382,7 +392,9 @@ class SoftwareTrigger(object):
     def __init__(self, *args, **kwargs):
         super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterSoftwareTrigger')
+        cls = 'IviPwrMeter'
+        grp = 'SoftwareTrigger'
+        ivi.add_group_capability(self, cls+grp)
     
     def send_software_trigger(self):
         pass
@@ -397,7 +409,9 @@ class DutyCycleCorrection(object):
         
         super(DutyCycleCorrection, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterDutyCycleCorrection')
+        cls = 'IviPwrMeter'
+        grp = 'DutyCycleCorrection'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_duty_cycle_enabled = list()
         self._channel_duty_cycle_value = list()
@@ -459,7 +473,9 @@ class AveragingCount(object):
         
         super(AveragingCount, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterAveragingCount')
+        cls = 'IviPwrMeter'
+        grp = 'AveragingCount'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_averaging_count = list()
         
@@ -500,7 +516,9 @@ class ZeroCorrection(object):
         
         super(ZeroCorrection, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterZeroCorrection')
+        cls = 'IviPwrMeter'
+        grp = 'ZeroCorrection'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_zero_state = list()
         
@@ -545,7 +563,9 @@ class Calibration(object):
         
         super(Calibration, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterCalibration')
+        cls = 'IviPwrMeter'
+        grp = 'Calibration'
+        ivi.add_group_capability(self, cls+grp)
         
         self._channel_calibration_state = list()
         
@@ -586,7 +606,9 @@ class ReferenceOscillator(object):
         
         super(ReferenceOscillator, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviPwrMeterReferenceOscillator')
+        cls = 'IviPwrMeter'
+        grp = 'ReferenceOscillator'
+        ivi.add_group_capability(self, cls+grp)
         
         self._reference_oscillator_enabled = False
         self._reference_oscillator_frequency = 10e6

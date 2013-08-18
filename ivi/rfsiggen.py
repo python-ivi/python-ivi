@@ -49,7 +49,9 @@ class Base(object):
     def __init__(self, *args, **kwargs):
         super(Base, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenBase')
+        cls = 'IviRFSigGen'
+        grp = 'Base'
+        ivi.add_group_capability(self, cls+grp)
         
         self._rf_frequency = 1e8
         self._rf_level = 0
@@ -143,7 +145,9 @@ class ModulateAM(object):
     def __init__(self, *args, **kwargs):
         super(ModulateAM, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenModulateAM')
+        cls = 'IviRFSigGen'
+        grp = 'ModulateAM'
+        ivi.add_group_capability(self, cls+grp)
         
         self._analog_modulation_am_enabled = False
         self._analog_modulation_am_source = ""
@@ -228,7 +232,9 @@ class ModulateFM(object):
     def __init__(self, *args, **kwargs):
         super(ModulateFM, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenModulateFM')
+        cls = 'IviRFSigGen'
+        grp = 'ModulateFM'
+        ivi.add_group_capability(self, cls+grp)
         
         self._analog_modulation_fm_enabled = False
         self._analog_modulation_fm_source = ""
@@ -301,7 +307,9 @@ class ModulatePM(object):
     def __init__(self, *args, **kwargs):
         super(ModulatePM, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenModulatePM')
+        cls = 'IviRFSigGen'
+        grp = 'ModulatePM'
+        ivi.add_group_capability(self, cls+grp)
         
         self._analog_modulation_pm_enabled = False
         self._analog_modulation_pm_source = ""
@@ -374,7 +382,9 @@ class AnalogModulationSource(object):
     def __init__(self, *args, **kwargs):
         super(AnalogModulationSource, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenAnalogModulationSource')
+        cls = 'IviRFSigGen'
+        grp = 'AnalogModulationSource'
+        ivi.add_group_capability(self, cls+grp)
         
         self._analog_modulation_source_count = 0
         self._analog_modulation_source_name = list()
@@ -393,7 +403,9 @@ class ModulatePulse(object):
     def __init__(self, *args, **kwargs):
         super(ModulatePulse, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenModulatePulse')
+        cls = 'IviRFSigGen'
+        grp = 'ModulatePulse'
+        ivi.add_group_capability(self, cls+grp)
         
         self._pulse_modulation_enabled = False
         self._pulse_modulation_source = ""
@@ -438,7 +450,9 @@ class LFGenerator(object):
     def __init__(self, *args, **kwargs):
         super(LFGenerator, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenLFGenerator')
+        cls = 'IviRFSigGen'
+        grp = 'LFGenerator'
+        ivi.add_group_capability(self, cls+grp)
         
         self._lf_generator_active_lf_generator = ""
         self._lf_generator_count = 0
@@ -497,7 +511,9 @@ class LFGeneratorOutput(object):
     def __init__(self, *args, **kwargs):
         super(LFGeneratorOutput, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenLFGeneratorOutput')
+        cls = 'IviRFSigGen'
+        grp = 'LFGeneratorOutput'
+        ivi.add_group_capability(self, cls+grp)
         
         self._lf_generator_output_amplitude = 0
         self._lf_generator_output_enabled = 0
@@ -536,7 +552,9 @@ class PulseGenerator(object):
     def __init__(self, *args, **kwargs):
         super(PulseGenerator, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenPulseGenerator')
+        cls = 'IviRFSigGen'
+        grp = 'PulseGenerator'
+        ivi.add_group_capability(self, cls+grp)
         
         self._pulse_generator_internal_trigger_period = 0
         self._pulse_generator_width = 0
@@ -627,7 +645,9 @@ class PulseDoubleGenerator(object):
     def __init__(self, *args, **kwargs):
         super(PulseDoubleGenerator, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenPulseDoubleGenerator')
+        cls = 'IviRFSigGen'
+        grp = 'PulseDoubleGenerator'
+        ivi.add_group_capability(self, cls+grp)
         
         self._pulse_generator_double_pulse_enabled = False
         self._pulse_generator_double_pulse_delay = 0
@@ -666,7 +686,9 @@ class PulseGeneratorOutput(object):
     def __init__(self, *args, **kwargs):
         super(PulseGeneratorOutput, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenPulseGeneratorOutput')
+        cls = 'IviRFSigGen'
+        grp = 'PulseGeneratorOutput'
+        ivi.add_group_capability(self, cls+grp)
         
         self._pulse_generator_output_polarity = 0
         self._pulse_generator_output_enabled = 0
@@ -705,7 +727,9 @@ class Sweep(object):
     def __init__(self, *args, **kwargs):
         super(Sweep, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenSweep')
+        cls = 'IviRFSigGen'
+        grp = 'Sweep'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sweep_mode = 0
         self._sweep_trigger_source = ""
@@ -745,7 +769,9 @@ class FrequencySweep(object):
     def __init__(self, *args, **kwargs):
         super(FrequencySweep, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenFrequencySweep')
+        cls = 'IviRFSigGen'
+        grp = 'FrequencySweep'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sweep_frequency_sweep_start = 0
         self._sweep_frequency_sweep_stop = 0
@@ -801,7 +827,9 @@ class PowerSweep(object):
     def __init__(self, *args, **kwargs):
         super(PowerSweep, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenPowerSweep')
+        cls = 'IviRFSigGen'
+        grp = 'PowerSweep'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sweep_power_sweep_start = 0
         self._sweep_power_sweep_stop = 0
@@ -851,7 +879,9 @@ class FrequencyStep(object):
     def __init__(self, *args, **kwargs):
         super(FrequencyStep, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenFrequencyStep')
+        cls = 'IviRFSigGen'
+        grp = 'FrequencyStep'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sweep_frequency_step_start = 0
         self._sweep_frequency_step_stop = 0
@@ -948,7 +978,9 @@ class PowerStep(object):
     def __init__(self, *args, **kwargs):
         super(PowerStep, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenPowerStep')
+        cls = 'IviRFSigGen'
+        grp = 'PowerStep'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sweep_power_step_start = 0
         self._sweep_power_step_stop = 0
@@ -1032,7 +1064,9 @@ class List(object):
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenList')
+        cls = 'IviRFSigGen'
+        grp = 'List'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sweep_list_selected_list = ''
         self._sweep_list_single_step_enabled = False
@@ -1107,7 +1141,9 @@ class ALC(object):
     def __init__(self, *args, **kwargs):
         super(ALC, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenALC')
+        cls = 'IviRFSigGen'
+        grp = 'ALC'
+        ivi.add_group_capability(self, cls+grp)
         
         self._alc_source = 'internal'
         self._alc_bandwidth = 0
@@ -1147,7 +1183,9 @@ class ReferenceOscillator(object):
     def __init__(self, *args, **kwargs):
         super(ReferenceOscillator, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenReferenceOscillator')
+        cls = 'IviRFSigGen'
+        grp = 'ReferenceOscillator'
+        ivi.add_group_capability(self, cls+grp)
         
         self._reference_oscillator_source = 'internal'
         self._reference_oscillator_external_frequency = 0
@@ -1187,7 +1225,9 @@ class SoftwareTrigger(object):
     def __init__(self, *args, **kwargs):
         super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenSoftwareTrigger')
+        cls = 'IviRFSigGen'
+        grp = 'SoftwareTrigger'
+        ivi.add_group_capability(self, cls+grp)
     
     def send_software_trigger(self):
         pass
@@ -1199,7 +1239,9 @@ class ModulateIQ(object):
     def __init__(self, *args, **kwargs):
         super(ModulateIQ, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenModulateIQ')
+        cls = 'IviRFSigGen'
+        grp = 'ModulateIQ'
+        ivi.add_group_capability(self, cls+grp)
         
         self._iq_enabled = False
         self._iq_source = 'digital_modulation_base'
@@ -1266,7 +1308,9 @@ class IQImpairment(object):
     def __init__(self, *args, **kwargs):
         super(IQImpairment, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenIQImpairment')
+        cls = 'IviRFSigGen'
+        grp = 'IQImpairment'
+        ivi.add_group_capability(self, cls+grp)
         
         self._iq_impairment_enabled = False
         self._iq_impairment_i_offset = 0
@@ -1340,7 +1384,9 @@ class ArbGenerator(object):
     def __init__(self, *args, **kwargs):
         super(ArbGenerator, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenArbGenerator')
+        cls = 'IviRFSigGen'
+        grp = 'ArbGenerator'
+        ivi.add_group_capability(self, cls+grp)
         
         self._digital_modulation_arb_selected_waveform = ''
         self._digital_modulation_arb_clock_frequency = 0
@@ -1448,7 +1494,9 @@ class DigitalModulationBase(object):
     def __init__(self, *args, **kwargs):
         super(DigitalModulationBase, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenDigitalModulationBase')
+        cls = 'IviRFSigGen'
+        grp = 'DigitalModulationBase'
+        ivi.add_group_capability(self, cls+grp)
         
         self._digital_modulation_base_standard_names = list()
         self._digital_modulation_base_selected_standard = ''
@@ -1551,7 +1599,9 @@ class CDMABase(object):
     def __init__(self, *args, **kwargs):
         super(CDMABase, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenCDMABase')
+        cls = 'IviRFSigGen'
+        grp = 'CDMABase'
+        ivi.add_group_capability(self, cls+grp)
         
         self._digital_modulation_cdma_standard_names = list()
         self._digital_modulation_cdma_selected_standard = ''
@@ -1632,7 +1682,9 @@ class TDMABase(object):
     def __init__(self, *args, **kwargs):
         super(TDMABase, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviRFSigGenTDMABase')
+        cls = 'IviRFSigGen'
+        grp = 'TDMABase'
+        ivi.add_group_capability(self, cls+grp)
         
         self._digital_modulation_tdma_standard_names = list()
         self._digital_modulation_tdma_selected_standard = ''

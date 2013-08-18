@@ -55,8 +55,9 @@ class Base(object):
         
         super(Base, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenBase')
+        cls = 'IviFgen'
+        grp = 'Base'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_name = list()
         self._output_operation_mode = list()
@@ -298,8 +299,9 @@ class StdFunc(object):
     def __init__(self, *args, **kwargs):
         super(StdFunc, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenStdFunc')
+        cls = 'IviFgen'
+        grp = 'StdFunc'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_standard_waveform_amplitude = list()
         self._output_standard_waveform_dc_offset = list()
@@ -475,8 +477,9 @@ class ArbWfm(object):
     def __init__(self, *args, **kwargs):
         super(ArbWfm, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbWfm')
+        cls = 'IviFgen'
+        grp = 'ArbWfm'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_arbitrary_gain = list()
         self._output_arbitrary_offset = list()
@@ -664,8 +667,9 @@ class ArbFrequency(object):
     def __init__(self, *args, **kwargs):
         super(ArbFrequency, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbFrequency')
+        cls = 'IviFgen'
+        grp = 'ArbFrequency'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_arbitrary_frequency = list()
         
@@ -707,8 +711,9 @@ class ArbSeq(object):
     def __init__(self, *args, **kwargs):
         super(ArbSeq, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbSeq')
+        cls = 'IviFgen'
+        grp = 'ArbSeq'
+        ivi.add_group_capability(self, cls+grp)
         
         self._arbitrary_sequence_number_sequences_max = 0
         self._arbitrary_sequence_loop_count_max = 0
@@ -827,8 +832,9 @@ class Trigger(object):
     def __init__(self, *args, **kwargs):
         super(Trigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenTrigger')
+        cls = 'IviFgen'
+        grp = 'Trigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_trigger_source = list()
         
@@ -870,8 +876,9 @@ class StartTrigger(object):
     def __init__(self, *args, **kwargs):
         super(StartTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenStartTrigger')
+        cls = 'IviFgen'
+        grp = 'StartTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_start_trigger_delay = list()
         self._output_start_trigger_slope = list()
@@ -1000,8 +1007,9 @@ class StopTrigger(object):
     def __init__(self, *args, **kwargs):
         super(StopTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenStopTrigger')
+        cls = 'IviFgen'
+        grp = 'StopTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_stop_trigger_delay = list()
         self._output_stop_trigger_slope = list()
@@ -1130,8 +1138,9 @@ class HoldTrigger(object):
     def __init__(self, *args, **kwargs):
         super(HoldTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenHoldTrigger')
+        cls = 'IviFgen'
+        grp = 'HoldTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_hold_trigger_delay = list()
         self._output_hold_trigger_slope = list()
@@ -1259,8 +1268,9 @@ class ResumeTrigger(object):
     def __init__(self, *args, **kwargs):
         super(ResumeTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenResumeTrigger')
+        cls = 'IviFgen'
+        grp = 'ResumeTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_resume_trigger_delay = list()
         self._output_resume_trigger_slope = list()
@@ -1389,8 +1399,9 @@ class AdvanceTrigger(object):
     def __init__(self, *args, **kwargs):
         super(AdvanceTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenAdvanceTrigger')
+        cls = 'IviFgen'
+        grp = 'AdvanceTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_advance_trigger_delay = list()
         self._output_advance_trigger_slope = list()
@@ -1520,8 +1531,9 @@ class InternalTrigger(object):
     def __init__(self, *args, **kwargs):
         super(InternalTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenInternalTrigger')
+        cls = 'IviFgen'
+        grp = 'InternalTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self._internal_trigger_rate = 0
         
@@ -1548,8 +1560,9 @@ class SoftwareTrigger(object):
     def __init__(self, *args, **kwargs):
         super(SoftwareTrigger, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenSoftwareTrigger')
+        cls = 'IviFgen'
+        grp = 'SoftwareTrigger'
+        ivi.add_group_capability(self, cls+grp)
         
         self.__dict__.setdefault('_docs', dict())
         self._docs['send_software_trigger'] = """
@@ -1590,8 +1603,9 @@ class Burst(object):
     def __init__(self, *args, **kwargs):
         super(Burst, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenBurst')
+        cls = 'IviFgen'
+        grp = 'Burst'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_burst_count = list()
         
@@ -1633,8 +1647,9 @@ class ModulateAM(object):
     def __init__(self, *args, **kwargs):
         super(ModulateAM, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenModulateAM')
+        cls = 'IviFgen'
+        grp = 'ModulateAM'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_am_enabled = list()
         self._am_internal_depth = 0
@@ -1665,8 +1680,6 @@ class ModulateAM(object):
                         This attribute affects instrument behavior only when the AM Enabled
                         attribute is set to True.
                         """)
-        
-        self.__dict__.setdefault('am', ivi.PropertyCollection())
         ivi.add_property(self, 'am.internal_depth',
                         self._get_am_internal_depth,
                         self._set_am_internal_depth,
@@ -1781,8 +1794,9 @@ class ModulateFM(object):
     def __init__(self, *args, **kwargs):
         super(ModulateFM, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenModulateFM')
+        cls = 'IviFgen'
+        grp = 'ModulateFM'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_fm_enabled = list()
         self._fm_internal_deviation = 0
@@ -1806,8 +1820,6 @@ class ModulateFM(object):
                         None,
                         """
                         """)
-        
-        self.__dict__.setdefault('fm', ivi.PropertyCollection())
         ivi.add_property(self, 'fm.internal_deviation',
                         self._get_fm_internal_deviation,
                         self._set_fm_internal_deviation,
@@ -1924,8 +1936,9 @@ class SampleClock(object):
     def __init__(self, *args, **kwargs):
         super(SampleClock, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenSampleClock')
+        cls = 'IviFgen'
+        grp = 'SampleClock'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sample_clock_source = 'internal'
         self._sample_clock_output_enabled = ''
@@ -1970,8 +1983,9 @@ class TerminalConfiguration(object):
     def __init__(self, *args, **kwargs):
         super(TerminalConfiguration, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenTerminalConfiguration')
+        cls = 'IviFgen'
+        grp = 'TerminalConfiguration'
+        ivi.add_group_capability(self, cls+grp)
         
         self._output_terminal_configuration = list()
         
@@ -2020,8 +2034,9 @@ class ArbChannelWfm(object):
     def __init__(self, *args, **kwargs):
         super(ArbChannelWfm, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbChannelWfm')
+        cls = 'IviFgen'
+        grp = 'ArbChannelWfm'
+        ivi.add_group_capability(self, cls+grp)
         
         ivi.add_method(self, 'outputs[].arbitrary.create_waveform',
                         self._arbitrary_waveform_create_channel_waveform,
@@ -2074,8 +2089,9 @@ class ArbWfmBinary(object):
     def __init__(self, *args, **kwargs):
         super(ArbWfmBinary, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbWfmBinary')
+        cls = 'IviFgen'
+        grp = 'ArbWfmBinary'
+        ivi.add_group_capability(self, cls+grp)
         
         self._arbitrary_binary_alignment = 'right'
         self._arbitrary_sample_bit_resolution = 16
@@ -2212,8 +2228,9 @@ class DataMarker(object):
     def __init__(self, *args, **kwargs):
         super(DataMarker, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenDataMarker')
+        cls = 'IviFgen'
+        grp = 'DataMarker'
+        ivi.add_group_capability(self, cls+grp)
         
         self._data_marker_count = 1
         self._data_marker_name = list()
@@ -2403,8 +2420,9 @@ class ArbDataMask(object):
     def __init__(self, *args, **kwargs):
         super(ArbDataMask, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbDataMask')
+        cls = 'IviFgen'
+        grp = 'ArbDataMask'
+        ivi.add_group_capability(self, cls+grp)
         
         self._arbitrary_data_mask = 0xffffffff
         
@@ -2438,8 +2456,9 @@ class SparseMarker(object):
     def __init__(self, *args, **kwargs):
         super(SparseMarker, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenSparseMarker')
+        cls = 'IviFgen'
+        grp = 'SparseMarker'
+        ivi.add_group_capability(self, cls+grp)
         
         self._sparse_marker_count = 1
         self._sparse_marker_name = list()
@@ -2629,8 +2648,9 @@ class ArbSeqDepth(object):
     def __init__(self, *args, **kwargs):
         super(ArbSeqDepth, self).__init__(*args, **kwargs)
         
-        self.__dict__.setdefault('_identity_group_capabilities', list())
-        self._identity_group_capabilities.insert(0, 'IviFgenArbSeqDepth')
+        cls = 'IviFgen'
+        grp = 'ArbSeqDepth'
+        ivi.add_group_capability(self, cls+grp)
         
         self._arbitrary_sequence_depth_max = 1
         

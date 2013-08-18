@@ -45,7 +45,9 @@ class Base(object):
     def __init__(self, *args, **kwargs):
         super(Base, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviDmmBase')
+        cls = 'IviDmm'
+        grp = 'Base'
+        ivi.add_group_capability(self, cls+grp)
         
         self._measurement_function = 'dc_volts'
         self._range = 0
@@ -181,7 +183,9 @@ class ACMeasurement(object):
     def __init__(self, *args, **kwargs):
         super(ACMeasurement, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviDmmACMeasurement')
+        cls = 'IviDmm'
+        grp = 'ACMeasurement'
+        ivi.add_group_capability(self, cls+grp)
         
         self._ac_frequency_max = 100
         self._ac_frequency_min = 10
@@ -221,7 +225,9 @@ class FrequencyMeasurement(object):
     def __init__(self, *args, **kwargs):
         super(FrequencyMeasurement, self).__init__(*args, **kwargs)
         
-        self._add_group_capability('IviDmmFrequencyMeasurement')
+        cls = 'IviDmm'
+        grp = 'FrequencyMeasurement'
+        ivi.add_group_capability(self, cls+grp)
         
         self._frequency_voltage_range = 1
         self._frequency_voltage_range_auto = False
