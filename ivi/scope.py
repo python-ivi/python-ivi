@@ -87,87 +87,82 @@ class Base(object):
         self._trigger_source = ""
         self._trigger_type = 'edge'
         
-        self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
-        self.acquisition._add_property('start_time',
+        ivi.add_property(self, 'acquisition.start_time',
                         self._get_acquisition_start_time,
                         self._set_acquisition_start_time)
-        self.acquisition._add_property('type',
+        ivi.add_property(self, 'acquisition.type',
                         self._get_acquisition_type,
                         self._set_acquisition_type)
-        self.acquisition._add_property('number_of_points_minimum',
+        ivi.add_property(self, 'acquisition.number_of_points_minimum',
                         self._get_acquisition_number_of_points_minimum,
                         self._set_acquisition_number_of_points_minimum)
-        self.acquisition._add_property('record_length',
+        ivi.add_property(self, 'acquisition.record_length',
                         self._get_acquisition_record_length)
-        self.acquisition._add_property('sample_rate',
+        ivi.add_property(self, 'acquisition.sample_rate',
                         self._get_acquisition_sample_rate)
-        self.acquisition._add_property('time_per_record',
+        ivi.add_property(self, 'acquisition.time_per_record',
                         self._get_acquisition_time_per_record,
                         self._set_acquisition_time_per_record)
-        self.acquisition._add_method('configure_record',
+        ivi.add_method(self, 'acquisition.configure_record',
                         self._acquisition_configure_record)
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('name',
+        ivi.add_property(self, 'channels[].name',
                         self._get_channel_name)
-        self.channels._add_property('enabled',
+        ivi.add_property(self, 'channels[].enabled',
                         self._get_channel_enabled,
                         self._set_channel_enabled)
-        self.channels._add_property('input_impedance',
+        ivi.add_property(self, 'channels[].input_impedance',
                         self._get_channel_input_impedance,
                         self._set_channel_input_impedance)
-        self.channels._add_property('input_frequency_max',
+        ivi.add_property(self, 'channels[].input_frequency_max',
                         self._get_channel_input_frequency_max,
                         self._set_channel_input_frequency_max)
-        self.channels._add_property('probe_attenuation',
+        ivi.add_property(self, 'channels[].probe_attenuation',
                         self._get_channel_probe_attenuation,
                         self._set_channel_probe_attenuation)
-        self.channels._add_property('coupling',
+        ivi.add_property(self, 'channels[].coupling',
                         self._get_channel_coupling,
                         self._set_channel_coupling)
-        self.channels._add_property('offset',
+        ivi.add_property(self, 'channels[].offset',
                         self._get_channel_offset,
                         self._set_channel_offset)
-        self.channels._add_property('range',
+        ivi.add_property(self, 'channels[].range',
                         self._get_channel_range,
                         self._set_channel_range)
-        self.channels._add_method('configure',
+        ivi.add_method(self, 'channels[].configure',
                         self._channel_configure)
-        self.channels._add_method('configure_characteristics',
+        ivi.add_method(self, 'channels[].configure_characteristics',
                         self._channel_configure_characteristics)
-        self.channels._add_method('measurement.fetch_waveform',
+        ivi.add_method(self, 'channels[].measurement.fetch_waveform',
                         self._measurement_fetch_waveform)
-        self.channels._add_method('measurement.read_waveform',
+        ivi.add_method(self, 'channels[].measurement.read_waveform',
                         self._measurement_read_waveform)
-        self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement._add_property('status',
+        ivi.add_property(self, 'measurement.status',
                         self._get_measurement_status)
-        self.measurement._add_method('abort',
+        ivi.add_method(self, 'measurement.abort',
                         self._measurement_abort)
-        self.measurement._add_method('initiate',
+        ivi.add_method(self, 'measurement.initiate',
                         self._measurement_initiate)
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger._add_property('coupling',
+        ivi.add_property(self, 'trigger.coupling',
                         self._get_trigger_coupling,
                         self._set_trigger_coupling)
-        self.trigger._add_property('holdoff',
+        ivi.add_property(self, 'trigger.holdoff',
                         self._get_trigger_holdoff,
                         self._set_trigger_holdoff)
-        self.trigger._add_property('level',
+        ivi.add_property(self, 'trigger.level',
                         self._get_trigger_level,
                         self._set_trigger_level)
-        self.trigger.__dict__.setdefault('edge', ivi.PropertyCollection())
-        self.trigger.edge._add_property('slope',
+        ivi.add_property(self, 'trigger.edge.slope',
                         self._get_trigger_edge_slope,
                         self._set_trigger_edge_slope)
-        self.trigger.edge._add_method('configure',
+        ivi.add_method(self, 'trigger.edge.configure',
                         self._trigger_edge_configure)
-        self.trigger._add_property('source',
+        ivi.add_property(self, 'trigger.source',
                         self._get_trigger_source,
                         self._set_trigger_source)
-        self.trigger._add_property('type',
+        ivi.add_property(self, 'trigger.type',
                         self._get_trigger_type,
                         self._set_trigger_type)
-        self.trigger._add_method('configure',
+        ivi.add_method(self, 'trigger.configure',
                         self._trigger_configure)
         
         self._init_channels()
@@ -403,8 +398,7 @@ class Interpolation(object):
         
         self._acquisition_interpolation = 'none'
         
-        self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
-        self.acquisition._add_property('interpolation',
+        ivi.add_property(self, 'acquisition.interpolation',
                         self._get_acquisition_interpolation,
                         self._set_acquisition_interpolation)
     
@@ -428,21 +422,19 @@ class TVTrigger(object):
         self._trigger_tv_polarity = 'positive'
         self._trigger_tv_signal_format = 'ntsc'
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger.__dict__.setdefault('tv', ivi.PropertyCollection())
-        self.trigger.tv._add_property('trigger_event',
+        ivi.add_property(self, 'trigger.tv.trigger_event',
                         self._get_trigger_tv_trigger_event,
                         self._set_trigger_tv_trigger_event)
-        self.trigger.tv._add_property('line_number',
+        ivi.add_property(self, 'trigger.tv.line_number',
                         self._get_trigger_tv_line_number,
                         self._set_trigger_tv_line_number)
-        self.trigger.tv._add_property('polarity',
+        ivi.add_property(self, 'trigger.tv.polarity',
                         self._get_trigger_tv_polarity,
                         self._set_trigger_tv_polarity)
-        self.trigger.tv._add_property('signal_format',
+        ivi.add_property(self, 'trigger.tv.signal_format',
                         self._get_trigger_tv_signal_format,
                         self._set_trigger_tv_signal_format)
-        self.trigger.tv._add_method('configure',
+        ivi.add_method(self, 'trigger.tv.configure',
                         self._trigger_tv_configure)
     
     def _get_trigger_tv_trigger_event(self):
@@ -494,18 +486,16 @@ class RuntTrigger(object):
         self._trigger_runt_threshold_low = 0
         self._trigger_runt_polarity = 'positive'
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger.__dict__.setdefault('runt', ivi.PropertyCollection())
-        self.trigger.runt._add_property('threshold_high',
+        ivi.add_property(self, 'trigger.runt.threshold_high',
                         self._get_trigger_runt_threshold_high,
                         self._set_trigger_runt_threshold_high)
-        self.trigger.runt._add_property('threshold_low',
+        ivi.add_property(self, 'trigger.runt.threshold_low',
                         self._get_trigger_runt_threshold_low,
                         self._set_trigger_runt_threshold_low)
-        self.trigger.runt._add_property('polarity',
+        ivi.add_property(self, 'trigger.runt.polarity',
                         self._get_trigger_runt_polarity,
                         self._set_trigger_runt_polarity)
-        self.trigger.runt._add_method('configure',
+        ivi.add_method(self, 'trigger.runt.configure',
                         self._trigger_runt_configure)
     
     def _get_trigger_runt_threshold_high(self):
@@ -549,18 +539,16 @@ class GlitchTrigger(object):
         self._trigger_glitch_polarity = 'positive'
         self._trigger_glitch_width = 0
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger.__dict__.setdefault('glitch', ivi.PropertyCollection())
-        self.trigger.glitch._add_property('condition',
+        ivi.add_property(self, 'trigger.glitch.condition',
                         self._get_trigger_glitch_condition,
                         self._set_trigger_glitch_condition)
-        self.trigger.glitch._add_property('polarity',
+        ivi.add_property(self, 'trigger.glitch.polarity',
                         self._get_trigger_glitch_polarity,
                         self._set_trigger_glitch_polarity)
-        self.trigger.glitch._add_property('width',
+        ivi.add_property(self, 'trigger.glitch.width',
                         self._get_trigger_glitch_width,
                         self._set_trigger_glitch_width)
-        self.trigger.glitch._add_method('configure',
+        ivi.add_method(self, 'trigger.glitch.configure',
                         self._trigger_glitch_configure)
     
     def _get_trigger_glitch_condition(self):
@@ -607,21 +595,19 @@ class WidthTrigger(object):
         self._trigger_width_threshold_low = 0
         self._trigger_width_polarity = 'positive'
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger.__dict__.setdefault('width', ivi.PropertyCollection())
-        self.trigger.width._add_property('condition',
+        ivi.add_property(self, 'trigger.width.condition',
                         self._get_trigger_width_condition,
                         self._set_trigger_width_condition)
-        self.trigger.width._add_property('threshold_high',
+        ivi.add_property(self, 'trigger.width.threshold_high',
                         self._get_trigger_width_threshold_high,
                         self._set_trigger_width_threshold_high)
-        self.trigger.width._add_property('threshold_low',
+        ivi.add_property(self, 'trigger.width.threshold_low',
                         self._get_trigger_width_threshold_low,
                         self._set_trigger_width_threshold_low)
-        self.trigger.width._add_property('polarity',
+        ivi.add_property(self, 'trigger.width.polarity',
                         self._get_trigger_width_polarity,
                         self._set_trigger_width_polarity)
-        self.trigger.width._add_method('configure',
+        ivi.add_method(self, 'trigger.width.configure',
                         self._trigger_width_configure)
     
     def _get_trigger_width_condition(self):
@@ -673,9 +659,7 @@ class AcLineTrigger(object):
         
         self._trigger_ac_line_slope = 'positive'
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger.__dict__.setdefault('ac_line', ivi.PropertyCollection())
-        self.trigger.ac_line._add_property('slope',
+        ivi.add_property(self, 'trigger.ac_line.slope',
                         self._get_trigger_ac_line_slope,
                         self._set_trigger_ac_line_slope)
     
@@ -700,22 +684,20 @@ class WaveformMeasurement(object):
         self._reference_level_low = 10
         self._reference_level_middle = 50
         
-        self.__dict__.setdefault('reference_level', ivi.PropertyCollection())
-        self.reference_level._add_property('high',
+        ivi.add_property(self, 'reference_level.high',
                         self._get_reference_level_high,
                         self._set_reference_level_high)
-        self.reference_level._add_property('middle',
+        ivi.add_property(self, 'reference_level.middle',
                         self._get_reference_level_middle,
                         self._set_reference_level_middle)
-        self.reference_level._add_property('low',
+        ivi.add_property(self, 'reference_level.low',
                         self._get_reference_level_low,
                         self._set_reference_level_low)
-        self.reference_level._add_method('configure',
+        ivi.add_method(self, 'reference_level.configure',
                         self._reference_level_configure)
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_method('measurement.fetch_waveform_measurement',
+        ivi.add_method(self, 'channels[].measurement.fetch_waveform_measurement',
                         self._measurement_fetch_waveform_measurement)
-        self.channels._add_method('measurement.read_waveform_measurement',
+        ivi.add_method(self, 'channels[].measurement.read_waveform_measurement',
                         self._measurement_read_waveform_measurement)
     
     def _get_reference_level_high(self):
@@ -764,14 +746,12 @@ class MinMaxWaveform(object):
         
         self._acquisition_number_of_envelopes = 0
         
-        self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
-        self.acquisition._add_property('number_of_envelopes',
+        ivi.add_property(self, 'acquisition.number_of_envelopes',
                         self._get_acquisition_number_of_envelopes,
                         self._set_acquisition_number_of_envelopes)
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_method('measurement.fetch_waveform_min_max',
+        ivi.add_method(self, 'channels[].measurement.fetch_waveform_min_max',
                         self._measurement_fetch_waveform_min_max)
-        self.channels._add_method('measurement.read_waveform_min_max',
+        ivi.add_method(self, 'channels[].measurement.read_waveform_min_max',
                         self._measurement_read_waveform_min_max)
     
     def _get_acquisition_number_of_envelopes(self):
@@ -799,11 +779,10 @@ class ProbeAutoSense(object):
         self._channel_probe_attenuation_auto = list()
         self._channel_probe_sense = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('probe_attenuation_auto',
+        ivi.add_property(self, 'channels[].probe_attenuation_auto',
                         self._get_channel_probe_attenuation_auto,
                         self._set_channel_probe_attenuation_auto)
-        self.channels._add_property('probe_sense',
+        ivi.add_property(self, 'channels[].probe_sense',
                         self._get_channel_probe_sense)
     
     def init_channels(self):
@@ -842,8 +821,7 @@ class ContinuousAcquisition(object):
         
         self._trigger_continuous = False
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger._add_property('continuous',
+        ivi.add_property(self, 'trigger.continuous',
                         self._get_trigger_continuous,
                         self._set_trigger_continuous)
     
@@ -864,8 +842,7 @@ class AverageAcquisition(object):
         
         self._acquisition_number_of_averages = 1
         
-        self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
-        self.acquisition._add_property('number_of_averages',
+        ivi.add_property(self, 'acquisition.number_of_averages',
                         self._get_acquisition_number_of_averages,
                         self._set_acquisition_number_of_averages)
     
@@ -886,8 +863,7 @@ class SampleMode(object):
         
         self._acquisition_sample_mode = 'real_time'
         
-        self.__dict__.setdefault('acquisition', ivi.PropertyCollection())
-        self.acquisition._add_property('sample_mode',
+        ivi.add_property(self, 'acquisition.sample_mode',
                         self._get_acquisition_sample_mode,
                         self._set_acquisition_sample_mode)
     
@@ -910,8 +886,7 @@ class TriggerModifier(object):
         
         self._trigger_modifier = 'none'
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger._add_property('modifier',
+        ivi.add_property(self, 'trigger.modifier',
                         self._get_trigger_modifier,
                         self._set_trigger_modifier)
     
@@ -932,8 +907,7 @@ class AutoSetup(object):
         
         self._add_group_capability('IviScopeAutoSetup')
         
-        self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement._add_method('auto_setup',
+        ivi.add_method(self, 'measurement.auto_setup',
                         self._measurement_auto_setup)
     
     def _measurement_auto_setup(self):

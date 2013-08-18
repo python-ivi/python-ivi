@@ -57,35 +57,32 @@ class Base(object):
         
         self._measurement_measurement_state = 'unknown'
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('averaging.count_auto',
+        ivi.add_property(self, 'channels[].averaging.count_auto',
                         self._get_channel_averaging_count_auto,
                         self._set_channel_averaging_count_auto)
-        self.channels._add_property('correction_frequency',
+        ivi.add_property(self, 'channels[].correction_frequency',
                         self._get_channel_correction_frequency,
                         self._set_channel_correction_frequency)
-        self.channels._add_property('offset',
+        ivi.add_property(self, 'channels[].offset',
                         self._get_channel_offset,
                         self._set_channel_offset)
-        self.channels._add_property('range_auto',
+        ivi.add_property(self, 'channels[].range_auto',
                         self._get_channel_range_auto,
                         self._set_channel_range_auto)
-        self.channels._add_property('units',
+        ivi.add_property(self, 'channels[].units',
                         self._get_channel_units,
                         self._set_channel_units)
-        
-        self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement._add_property('measurement_state',
+        ivi.add_property(self, 'measurement.measurement_state',
                         self._get_measurement_measurement_state)
-        self.measurement._add_method('abort',
+        ivi.add_method(self, 'measurement.abort',
                         self._measurement_abort)
-        self.measurement._add_method('configure',
+        ivi.add_method(self, 'measurement.configure',
                         self._measurement_configure)
-        self.measurement._add_method('fetch',
+        ivi.add_method(self, 'measurement.fetch',
                         self._measurement_fetch)
-        self.measurement._add_method('initiate',
+        ivi.add_method(self, 'measurement.initiate',
                         self._measurement_initiate)
-        self.measurement._add_method('read',
+        ivi.add_method(self, 'measurement.read',
                         self._measurement_read)
         
         self._init_channels()
@@ -193,19 +190,16 @@ class ChannelAcquisition(object):
         
         self._channel_enabled = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('enabled',
+        ivi.add_property(self, 'channels[].enabled',
                         self._get_channel_enabled,
                         self._set_channel_enabled)
-        self.channels._add_method('fetch',
+        ivi.add_method(self, 'channels[].fetch',
                         self._measurement_fetch_channel)
-        self.channels._add_method('read',
+        ivi.add_method(self, 'channels[].read',
                         self._measurement_read_channel)
-        
-        self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement._add_method('fetch_channel',
+        ivi.add_method(self, 'measurement.fetch_channel',
                         self._measurement_fetch_channel)
-        self.measurement._add_method('read_channel',
+        ivi.add_method(self, 'measurement.read_channel',
                         self._measurement_read_channel)
         
         self._init_channels()
@@ -254,14 +248,13 @@ class ManualRange(object):
         self._channel_range_lower = list()
         self._channel_range_upper = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('range.lower',
+        ivi.add_property(self, 'channels[].range.lower',
                         self._get_channel_range_lower,
                         self._set_channel_range_lower)
-        self.channels._add_property('range.upper',
+        ivi.add_property(self, 'channels[].range.upper',
                         self._get_channel_range_upper,
                         self._set_channel_range_upper)
-        self.channels._add_method('range.configure',
+        ivi.add_method(self, 'channels[].range.configure',
                         self._channel_range_configure)
         
         self._init_channels()
@@ -317,7 +310,7 @@ class TriggerSource(object):
         self._trigger_source = ''
         
         self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger._add_property('source',
+        ivi.add_property(self, 'trigger.source',
                         self._get_trigger_source,
                         self._set_trigger_source)
     
@@ -344,18 +337,16 @@ class InternalTrigger(object):
         self._trigger_internal_level = 0.0
         self._trigger_internal_slope = 'positive'
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger.setdefault('internal', ivi.PropertyCollection())
-        self.trigger.internal._add_property('event_source',
+        ivi.add_property(self, 'trigger.internal.event_source',
                         self._get_trigger_internal_event_source,
                         self._set_trigger_internal_event_source)
-        self.trigger.internal._add_property('level',
+        ivi.add_property(self, 'trigger.internal.level',
                         self._get_trigger_internal_level,
                         self._set_trigger_internal_level)
-        self.trigger.internal._add_property('slope',
+        ivi.add_property(self, 'trigger.internal.slope',
                         self._get_trigger_internal_slope,
                         self._set_trigger_internal_slope)
-        self.trigger.internal._add_method('configure',
+        ivi.add_method(self, 'trigger.internal.configure',
                         self._trigger_internal_configure)
     
     def _get_trigger_internal_event_source(self):
@@ -411,14 +402,13 @@ class DutyCycleCorrection(object):
         self._channel_duty_cycle_enabled = list()
         self._channel_duty_cycle_value = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('duty_cycle.enabled',
+        ivi.add_property(self, 'channels[].duty_cycle.enabled',
                         self._get_channel_duty_cycle_enabled,
                         self._set_channel_duty_cycle_enabled)
-        self.channels._add_property('duty_cycle.value',
+        ivi.add_property(self, 'channels[].duty_cycle.value',
                         self._get_channel_duty_cycle_value,
                         self._set_channel_duty_cycle_value)
-        self.channels._add_method('duty_cycle.configure',
+        ivi.add_method(self, 'channels[].duty_cycle.configure',
                         self._channel_duty_cycle_configure)
         
         self._init_channels()
@@ -473,8 +463,7 @@ class AveragingCount(object):
         
         self._channel_averaging_count = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('averaging.count',
+        ivi.add_property(self, 'channels[].averaging.count',
                         self._get_channel_averaging_count,
                         self._set_channel_averaging_count)
         
@@ -515,10 +504,9 @@ class ZeroCorrection(object):
         
         self._channel_zero_state = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('zero_state',
+        ivi.add_property(self, 'channels[].zero_state',
                         self._get_channel_zero_state)
-        self.channels._add_method('zero',
+        ivi.add_method(self, 'channels[].zero',
                         self._channel_zero)
         
         self._init_channels()
@@ -561,10 +549,9 @@ class Calibration(object):
         
         self._channel_calibration_state = list()
         
-        self.__dict__.setdefault('channels', ivi.IndexedPropertyCollection())
-        self.channels._add_property('calibration_state',
+        ivi.add_property(self, 'channels[].calibration_state',
                         self._get_channel_calibration_state)
-        self.channels._add_method('calibrate',
+        ivi.add_method(self, 'channels[].calibrate',
                         self._channel_calibrate)
         
         self._init_channels()
@@ -606,16 +593,16 @@ class ReferenceOscillator(object):
         self._reference_oscillator_level = 0.0
         
         self.__dict__.setdefault('reference_oscillator', ivi.PropertyCollection())
-        self.reference_oscillator._add_property('enabled',
+        ivi.add_property(self, 'reference_oscillator.enabled',
                         self._get_reference_oscillator_enabled,
                         self._set_reference_oscillator_enabled)
-        self.reference_oscillator._add_property('frequency',
+        ivi.add_property(self, 'reference_oscillator.frequency',
                         self._get_reference_oscillator_frequency,
                         self._set_reference_oscillator_frequency)
-        self.reference_oscillator._add_property('level',
+        ivi.add_property(self, 'reference_oscillator.level',
                         self._get_reference_oscillator_level,
                         self._set_reference_oscillator_level)
-        self.reference_oscillator._add_method('configure',
+        ivi.add_method(self, 'reference_oscillator.configure',
                         self._reference_oscillator_configure)
     
     def _get_reference_oscillator_enabled(self):

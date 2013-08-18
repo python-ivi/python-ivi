@@ -56,30 +56,27 @@ class Base(object):
         self._trigger_auto_delay = False
         self._trigger_source = ''
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        self.trigger._add_property('delay',
+        ivi.add_property(self, 'trigger.delay',
                         self._get_trigger_delay,
                         self._set_trigger_delay)
-        self.trigger._add_property('delay_auto',
+        ivi.add_property(self, 'trigger.delay_auto',
                         self._get_trigger_delay_auto,
                         self._set_trigger_delay_auto)
-        self.trigger._add_method('configure',
+        ivi.add_method(self, 'trigger.configure',
                         self._trigger_configure)
-        
-        self.__dict__.setdefault('measurement', ivi.PropertyCollection())
-        self.measurement._add_method('abort',
+        ivi.add_method(self, 'measurement.abort',
                         self._measurement_abort)
-        self.measurement._add_method('fetch',
+        ivi.add_method(self, 'measurement.fetch',
                         self._measurement_fetch)
-        self.measurement._add_method('initiate',
+        ivi.add_method(self, 'measurement.initiate',
                         self._measurement_initiate)
-        self.measurement._add_method('is_out_of_range',
+        ivi.add_method(self, 'measurement.is_out_of_range',
                         self._measurement_is_out_of_range)
-        self.measurement._add_method('is_over_range',
+        ivi.add_method(self, 'measurement.is_over_range',
                         self._measurement_is_over_range)
-        self.measurement._add_method('is_under_range',
+        ivi.add_method(self, 'measurement.is_under_range',
                         self._measurement_is_under_range)
-        self.measurement._add_method('read',
+        ivi.add_method(self, 'measurement.read',
                         self._measurement_read)
     
     def _get_measurement_function(self):
@@ -189,14 +186,13 @@ class ACMeasurement(object):
         self._ac_frequency_max = 100
         self._ac_frequency_min = 10
         
-        self.__dict__.setdefault('ac', ivi.PropertyCollection())
-        self.ac._add_property('frequency_max',
+        ivi.add_property(self, 'ac.frequency_max',
                         self._get_ac_frequency_max,
                         self._set_ac_frequency_max)
-        self.ac._add_property('frequency_min',
+        ivi.add_property(self, 'ac.frequency_min',
                         self._get_ac_frequency_min,
                         self._set_ac_frequency_min)
-        self.ac._add_method('configure_bandwidth',
+        ivi.add_method(self, 'ac.configure_bandwidth',
                         self._ac_configure_bandwidth)
         
     
@@ -230,11 +226,10 @@ class FrequencyMeasurement(object):
         self._frequency_voltage_range = 1
         self._frequency_voltage_range_auto = False
         
-        self.__dict__.setdefault('frequency', ivi.PropertyCollection())
-        self.frequency._add_property('voltage_range',
+        ivi.add_property(self, 'frequency.voltage_range',
                         self._get_frequency_voltage_range,
                         self._set_frequency_voltage_range)
-        self.frequency._add_property('voltage_range_auto',
+        ivi.add_property(self, 'frequency.voltage_range_auto',
                         self._get_frequency_voltage_range_auto,
                         self._set_frequency_voltage_range_auto)
         

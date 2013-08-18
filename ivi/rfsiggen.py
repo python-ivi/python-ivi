@@ -56,26 +56,24 @@ class Base(object):
         self._rf_output_enabled = False
         self._alc_enabled = False
         
-        self.__dict__.setdefault('rf', ivi.PropertyCollection())
-        self.rf._add_property('frequency',
+        ivi.add_property(self, 'rf.frequency',
                         self._get_rf_frequency,
                         self._set_rf_frequency)
-        self.rf._add_property('level',
+        ivi.add_property(self, 'rf.level',
                         self._get_rf_level,
                         self._set_rf_level)
-        self.rf._add_property('output_enabled',
+        ivi.add_property(self, 'rf.output_enabled',
                         self._get_rf_output_enabled,
                         self._set_rf_output_enabled)
-        self.rf._add_method('configure',
+        ivi.add_method(self, 'rf.configure',
                         self._rf_configure)
-        self.rf._add_method('disable_all_modulation',
+        ivi.add_method(self, 'rf.disable_all_modulation',
                         self._rf_disable_all_modulation)
-        self.rf._add_method('is_settled',
+        ivi.add_method(self, 'rf.is_settled',
                         self._rf_is_settled)
-        self.rf._add_method('wait_until_settled',
+        ivi.add_method(self, 'rf.wait_until_settled',
                         self._rf_wait_until_settled)
-        self.__dict__.setdefault('alc', ivi.PropertyCollection())
-        self.alc._add_property('enabled',
+        ivi.add_property(self, 'alc.enabled',
                         self._get_alc_enabled,
                         self._set_alc_enabled)
     
@@ -154,27 +152,25 @@ class ModulateAM(object):
         self._analog_modulation_am_nominal_voltage = 0
         self._analog_modulation_am_depth = 0
         
-        self.__dict__.setdefault('analog_modulation', ivi.PropertyCollection())
-        self.analog_modulation.__dict__.setdefault('am', ivi.PropertyCollection())
-        self.analog_modulation.am._add_property('enabled',
+        ivi.add_property(self, 'analog_modulation.am.enabled',
                         self._get_analog_modulation_am_enabled,
                         self._set_analog_modulation_am_enabled)
-        self.analog_modulation.am._add_property('source',
+        ivi.add_property(self, 'analog_modulation.am.source',
                         self._get_analog_modulation_am_source,
                         self._set_analog_modulation_am_source)
-        self.analog_modulation.am._add_property('scaling',
+        ivi.add_property(self, 'analog_modulation.am.scaling',
                         self._get_analog_modulation_am_scaling,
                         self._set_analog_modulation_am_scaling)
-        self.analog_modulation.am._add_property('external_coupling',
+        ivi.add_property(self, 'analog_modulation.am.external_coupling',
                         self._get_analog_modulation_am_external_coupling,
                         self._set_analog_modulation_am_external_coupling)
-        self.analog_modulation.am._add_property('nominal_voltage',
+        ivi.add_property(self, 'analog_modulation.am.nominal_voltage',
                         self._get_analog_modulation_am_nominal_voltage,
                         self._set_analog_modulation_am_nominal_voltage)
-        self.analog_modulation.am._add_property('depth',
+        ivi.add_property(self, 'analog_modulation.am.depth',
                         self._get_analog_modulation_am_depth,
                         self._set_analog_modulation_am_depth)
-        self.analog_modulation.am._add_method('configure',
+        ivi.add_method(self, 'analog_modulation.am.configure',
                         self._analog_modulation_am_configure)
     
     def _get_analog_modulation_am_enabled(self):
@@ -240,24 +236,22 @@ class ModulateFM(object):
         self._analog_modulation_fm_nominal_voltage = 0
         self._analog_modulation_fm_deviation = 0
         
-        self.__dict__.setdefault('analog_modulation', ivi.PropertyCollection())
-        self.analog_modulation.__dict__.setdefault('fm', ivi.PropertyCollection())
-        self.analog_modulation.fm._add_property('enabled',
+        ivi.add_property(self, 'analog_modulation.fm.enabled',
                         self._get_analog_modulation_fm_enabled,
                         self._set_analog_modulation_fm_enabled)
-        self.analog_modulation.fm._add_property('source',
+        ivi.add_property(self, 'analog_modulation.fm.source',
                         self._get_analog_modulation_fm_source,
                         self._set_analog_modulation_fm_source)
-        self.analog_modulation.fm._add_property('external_coupling',
+        ivi.add_property(self, 'analog_modulation.fm.external_coupling',
                         self._get_analog_modulation_fm_external_coupling,
                         self._set_analog_modulation_fm_external_coupling)
-        self.analog_modulation.fm._add_property('nominal_voltage',
+        ivi.add_property(self, 'analog_modulation.fm.nominal_voltage',
                         self._get_analog_modulation_fm_nominal_voltage,
                         self._set_analog_modulation_fm_nominal_voltage)
-        self.analog_modulation.fm._add_property('deviation',
+        ivi.add_property(self, 'analog_modulation.fm.deviation',
                         self._get_analog_modulation_fm_deviation,
                         self._set_analog_modulation_fm_deviation)
-        self.analog_modulation.fm._add_method('configure',
+        ivi.add_method(self, 'analog_modulation.fm.configure',
                         self._analog_modulation_fm_configure)
     
     def _get_analog_modulation_fm_enabled(self):
@@ -315,24 +309,22 @@ class ModulatePM(object):
         self._analog_modulation_pm_nominal_voltage = 0
         self._analog_modulation_pm_deviation = 0
         
-        self.__dict__.setdefault('analog_modulation', ivi.PropertyCollection())
-        self.analog_modulation.__dict__.setdefault('pm', ivi.PropertyCollection())
-        self.analog_modulation.pm._add_property('enabled',
+        ivi.add_property(self, 'analog_modulation.pm.enabled',
                         self._get_analog_modulation_pm_enabled,
                         self._set_analog_modulation_pm_enabled)
-        self.analog_modulation.pm._add_property('source',
+        ivi.add_property(self, 'analog_modulation.pm.source',
                         self._get_analog_modulation_pm_source,
                         self._set_analog_modulation_pm_source)
-        self.analog_modulation.pm._add_property('external_coupling',
+        ivi.add_property(self, 'analog_modulation.pm.external_coupling',
                         self._get_analog_modulation_pm_external_coupling,
                         self._set_analog_modulation_pm_external_coupling)
-        self.analog_modulation.pm._add_property('nominal_voltage',
+        ivi.add_property(self, 'analog_modulation.pm.nominal_voltage',
                         self._get_analog_modulation_pm_nominal_voltage,
                         self._set_analog_modulation_pm_nominal_voltage)
-        self.analog_modulation.pm._add_property('deviation',
+        ivi.add_property(self, 'analog_modulation.pm.deviation',
                         self._get_analog_modulation_pm_deviation,
                         self._set_analog_modulation_pm_deviation)
-        self.analog_modulation.pm._add_method('configure',
+        ivi.add_method(self, 'analog_modulation.pm.configure',
                         self._analog_modulation_pm_configure)
     
     def _get_analog_modulation_pm_enabled(self):
@@ -407,14 +399,13 @@ class ModulatePulse(object):
         self._pulse_modulation_source = ""
         self._pulse_modulation_external_polarity = 0
         
-        self.__dict__.setdefault('pulse_modulation', ivi.PropertyCollection())
-        self.pulse_modulation._add_property('enabled',
+        ivi.add_property(self, 'pulse_modulation.enabled',
                         self._get_pulse_modulation_enabled,
                         self._set_pulse_modulation_enabled)
-        self.pulse_modulation._add_property('source',
+        ivi.add_property(self, 'pulse_modulation.source',
                         self._get_pulse_modulation_source,
                         self._set_pulse_modulation_source)
-        self.pulse_modulation._add_property('external_polarity',
+        ivi.add_property(self, 'pulse_modulation.external_polarity',
                         self._get_pulse_modulation_external_polarity,
                         self._set_pulse_modulation_external_polarity)
     
@@ -455,17 +446,16 @@ class LFGenerator(object):
         self._lf_generator_frequency = 0
         self._lf_generator_waveform = 0
         
-        self.__dict__.setdefault('lf_generator', ivi.PropertyCollection())
-        self.lf_generator._add_property('active_lf_generator',
+        ivi.add_property(self, 'lf_generator.active_lf_generator',
                         self._get_lf_generator_active_lf_generator,
                         self._set_lf_generator_active_lf_generator)
-        self.lf_generator._add_property('frequency',
+        ivi.add_property(self, 'lf_generator.frequency',
                         self._get_lf_generator_frequency,
                         self._set_lf_generator_frequency)
-        self.lf_generator._add_property('waveform',
+        ivi.add_property(self, 'lf_generator.waveform',
                         self._get_lf_generator_waveform,
                         self._set_lf_generator_waveform)
-        self.lf_generator._add_method('configure',
+        ivi.add_method(self, 'lf_generator.configure',
                         self._lf_generator_configure)
     
     def _get_lf_generator_active_lf_generator(self):
@@ -512,15 +502,13 @@ class LFGeneratorOutput(object):
         self._lf_generator_output_amplitude = 0
         self._lf_generator_output_enabled = 0
         
-        self.__dict__.setdefault('lf_generator', ivi.PropertyCollection())
-        self.lf_generator.__dict__.setdefault('output', ivi.PropertyCollection())
-        self.lf_generator.output._add_property('enabled',
+        ivi.add_property(self, 'lf_generator.output.enabled',
                         self._get_lf_generator_output_enabled,
                         self._set_lf_generator_output_enabled)
-        self.lf_generator.output._add_property('amplitude',
+        ivi.add_property(self, 'lf_generator.output.amplitude',
                         self._get_lf_generator_output_amplitude,
                         self._set_lf_generator_output_amplitude)
-        self.lf_generator.output._add_method('configure',
+        ivi.add_method(self, 'lf_generator.output.configure',
                         self._lf_generator_output_configure)
     
     def _get_lf_generator_output_amplitude(self):
@@ -557,28 +545,27 @@ class PulseGenerator(object):
         self._pulse_generator_external_trigger_slope = 0
         self._pulse_generator_external_trigger_delay = 0
         
-        self.__dict__.setdefault('pulse_generator', ivi.PropertyCollection())
-        self.pulse_generator._add_property('internal_trigger_period',
+        ivi.add_property(self, 'pulse_generator.internal_trigger_period',
                         self._get_pulse_generator_internal_trigger_period,
                         self._set_pulse_generator_internal_trigger_period)
-        self.pulse_generator._add_property('width',
+        ivi.add_property(self, 'pulse_generator.width',
                         self._get_pulse_generator_width,
                         self._set_pulse_generator_width)
-        self.pulse_generator._add_property('gating_enabled',
+        ivi.add_property(self, 'pulse_generator.gating_enabled',
                         self._get_pulse_generator_gating_enabled,
                         self._set_pulse_generator_gating_enabled)
-        self.pulse_generator._add_property('trigger_source',
+        ivi.add_property(self, 'pulse_generator.trigger_source',
                         self._get_pulse_generator_trigger_source,
                         self._set_pulse_generator_trigger_source)
-        self.pulse_generator._add_property('external_trigger_slope',
+        ivi.add_property(self, 'pulse_generator.external_trigger_slope',
                         self._get_pulse_generator_external_trigger_slope,
                         self._set_pulse_generator_external_trigger_slope)
-        self.pulse_generator._add_property('external_trigger_delay',
+        ivi.add_property(self, 'pulse_generator.external_trigger_delay',
                         self._get_pulse_generator_external_trigger_delay,
                         self._set_pulse_generator_external_trigger_delay)
-        self.pulse_generator._add_method('configure_external_trigger',
+        ivi.add_method(self, 'pulse_generator.configure_external_trigger',
                         self._pulse_generator_configure_external_trigger)
-        self.pulse_generator._add_method('configure',
+        ivi.add_method(self, 'pulse_generator.configure',
                         self._pulse_generator_configure)
     
     def _get_pulse_generator_internal_trigger_period(self):
@@ -645,15 +632,13 @@ class PulseDoubleGenerator(object):
         self._pulse_generator_double_pulse_enabled = False
         self._pulse_generator_double_pulse_delay = 0
         
-        self.__dict__.setdefault('pulse_generator', ivi.PropertyCollection())
-        self.pulse_generator.__dict__.setdefault('double_pulse', ivi.PropertyCollection())
-        self.pulse_generator.double_pulse._add_property('enabled',
+        ivi.add_property(self, 'pulse_generator.double_pulse.enabled',
                         self._get_pulse_generator_double_pulse_enabled,
                         self._set_pulse_generator_double_pulse_enabled)
-        self.pulse_generator.double_pulse._add_property('delay',
+        ivi.add_property(self, 'pulse_generator.double_pulse.delay',
                         self._get_pulse_generator_double_pulse_delay,
                         self._set_pulse_generator_double_pulse_delay)
-        self.pulse_generator.double_pulse._add_method('configure',
+        ivi.add_method(self, 'pulse_generator.double_pulse.configure',
                         self._pulse_generator_double_pulse_configure)
     
     def _get_pulse_generator_double_pulse_enabled(self):
@@ -686,15 +671,13 @@ class PulseGeneratorOutput(object):
         self._pulse_generator_output_polarity = 0
         self._pulse_generator_output_enabled = 0
         
-        self.__dict__.setdefault('pulse_generator', ivi.PropertyCollection())
-        self.pulse_generator.__dict__.setdefault('output', ivi.PropertyCollection())
-        self.pulse_generator.output._add_property('polarity',
+        ivi.add_property(self, 'pulse_generator.output.polarity',
                         self._get_pulse_generator_output_polarity,
                         self._set_pulse_generator_output_polarity)
-        self.pulse_generator.output._add_property('enabled',
+        ivi.add_property(self, 'pulse_generator.output.enabled',
                         self._get_pulse_generator_output_enabled,
                         self._set_pulse_generator_output_enabled)
-        self.pulse_generator.output._add_method('configure',
+        ivi.add_method(self, 'pulse_generator.output.configure',
                         self._pulse_generator_output_configure)
     
     def _get_pulse_generator_output_polarity(self):
@@ -727,14 +710,13 @@ class Sweep(object):
         self._sweep_mode = 0
         self._sweep_trigger_source = ""
         
-        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
-        self.sweep._add_property('mode',
+        ivi.add_property(self, 'sweep.mode',
                         self._get_sweep_mode,
                         self._set_sweep_mode)
-        self.sweep._add_property('trigger_source',
+        ivi.add_property(self, 'sweep.trigger_source',
                         self._get_sweep_trigger_source,
                         self._set_sweep_trigger_source)
-        self.sweep._add_method('configure',
+        ivi.add_method(self, 'sweep.configure',
                         self._sweep_configure)
     
     def _get_sweep_mode(self):
@@ -769,20 +751,18 @@ class FrequencySweep(object):
         self._sweep_frequency_sweep_stop = 0
         self._sweep_frequency_sweep_time = 0
         
-        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
-        self.sweep.__dict__.setdefault('frequency_sweep', ivi.PropertyCollection())
-        self.sweep.frequency_sweep._add_property('start',
+        ivi.add_property(self, 'sweep.frequency_sweep.start',
                         self._get_sweep_frequency_sweep_start,
                         self._set_sweep_frequency_sweep_start)
-        self.sweep.frequency_sweep._add_property('stop',
+        ivi.add_property(self, 'sweep.frequency_sweep.stop',
                         self._get_sweep_frequency_sweep_stop,
                         self._set_sweep_frequency_sweep_stop)
-        self.sweep.frequency_sweep._add_property('time',
+        ivi.add_property(self, 'sweep.frequency_sweep.time',
                         self._get_sweep_frequency_sweep_time,
                         self._set_sweep_frequency_sweep_time)
-        self.sweep.frequency_sweep._add_method('configure_start_stop',
+        ivi.add_method(self, 'sweep.frequency_sweep.configure_start_stop',
                         self._sweep_frequency_sweep_configure_start_stop)
-        self.sweep.frequency_sweep._add_method('configure_center_span',
+        ivi.add_method(self, 'sweep.frequency_sweep.configure_center_span',
                         self._sweep_frequency_sweep_configure_center_span)
     
     def _get_sweep_frequency_sweep_start(self):
@@ -827,18 +807,16 @@ class PowerSweep(object):
         self._sweep_power_sweep_stop = 0
         self._sweep_power_sweep_time = 0
         
-        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
-        self.sweep.__dict__.setdefault('power_sweep', ivi.PropertyCollection())
-        self.sweep.power_sweep._add_property('start',
+        ivi.add_property(self, 'sweep.power_sweep.start',
                         self._get_sweep_power_sweep_start,
                         self._set_sweep_power_sweep_start)
-        self.sweep.power_sweep._add_property('stop',
+        ivi.add_property(self, 'sweep.power_sweep.stop',
                         self._get_sweep_power_sweep_stop,
                         self._set_sweep_power_sweep_stop)
-        self.sweep.power_sweep._add_property('time',
+        ivi.add_property(self, 'sweep.power_sweep.time',
                         self._get_sweep_power_sweep_time,
                         self._set_sweep_power_sweep_time)
-        self.sweep.power_sweep._add_method('configure_start_stop',
+        ivi.add_method(self, 'sweep.power_sweep.configure_start_stop',
                         self._sweep_power_sweep_configure_start_stop)
     
     def _get_sweep_power_sweep_start(self):
@@ -882,31 +860,29 @@ class FrequencyStep(object):
         self._sweep_frequency_step_single_step_enabled = False
         self._sweep_frequency_step_dwell = 0
         
-        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
-        self.sweep.__dict__.setdefault('frequency_step', ivi.PropertyCollection())
-        self.sweep.frequency_step._add_property('start',
+        ivi.add_property(self, 'sweep.frequency_step.start',
                         self._get_sweep_frequency_step_start,
                         self._set_sweep_frequency_step_start)
-        self.sweep.frequency_step._add_property('stop',
+        ivi.add_property(self, 'sweep.frequency_step.stop',
                         self._get_sweep_frequency_step_stop,
                         self._set_sweep_frequency_step_stop)
-        self.sweep.frequency_step._add_property('scaling',
+        ivi.add_property(self, 'sweep.frequency_step.scaling',
                         self._get_sweep_frequency_step_scaling,
                         self._set_sweep_frequency_step_scaling)
-        self.sweep.frequency_step._add_property('size',
+        ivi.add_property(self, 'sweep.frequency_step.size',
                         self._get_sweep_frequency_step_size,
                         self._set_sweep_frequency_step_size)
-        self.sweep.frequency_step._add_property('single_step_enabled',
+        ivi.add_property(self, 'sweep.frequency_step.single_step_enabled',
                         self._get_sweep_frequency_step_single_step_enabled,
                         self._set_sweep_frequency_step_single_step_enabled)
-        self.sweep.frequency_step._add_property('dwell',
+        ivi.add_property(self, 'sweep.frequency_step.dwell',
                         self._get_sweep_frequency_step_dwell,
                         self._set_sweep_frequency_step_dwell)
-        self.sweep.frequency_step._add_method('configure_start_stop',
+        ivi.add_method(self, 'sweep.frequency_step.configure_start_stop',
                         self._sweep_frequency_step_configure_start_stop)
-        self.sweep.frequency_step._add_method('configure_dwell',
+        ivi.add_method(self, 'sweep.frequency_step.configure_dwell',
                         self._sweep_frequency_step_configure_dwell)
-        self.sweep.frequency_step._add_method('reset',
+        ivi.add_method(self, 'sweep.frequency_step.reset',
                         self._sweep_frequency_step_reset)
     
     def _get_sweep_frequency_step_start(self):
@@ -980,28 +956,26 @@ class PowerStep(object):
         self._sweep_power_step_single_step_enabled = False
         self._sweep_power_step_dwell = 0
         
-        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
-        self.sweep.__dict__.setdefault('power_step', ivi.PropertyCollection())
-        self.sweep.power_step._add_property('start',
+        ivi.add_property(self, 'sweep.power_step.start',
                         self._get_sweep_power_step_start,
                         self._set_sweep_power_step_start)
-        self.sweep.power_step._add_property('stop',
+        ivi.add_property(self, 'sweep.power_step.stop',
                         self._get_sweep_power_step_stop,
                         self._set_sweep_power_step_stop)
-        self.sweep.power_step._add_property('size',
+        ivi.add_property(self, 'sweep.power_step.size',
                         self._get_sweep_power_step_size,
                         self._set_sweep_power_step_size)
-        self.sweep.power_step._add_property('single_step_enabled',
+        ivi.add_property(self, 'sweep.power_step.single_step_enabled',
                         self._get_sweep_power_step_single_step_enabled,
                         self._set_sweep_power_step_single_step_enabled)
-        self.sweep.power_step._add_property('dwell',
+        ivi.add_property(self, 'sweep.power_step.dwell',
                         self._get_sweep_power_step_dwell,
                         self._set_sweep_power_step_dwell)
-        self.sweep.power_step._add_method('configure_start_stop',
+        ivi.add_method(self, 'sweep.power_step.configure_start_stop',
                         self._sweep_power_step_configure_start_stop)
-        self.sweep.power_step._add_method('configure_dwell',
+        ivi.add_method(self, 'sweep.power_step.configure_dwell',
                         self._sweep_power_step_configure_dwell)
-        self.sweep.power_step._add_method('reset',
+        ivi.add_method(self, 'sweep.power_step.reset',
                         self._sweep_power_step_reset)
     
     def _get_sweep_power_step_start(self):
@@ -1064,28 +1038,26 @@ class List(object):
         self._sweep_list_single_step_enabled = False
         self._sweep_list_dwell = 0
         
-        self.__dict__.setdefault('sweep', ivi.PropertyCollection())
-        self.sweep.__dict__.setdefault('list', ivi.PropertyCollection())
-        self.sweep.list._add_property('selected_list',
+        ivi.add_property(self, 'sweep.list.selected_list',
                         self._get_sweep_list_selected_list,
                         self._set_sweep_list_selected_list)
-        self.sweep.list._add_property('single_step_enabled',
+        ivi.add_property(self, 'sweep.list.single_step_enabled',
                         self._get_sweep_list_single_step_enabled,
                         self._set_sweep_list_single_step_enabled)
-        self.sweep.list._add_property('dwell',
+        ivi.add_property(self, 'sweep.list.dwell',
                         self._get_sweep_list_dwell,
                         self._set_sweep_list_dwell)
-        self.sweep.list._add_method('create_frequency',
+        ivi.add_method(self, 'sweep.list.create_frequency',
                         self._sweep_list_create_frequency)
-        self.sweep.list._add_method('create_power',
+        ivi.add_method(self, 'sweep.list.create_power',
                         self._sweep_list_create_power)
-        self.sweep.list._add_method('create_frequency_power',
+        ivi.add_method(self, 'sweep.list.create_frequency_power',
                         self._sweep_list_create_frequency_power)
-        self.sweep.list._add_method('clear_all',
+        ivi.add_method(self, 'sweep.list.clear_all',
                         self._sweep_list_clear_all)
-        self.sweep.list._add_method('configure_dwell',
+        ivi.add_method(self, 'sweep.list.configure_dwell',
                         self._sweep_list_configure_dwell)
-        self.sweep.list._add_method('reset',
+        ivi.add_method(self, 'sweep.list.reset',
                         self._sweep_list_reset)
     
     def _get_sweep_list_selected_list(self):
@@ -1140,14 +1112,13 @@ class ALC(object):
         self._alc_source = 'internal'
         self._alc_bandwidth = 0
         
-        self.__dict__.setdefault('alc', ivi.PropertyCollection())
-        self.alc._add_property('source',
+        ivi.add_property(self, 'alc.source',
                         self._get_alc_source,
                         self._set_alc_source)
-        self.alc._add_property('bandwidth',
+        ivi.add_property(self, 'alc.bandwidth',
                         self._get_alc_bandwidth,
                         self._set_alc_bandwidth)
-        self.alc._add_method('configure',
+        ivi.add_method(self, 'alc.configure',
                         self._alc_configure)
     
     def _get_alc_source(self):
@@ -1181,14 +1152,13 @@ class ReferenceOscillator(object):
         self._reference_oscillator_source = 'internal'
         self._reference_oscillator_external_frequency = 0
         
-        self.__dict__.setdefault('reference_oscillator', ivi.PropertyCollection())
-        self.reference_oscillator._add_property('source',
+        ivi.add_property(self, 'reference_oscillator.source',
                         self._get_reference_oscillator_source,
                         self._set_reference_oscillator_source)
-        self.reference_oscillator._add_property('external_frequency',
+        ivi.add_property(self, 'reference_oscillator.external_frequency',
                         self._get_reference_oscillator_external_frequency,
                         self._set_reference_oscillator_external_frequency)
-        self.reference_oscillator._add_method('configure',
+        ivi.add_method(self, 'reference_oscillator.configure',
                         self._reference_oscillator_configure)
     
     def _get_reference_oscillator_source(self):
@@ -1236,22 +1206,21 @@ class ModulateIQ(object):
         self._iq_nominal_voltage = 0
         self._iq_swap_enabled = False
         
-        self.__dict__.setdefault('iq', ivi.PropertyCollection())
-        self.iq._add_property('enabled',
+        ivi.add_property(self, 'iq.enabled',
                         self._get_iq_enabled,
                         self._set_iq_enabled)
-        self.iq._add_property('source',
+        ivi.add_property(self, 'iq.source',
                         self._get_iq_source,
                         self._set_iq_source)
-        self.iq._add_property('nominal_voltage',
+        ivi.add_property(self, 'iq.nominal_voltage',
                         self._get_iq_nominal_voltage,
                         self._set_iq_nominal_voltage)
-        self.iq._add_property('swap_enabled',
+        ivi.add_property(self, 'iq.swap_enabled',
                         self._get_iq_swap_enabled,
                         self._set_iq_swap_enabled)
-        self.iq._add_method('configure',
+        ivi.add_method(self, 'iq.configure',
                         self._iq_configure)
-        self.iq._add_method('calibrate',
+        ivi.add_method(self, 'iq.calibrate',
                         self._iq_calibrate)
     
     def _get_iq_enabled(self):
@@ -1305,24 +1274,22 @@ class IQImpairment(object):
         self._iq_impairment_iq_ratio = 0
         self._iq_impairment_iq_skew = 0
         
-        self.__dict__.setdefault('iq', ivi.PropertyCollection())
-        self.iq.__dict__.setdefault('impairment', ivi.PropertyCollection())
-        self.iq.impairment._add_property('enabled',
+        ivi.add_property(self, 'iq.impairment.enabled',
                         self._get_iq_impairment_enabled,
                         self._set_iq_impairment_enabled)
-        self.iq.impairment._add_property('i_offset',
+        ivi.add_property(self, 'iq.impairment.i_offset',
                         self._get_iq_impairment_i_offset,
                         self._set_iq_impairment_i_offset)
-        self.iq.impairment._add_property('q_offset',
+        ivi.add_property(self, 'iq.impairment.q_offset',
                         self._get_iq_impairment_q_offset,
                         self._set_iq_impairment_q_offset)
-        self.iq.impairment._add_property('iq_ratio',
+        ivi.add_property(self, 'iq.impairment.iq_ratio',
                         self._get_iq_impairment_iq_ratio,
                         self._set_iq_impairment_iq_ratio)
-        self.iq.impairment._add_property('iq_skew',
+        ivi.add_property(self, 'iq.impairment.iq_skew',
                         self._get_iq_impairment_iq_skew,
                         self._set_iq_impairment_iq_skew)
-        self.iq.impairment._add_method('configure',
+        ivi.add_method(self, 'iq.impairment.configure',
                         self._iq_impairment_configure)
     
     def _get_iq_impairment_enabled(self):
@@ -1385,36 +1352,34 @@ class ArbGenerator(object):
         self._digital_modulation_arb_trigger_source = 'immediate'
         self._digital_modulation_arb_external_trigger_slope = 'positive'
         
-        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
-        self.digital_modulation.__dict__.setdefault('arb', ivi.PropertyCollection())
-        self.digital_modulation.arb._add_property('selected_waveform',
+        ivi.add_property(self, 'digital_modulation.arb.selected_waveform',
                         self._get_digital_modulation_arb_selected_waveform,
                         self._set_digital_modulation_arb_selected_waveform)
-        self.digital_modulation.arb._add_property('clock_frequency',
+        ivi.add_property(self, 'digital_modulation.arb.clock_frequency',
                         self._get_digital_modulation_arb_clock_frequency,
                         self._set_digital_modulation_arb_clock_frequency)
-        self.digital_modulation.arb._add_property('filter_frequency',
+        ivi.add_property(self, 'digital_modulation.arb.filter_frequency',
                         self._get_digital_modulation_arb_filter_frequency,
                         self._set_digital_modulation_arb_filter_frequency)
-        self.digital_modulation.arb._add_property('max_number_waveforms',
+        ivi.add_property(self, 'digital_modulation.arb.max_number_waveforms',
                         self._get_digital_modulation_arb_max_number_waveforms)
-        self.digital_modulation.arb._add_property('waveform_quantum',
+        ivi.add_property(self, 'digital_modulation.arb.waveform_quantum',
                         self._get_digital_modulation_arb_waveform_quantum)
-        self.digital_modulation.arb._add_property('waveform_size_min',
+        ivi.add_property(self, 'digital_modulation.arb.waveform_size_min',
                         self._get_digital_modulation_arb_waveform_size_min)
-        self.digital_modulation.arb._add_property('waveform_size_max',
+        ivi.add_property(self, 'digital_modulation.arb.waveform_size_max',
                         self._get_digital_modulation_arb_waveform_size_max)
-        self.digital_modulation.arb._add_property('trigger_source',
+        ivi.add_property(self, 'digital_modulation.arb.trigger_source',
                         self._get_digital_modulation_arb_trigger_source,
                         self._set_digital_modulation_arb_trigger_source)
-        self.digital_modulation.arb._add_property('external_trigger_slope',
+        ivi.add_property(self, 'digital_modulation.arb.external_trigger_slope',
                         self._get_digital_modulation_arb_external_trigger_slope,
                         self._set_digital_modulation_arb_external_trigger_slope)
-        self.digital_modulation.arb._add_method('configure',
+        ivi.add_method(self, 'digital_modulation.arb.configure',
                         self._digital_modulation_arb_configure)
-        self.digital_modulation.arb._add_method('write_waveform',
+        ivi.add_method(self, 'digital_modulation.arb.write_waveform',
                         self._digital_modulation_arb_write_waveform)
-        self.digital_modulation.arb._add_method('clear_all_waveforms',
+        ivi.add_method(self, 'digital_modulation.arb.clear_all_waveforms',
                         self._digital_modulation_arb_clear_all_waveforms)
     
     def _get_digital_modulation_arb_selected_waveform(self):
@@ -1493,33 +1458,31 @@ class DigitalModulationBase(object):
         self._digital_modulation_base_clock_source = 'internal'
         self._digital_modulation_base_external_clock_type = 'bit'
         
-        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
-        self.digital_modulation.__dict__.setdefault('base', ivi.PropertyCollection())
-        self.digital_modulation.base._add_property('standard_names',
+        ivi.add_property(self, 'digital_modulation.base.standard_names',
                         self._get_digital_modulation_base_standard_names)
-        self.digital_modulation.base._add_property('selected_standard',
+        ivi.add_property(self, 'digital_modulation.base.selected_standard',
                         self._get_digital_modulation_base_selected_standard,
                         self._set_digital_modulation_base_selected_standard)
-        self.digital_modulation.base._add_property('data_source',
+        ivi.add_property(self, 'digital_modulation.base.data_source',
                         self._get_digital_modulation_base_data_source,
                         self._set_digital_modulation_base_data_source)
-        self.digital_modulation.base._add_property('prbs_type',
+        ivi.add_property(self, 'digital_modulation.base.prbs_type',
                         self._get_digital_modulation_base_prbs_type,
                         self._set_digital_modulation_base_prbs_type)
-        self.digital_modulation.base._add_property('selected_bit_sequence',
+        ivi.add_property(self, 'digital_modulation.base.selected_bit_sequence',
                         self._get_digital_modulation_base_selected_bit_sequence,
                         self._set_digital_modulation_base_selected_bit_sequence)
-        self.digital_modulation.base._add_property('clock_source',
+        ivi.add_property(self, 'digital_modulation.base.clock_source',
                         self._get_digital_modulation_base_clock_source,
                         self._set_digital_modulation_base_clock_source)
-        self.digital_modulation.base._add_property('external_clock_type',
+        ivi.add_property(self, 'digital_modulation.base.external_clock_type',
                         self._get_digital_modulation_base_external_clock_type,
                         self._set_digital_modulation_base_external_clock_type)
-        self.digital_modulation.base._add_method('configure_clock_source',
+        ivi.add_method(self, 'digital_modulation.base.configure_clock_source',
                         self._digital_modulation_base_configure_clock_source)
-        self.digital_modulation.base._add_method('create_bit_sequence',
+        ivi.add_method(self, 'digital_modulation.base.create_bit_sequence',
                         self._digital_modulation_base_create_bit_sequence)
-        self.digital_modulation.base._add_method('clear_all_bit_sequences',
+        ivi.add_method(self, 'digital_modulation.base.clear_all_bit_sequences',
                         self._digital_modulation_base_clear_all_bit_sequences)
     
     def _get_digital_modulation_base_standard_names(self):
@@ -1598,25 +1561,23 @@ class CDMABase(object):
         self._digital_modulation_cdma_selected_test_model = ''
         self._digital_modulation_cdma_clock_source = 'internal'
         
-        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
-        self.digital_modulation.__dict__.setdefault('cdma', ivi.PropertyCollection())
-        self.digital_modulation.cdma._add_property('standard_names',
+        ivi.add_property(self, 'digital_modulation.cdma.standard_names',
                         self._get_digital_modulation_cdma_standard_names)
-        self.digital_modulation.cdma._add_property('selected_standard',
+        ivi.add_property(self, 'digital_modulation.cdma.selected_standard',
                         self._get_digital_modulation_cdma_selected_standard,
                         self._set_digital_modulation_cdma_selected_standard)
-        self.digital_modulation.cdma._add_property('trigger_source',
+        ivi.add_property(self, 'digital_modulation.cdma.trigger_source',
                         self._get_digital_modulation_cdma_trigger_source,
                         self._set_digital_modulation_cdma_trigger_source)
-        self.digital_modulation.cdma._add_property('external_trigger_slope',
+        ivi.add_property(self, 'digital_modulation.cdma.external_trigger_slope',
                         self._get_digital_modulation_cdma_external_trigger_slope,
                         self._set_digital_modulation_cdma_external_trigger_slope)
-        self.digital_modulation.cdma._add_property('test_model_names',
+        ivi.add_property(self, 'digital_modulation.cdma.test_model_names',
                         self._get_digital_modulation_cdma_test_model_names)
-        self.digital_modulation.cdma._add_property('selected_test_model',
+        ivi.add_property(self, 'digital_modulation.cdma.selected_test_model',
                         self._get_digital_modulation_cdma_selected_test_model,
                         self._set_digital_modulation_cdma_selected_test_model)
-        self.digital_modulation.cdma._add_property('clock_source',
+        ivi.add_property(self, 'digital_modulation.cdma.clock_source',
                         self._get_digital_modulation_cdma_clock_source,
                         self._set_digital_modulation_cdma_clock_source)
     
@@ -1682,31 +1643,29 @@ class TDMABase(object):
         self._digital_modulation_tdma_clock_source = 'internal'
         self._digital_modulation_tdma_external_clock_type = 'bit'
         
-        self.__dict__.setdefault('digital_modulation', ivi.PropertyCollection())
-        self.digital_modulation.__dict__.setdefault('tdma', ivi.PropertyCollection())
-        self.digital_modulation.tdma._add_property('standard_names',
+        ivi.add_property(self, 'digital_modulation.tdma.standard_names',
                         self._get_digital_modulation_tdma_standard_names)
-        self.digital_modulation.tdma._add_property('selected_standard',
+        ivi.add_property(self, 'digital_modulation.tdma.selected_standard',
                         self._get_digital_modulation_tdma_selected_standard,
                         self._set_digital_modulation_tdma_selected_standard)
-        self.digital_modulation.tdma._add_property('trigger_source',
+        ivi.add_property(self, 'digital_modulation.tdma.trigger_source',
                         self._get_digital_modulation_tdma_trigger_source,
                         self._set_digital_modulation_tdma_trigger_source)
-        self.digital_modulation.tdma._add_property('external_trigger_slope',
+        ivi.add_property(self, 'digital_modulation.tdma.external_trigger_slope',
                         self._get_digital_modulation_tdma_external_trigger_slope,
                         self._set_digital_modulation_tdma_external_trigger_slope)
-        self.digital_modulation.tdma._add_property('frame_names',
+        ivi.add_property(self, 'digital_modulation.tdma.frame_names',
                         self._get_digital_modulation_tdma_frame_names)
-        self.digital_modulation.tdma._add_property('selected_frame',
+        ivi.add_property(self, 'digital_modulation.tdma.selected_frame',
                         self._get_digital_modulation_tdma_selected_frame,
                         self._set_digital_modulation_tdma_selected_frame)
-        self.digital_modulation.tdma._add_property('clock_source',
+        ivi.add_property(self, 'digital_modulation.tdma.clock_source',
                         self._get_digital_modulation_tdma_clock_source,
                         self._set_digital_modulation_tdma_clock_source)
-        self.digital_modulation.tdma._add_property('external_clock_type',
+        ivi.add_property(self, 'digital_modulation.tdma.external_clock_type',
                         self._get_digital_modulation_tdma_external_clock_type,
                         self._set_digital_modulation_tdma_external_clock_type)
-        self.digital_modulation.tdma._add_method('configure_clock_source',
+        ivi.add_method(self, 'digital_modulation.tdma.configure_clock_source',
                         self._digital_modulation_tdma_configure_clock_source)
     
     def _get_digital_modulation_tdma_standard_names(self):
