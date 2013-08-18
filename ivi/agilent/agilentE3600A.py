@@ -70,28 +70,28 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
                         'E3640A','E3641A','E3642A','E3643A','E3644A','E3645A','E3646A',
                         'E3647A','E3648A','E3649A']
         
-        self.__dict__.setdefault('outputs', ivi.IndexedPropertyCollection())
-        self.outputs._add_property('trigger_delay',
+        ivi.add_property(self, 'outputs.trigger_delay',
                         self._get_output_trigger_delay,
                         self._set_output_trigger_delay)
         
-        self.__dict__.setdefault('couple', ivi.PropertyCollection())
-        self.couple._add_property('trigger',
+        ivi.add_property(self, 'couple.trigger',
                         self._get_couple_trigger,
                         self._set_couple_trigger)
-        self.couple.__dict__.setdefault('tracking', ivi.PropertyCollection())
-        self.couple.tracking._add_property('enabled',
+        ivi.add_property(self, 'couple.tracking.enabled',
                         self._get_couple_tracking_enabled,
                         self._set_couple_tracking_enabled)
-        self.couple.tracking._add_property('type',
+        ivi.add_property(self, 'couple.tracking.type',
                         self._get_couple_tracking_type,
                         self._set_couple_tracking_type)
         
-        self.__dict__.setdefault('memory', ivi.PropertyCollection())
-        self.memory.save = self._memory_save
-        self.memory.recall = self._memory_recall
-        self.memory.set_name = self._set_memory_name
-        self.memory.get_name = self._get_memory_name
+        ivi.add_method('memory.save',
+                        self._memory_save)
+        ivi.add_method('memory.recall',
+                        self._memory_recall)
+        ivi.add_method('memory.set_name',
+                        self._set_memory_name)
+        ivi.add_method('memory.get_name',
+                        self._get_memory_name)
         
         self._init_outputs()
     

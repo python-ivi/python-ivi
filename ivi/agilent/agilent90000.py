@@ -186,27 +186,27 @@ class agilent90000(ivi.Driver, scope.Base, scope.TVTrigger,
                 'DSAX92504A','DSAX92804A','DSAX93204A','MSOX91304A','MSOX91604A','MSOX92004A',
                 'MSOX92504A','MSOX92804A','MSOX93204A']
         
-        self.channels._add_property('label',
+        ivi.add_property(self, 'channels[].label',
                         self._get_channel_label,
                         self._set_channel_label)
-        self.channels._add_property('probe_skew',
+        ivi.add_property(self, 'channels[].probe_skew',
                         self._get_channel_probe_skew,
                         self._set_channel_probe_skew)
-        self.channels._add_property('invert',
+        ivi.add_property(self, 'channels[].invert',
                         self._get_channel_invert,
                         self._set_channel_invert)
-        self.channels._add_property('probe_id',
+        ivi.add_property(self, 'channels[].probe_id',
                         self._get_channel_probe_id)
-        self.channels._add_property('bw_limit',
+        ivi.add_property(self, 'channels[].bw_limit',
                         self._get_channel_bw_limit,
                         self._set_channel_bw_limit)
-        self.channels._add_property('common_mode',
+        ivi.add_property(self, 'channels[].common_mode',
                         self._get_channel_common_mode,
                         self._set_channel_common_mode)
-        self.channels._add_property('differential',
+        ivi.add_property(self, 'channels[].differential',
                         self._get_channel_differential,
                         self._set_channel_differential)
-        self.channels._add_property('differential_skew',
+        ivi.add_property(self, 'channels[].differential_skew',
                         self._get_channel_differential_skew,
                         self._set_channel_differential_skew)
         

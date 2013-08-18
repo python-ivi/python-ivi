@@ -182,18 +182,18 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                 'DSO7034B','DSO7052B','DSO7054B','DSO7104B','MSO7012B','MSO7014B','MSO7032B',
                 'MSO7034B','MSO7052B','MSO7054B','MSO7104B']
         
-        self.channels._add_property('label',
+        ivi.add_property(self, 'channels[].label',
                         self._get_channel_label,
                         self._set_channel_label)
-        self.channels._add_property('probe_skew',
+        ivi.add_property(self, 'channels[].probe_skew',
                         self._get_channel_probe_skew,
                         self._set_channel_probe_skew)
-        self.channels._add_property('invert',
+        ivi.add_property(self, 'channels[].invert',
                         self._get_channel_invert,
                         self._set_channel_invert)
-        self.channels._add_property('probe_id',
+        ivi.add_property(self, 'channels[].probe_id',
                         self._get_channel_probe_id)
-        self.channels._add_property('bw_limit',
+        ivi.add_property(self, 'channels[].bw_limit',
                         self._get_channel_bw_limit,
                         self._set_channel_bw_limit)
         
