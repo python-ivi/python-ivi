@@ -519,7 +519,49 @@ class TriggerSlope(object):
         self._trigger_slope = value
     
     
-# SoftwareTrigger
+class SoftwareTrigger(object):
+    "Extension IVI methods for DMMs that can initiate a measurement based on a software trigger signal"
+    
+    def __init__(self, *args, **kwargs):
+        super(SoftwareTrigger, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'SoftwareTrigger'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self.__dict__.setdefault('_docs', dict())
+        self._docs['send_software_trigger'] = ivi.Doc("""
+                        This function sends a software-generated trigger to the instrument. It is
+                        only applicable for instruments using interfaces or protocols which
+                        support an explicit trigger function. For example, with GPIB this function
+                        could send a group execute trigger to the instrument. Other
+                        implementations might send a ``*TRG`` command.
+                        
+                        Since instruments interpret a software-generated trigger in a wide variety
+                        of ways, the precise response of the instrument to this trigger is not
+                        defined. Note that SCPI details a possible implementation.
+                        
+                        This function should not use resources which are potentially shared by
+                        other devices (for example, the VXI trigger lines). Use of such shared
+                        resources may have undesirable effects on other devices.
+                        
+                        This function should not check the instrument status. Typically, the
+                        end-user calls this function only in a sequence of calls to other
+                        low-level driver functions. The sequence performs one operation. The
+                        end-user uses the low-level functions to optimize one or more aspects of
+                        interaction with the instrument. To check the instrument status, call the
+                        appropriate error query function at the conclusion of the sequence.
+                        
+                        The trigger source attribute must accept Software Trigger as a valid
+                        setting for this function to work. If the trigger source is not set to
+                        Software Trigger, this function does nothing and returns the error Trigger
+                        Not Software.
+                        """, cls, grp, '13.2.1', 'send_software_trigger')
+    
+    def send_software_trigger(self):
+        pass
+    
+    
 # DeviceInfo
 # AutoRangeValue
 # AutoZero
