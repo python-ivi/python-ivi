@@ -493,7 +493,32 @@ class MultiPoint(object):
         pass
     
     
-# TriggerSlope
+class TriggerSlope(object):
+    "Extension IVI methods for DMMs that can specify the polarity of the external trigger signal"
+    
+    def __init__(self, *args, **kwargs):
+        super(TriggerSlope, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'TriggerSlope'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._trigger_slope = 'positive'
+        
+        ivi.add_property(self, 'trigger.slope',
+                        self._get_trigger_slope,
+                        self._set_trigger_slope)
+        
+    
+    def _get_trigger_slope(self):
+        return self._trigger_slope
+    
+    def _set_trigger_slope(self, value):
+        if value not in TriggerSlope:
+            raise ivi.ValueNotSupportedException()
+        self._trigger_slope = value
+    
+    
 # SoftwareTrigger
 # DeviceInfo
 # AutoRangeValue
