@@ -406,7 +406,93 @@ class Thermistor(object):
         self._thermistor_resistance = value
     
     
-# MultiPoint
+class MultiPoint(object):
+    "Extension IVI methods for DMMs capable of acquiring measurements based on multiple triggers"
+    
+    def __init__(self, *args, **kwargs):
+        super(MultiPoint, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'MultiPoint'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._trigger_measurement_complete_destination = ""
+        self._trigger_multi_point_sample_count = 1
+        self._trigger_multi_point_sample_interval = 1.0
+        self._trigger_multi_point_sample_trigger = ""
+        self._trigger_multi_point_count = 1
+        
+        ivi.add_property(self, 'trigger.measurement_complete_destination',
+                        self._get_trigger_measurement_complete_destination,
+                        self._set_trigger_measurement_complete_destination)
+        ivi.add_property(self, 'trigger.multi_point.sample_count',
+                        self._get_trigger_multi_point_sample_count,
+                        self._set_trigger_multi_point_sample_count)
+        ivi.add_property(self, 'trigger.multi_point.sample_interval',
+                        self._get_trigger_multi_point_sample_interval,
+                        self._set_trigger_multi_point_sample_interval)
+        ivi.add_property(self, 'trigger.multi_point.sample_trigger',
+                        self._get_trigger_multi_point_sample_trigger,
+                        self._set_trigger_multi_point_sample_trigger)
+        ivi.add_property(self, 'trigger.multi_point.count',
+                        self._get_trigger_multi_point_count,
+                        self._set_trigger_multi_point_count)
+        ivi.add_method(self, 'trigger.multi_point.configure',
+                        self._trigger_multi_point_configure)
+        ivi.add_method(self, 'measurement.fetch_multi_point',
+                        self._measurement_fetch_multi_point)
+        ivi.add_method(self, 'measurement.read_multi_point',
+                        self._measurement_read_multi_point)
+        
+    
+    def _get_trigger_measurement_complete_destination(self):
+        return self._trigger_measurement_complete_destination
+    
+    def _set_trigger_measurement_complete_destination(self, value):
+        value = str(value)
+        self._trigger_measurement_complete_destination = value
+    
+    def _get_trigger_multi_point_sample_count(self):
+        return self._trigger_multi_point_sample_count
+    
+    def _set_trigger_multi_point_sample_count(self, value):
+        value = int(value)
+        self._trigger_multi_point_sample_count = value
+    
+    def _get_trigger_multi_point_sample_interval(self):
+        return self._trigger_multi_point_sample_interval
+    
+    def _set_trigger_multi_point_sample_interval(self, value):
+        value = int(value)
+        self._trigger_multi_point_sample_interval = value
+    
+    def _get_trigger_multi_point_sample_trigger(self):
+        return self._trigger_multi_point_sample_trigger
+    
+    def _set_trigger_multi_point_sample_trigger(self, value):
+        value = str(value)
+        self._trigger_multi_point_sample_trigger = value
+    
+    def _get_trigger_multi_point_count(self):
+        return self._trigger_multi_point_count
+    
+    def _set_trigger_multi_point_count(self, value):
+        value = int(value)
+        self._trigger_multi_point_count = value
+    
+    def _trigger_multi_point_configure(self, trigger_count, sample_count, sample_trigger, sample_interval):
+        self._set_trigger_multi_point_count(trigger_count)
+        self._set_trigger_multi_point_sample_count(sample_count)
+        self._set_trigger_multi_point_sample_trigger(sample_trigger)
+        self._set_trigger_multi_point_sample_interval(sample_interval)
+    
+    def _measurement_fetch_multi_point(self, max_time, num_of_measurements = 0):
+        pass
+    
+    def _measurement_read_multi_point(self, max_time, num_of_measurements = 0):
+        pass
+    
+    
 # TriggerSlope
 # SoftwareTrigger
 # DeviceInfo
