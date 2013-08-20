@@ -378,7 +378,31 @@ class ResistanceTemperatureDevice(object):
         self._set_rtd_resistance(resistance)
     
     
-# Thermistor
+class Thermistor(object):
+    "Extension IVI methods for DMMs that can take temperature measurements using a thermistor"
+    
+    def __init__(self, *args, **kwargs):
+        super(Thermistor, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'Thermistor'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._thermistor_resistance = 10000
+        
+        ivi.add_property(self, 'thermistor.resistance',
+                        self._get_thermistor_resistance,
+                        self._set_thermistor_resistance)
+        
+    
+    def _get_thermistor_resistance(self):
+        return self._thermistor_resistance
+    
+    def _set_thermistor_resistance(self, value):
+        value = float(value)
+        self._thermistor_resistance = value
+    
+    
 # MultiPoint
 # TriggerSlope
 # SoftwareTrigger
