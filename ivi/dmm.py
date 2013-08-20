@@ -588,7 +588,26 @@ class DeviceInfo(object):
         return self._advanced_aperture_time_units
     
     
-# AutoRangeValue
+class AutoRangeValue(object):
+    "Extension IVI methods for DMMs that can return the actual range value when auto ranging"
+    
+    def __init__(self, *args, **kwargs):
+        super(AutoRangeValue, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'AutoRangeValue'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._advanced_actual_range = 1.0
+        
+        ivi.add_property(self, 'advanced.actual_range',
+                        self._get_advanced_actual_range)
+        
+    
+    def _get_advanced_actual_range(self):
+        return self._advanced_actual_range
+    
+    
 # AutoZero
 # PowerLineFrequency
 
