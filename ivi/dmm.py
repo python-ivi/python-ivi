@@ -634,5 +634,29 @@ class AutoZero(object):
         self._advanced_auto_zero = value
     
     
-# PowerLineFrequency
+class PowerLineFrequency(object):
+    "Extension IVI methods for DMMs that can specify the power line frequency"
+    
+    def __init__(self, *args, **kwargs):
+        super(PowerLineFrequency, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'PowerLineFrequency'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._advanced_power_line_frequency = 60.0
+        
+        ivi.add_property(self, 'advanced.power_line_frequency',
+                        self._get_advanced_power_line_frequency,
+                        self._set_advanced_power_line_frequency)
+        
+    
+    def _get_advanced_power_line_frequency(self):
+        return self._advanced_power_line_frequency
+    
+    def _set_advanced_power_line_frequency(self, value):
+        value = float(value)
+        self._advanced_power_line_frequency = value
+    
+    
 
