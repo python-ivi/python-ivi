@@ -281,7 +281,61 @@ class TemperatureMeasurement(object):
         self._temperature_transducer_type = value
     
     
-# Thermocouple
+class Thermocouple(object):
+    "Extension IVI methods for DMMs that can take temperature measurements using a thermocouple"
+    
+    def __init__(self, *args, **kwargs):
+        super(Thermocouple, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'Thermocouple'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._thermocouple_fixed_reference_junction = 25.0
+        self._thermocouple_reference_junction_type = ''
+        self._thermocouple_type = ''
+        
+        ivi.add_property(self, 'thermocouple.fixed_reference_junction',
+                        self._get_thermocouple_fixed_reference_junction,
+                        self._set_thermocouple_fixed_reference_junction)
+        ivi.add_property(self, 'thermocouple.reference_junction_type',
+                        self._get_thermocouple_reference_junction_type,
+                        self._set_thermocouple_reference_junction_type)
+        ivi.add_property(self, 'thermocouple.type',
+                        self._get_thermocouple_type,
+                        self._set_thermocouple_type)
+        ivi.add_method(self, 'thermocouple.configure',
+                        self._thermocouple_configure)
+        
+    
+    def _get_thermocouple_fixed_reference_junction(self):
+        return self._thermocouple_fixed_reference_junction
+    
+    def _set_thermocouple_fixed_reference_junction(self, value):
+        value = float(value)
+        self._thermocouple_fixed_reference_junction = value
+    
+    def _get_thermocouple_reference_junction_type(self):
+        return self._thermocouple_reference_junction_type
+    
+    def _set_thermocouple_reference_junction_type(self, value):
+        if value not in ThermocoupleReferenceJunctionType:
+            raise ivi.ValueNotSupportedException()
+        self._thermocouple_reference_junction_type = value
+    
+    def _get_thermocouple_type(self):
+        return self._thermocouple_type
+    
+    def _set_thermocouple_type(self, value):
+        if value not in ThermocoupleType:
+            raise ivi.ValueNotSupportedException()
+        self._thermocouple_type = value
+    
+    def _thermocouple_configure(self, thermocouple_type, reference_junction_type):
+        self._set_thermocouple_type(thermocouple_type)
+        self._set_thermocouple_reference_junction_type(reference_junction_type)
+    
+    
 # ResistanceTemperatureDevice
 # Thermistor
 # MultiPoint
