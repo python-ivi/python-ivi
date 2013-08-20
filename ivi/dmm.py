@@ -514,7 +514,7 @@ class TriggerSlope(object):
         return self._trigger_slope
     
     def _set_trigger_slope(self, value):
-        if value not in TriggerSlope:
+        if value not in Slope:
             raise ivi.ValueNotSupportedException()
         self._trigger_slope = value
     
