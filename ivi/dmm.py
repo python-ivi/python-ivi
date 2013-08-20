@@ -336,7 +336,48 @@ class Thermocouple(object):
         self._set_thermocouple_reference_junction_type(reference_junction_type)
     
     
-# ResistanceTemperatureDevice
+class ResistanceTemperatureDevice(object):
+    "Extension IVI methods for DMMs that can take temperature measurements using a resistance temperature device (RTD)"
+    
+    def __init__(self, *args, **kwargs):
+        super(ResistanceTemperatureDevice, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'ResistanceTemperatureDevice'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._rtd_alpha = 0.00385
+        self._rtd_resistance = 100
+        
+        ivi.add_property(self, 'rtd.alpha',
+                        self._get_rtd_alpha,
+                        self._set_rtd_alpha)
+        ivi.add_property(self, 'rtd.resistance',
+                        self._get_rtd_resistance,
+                        self._set_rtd_resistance)
+        ivi.add_method(self, 'rtd.configure',
+                        self._rtd_configure)
+        
+    
+    def _get_rtd_alpha(self):
+        return self._rtd_alpha
+    
+    def _set_rtd_alpha(self, value):
+        value = float(value)
+        self._rtd_alpha = value
+    
+    def _get_rtd_resistance(self):
+        return self._rtd_resistance
+    
+    def _set_rtd_resistance(self, value):
+        value = float(value)
+        self._rtd_resistance = value
+    
+    def _rtd_configure(self, alpha, resistance):
+        self._set_rtd_alpha(alpha)
+        self._set_rtd_resistance(resistance)
+    
+    
 # Thermistor
 # MultiPoint
 # TriggerSlope
