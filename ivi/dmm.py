@@ -28,8 +28,8 @@ from . import ivi
 
 # Parameter Values
 ApertureTimeUnits = set(['seconds', 'powerline_cycles'])
-Auto = set(['Off', 'On', 'Once'])
-Auto2 = set(['Off', 'On'])
+Auto = set(['off', 'on', 'once'])
+Auto2 = set(['off', 'on'])
 MeasurementFunction = set(['dc_volts', 'ac_volts', 'dc_current', 'ac_current',
                 'two_wire_resistance', 'four_wire_resistance',
                 'ac_plus_dc_volts', 'ac_plus_dc_current', 'frequency',
@@ -608,6 +608,31 @@ class AutoRangeValue(object):
         return self._advanced_actual_range
     
     
-# AutoZero
+class AutoZero(object):
+    "Extension IVI methods for DMMs that can take an auto zero reading"
+    
+    def __init__(self, *args, **kwargs):
+        super(AutoZero, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'AutoZero'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._advanced_auto_zero = 'off'
+        
+        ivi.add_property(self, 'advanced.auto_zero',
+                        self._get_advanced_auto_zero,
+                        self._set_advanced_auto_zero)
+        
+    
+    def _get_advanced_auto_zero(self):
+        return self._advanced_auto_zero
+    
+    def _set_advanced_auto_zero(self, value):
+        if value not in Auto:
+            return ivi.ValueNotSupportedException
+        self._advanced_auto_zero = value
+    
+    
 # PowerLineFrequency
 
