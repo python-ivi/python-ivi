@@ -55,7 +55,7 @@ class Base(object):
         self._resolution = 1
         
         self._trigger_delay = 0
-        self._trigger_auto_delay = False
+        self._trigger_delay_auto = False
         self._trigger_source = ''
         
         ivi.add_property(self, 'trigger.delay',
