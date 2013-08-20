@@ -562,7 +562,32 @@ class SoftwareTrigger(object):
         pass
     
     
-# DeviceInfo
+class DeviceInfo(object):
+    "A set of read-only attributes for DMMs that can be queried to determine how they are presently configured"
+    
+    def __init__(self, *args, **kwargs):
+        super(DeviceInfo, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'DeviceInfo'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._advanced_aperture_time = 1.0
+        self._advanced_aperture_time_units = 'seconds'
+        
+        ivi.add_property(self, 'advanced.aperture_time',
+                        self._get_advanced_aperture_time)
+        ivi.add_property(self, 'advanced.aperture_time_units',
+                        self._get_advanced_aperture_time_units)
+        
+    
+    def _get_advanced_aperture_time(self):
+        return self._advanced_aperture_time
+    
+    def _get_advanced_aperture_time_units(self):
+        return self._advanced_aperture_time_units
+    
+    
 # AutoRangeValue
 # AutoZero
 # PowerLineFrequency
