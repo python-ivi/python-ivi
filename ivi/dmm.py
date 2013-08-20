@@ -255,7 +255,32 @@ class FrequencyMeasurement(object):
         self._frequency_range_auto = value
     
     
-# TemperatureMeasurement
+class TemperatureMeasurement(object):
+    "Extension IVI methods for DMMs that can take temperature measurements"
+    
+    def __init__(self, *args, **kwargs):
+        super(TemperatureMeasurement, self).__init__(*args, **kwargs)
+        
+        cls = 'IviDmm'
+        grp = 'TemperatureMeasurement'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._temperature_transducer_type = ''
+        
+        ivi.add_property(self, 'temperature.transducer_type',
+                        self._get_temperature_transducer_type,
+                        self._set_temperature_transducer_type)
+        
+    
+    def _get_temperature_transducer_type(self):
+        return self._temperature_transducer_type
+    
+    def _set_temperature_transducer_type(self, value):
+        if value not in TemperatureTransducerType:
+            raise ivi.ValueNotSupportedException()
+        self._temperature_transducer_type = value
+    
+    
 # Thermocouple
 # ResistanceTemperatureDevice
 # Thermistor
