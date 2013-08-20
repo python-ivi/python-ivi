@@ -64,6 +64,9 @@ class Base(object):
         ivi.add_property(self, 'trigger.delay_auto',
                         self._get_trigger_delay_auto,
                         self._set_trigger_delay_auto)
+        ivi.add_property(self, 'trigger.source',
+                        self._get_trigger_source,
+                        self._set_trigger_source)
         ivi.add_method(self, 'trigger.configure',
                         self._trigger_configure)
         ivi.add_method(self, 'measurement.abort',
