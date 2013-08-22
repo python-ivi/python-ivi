@@ -1125,7 +1125,7 @@ class DriverIdentity(object):
                         that the IVI specific driver implements. The items in the list are
                         capability group names that the IVI class specifications define. The
                         string has no white space except for white space that might be embedded in
-                        a capability group name. 
+                        a capability group name.
                         
                         If the IVI specific driver does not comply with an IVI class specification,
                         the specific driver returns an empty string as the value of this attribute.
