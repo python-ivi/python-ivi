@@ -113,7 +113,7 @@ class Base(object):
                         None,
                         """
                         Determines how the function generator produces waveforms. This attribute
-                        determines which extension group’s functions and attributes are used to
+                        determines which extension group's functions and attributes are used to
                         configure the waveform the function generator produces.
                         
                         Values for output_mode:
@@ -157,7 +157,7 @@ class Base(object):
                         
                         Many function generators constantly generate an output signal, and do not
                         require the user to abort signal generation prior to configuring the
-                        instrument. If a function generator’s output cannot be aborted (i.e., the
+                        instrument. If a function generator's output cannot be aborted (i.e., the
                         function generator cannot stop generating a signal) this function does
                         nothing and returns Success.
                         
@@ -192,7 +192,7 @@ class Base(object):
                         
                         Many function generators constantly generate an output signal, and do not
                         require the user to abort signal generation prior to configuring the
-                        instrument. If a function generator’s output cannot be aborted (i.e., the
+                        instrument. If a function generator's output cannot be aborted (i.e., the
                         function generator cannot stop generating a signal) this function does
                         nothing and returns Success.
                         
@@ -769,7 +769,7 @@ class ArbSeq(object):
                         self._arbitrary_sequence_clear,
                         """
                         Removes a previously created arbitrary sequence from the function
-                        generator's memory and invalidates the sequence’s handle.
+                        generator's memory and invalidates the sequence's handle.
                         
                         If the sequence cannot be cleared because it is currently being generated,
                         this function returns the error Sequence In Use.
@@ -1542,7 +1542,7 @@ class InternalTrigger(object):
                         self._set_internal_trigger_rate,
                         None,
                         """
-                        Specifies the rate at which the function generator’s internal trigger
+                        Specifies the rate at which the function generator's internal trigger
                         source produces a trigger, in triggers per second.
                         """)
     

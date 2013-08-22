@@ -176,7 +176,7 @@ class Base(object):
         ivi.add_method(self, 'outputs[].configure_range',
                         self._output_configure_range,
                         ivi.Doc("""
-                        Configures the power supply’s output range on an output. One parameter
+                        Configures the power supply's output range on an output. One parameter
                         specifies whether to configure the voltage or current range, and the other
                         parameter is the value to which to set the range.
                         
@@ -192,7 +192,7 @@ class Base(object):
                         greater than or equal to that value.
                         
                         When the Enabled parameter is False, the Limit parameter does not affect
-                        the instrument’s behavior, and the driver does not set the OVP Limit
+                        the instrument's behavior, and the driver does not set the OVP Limit
                         attribute.
                         """, cls, grp, '4.3.4'))
         ivi.add_method(self, 'outputs[].query_current_limit_max',
