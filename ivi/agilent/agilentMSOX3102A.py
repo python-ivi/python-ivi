@@ -35,7 +35,7 @@ class agilentMSOX3102A(agilent3000A):
         self._instrument_id = 'AGILENT TECHNOLOGIES,MSO-X 3102A'
         self._analog_channel_count = 2
         self._digital_channel_count = 16
-        self._channel_count = 18
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
         self._init_channels()

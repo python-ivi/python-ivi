@@ -35,7 +35,7 @@ class agilentDSOX3104A(agilent3000A):
         self._instrument_id = 'AGILENT TECHNOLOGIES,DSO-X 3104A'
         self._analog_channel_count = 4
         self._digital_channel_count = 0
-        self._channel_count = 4
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
         self._init_channels()

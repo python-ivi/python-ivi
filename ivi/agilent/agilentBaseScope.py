@@ -164,7 +164,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._analog_channel_count = 4
         self._digital_channel_name = list()
         self._digital_channel_count = 16
-        self._channel_count = 20
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
         self._identity_description = "Agilent generic IVI oscilloscope driver"
@@ -329,6 +329,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                 self._channel_offset[i] = 0
                 self._channel_range[i] = 1
         
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
     
     def _get_acquisition_start_time(self):

@@ -35,7 +35,7 @@ class agilentMSO7012B(agilent7000B):
         self._instrument_id = 'AGILENT TECHNOLOGIES,MSO7012B'
         self._analog_channel_count = 2
         self._digital_channel_count = 16
-        self._channel_count = 18
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 100e6
         
         self._init_channels()

@@ -37,7 +37,7 @@ class agilent2000A(agilentBaseScope):
         self._analog_channel_count = 4
         self._digital_channel_name = list()
         self._digital_channel_count = 16
-        self._channel_count = 20
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 200e6
         
         self._identity_description = "Agilent InfiniiVision 2000A X-series IVI oscilloscope driver"
