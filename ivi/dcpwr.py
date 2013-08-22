@@ -234,7 +234,7 @@ class Base(object):
                         Limit Behavior attribute is set to the Current Trip defined value.
                         
                         When either an over-voltage condition or an over-current condition
-                        occurs, the power supply‘s output protection disables the output. If the
+                        occurs, the power supply's output protection disables the output. If the
                         power supply is in an over-voltage or over-current state, it does not
                         produce power until the output protection is reset. The Reset Output
                         Protection function resets the output protection. Once the output
