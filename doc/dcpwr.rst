@@ -24,9 +24,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.dcpwr.Base()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.dcpwr.Base()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`Trigger` class
 ----------------------
@@ -37,9 +36,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.dcpwr.Trigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.dcpwr.Trigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`SoftwareTrigger` class
 ------------------------------
@@ -50,9 +48,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.dcpwr.SoftwareTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.dcpwr.SoftwareTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`Measurement` class
 --------------------------
@@ -63,6 +60,5 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.dcpwr.Measurement()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.dcpwr.Measurement()
+   ivi.help(obj, complete=True, indent=3)

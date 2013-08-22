@@ -24,9 +24,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.Base()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.Base()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`StdFunc` class
 ----------------------
@@ -37,9 +36,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.StdFunc()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.StdFunc()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbWfm` class
 ---------------------
@@ -50,9 +48,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbWfm()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbWfm()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbChannelWfm` class
 ----------------------------
@@ -63,9 +60,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbChannelWfm()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbChannelWfm()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbWfmBinary` class
 ---------------------------
@@ -76,9 +72,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbWfmBinary()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbWfmBinary()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`DataMarker` class
 --------------------------
@@ -89,9 +84,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.DataMarker()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.DataMarker()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`SparseMarker` class
 ----------------------------
@@ -102,9 +96,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.SparseMarker()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.SparseMarker()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbDataMask` class
 --------------------------
@@ -115,9 +108,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbDataMask()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbDataMask()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbFrequency` class
 ---------------------------
@@ -128,9 +120,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbFrequency()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbFrequency()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbSeq` class
 ---------------------
@@ -141,9 +132,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbSeq()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbSeq()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ArbSeqDepth` class
 --------------------------
@@ -154,9 +144,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ArbSeqDepth()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ArbSeqDepth()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`Trigger` class
 ----------------------
@@ -167,9 +156,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.Trigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.Trigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`InternalTrigger` class
 ------------------------------
@@ -180,9 +168,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.InternalTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.InternalTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`SoftwareTrigger` class
 ------------------------------
@@ -193,9 +180,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.SoftwareTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.SoftwareTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`Burst` class
 --------------------
@@ -206,9 +192,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.Burst()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.Burst()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ModulateAM` class
 -------------------------
@@ -219,9 +204,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ModulateAM()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ModulateAM()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ModulateFM` class
 -------------------------
@@ -232,9 +216,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ModulateFM()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ModulateFM()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`SampleClock` class
 --------------------------
@@ -245,9 +228,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.SampleClock()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.SampleClock()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`TerminalConfiguration` class
 ------------------------------------
@@ -258,9 +240,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.TerminalConfiguration()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.TerminalConfiguration()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`StartTrigger` class
 ---------------------------
@@ -271,9 +252,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.StartTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.StartTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`StopTrigger` class
 --------------------------
@@ -284,9 +264,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.StopTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.StopTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`HoldTrigger` class
 --------------------------
@@ -297,9 +276,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.HoldTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.HoldTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`ResumeTrigger` class
 ----------------------------
@@ -310,9 +288,8 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.ResumeTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.ResumeTrigger()
+   ivi.help(obj, complete=True, indent=3)
 
 :class:`AdvanceTrigger` class
 -----------------------------
@@ -323,6 +300,5 @@ Functions and Exceptions
    
 .. exec::
    import ivi
-   i = ivi.Driver()
-   m = ivi.fgen.AdvanceTrigger()
-   i.help(m, complete=True, indent=3)
+   obj = ivi.fgen.AdvanceTrigger()
+   ivi.help(obj, complete=True, indent=3)
