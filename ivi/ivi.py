@@ -335,15 +335,19 @@ def add_attribute(obj, name, attr, doc = None):
     else:
         cur_obj._add_method(base, attr, doc)
 
+
 def add_method(obj, name, f, doc = None):
     add_attribute(obj, name, f, doc)
+
 
 def add_property(obj, name, fget, fset = None, fdel = None, doc = None):
     add_attribute(obj, name, (fget, fset, fdel), doc)
 
+
 def add_group_capability(obj, cap):
     obj.__dict__.setdefault('_identity_group_capabilities', list())
     obj._identity_group_capabilities.insert(0, cap)
+
 
 def build_ieee_block(data):
     "Build IEEE block"
@@ -440,6 +444,117 @@ def trim_doc(docstring):
         trimmed.pop(0)
     # Return a single string:
     return '\n'.join(trimmed)
+
+def doc(obj=None, itm=None, docs=None, prefix=None):
+    """Python IVI documentation generator"""
+    st = ""
+    
+    # add a dot to prefix when needed
+    if prefix is None or len(prefix) == 0:
+        prefix = ''
+    else:
+        prefix += '.'
+    
+    # if something passed in docs, iterate over it
+    if docs is not None:
+        for n in docs:
+            d = docs[n]
+            if type(d) == dict:
+                # recurse into node
+                st += doc(docs=d, prefix=prefix+n)
+            else:
+                # print leaf (method or property)
+                st += prefix + n + "\n"
+        
+        return st
+    
+    if itm is not None:
+        # split off first component before the dot
+        l = itm.split('.',1)
+        n = l[0]
+        r = ''
+        
+        # remove brackets
+        k = n.find('[')
+        if k > 0:
+            n = n[:k]
+        
+        # if there is more left, need to recurse
+        if len(l) > 1:
+            r = l[1]
+            
+            # hand off to parent
+            if type(obj) == dict and n in obj:
+                return doc(obj[n], r, prefix=prefix+n)
+            
+            elif n in obj.__dict__:
+                return doc(obj.__dict__[n], r, prefix=prefix+n)
+            
+            elif hasattr(obj, '_docs') and n in obj._docs:
+                d = obj._docs[n]
+                if type(d) == dict:
+                    return doc(d, r, prefix=prefix+n)
+            
+        else:
+            
+            d = None
+            
+            # return documentation if present
+            if type(obj) == dict and n in obj:
+                d = obj[n]
+            
+            elif hasattr(obj, '_docs') and n in obj._docs:
+                d = obj._docs[n]
+            
+            if type(d) == Doc:
+                return d
+            elif type(d) == str:
+                return trim_doc(d)
+        
+        return "error"
+        
+    
+    if hasattr(obj, '__dict__'):
+        # if obj has __dict__, iterate over it
+        for n in obj.__dict__:
+            o = obj.__dict__[n]
+            
+            # add brackets for indexed property collections
+            extra = ''
+            if type(o) == IndexedPropertyCollection:
+                extra = '[]'
+            
+            if n == '_docs':
+                # process documentation dict
+                st += doc(docs=o, prefix=prefix)
+            elif hasattr(o, '_docs'):
+                # process object that contains a documentation dict
+                st += doc(docs=o._docs, prefix=prefix+n+extra)
+        
+        # if we got something, return it
+        if len(st) > 0:
+            return st
+    
+    return "error"
+
+def help(obj=None, complete=False, indent=0):
+    """Python IVI help system"""
+    if complete:
+        l = doc(obj).split('\n')
+        l = sorted(filter(None, l))
+        for m in l:
+            d = doc(obj, m)
+            
+            if type(d) == Doc:
+                print(d.render())
+            if type(d) == str:
+                print((indent * ' ') + '.. attribute:: ' + m + '\n')
+                #print('-'*len(m)+'\n')
+                d = '\n'.join(((indent + 3) * ' ') + x for x in d.splitlines())
+                print(d)
+                print('\n')
+    else:
+        print(doc(obj))
 
 
 class DriverOperation(object):
@@ -1751,26 +1866,6 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
     
     def doc(self, obj=None, itm=None, docs=None, prefix=None):
         """Python IVI documentation generator"""
-        st = ""
-        
-        # add a dot to prefix when needed
-        if prefix is None or len(prefix) == 0:
-            prefix = ''
-        else:
-            prefix += '.'
-        
-        # if something passed in docs, iterate over it
-        if docs is not None:
-            for n in docs:
-                d = docs[n]
-                if type(d) == dict:
-                    # recurse into node
-                    st += self.doc(docs=d, prefix=prefix+n)
-                else:
-                    # print leaf (method or property)
-                    st += prefix + n + "\n"
-            
-            return st
         
         # need an obj, if none specified, use self
         if obj is None:
@@ -1781,91 +1876,11 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             itm = obj
             obj = self
         
-        if itm is not None:
-            # split off first component before the dot
-            l = itm.split('.',1)
-            n = l[0]
-            r = ''
-            
-            # remove brackets
-            k = n.find('[')
-            if k > 0:
-                n = n[:k]
-            
-            # if there is more left, need to recurse
-            if len(l) > 1:
-                r = l[1]
-                
-                # hand off to parent
-                if type(obj) == dict and n in obj:
-                    return self.doc(obj[n], r, prefix=prefix+n)
-                
-                elif n in obj.__dict__:
-                    return self.doc(obj.__dict__[n], r, prefix=prefix+n)
-                
-                elif hasattr(obj, '_docs') and n in obj._docs:
-                    d = obj._docs[n]
-                    if type(d) == dict:
-                        return self.doc(d, r, prefix=prefix+n)
-                
-            else:
-                
-                d = None
-                
-                # return documentation if present
-                if type(obj) == dict and n in obj:
-                    d = obj[n]
-                
-                elif hasattr(obj, '_docs') and n in obj._docs:
-                    d = obj._docs[n]
-                
-                if type(d) == Doc:
-                    return d
-                elif type(d) == str:
-                    return trim_doc(d)
-            
-            return "error"
-            
-        
-        if hasattr(obj, '__dict__'):
-            # if obj has __dict__, iterate over it
-            for n in obj.__dict__:
-                o = obj.__dict__[n]
-                
-                # add brackets for indexed property collections
-                extra = ''
-                if type(o) == IndexedPropertyCollection:
-                    extra = '[]'
-                
-                if n == '_docs':
-                    # process documentation dict
-                    st += self.doc(docs=o, prefix=prefix)
-                elif hasattr(o, '_docs'):
-                    # process object that contains a documentation dict
-                    st += self.doc(docs=o._docs, prefix=prefix+n+extra)
-            
-            # if we got something, return it
-            if len(st) > 0:
-                return st
-        
-        return "error"
+        return doc(obj, itm, docs, prefix)
     
     def help(self, obj=None, complete=False, indent=0):
         """Python IVI help system"""
-        if complete:
-            l = self.doc(obj).split('\n')
-            l = sorted(filter(None, l))
-            for m in l:
-                doc = self.doc(obj, m)
-                
-                if type(doc) == Doc:
-                    print(doc.render())
-                if type(doc) == str:
-                    print((indent * ' ') + '.. attribute:: ' + m + '\n')
-                    #print('-'*len(m)+'\n')
-                    doc = '\n'.join(((indent + 3) * ' ') + x for x in doc.splitlines())
-                    print(doc)
-                    print('\n')
-        else:
-            print(self.doc(obj))
+        if obj is None:
+            obj = self
+        return help(obj, complete, indent)
     
