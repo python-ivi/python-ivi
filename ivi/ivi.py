@@ -1236,7 +1236,7 @@ class DriverUtility(object):
                         driver returns the Instrument Status error. The IVI specific driver
                         returns the Instrument Status error when the instrument indicates that it
                         encountered an error and its error queue is not empty. Error Query
-                        extracts an error out of the instrument’s error queue.
+                        extracts an error out of the instrument's error queue.
                         
                         For instruments that have status registers but no error queue, the IVI
                         specific driver emulates an error queue in software.
