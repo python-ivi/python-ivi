@@ -120,6 +120,10 @@ from .agilentMSOX92504A import agilentMSOX92504A
 from .agilentMSOX92804A import agilentMSOX92804A
 from .agilentMSOX93204A import agilentMSOX93204A
 
+# Digital Multimeters
+from .agilent34410A import agilent34410A
+from .agilent34411A import agilent34411A
+
 # DC Power Supplies
 # 603xA
 from .agilent6030A import agilent6030A
