@@ -79,8 +79,6 @@ class agilent34410A(ivi.Driver, dmm.Base):
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
-        
         super(agilent34410A, self).initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
@@ -232,21 +230,6 @@ class agilent34410A(ivi.Driver, dmm.Base):
     def _measurement_abort(self):
         if not self._driver_operation_simulate:
             self._write(":abort")
-    
-    def configure(self, function, range, resolution):
-        self._set_measurement_function(self, function)
-        if range in Auto:
-            self._set_auto_range(range)
-        else:
-            self._set_range(range)
-        self._set_resolution(resolution)
-    
-    def _trigger_configure(self, source, delay):
-        self._set_trigger_source(source)
-        if isinstance(delay, bool):
-            self._set_trigger_auto_delay(delay)
-        else:
-            self._set_trigger_delay(delay)
     
     def _measurement_fetch(self, max_time):
         if not self._driver_operation_simulate:
