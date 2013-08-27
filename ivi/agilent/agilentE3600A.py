@@ -84,13 +84,13 @@ class agilentE3600A(ivi.Driver, dcpwr.Base, dcpwr.Trigger, dcpwr.SoftwareTrigger
                         self._get_couple_tracking_type,
                         self._set_couple_tracking_type)
         
-        ivi.add_method('memory.save',
+        ivi.add_method(self, 'memory.save',
                         self._memory_save)
-        ivi.add_method('memory.recall',
+        ivi.add_method(self, 'memory.recall',
                         self._memory_recall)
-        ivi.add_method('memory.set_name',
+        ivi.add_method(self, 'memory.set_name',
                         self._set_memory_name)
-        ivi.add_method('memory.get_name',
+        ivi.add_method(self, 'memory.get_name',
                         self._get_memory_name)
         
         self._init_outputs()
