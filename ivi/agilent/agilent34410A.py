@@ -180,7 +180,7 @@ class agilent34410A(ivi.Driver, dmm.Base):
         if value not in MeasurementFunctionMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":sense:function %s" % MeasurementFunctionMapping[value])
+            self._write(":sense:function '%s'" % MeasurementFunctionMapping[value])
         self._measurement_function = value
         self._set_cache_valid()
     
