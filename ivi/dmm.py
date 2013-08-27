@@ -92,7 +92,8 @@ class Base(object):
             raise ivi.ValueNotSupportedException()
         self._measurement_function = value
     
-    measurement_function = property(_get_measurement_function, _set_measurement_function)
+    measurement_function = property(lambda self: self._get_measurement_function(),
+                                    lambda self, value: self._set_measurement_function(value))
     
     def _get_range(self):
         return self._range
@@ -101,7 +102,8 @@ class Base(object):
         value = float(value)
         self._range = value
     
-    range = property(_get_range, _set_range)
+    range = property(lambda self: self._get_range(),
+                     lambda self, value: self._set_range())
     
     def _get_auto_range(self):
         return self._auto_range
@@ -111,7 +113,8 @@ class Base(object):
             raise ivi.ValueNotSupportedException()
         self._auto_range = value
     
-    auto_range = property(_get_auto_range, _set_auto_range)
+    auto_range = property(lambda self: self._get_auto_range(),
+                          lambda self, value: self._set_auto_range())
     
     def _get_resolution(self):
         return self._resolution
@@ -120,7 +123,8 @@ class Base(object):
         value = float(value)
         self._resolution = value
     
-    resolution = property(_get_resolution, _set_resolution)
+    resolution = property(lambda self: self._get_resolution(),
+                          lambda self, value: self._set_resolution())
     
     def _get_trigger_delay(self):
         return self._trigger_delay

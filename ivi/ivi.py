@@ -1690,7 +1690,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         "Returnes initialization state of driver"
         return self._initialized
         
-    initialized = property(_get_initialized)
+    initialized = property(lambda self: self._get_initialized())
     
     def _get_cache_tag(self, tag=None, skip=1):
         if tag is None:
