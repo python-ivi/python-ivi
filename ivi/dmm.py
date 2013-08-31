@@ -103,7 +103,7 @@ class Base(object):
         self._range = value
     
     range = property(lambda self: self._get_range(),
-                     lambda self, value: self._set_range())
+                     lambda self, value: self._set_range(value))
     
     def _get_auto_range(self):
         return self._auto_range
@@ -114,7 +114,7 @@ class Base(object):
         self._auto_range = value
     
     auto_range = property(lambda self: self._get_auto_range(),
-                          lambda self, value: self._set_auto_range())
+                          lambda self, value: self._set_auto_range(value))
     
     def _get_resolution(self):
         return self._resolution
@@ -124,7 +124,7 @@ class Base(object):
         self._resolution = value
     
     resolution = property(lambda self: self._get_resolution(),
-                          lambda self, value: self._set_resolution())
+                          lambda self, value: self._set_resolution(value))
     
     def _get_trigger_delay(self):
         return self._trigger_delay
