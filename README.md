@@ -30,6 +30,8 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 436A
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
+  * Other
+    * Colby Instruments PDL10A
 
 ## Instrument communication
 

@@ -24,16 +24,7 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "pwrmeter", "rfsiggen", "specan",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "colby", "tektronix"]
+# Phase shifters
+from .colbyPDL10A import colbyPDL10A
 
-from .ivi import *
-from . import *
 
