@@ -27,9 +27,7 @@ THE SOFTWARE.
 from .. import ivi
 from .. import dcpwr
 
-TrackingTypeMapping = {
-        'parallel': 'par',
-        'series': 'ser'}
+TrackingType = set(['parallel', 'series'])
 
 class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     "Tektronix PS2520G DC power supply driver"
@@ -367,12 +365,12 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
                 self._couple_tracking_enabled = False
             else:
                 self._couple_tracking_enabled = True
-                self._couple_tracking_type = [k for k,v in TrackingTypeMapping.items() if v==value][0]
+                self._couple_tracking_type = value
             self._set_cache_valid()
     
     def _set_tracking(self):
         if not self._driver_operation_simulate:
-            value = TrackingTypeMapping[self._couple_tracking_type]
+            value = self._couple_tracking_type
             if not self._couple_tracking_enabled:
                 value = 'none'
             self._write(":instrument:couple:tracking %s" % value)
@@ -393,7 +391,7 @@ class tektronixPS2520G(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     
     def _set_couple_tracking_type(self, value):
         value = str(value)
-        if value not in TrackingTypeMapping:
+        if value not in TrackingType:
             raise ivi.ValueNotSupportedException()
         self._couple_tracking_type = value
         self._set_tracking()
