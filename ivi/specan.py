@@ -467,7 +467,7 @@ class Base(object):
     def _get_level_reference_offset(self):
         return self._level_reference_offset
     
-    def _set_level_reference(self, value):
+    def _set_level_reference_offset(self, value):
         value = float(value)
         self._level_reference_offset = value
     
@@ -594,7 +594,7 @@ class Base(object):
             self._set_sweep_coupling_sweep_time(sweep_time)
     
     def _trace_fetch_y(self, index):
-        index = ivi.get_index(self._channel_name, index)
+        index = ivi.get_index(self._trace_name, index)
         data = list()
         return data
     
