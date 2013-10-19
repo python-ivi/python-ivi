@@ -603,9 +603,60 @@ class Base(object):
     
     def _trace_read_y(self, index):
         return self._trace_fetch_y(index)
+
+
+class Multitrace(object):
+    "Extension IVI methods for spectrum analyzers supporting simple mathematical operations on traces"
     
+    def __init__(self, *args, **kwargs):
+        super(Interpolation, self).__init__( *args, **kwargs)
+        
+        cls = 'IviSpecAn'
+        grp = 'Multitrace'
+        ivi.add_group_capability(self, cls+grp)
+        
+        ivi.add_method(self, 'trace_math.add',
+                       self._trace_math_add,
+                       """
+                       This function modifies a trace to be the point by point sum of two other
+                       traces. Any data in the destination trace is deleted.
+                       
+                         DestinationTrace = Trace1 + Trace2
+                       """)
+        ivi.add_method(self, 'trace_math.copy',
+                       self._trace_math_copy,
+                       """
+                       This function copies the data array from one trace into another trace. Any
+                       data in the Destination Trace is deleted.
+                       """)
+        ivi.add_method(self, 'trace_math.exchange',
+                       self._trace_math_exchange,
+                       """
+                       This function exchanges the data arrays of two traces.
+                       """)
+        ivi.add_method(self, 'trace_math.subtract',
+                       self._trace_math_subtract,
+                       """
+                       This function modifies a trace to be the point by point difference between
+                       two traces. Any data in the destination trace is deleted.
+                       
+                         DestinationTrace = Trace1 – Trace2
+                       """)
     
-# Multitrace
+    def _trace_math_add(self, dest, trace1, trace2):
+        pass
+    
+    def _trace_math_copy(self, dest, src):
+        pass
+    
+    def _trace_math_exchange(self, trace1, trace2):
+        pass
+    
+    def _trace_math_subtract(self, dest, trace1, trace2):
+        pass
+
+
+
 # Marker
 # Trigger
 # ExternalTrigger
