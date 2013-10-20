@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 __all__ = [
         # IVI implementations
-        "dcpwr"]
+        "dcpwr", "dmm"]
 
 from . import *
 
