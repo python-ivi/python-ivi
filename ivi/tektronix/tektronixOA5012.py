@@ -24,20 +24,13 @@ THE SOFTWARE.
 
 """
 
-# Function Generators
-from .tektronixAWG2005 import tektronixAWG2005
-from .tektronixAWG2020 import tektronixAWG2020
-from .tektronixAWG2021 import tektronixAWG2021
-from .tektronixAWG2040 import tektronixAWG2040
-from .tektronixAWG2041 import tektronixAWG2041
+from .tektronixOA5000 import *
 
-# Power Supplies
-from .tektronixPS2520G import tektronixPS2520G
-from .tektronixPS2521G import tektronixPS2521G
-
-# Optical attenuators
-from .tektronixOA5002 import tektronixOA5002
-from .tektronixOA5012 import tektronixOA5012
-from .tektronixOA5022 import tektronixOA5022
-from .tektronixOA5032 import tektronixOA5032
-
+class tektronixOA5012(tektronixOA5000):
+    "Tektronix OA5012 optical attenuator driver"
+    
+    def __init__(self, *args, **kwargs):
+        super(tektronixOA5012, self).__init__(*args, **kwargs)
+        
+        self._instrument_id = 'OA5012'
+    
