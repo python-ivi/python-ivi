@@ -32,6 +32,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 8642 A/B
   * Other
     * Colby Instruments PDL10A
+    * Tektronix OA5000 series
 
 ## Instrument communication
 
