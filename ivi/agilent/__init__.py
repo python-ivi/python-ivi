@@ -121,6 +121,7 @@ from .agilentMSOX92804A import agilentMSOX92804A
 from .agilentMSOX93204A import agilentMSOX93204A
 
 # Digital Multimeters
+from .agilent34401A import agilent34401A
 from .agilent34410A import agilent34410A
 from .agilent34411A import agilent34411A
 
