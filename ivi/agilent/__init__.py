@@ -120,6 +120,22 @@ from .agilentMSOX92504A import agilentMSOX92504A
 from .agilentMSOX92804A import agilentMSOX92804A
 from .agilentMSOX93204A import agilentMSOX93204A
 
+# Spectrum Analyzers
+# 859x series
+from .agilent8590L import agilent8590L
+from .agilent8591C import agilent8591C
+from .agilent8591E import agilent8591E
+from .agilent8593E import agilent8593E
+from .agilent8593EM import agilent8593EM
+from .agilent8594E import agilent8594E
+from .agilent8594EM import agilent8594EM
+from .agilent8594L import agilent8594L
+from .agilent8594Q import agilent8594Q
+from .agilent8595E import agilent8595E
+from .agilent8595EM import agilent8595EM
+from .agilent8596E import agilent8596E
+from .agilent8596EM import agilent8596EM
+
 # Digital Multimeters
 from .agilent34401A import agilent34401A
 from .agilent34410A import agilent34410A
