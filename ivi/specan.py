@@ -50,17 +50,17 @@ class Base(object):
         self._trace_count = 1
         
         self._level_amplitude_units = 'dBm'
-        self._level_attenuation = 0
+        self._level_attenuation = 0.0
         self._level_attenuation_auto = False
         self._acquisition_detector_type = 'sample'
         self._acquisition_detector_type_auto = False
         self._frequency_start = 1e3
         self._frequency_stop = 1e9
-        self._frequency_offset = 0
+        self._frequency_offset = 0.0
         self._level_input_impedance = 50
         self._acquisition_number_of_sweeps = 1
-        self._level_reference = 0
-        self._level_reference_offset = 0
+        self._level_reference = 0.0
+        self._level_reference_offset = 0.0
         self._sweep_coupling_resolution_bandwidth = 1e2
         self._sweep_coupling_resolution_bandwidth_auto = False
         self._acquisition_sweep_mode_continuous = True
