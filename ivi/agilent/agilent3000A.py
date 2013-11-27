@@ -41,7 +41,7 @@ class agilent3000A(agilentBaseScope):
         self._bandwidth = 1e9
         
         self._identity_description = "Agilent InfiniiVision 3000A X-series IVI oscilloscope driver"
-        self._identity_supported_instrument_models =['DSOX3012A','DSOX3014A','DSOX3024A',
+        self._identity_supported_instrument_models = ['DSOX3012A','DSOX3014A','DSOX3024A',
                 'DSOX3032A','DSOX3034A','DSOX3052A','DSOX3054A','DSOX3104A','MSOX3012A','MSOX3014A',
                 'MSOX3024A','MSOX3032A','MSOX3034A','MSOX3052A','MSOX3054A','MSOX3104A']
         

@@ -50,7 +50,7 @@ class agilent90000(agilentBaseScope):
         self._bandwidth = 13e9
         
         self._identity_description = "Agilent Infiniium 90000A/90000X series IVI oscilloscope driver"
-        self._identity_supported_instrument_models =['DSO90254A','DSO90404A','DSO90604A',
+        self._identity_supported_instrument_models = ['DSO90254A','DSO90404A','DSO90604A',
                 'DSO90804A','DSO91204A','DSO91304A','DSOX91304A','DSOX91604A','DSOX92004A',
                 'DSOX92504A','DSOX92804A','DSOX93204A','DSA90254A','DSA90404A','DSA90604A',
                 'DSA90804A','DSA91204A','DSA91304A','DSAX91304A','DSAX91604A','DSAX92004A',

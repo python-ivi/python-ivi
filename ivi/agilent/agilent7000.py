@@ -41,7 +41,7 @@ class agilent7000(agilentBaseScope):
         self._bandwidth = 1e9
         
         self._identity_description = "Agilent InfiniiVision 7000 series IVI oscilloscope driver"
-        self._identity_supported_instrument_models =['DSO7012A','DSO7014A','DSO7032A',
+        self._identity_supported_instrument_models = ['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',
                 'MSO7034A','MSO7052A','MSO7054A','MSO7104A','DSO7012B','DSO7014B','DSO7032B',
                 'DSO7034B','DSO7052B','DSO7054B','DSO7104B','MSO7012B','MSO7014B','MSO7032B',

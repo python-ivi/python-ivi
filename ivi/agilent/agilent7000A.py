@@ -33,7 +33,7 @@ class agilent7000A(agilent7000):
         super(agilent7000A, self).__init__(*args, **kwargs)
         
         self._identity_description = "Agilent InfiniiVision 7000A series IVI oscilloscope driver"
-        self._identity_supported_instrument_models =['DSO7012A','DSO7014A','DSO7032A',
+        self._identity_supported_instrument_models = ['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',
                 'MSO7034A','MSO7052A','MSO7054A','MSO7104A']
         
