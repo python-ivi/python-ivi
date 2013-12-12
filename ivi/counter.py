@@ -1523,7 +1523,78 @@ class Base(object):
         return self._measurement_fetch()
     
     
-# Filter
+class Filter(object):
+    "Extension IVI methods for frequency counters that support filtering the input frequency"
+    
+    def __init__(self, *args, **kwargs):
+        super(Filter, self).__init__(*args, **kwargs)
+        
+        cls = 'IviCounter'
+        grp = 'Filter'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._channel_minimum_frequency = list()
+        self._channel_maximum_frequency = list()
+        
+        ivi.add_property(self, 'channels[].minimum_frequency',
+                        self._get_channel_minimum_frequency,
+                        self._set_channel_minimum_frequency,
+                        None,
+                        ivi.Doc("""
+                        Specifies the low cutoff frequency for the filter in hertz. Set to zero to
+                        disable low frequency filtering.
+                        """, cls, grp, '5.2.1'))
+        ivi.add_property(self, 'channels[].maximum_frequency',
+                        self._get_channel_maximum_frequency,
+                        self._set_channel_maximum_frequency,
+                        None,
+                        ivi.Doc("""
+                        Specifies the high cutoff frequency for the filter in hertz. Set to
+                        positive infinity to disable high frequency filtering.
+                        """, cls, grp, '5.2.2'))
+        ivi.add_method(self, 'channels[].filter.configure',
+                        self._channel_filter_configure,
+                        ivi.Doc("""
+                        
+                        """, cls, grp, '5.3.1'))
+        
+    def _init_channels(self):
+        try:
+            super(Filter, self)._init_channels()
+        except AttributeError:
+            pass
+        
+        self._channel_minimum_frequency = list()
+        self._channel_maximum_frequency = list()
+        for i in range(self._channel_count):
+            self._channel_minimum_frequency.append(0.0)
+            self._channel_maximum_frequency.append(1e9)
+        
+        self.channels._set_list(self._channel_name)
+    
+    def _get_channel_minimum_frequency(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        return self._channel_minimum_frequency[index]
+    
+    def _set_channel_minimum_frequency(self, index, value):
+        index = ivi.get_index(self._channel_name, index)
+        value = int(value)
+        self._channel_minimum_frequency[index] = value
+    
+    def _get_channel_maximum_frequency(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        return self._channel_maximum_frequency[index]
+    
+    def _set_channel_maximum_frequency(self, index, value):
+        index = ivi.get_index(self._channel_name, index)
+        value = int(value)
+        self._channel_maximum_frequency[index] = value
+    
+    def _channel_filter_configure(self, index, minimum, maximum):
+        self._set_channel_minimum_frequency(index, minimum)
+        self._set_channel_maximum_frequency(index, maximum)
+    
+
 # TimeIntervalStopHoldoff
 # VoltageMeasurement
 # EdgeTimeReferenceLevels
