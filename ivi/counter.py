@@ -1632,7 +1632,77 @@ class TimeIntervalStopHoldoff(object):
         index = ivi.get_index(self._channel_name)
         self._time_interval_stop_holdoff[index] = value
     
+    
+class VoltageMeasurement(object):
+    "Extension IVI methods for frequency counters that support taking voltage measurements on the input signal"
+    
+    def __init__(self, *args, **kwargs):
+        super(VoltageMeasurement, self).__init__(*args, **kwargs)
+        
+        cls = 'IviCounter'
+        grp = 'VoltageMeasurement'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._voltage_channel = 0
+        self._voltage_estimate = 0
+        self._voltage_resolution = 0.01
+        
+        ivi.add_property(self, 'voltage.channel',
+                        self._get_voltage_channel,
+                        self._set_voltage_channel,
+                        None,
+                        ivi.Doc("""
+                        Specifies the input channel the voltage is measured on.
+                        """, cls, grp, '7.2.1'))
+        ivi.add_property(self, 'voltage.estimate',
+                        self._get_voltage_estimate,
+                        self._set_voltage_estimate,
+                        None,
+                        ivi.Doc("""
+                        Specifies the estimated voltage, in volts, for the voltage function.
+                        """, cls, grp, '7.2.2'))
+        ivi.add_property(self, 'voltage.resolution',
+                        self._get_voltage_resolution,
+                        self._set_voltage_resolution,
+                        None,
+                        ivi.Doc("""
+                        Specifies the resolution of the measurement, in volts, for the voltage
+                        function.
+                        """, cls, grp, '7.2.3'))
+        ivi.add_method(self, 'voltage.configure',
+                        self._voltage_configure,
+                        ivi.Doc("""
+                        Configures the voltage function, the estimate, and the resolution
+                        attributes for a voltage measurement.
+                        """, cls, grp, '7.3.1'))
+    
+    def _get_voltage_channel(self):
+        return self._voltage_channel
+    
+    def _set_voltage_channel(self, value):
+        index = ivi.get_index(self._channel_name, value)
+        self._voltage_channel = index
+    
+    def _get_voltage_estimate(self):
+        return self._voltage_estimate
+    
+    def _set_voltage_estimate(self, value):
+        value = float(value)
+        self._voltage_estimate = value
+    
+    def _get_voltage_resolution(self):
+        return self._voltage_resolution
+    
+    def _set_voltage_resolution(self, value):
+        value = float(value)
+        self._voltage_resolution = value
+    
+    def _voltage_configure(self, channel, measurement_function, estimate, resolution):
+        self._set_measurement_function(measurement_function)
+        self._set_voltage_channel(channel)
+        self._set_voltage_estimate(estimate)
+        self._set_voltage_resolution(resolution)
+    
 
-# VoltageMeasurement
 # EdgeTimeReferenceLevels
 
