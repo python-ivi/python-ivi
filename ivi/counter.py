@@ -1410,7 +1410,7 @@ class Base(object):
         self._frequency_configure(channel, estimate, resolution)
     
     def _frequency_configure_with_aperture(self, channel, aperture_time):
-        self._set_measurement_function('frequency')
+        self._set_measurement_function('frequency_with_aperture')
         self._set_frequency_channel(channel)
         self._set_frequency_aperture_time(aperture_time)
     
@@ -1421,7 +1421,7 @@ class Base(object):
         self._set_period_resolution(resolution)
     
     def _period_configure_with_aperture(self, channel, aperture_time):
-        self._set_measurement_function('period')
+        self._set_measurement_function('period_with_aperture')
         self._set_period_channel(channel)
         self._set_period_aperture_time(aperture_time)
     
