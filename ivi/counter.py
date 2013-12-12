@@ -1702,7 +1702,16 @@ class VoltageMeasurement(object):
         self._set_voltage_channel(channel)
         self._set_voltage_estimate(estimate)
         self._set_voltage_resolution(resolution)
-    
 
-# EdgeTimeReferenceLevels
+
+class EdgeTimeReferenceLevels(object):
+    "Extension IVI methods for frequency counters that support taking percentage based edge time measurements"
+    
+    def __init__(self, *args, **kwargs):
+        super(EdgeTimeReferenceLevels, self).__init__(*args, **kwargs)
+        
+        cls = 'IviCounter'
+        grp = 'EdgeTimeReferenceLevels'
+        ivi.add_group_capability(self, cls+grp)
+
 
