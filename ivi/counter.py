@@ -1594,8 +1594,47 @@ class Filter(object):
         self._set_channel_minimum_frequency(index, minimum)
         self._set_channel_maximum_frequency(index, maximum)
     
+    
+class TimeIntervalStopHoldoff(object):
+    "Extension IVI methods for frequency counters that support setting a delay time for the time interval functions"
+    
+    def __init__(self, *args, **kwargs):
+        super(TimeIntervalStopHoldoff, self).__init__(*args, **kwargs)
+        
+        cls = 'IviCounter'
+        grp = 'TimeIntervalStopHoldoff'
+        ivi.add_group_capability(self, cls+grp)
+        
+        self._time_interval_stop_holdoff = 0.0
+        
+        ivi.add_property(self, 'time_interval.stop_holdoff',
+                        self._get_time_interval_stop_holdoff,
+                        self._set_time_interval_stop_holdoff,
+                        None,
+                        ivi.Doc("""
+                        Specifies the stop holdoff time for a Time Interval measurement. The stop
+                        holdoff time is the time from the Time Interval Start Channel Trigger
+                        until the Time Interval Stop Channel Trigger is enabled. The units are
+                        seconds.
+                        
+                        Note: Many counters have a small, non-zero value as the minimum value for
+                        this attribute. To configure the instrument to use the shortest stop
+                        hold-off, the user can specify a value of zero for this attribute.
+                        Therefore, the IVI Class-Compliant specific driver shall coerce any value
+                        between zero and the minimum value to the minimum value. No other coercion
+                        is allowed on this attribute.
+                        """, cls, grp, '6.2.1'))
+        
+    def _get_time_interval_stop_holdoff(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        return self._time_interval_stop_holdoff[index]
+    
+    def _set_time_interval_stop_holdoff(self, index, value):
+        index = ivi.get_index(self._channel_name, index)
+        value = int(value)
+        self._time_interval_stop_holdoff[index] = value
+    
 
-# TimeIntervalStopHoldoff
 # VoltageMeasurement
 # EdgeTimeReferenceLevels
 
