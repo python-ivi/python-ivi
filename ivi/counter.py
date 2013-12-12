@@ -1625,13 +1625,11 @@ class TimeIntervalStopHoldoff(object):
                         is allowed on this attribute.
                         """, cls, grp, '6.2.1'))
         
-    def _get_time_interval_stop_holdoff(self, index):
-        index = ivi.get_index(self._channel_name, index)
-        return self._time_interval_stop_holdoff[index]
+    def _get_time_interval_stop_holdoff(self):
+        return self._time_interval_stop_holdoff
     
-    def _set_time_interval_stop_holdoff(self, index, value):
-        index = ivi.get_index(self._channel_name, index)
-        value = int(value)
+    def _set_time_interval_stop_holdoff(self, value):
+        index = ivi.get_index(self._channel_name)
         self._time_interval_stop_holdoff[index] = value
     
 
