@@ -1583,7 +1583,9 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # TCPIP0::10.0.0.1::INSTR
             # TCPIP::10.0.0.1::gpib,5::INSTR
             # TCPIP0::10.0.0.1::gpib,5::INSTR
+            # USB::1234::5678::INSTR
             # USB::1234::5678::SERIAL::INSTR
+            # USB0::0x1234::0x5678::INSTR
             # USB0::0x1234::0x5678::SERIAL::INSTR
             # GPIB::10::INSTR
             # GPIB0::10::INSTR
@@ -1613,7 +1615,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 # USB connection
                 idVendor = int(res[1], 0)
                 idProduct = int(res[2], 0)
-                iSerial = res[3]
+                if len(res) > 4:
+                    iSerial = res[3]
+                else:
+                    iSerial = None
                 
                 if 'usbtmc' in globals():
                     self._interface = usbtmc.Instrument(idVendor, idProduct, iSerial)
