@@ -385,26 +385,22 @@ def get_sig(sig):
     "Parse various signal inputs into x and y components"
     if type(sig) == tuple and len(sig) == 2:
         # tuple of two lists or arrays
-        (x, y) = sig
+        x, y = sig
         x = array(x)
         y = array(y)
     elif type(sig) == list and type(sig[0]) == tuple and len(sig[0]) == 2:
         # list of tuples
-        x = list()
-        y = list()
-        for k in sig:
-            x.append(k[0])
-            y.append(k[1])
+        x, y = zip(*sig)
         x = array(x)
         y = array(y)
-    elif type(sig) == ndarray and len(sig.shape) == 2 and sig.shape[0] == 2:
+    elif (type(sig) == ndarray or type(sig) == matrix) and len(sig.shape) == 2 and sig.shape[0] == 2:
         # 2D array, hieght 2
-        x = sig[0]
-        y = sig[1]
-    elif type(sig) == ndarray and len(sig.shape) == 2 and sig.shape[1] == 2:
+        x = array(sig[0])
+        y = array(sig[1])
+    elif (type(sig) == ndarray or type(sig) == matrix) and len(sig.shape) == 2 and sig.shape[1] == 2:
         # 2D array, width 2
-        x = sig[:,0]
-        y = sig[:,1]
+        x = array(sig[:,0])
+        y = array(sig[:,1])
     else:
         raise Exception('Unknown argument')
     
