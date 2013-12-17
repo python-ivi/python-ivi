@@ -1597,27 +1597,15 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             
             if t[:5] == 'TCPIP':
                 # TCP connection
-                host = res[1]
-                name = None
-                if len(res) == 4:
-                    name = res[2]
-                
                 if 'vxi11' in globals():
                     # connect with VXI-11
-                    self._interface = vxi11.Instrument(host, name)
+                    self._interface = vxi11.Instrument(resource)
                 else:
                     raise IOException('Cannot use resource type %s' % t)
             elif t[:3] == 'USB':
                 # USB connection
-                idVendor = int(res[1], 0)
-                idProduct = int(res[2], 0)
-                if len(res) > 4:
-                    iSerial = res[3]
-                else:
-                    iSerial = None
-                
                 if 'usbtmc' in globals():
-                    self._interface = usbtmc.Instrument(idVendor, idProduct, iSerial)
+                    self._interface = usbtmc.Instrument(resource)
                 else:
                     raise IOException('Cannot use resource type %s' % t)
             elif t[:4] == 'GPIB':
