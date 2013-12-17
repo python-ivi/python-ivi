@@ -32,7 +32,7 @@ class tektronixAWG2005(tektronixAWG2000):
     def __init__(self, *args, **kwargs):
         super(tektronixAWG2005, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AWG2005'
+        self._instrument_id = 'SONY/TEK,AWG2005'
         
         self._output_count = 2
     

@@ -48,7 +48,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def __init__(self, *args, **kwargs):
         super(tektronixAWG2000, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AWG2000'
+        self._instrument_id = 'SONY/TEK,AWG2000'
         
         self._output_count = 1
         
