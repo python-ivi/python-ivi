@@ -24,16 +24,23 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "pwrmeter", "specan", "rfsiggen", "counter",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "colby", "rigol", "tektronix"]
+from .rigolDP1000 import *
 
-from .ivi import *
-from . import *
-
+class rigolDP1116A(rigolDP1000):
+    "Rigol DP1116A IVI DC power supply driver"
+    
+    def __init__(self, *args, **kwargs):
+        super(rigolDP1116A, self).__init__(*args, **kwargs)
+        
+        self._instrument_id = 'Rigol Technologies,DP1116A'
+        
+        self._output_count = 1
+        
+        self._output_range = [[(16.0, 10.0), (32.0, 5.0)]]
+        self._output_range_name = [['P16V', 'P32V']]
+        self._output_ovp_max = [35.2]
+        self._output_ocp_max = [11.0]
+        self._output_voltage_max = [32.0]
+        self._output_current_max = [10.0]
+    
+    

@@ -24,16 +24,11 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "pwrmeter", "specan", "rfsiggen", "counter",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "colby", "rigol", "tektronix"]
-
-from .ivi import *
-from . import *
-
+# DC Power Supplies
+# DP800
+from .rigolDP831A import rigolDP831A
+from .rigolDP832 import rigolDP832
+from .rigolDP832A import rigolDP832A
+# DP1000
+from .rigolDP1116A import rigolDP1116A
+from .rigolDP1308A import rigolDP1308A

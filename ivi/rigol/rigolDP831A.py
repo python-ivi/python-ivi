@@ -24,16 +24,23 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "pwrmeter", "specan", "rfsiggen", "counter",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "colby", "rigol", "tektronix"]
+from .rigolDP800 import *
 
-from .ivi import *
-from . import *
-
+class rigolDP831A(rigolDP800):
+    "Rigol DP831A IVI DC power supply driver"
+    
+    def __init__(self, *args, **kwargs):
+        super(rigolDP831A, self).__init__(*args, **kwargs)
+        
+        self._instrument_id = 'Rigol Technologies,DP831A'
+        
+        self._output_count = 3
+        
+        self._output_range = [[(8.0, 5.0)], [(30.0, 2.0)], [(-30.0, 2.0)]]
+        self._output_range_name = [['P8V'], ['P30V'], ['N30V']]
+        self._output_ovp_max = [8.8, 33.0, -33.0]
+        self._output_ocp_max = [5.5, 2.2, 2.2]
+        self._output_voltage_max = [8.0, 30.0, -30.0]
+        self._output_current_max = [5.0, 2.0, 2.0]
+    
+    

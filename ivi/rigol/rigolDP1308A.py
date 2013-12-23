@@ -24,16 +24,23 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "pwrmeter", "specan", "rfsiggen", "counter",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "colby", "rigol", "tektronix"]
+from .rigolDP1000 import *
 
-from .ivi import *
-from . import *
-
+class rigolDP1308A(rigolDP1000):
+    "Rigol DP1308A IVI DC power supply driver"
+    
+    def __init__(self, *args, **kwargs):
+        super(rigolDP1308A, self).__init__(*args, **kwargs)
+        
+        self._instrument_id = 'Rigol Technologies,DP1308A'
+        
+        self._output_count = 3
+        
+        self._output_range = [[(6.0, 5.0)], [(25.0, 1.0)], [(-25.0, 1.0)]]
+        self._output_range_name = [['P6V'], ['P25V'], ['N25V']]
+        self._output_ovp_max = [6.5, 27.0, -27.0]
+        self._output_ocp_max = [5.5, 1.2, 1.2]
+        self._output_voltage_max = [6.0, 25.0, -25.0]
+        self._output_current_max = [5.0, 1.0, 1.0]
+    
+    
