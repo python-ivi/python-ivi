@@ -226,7 +226,7 @@ class Base(ivi.Driver, dcpwr.Base):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._write(":instrument:nselect %d" % (index+1))
-            self._output_enabled[index] = bool(int(self._ask(":output:state?")))
+            self._output_enabled[index] = bool(int(self._ask(":output?")))
             self._set_cache_valid(index=index)
         return self._output_enabled[index]
     
@@ -235,7 +235,7 @@ class Base(ivi.Driver, dcpwr.Base):
         value = bool(value)
         if not self._driver_operation_simulate:
             self._write(":instrument:nselect %d" % (index+1))
-            self._write(":output:state %d" % int(value))
+            self._write(":output %d" % int(value))
         self._output_enabled[index] = value
         for k in range(self._output_count):
             self._set_cache_valid(valid=False,index=k)
