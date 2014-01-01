@@ -42,7 +42,7 @@ class LinuxGpibInstrument:
         if num < 0:
             num = 512
         
-        return self.gpib.read(len)
+        return self.gpib.read(num)
     
     def ask_raw(self, data, num=-1):
         "Write then read binary data"
