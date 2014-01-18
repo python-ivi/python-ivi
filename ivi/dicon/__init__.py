@@ -24,17 +24,7 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "swtch", "pwrmeter", "specan",
-        "rfsiggen", "counter",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "dicon", "colby", "rigol", "tektronix"]
+# Programmable fiberoptic instrument
+from .diconGP700 import diconGP700
 
-from .ivi import *
-from . import *
 
