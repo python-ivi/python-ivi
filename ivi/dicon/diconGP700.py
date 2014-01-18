@@ -34,7 +34,7 @@ class diconGP700(ivi.Driver):
         
         self._instrument_id = 'GP700'
         
-        self._memory_size = 4
+        self._memory_size = 9
         
         self._identity_description = "DiCon Fiberoptics GP700 Programmable Fiberoptic Instrument"
         self._identity_identifier = ""
