@@ -30,9 +30,9 @@ class diconGP700(ivi.Driver):
     "DiCon Fiberoptics GP700 Programmable Fiberoptic Instrument"
     
     def __init__(self, *args, **kwargs):
-        super(diconGP700, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'GP700')
         
-        self._instrument_id = 'GP700'
+        super(diconGP700, self).__init__(*args, **kwargs)
         
         self._memory_size = 9
         
