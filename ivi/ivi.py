@@ -1367,9 +1367,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 kw[k] = kwargs.pop(k)
         
         super(Driver, self).__init__(*args, **kwargs)
+        
         self._interface = None
         self._initialized = False
-        self._instrument_id = ''
+        self.__dict__.setdefault('_instrument_id', '')
         self._cache_valid = list()
         
         self.__dict__.setdefault('_docs', dict())
