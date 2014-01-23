@@ -533,7 +533,7 @@ def doc(obj=None, itm=None, docs=None, prefix=None):
     
     return "error"
 
-def help(obj=None, complete=False, indent=0):
+def help(obj=None, itm=None, complete=False, indent=0):
     """Python IVI help system"""
     if complete:
         l = doc(obj).split('\n')
@@ -550,7 +550,7 @@ def help(obj=None, complete=False, indent=0):
                 print(d)
                 print('\n')
     else:
-        print(doc(obj))
+        print(doc(obj, itm))
 
 
 class DriverOperation(object):
@@ -1867,9 +1867,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
         return doc(obj, itm, docs, prefix)
     
-    def help(self, obj=None, complete=False, indent=0):
+    def help(self, itm=None, complete=False, indent=0):
         """Python IVI help system"""
-        if obj is None:
-            obj = self
-        return help(obj, complete, indent)
+        return help(self, itm, complete, indent)
     
