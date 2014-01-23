@@ -30,7 +30,7 @@ class agilentDSOX2022A(agilent2000A):
     "Agilent InfiniiVision DSOX2022A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', 'DSO-X 2022A')
+        self.__dict__.setdefault('_instrument_id', 'DSO-X 2022A')
         
         super(agilentDSOX2022A, self).__init__(*args, **kwargs)
         

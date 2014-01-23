@@ -30,7 +30,7 @@ class agilentMSOX3052A(agilent3000A):
     "Agilent InfiniiVision MSOX3052A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', 'MSO-X 3052A')
+        self.__dict__.setdefault('_instrument_id', 'MSO-X 3052A')
         
         super(agilentMSOX3052A, self).__init__(*args, **kwargs)
         

@@ -71,7 +71,7 @@ class agilent34401A(scpi.dmm.Base):
     "Agilent 34401A IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', '34401A')
+        self.__dict__.setdefault('_instrument_id', '34401A')
         
         super(agilent34401A, self).__init__(*args, **kwargs)
         

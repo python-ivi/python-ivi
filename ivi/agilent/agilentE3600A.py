@@ -38,7 +38,7 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
     "Agilent E3600A series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', 'E3600A')
+        self.__dict__.setdefault('_instrument_id', 'E3600A')
         
         # don't do standard SCPI init routine
         self._do_scpi_init = False

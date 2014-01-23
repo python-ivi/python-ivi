@@ -30,7 +30,7 @@ class agilentMSO7014B(agilent7000B):
     "Agilent InfiniiVision MSO7014B IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', 'MSO7014B')
+        self.__dict__.setdefault('_instrument_id', 'MSO7014B')
         
         super(agilentMSO7014B, self).__init__(*args, **kwargs)
         

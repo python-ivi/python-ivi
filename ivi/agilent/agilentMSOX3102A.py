@@ -30,7 +30,7 @@ class agilentMSOX3102A(agilent3000A):
     "Agilent InfiniiVision MSOX3102A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', 'MSO-X 3102A')
+        self.__dict__.setdefault('_instrument_id', 'MSO-X 3102A')
         
         super(agilentMSOX3102A, self).__init__(*args, **kwargs)
         

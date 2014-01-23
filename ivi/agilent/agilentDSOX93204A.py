@@ -30,7 +30,7 @@ class agilentDSOX93204A(agilent90000):
     "Agilent Infiniium DSOX93204A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', 'DSOX93204A')
+        self.__dict__.setdefault('_instrument_id', 'DSOX93204A')
         
         super(agilentDSOX93204A, self).__init__(*args, **kwargs)
         

@@ -30,7 +30,7 @@ class agilent8591C(agilent8590E):
     "Agilent 8591C IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', '')
+        self.__dict__.setdefault('_instrument_id', '')
         
         super(agilent8591C, self).__init__(*args, **kwargs)
         

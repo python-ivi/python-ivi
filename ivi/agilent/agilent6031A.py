@@ -30,7 +30,7 @@ class agilent6031A(agilent603xA):
     "Agilent 6031A IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.set_default('_instrument_id', '6031A')
+        self.__dict__.setdefault('_instrument_id', '6031A')
         
         super(agilent6031A, self).__init__(*args, **kwargs)
         
