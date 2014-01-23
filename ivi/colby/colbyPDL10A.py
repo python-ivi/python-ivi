@@ -32,9 +32,9 @@ class colbyPDL10A(ivi.Driver):
     "Colby Instruments PDL10A Programmable Delay Line driver"
     
     def __init__(self, *args, **kwargs):
-        super(colbyPDL10A, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'PDL 10A')
         
-        self._instrument_id = 'PDL 10A'
+        super(colbyPDL10A, self).__init__(*args, **kwargs)
         
         self._identity_description = "Colby Instruments PDL10A Programmable Delay Line driver"
         self._identity_identifier = ""
