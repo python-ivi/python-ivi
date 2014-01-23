@@ -33,9 +33,9 @@ class tektronixAM5030(ivi.Driver):
     "Tektronix AM5030 current probe amplifier driver"
     
     def __init__(self, *args, **kwargs):
-        super(tektronixAM5030, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'AM5030')
         
-        self._instrument_id = 'AM5030'
+        super(tektronixAM5030, self).__init__(*args, **kwargs)
         
         self._identity_description = "Tektronix AM5030 current probe amplifier driver"
         self._identity_identifier = ""
