@@ -30,9 +30,10 @@ class agilentDSOX3102A(agilent3000A):
     "Agilent InfiniiVision DSOX3102A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.set_default('_instrument_id', 'DSO-X 3102A')
+        
         super(agilentDSOX3102A, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES,DSO-X 3102A'
         self._analog_channel_count = 2
         self._digital_channel_count = 0
         self._channel_count = self._analog_channel_count + self._digital_channel_count

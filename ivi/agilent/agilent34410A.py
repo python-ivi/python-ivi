@@ -35,9 +35,9 @@ class agilent34410A(scpi.dmm.Base):
     "Agilent 34410A IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
-        super(agilent34410A, self).__init__(*args, **kwargs)
+        self.__dict__.set_default('_instrument_id', '34410A')
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES,34410A'
+        super(agilent34410A, self).__init__(*args, **kwargs)
         
         self._memory_size = 5
         

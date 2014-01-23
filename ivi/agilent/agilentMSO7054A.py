@@ -30,9 +30,10 @@ class agilentMSO7054A(agilent7000A):
     "Agilent InfiniiVision MSO7054A IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.set_default('_instrument_id', 'MSO7054A')
+        
         super(agilentMSO7054A, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES,MSO7054A'
         self._analog_channel_count = 4
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count

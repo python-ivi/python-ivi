@@ -30,8 +30,9 @@ class agilent8642B(agilent8642A):
     "Agilent 8642B IVI RF signal generator driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.set_default('_instrument_id', 'HP8642B')
+        
         super(agilent8642B, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'HP8642B'
     
     

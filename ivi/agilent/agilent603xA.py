@@ -36,9 +36,9 @@ class agilent603xA(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     "Agilent 603xA series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(agilent603xA, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', '')
         
-        self._instrument_id = '603xA'
+        super(agilent603xA, self).__init__(*args, **kwargs)
         
         self._output_count = 1
         

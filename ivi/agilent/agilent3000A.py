@@ -30,9 +30,10 @@ class agilent3000A(agilentBaseScope):
     "Agilent InfiniiVision 3000A series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
+        
         super(agilent3000A, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES'
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()

@@ -30,9 +30,9 @@ class agilent34411A(agilent34410A):
     "Agilent 34411A IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
-        super(agilent34411A, self).__init__(*args, **kwargs)
+        self.__dict__.set_default('_instrument_id', '34411A')
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES,34411A'
+        super(agilent34411A, self).__init__(*args, **kwargs)
         
     
     

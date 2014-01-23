@@ -157,9 +157,9 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
     "Agilent 8642A IVI RF signal generator driver"
     
     def __init__(self, *args, **kwargs):
-        super(agilent8642A, self).__init__(*args, **kwargs)
+        self.__dict__.set_default('_instrument_id', 'HP8642A')
         
-        self._instrument_id = 'HP8642A'
+        super(agilent8642A, self).__init__(*args, **kwargs)
     
         self._identity_description = "Agilent 8642 IVI RF signal generator driver"
         self._identity_identifier = ""

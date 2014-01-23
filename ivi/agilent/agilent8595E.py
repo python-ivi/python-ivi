@@ -30,9 +30,10 @@ class agilent8595E(agilent8590E):
     "Agilent 8595E IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.set_default('_instrument_id', '')
+        
         super(agilent8595E, self).__init__(*args, **kwargs)
         
-        self._instrument_id = ''
         self._input_impedance = 50
         self._frequency_low = 9e3
         self._frequency_high = 6.5e9

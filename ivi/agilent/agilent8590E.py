@@ -46,9 +46,10 @@ class agilent8590E(ivi.Driver, specan.Base):
     "Agilent 8590E series IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
+        
         super(agilent8590E, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'HP8593E'
         self._frequency_low = 9e3
         self._frequency_high = 1.8e9
         

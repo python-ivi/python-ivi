@@ -147,10 +147,12 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     "Agilent generic IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()
         self._digital_channel_count = 16
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._channel_label = list()
         self._channel_probe_skew = list()
         self._channel_invert = list()
@@ -159,7 +161,6 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         super(agilentBaseScope, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES'
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()

@@ -30,9 +30,10 @@ class agilent7000(agilentBaseScope):
     "Agilent InfiniiVision 7000 series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
+        
         super(agilent7000, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES'
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()

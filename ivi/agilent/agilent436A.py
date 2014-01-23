@@ -33,9 +33,9 @@ class agilent436A(ivi.Driver, pwrmeter.Base, pwrmeter.ZeroCorrection, pwrmeter.M
     "Agilent 436A RF power meter"
     
     def __init__(self, *args, **kwargs):
-        super(agilent436A, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', '436A')
         
-        self._instrument_id = '436A'
+        super(agilent436A, self).__init__(*args, **kwargs)
         
         self._identity_description = "Agilent 436A RF power meter driver"
         self._identity_identifier = ""

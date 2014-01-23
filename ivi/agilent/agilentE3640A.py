@@ -30,9 +30,9 @@ class agilentE3640A(agilentE3600A):
     "Agilent E3640A IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(agilentE3640A, self).__init__(*args, **kwargs)
+        self.__dict__.set_default('_instrument_id', 'E3640A')
         
-        self._instrument_id = 'E3640A'
+        super(agilentE3640A, self).__init__(*args, **kwargs)
         
         self._output_count = 1
         

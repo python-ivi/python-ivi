@@ -30,6 +30,7 @@ class agilent90000(agilentBaseScope):
     "Agilent Infiniium 90000A/90000X series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()
@@ -41,7 +42,6 @@ class agilent90000(agilentBaseScope):
         
         super(agilent90000, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'AGILENT TECHNOLOGIES'
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()
