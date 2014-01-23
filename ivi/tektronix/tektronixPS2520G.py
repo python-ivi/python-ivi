@@ -34,9 +34,9 @@ class tektronixPS2520G(scpi.dcpwr.Base, scpi.dcpwr.Measurement):
     "Tektronix PS2520G DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(tektronixPS2520G, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'PS2520G')
         
-        self._instrument_id = 'PS2520G'
+        super(tektronixPS2520G, self).__init__(*args, **kwargs)
         
         self._output_count = 3
         

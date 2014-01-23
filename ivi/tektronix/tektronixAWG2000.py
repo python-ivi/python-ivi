@@ -46,9 +46,9 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     "Tektronix AWG2000 series arbitrary waveform generator driver"
     
     def __init__(self, *args, **kwargs):
-        super(tektronixAWG2000, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', '')
         
-        self._instrument_id = 'SONY/TEK,AWG2000'
+        super(tektronixAWG2000, self).__init__(*args, **kwargs)
         
         self._output_count = 1
         

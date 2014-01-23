@@ -30,9 +30,9 @@ class tektronixOA5000(ivi.Driver):
     "Tektronix OA5000 series optical attenuator driver"
     
     def __init__(self, *args, **kwargs):
-        super(tektronixOA5000, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', '')
         
-        self._instrument_id = 'OA5000'
+        super(tektronixOA5000, self).__init__(*args, **kwargs)
         
         self._identity_description = "Tektronix OA5000 series optical attenuator driver"
         self._identity_identifier = ""

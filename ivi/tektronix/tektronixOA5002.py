@@ -30,7 +30,8 @@ class tektronixOA5002(tektronixOA5000):
     "Tektronix OA5002 optical attenuator driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', 'OA5002')
+        
         super(tektronixOA5002, self).__init__(*args, **kwargs)
         
-        self._instrument_id = 'OA5002'
     

@@ -30,9 +30,9 @@ class tektronixAWG2021(tektronixAWG2000):
     "Tektronix AWG2021 arbitrary waveform generator driver"
     
     def __init__(self, *args, **kwargs):
-        super(tektronixAWG2021, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'AWG2021')
         
-        self._instrument_id = 'SONY/TEK,AWG2021'
+        super(tektronixAWG2021, self).__init__(*args, **kwargs)
         
         self._output_count = 1
     
