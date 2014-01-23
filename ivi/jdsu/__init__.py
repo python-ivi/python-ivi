@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 """
 
-# Phase shifters
+# Optical Grating Filters
 from .jdsuTB9 import jdsuTB9
 
 
