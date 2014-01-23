@@ -30,9 +30,9 @@ class rigolDP1116A(rigolDP1000):
     "Rigol DP1116A IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(rigolDP1116A, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'DP1116A')
         
-        self._instrument_id = 'Rigol Technologies,DP1116A'
+        super(rigolDP1116A, self).__init__(*args, **kwargs)
         
         self._output_count = 1
         

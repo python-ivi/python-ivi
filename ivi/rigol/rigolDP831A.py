@@ -30,9 +30,9 @@ class rigolDP831A(rigolDP800):
     "Rigol DP831A IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(rigolDP831A, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', 'DP831A')
         
-        self._instrument_id = 'Rigol Technologies,DP831A'
+        super(rigolDP831A, self).__init__(*args, **kwargs)
         
         self._output_count = 3
         

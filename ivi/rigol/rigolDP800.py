@@ -38,9 +38,9 @@ class rigolDP800(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigger
     "Rigol DP800 series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(rigolDP800, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', '')
         
-        self._instrument_id = 'Rigol Technologies,DP800'
+        super(rigolDP800, self).__init__(*args, **kwargs)
         
         self._output_count = 3
         
@@ -53,7 +53,7 @@ class rigolDP800(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigger
         
         self._memory_size = 10
         
-        self._identity_description = "Rigol DP800 series DC power supply driver"
+        self._identity_description = "Rigol DP800 series IVI DC power supply driver"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""

@@ -38,9 +38,9 @@ class rigolDP1000(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigge
     "Rigol DP1000 series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
-        super(rigolDP1000, self).__init__(*args, **kwargs)
+        self.__dict__.setdefault('_instrument_id', '')
         
-        self._instrument_id = 'Rigol Technologies,DP1000'
+        super(rigolDP1000, self).__init__(*args, **kwargs)
         
         self._output_count = 1
         
@@ -53,7 +53,7 @@ class rigolDP1000(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigge
         
         self._memory_size = 4
         
-        self._identity_description = "Rigol DP1000 series DC power supply driver"
+        self._identity_description = "Rigol DP1000 series IVI DC power supply driver"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
