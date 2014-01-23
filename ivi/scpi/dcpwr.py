@@ -36,12 +36,12 @@ class Base(ivi.Driver, dcpwr.Base):
     "Generic SCPI IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
+        
         # early define of _do_scpi_init
         self.__dict__.setdefault('_do_scpi_init', True)
         
         super(Base, self).__init__(*args, **kwargs)
-        
-        self._instrument_id = ''
         
         self._output_count = 1
         

@@ -76,12 +76,12 @@ class Base(ivi.Driver, dmm.Base):
     "Generic SCPI IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '')
+        
         # early define of _do_scpi_init
         self.__dict__.setdefault('_do_scpi_init', True)
         
         super(Base, self).__init__(*args, **kwargs)
-        
-        self._instrument_id = ''
         
         self._identity_description = "Generic SCPI IVI DMM driver"
         self._identity_identifier = ""
