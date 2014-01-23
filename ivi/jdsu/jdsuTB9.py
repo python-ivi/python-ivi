@@ -27,14 +27,14 @@ THE SOFTWARE.
 from .. import ivi
 
 class jdsuTB9(ivi.Driver):
-    "JDS Uniphase TB9 Tunable Filter driver"
+    "JDS Uniphase TB9 Series Optical Grating Filter driver"
     
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', 'TB9')
         
         super(jdsuTB9, self).__init__(*args, **kwargs)
         
-        self._identity_description = "JDS Uniphase TB9 Tunable Filter driver"
+        self._identity_description = "JDS Uniphase TB9 Series Optical Grating Filter driver"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
