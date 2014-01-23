@@ -873,10 +873,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         count = int(pre[3])
         xincrement = float(pre[4])
         xorigin = float(pre[5])
-        xreference = int(pre[6])
+        xreference = int(float(pre[6]))
         yincrement = float(pre[7])
         yorigin = float(pre[8])
-        yreference = int(pre[9])
+        yreference = int(float(pre[9]))
         
         if type == 1:
             raise scope.InvalidAcquisitionTypeException()
