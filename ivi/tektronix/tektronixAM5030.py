@@ -56,6 +56,58 @@ class tektronixAM5030(ivi.Driver):
         self._probe_open = False
         self._probe_trim = 1.0
         self._probe_type = ''
+        
+        self._docs['amps'] = ivi.Doc("""
+                        Specifies the resolution of the current measurement in amps per 10 mV.
+                        """)
+        self._docs['bw_limit'] = ivi.Doc("""
+                        Sets the 20 MHz bandwidth limit switch.
+                        """)
+        self._docs['coupling'] = ivi.Doc("""
+                        Specifies the input coupling of the amplifier.
+                        
+                        Values:
+                        
+                        * 'ac'
+                        * 'dc'
+                        * 'ref'
+                        """)
+        self._docs['dc_level'] = ivi.Doc("""
+                        Specifies the DC offset level of the amplifier.  This is the current level
+                        that will be displayed at the oscilloscope ground reference level.  
+                        """)
+        self._docs['degauss'] = ivi.Doc("""
+                        Initializes the probe degauss/autobalance sequence.  
+                        
+                        Argument:
+                        
+                        * 'normal' (default)
+                        * 'force_gain'
+                        * 'gain_only'
+                        """)
+        self._docs['overload'] = ivi.Doc("""
+                        Returns the state of the overload indicator.
+                        """)
+        self._docs['probe_open'] = ivi.Doc("""
+                        Returns the state of the probe open indicator.
+                        """)
+        self._docs['probe_trim'] = ivi.Doc("""
+                        Lets you specify a multiplicative gain factor (trim adjustment) for probe
+                        compensation. There is a trim adjustment value for each type of probe (for
+                        example, A6302/A6312, A6302XL, A6303, A6303XL, or A6304XL). This command
+                        will set or query only the trim adjustment for the type of current probe
+                        currently connected to the AM 5030. If no probe is connected, executing
+                        this command or query will cause error 264, "No probe connected."
+                        
+                        Probe trim is used to perform an optional fine-tune calibration of the
+                        A6303 Current Probe.
+                        """)
+        self._docs['probe_type'] = ivi.Doc("""
+                        Returns the type (model) of current probe connected to the AM 5030 INPUT
+                        connector. The return string NOPROBE indicates that no current probe is
+                        connected.
+                        """)
+        
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
