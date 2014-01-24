@@ -128,7 +128,7 @@ class Base(ivi.Driver, dcpwr.Base):
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_code, error_message = self._ask(":system:error?").split(',')
+            error_code, error_message = self._ask("system:error?").split(',')
             error_code = int(error_code)
             error_message = error_message.strip(' "')
         return (error_code, error_message)
@@ -182,8 +182,8 @@ class Base(ivi.Driver, dcpwr.Base):
     def _get_output_current_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_current_limit[index] = float(self._ask(":source:current:level?"))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_current_limit[index] = float(self._ask("source:current:level?"))
             self._set_cache_valid(index=index)
         return self._output_current_limit[index]
     
@@ -193,16 +193,16 @@ class Base(ivi.Driver, dcpwr.Base):
         if value < 0 or value > self._output_current_max[index]:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:current:level %e" % value)
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:current:level %e" % value)
         self._output_current_limit[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_current_limit_behavior(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            value = bool(int(self._ask(":source:current:protection:state?")))
+            self._write("instrument:nselect %d" % (index+1))
+            value = bool(int(self._ask("source:current:protection:state?")))
             if value:
                 self._output_current_limit_behavior[index] = 'trip'
             else:
@@ -215,8 +215,8 @@ class Base(ivi.Driver, dcpwr.Base):
         if value not in dcpwr.CurrentLimitBehavior:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:current:protection:state %d" % int(value == 'trip'))
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:current:protection:state %d" % int(value == 'trip'))
         self._output_current_limit_behavior[index] = value
         for k in range(self._output_count):
             self._set_cache_valid(valid=False,index=k)
@@ -225,8 +225,8 @@ class Base(ivi.Driver, dcpwr.Base):
     def _get_output_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_enabled[index] = bool(int(self._ask(":output?")))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_enabled[index] = bool(int(self._ask("output?")))
             self._set_cache_valid(index=index)
         return self._output_enabled[index]
     
@@ -234,8 +234,8 @@ class Base(ivi.Driver, dcpwr.Base):
         index = ivi.get_index(self._output_name, index)
         value = bool(value)
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":output %d" % int(value))
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("output %d" % int(value))
         self._output_enabled[index] = value
         for k in range(self._output_count):
             self._set_cache_valid(valid=False,index=k)
@@ -244,8 +244,8 @@ class Base(ivi.Driver, dcpwr.Base):
     def _get_output_ovp_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_ovp_enabled[index] = bool(int(self._ask(":source:voltage:protection:state?")))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_ovp_enabled[index] = bool(int(self._ask("source:voltage:protection:state?")))
             self._set_cache_valid(index=index)
         return self._output_ovp_enabled[index]
     
@@ -253,16 +253,16 @@ class Base(ivi.Driver, dcpwr.Base):
         index = ivi.get_index(self._output_name, index)
         value = bool(value)
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:protection:state %d" % int(value))
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:protection:state %d" % int(value))
         self._output_ovp_enabled[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_ovp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_ovp_limit[index] = float(self._ask(":source:voltage:protection:level?"))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_ovp_limit[index] = float(self._ask("source:voltage:protection:level?"))
             self._set_cache_valid(index=index)
         return self._output_ovp_limit[index]
     
@@ -272,16 +272,16 @@ class Base(ivi.Driver, dcpwr.Base):
         if value < 0 or value > self._output_ovp_max[index]:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:protection:level %e" % value)
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:protection:level %e" % value)
         self._output_ovp_limit[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_voltage_level(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_voltage_level[index] = float(self._ask(":source:voltage:level?"))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_voltage_level[index] = float(self._ask("source:voltage:level?"))
             self._set_cache_valid(index=index)
         return self._output_voltage_level[index]
     
@@ -291,8 +291,8 @@ class Base(ivi.Driver, dcpwr.Base):
         if value < 0 or value > self._output_voltage_max[index]:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:level %e" % value)
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:level %e" % value)
         self._output_voltage_level[index] = value
         self._set_cache_valid(index=index)
     
@@ -313,8 +313,8 @@ class Base(ivi.Driver, dcpwr.Base):
         self._output_voltage_max[index] = self._output_range[index][k][0]
         self._output_current_max[index] = self._output_range[index][k][1]
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:range %s" % self._output_range_name[index][k])
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:range %s" % self._output_range_name[index][k])
     
     def _output_query_current_limit_max(self, index, voltage_level):
         index = ivi.get_index(self._output_name, index)
@@ -334,7 +334,7 @@ class Base(ivi.Driver, dcpwr.Base):
             raise ivi.ValueNotSupportedException()
         status = 0
         if not self._driver_operation_simulate:
-            status = int(self._ask(":stat:ques:inst:isum%d:cond?" % (index+1)))
+            status = int(self._ask("stat:ques:inst:isum%d:cond?" % (index+1)))
         if state == 'constant_voltage':
             return status & (1 << 1) != 0
         elif state == 'constant_current':
@@ -349,15 +349,15 @@ class Base(ivi.Driver, dcpwr.Base):
     
     def _output_reset_output_protection(self, index):
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:protection:clear")
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:protection:clear")
 
 class Trigger(dcpwr.Trigger):
     def _get_output_trigger_source(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._write(":instrument:nselect %d" % (index+1))
-            value = self._ask(":trigger:source?").lower()
+            self._write("instrument:nselect %d" % (index+1))
+            value = self._ask("trigger:source?").lower()
             self._output_trigger_source[index] = [k for k,v in TriggerSourceMapping.items() if v==value][0]
         return self._output_trigger_source[index]
     
@@ -367,16 +367,16 @@ class Trigger(dcpwr.Trigger):
         if value not in TriggerSourceMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":trigger:source %s" % TriggerSourceMapping[value])
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("trigger:source %s" % TriggerSourceMapping[value])
         self._output_trigger_source[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_triggered_current_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_triggered_current_limit[index] = float(self._ask(":source:current:level:triggered?"))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_triggered_current_limit[index] = float(self._ask("source:current:level:triggered?"))
             self._set_cache_valid(index=index)
         return self._output_triggered_current_limit[index]
     
@@ -386,16 +386,16 @@ class Trigger(dcpwr.Trigger):
         if value < 0 or value > self._output_current_max[index]:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:current:level:triggered %e" % value)
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:current:level:triggered %e" % value)
         self._output_triggered_current_limit[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_triggered_voltage_level(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_triggered_voltage_level[index] = float(self._ask(":source:voltage:level:triggered?"))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_triggered_voltage_level[index] = float(self._ask("source:voltage:level:triggered?"))
             self._set_cache_valid(index=index)
         return self._output_triggered_voltage_level[index]
     
@@ -405,16 +405,16 @@ class Trigger(dcpwr.Trigger):
         if value < 0 or value > self._output_voltage_max[index]:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":source:voltage:level:triggered %e" % value)
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:level:triggered %e" % value)
         self._output_triggered_voltage_level[index] = value
         self._set_cache_valid(index=index)
     
     def _get_output_trigger_delay(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._write(":instrument:nselect %d" % (index+1))
-            self._output_trigger_delay[index] = float(self._ask(":trigger:delay?"))
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_trigger_delay[index] = float(self._ask("trigger:delay?"))
             self._set_cache_valid(index=index)
         return self._output_trigger_delay[index]
     
@@ -424,8 +424,8 @@ class Trigger(dcpwr.Trigger):
         if value < 0:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write(":instrument:nselect %d" % (index+1))
-            self._write(":trigger:delay %e" % value)
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("trigger:delay %e" % value)
         self._output_trigger_delay[index] = value
         self._set_cache_valid(index=index)
     
@@ -448,10 +448,10 @@ class Measurement(dcpwr.Measurement):
             raise ivi.ValueNotSupportedException()
         if type == 'voltage':
             if not self._driver_operation_simulate:
-                self._write(":instrument:nselect %d" % (index+1))
-                return float(self._ask(":measure:voltage?"))
+                self._write("instrument:nselect %d" % (index+1))
+                return float(self._ask("measure:voltage?"))
         elif type == 'current':
             if not self._driver_operation_simulate:
-                self._write(":instrument:nselect %d" % (index+1))
-                return float(self._ask(":measure:current?"))
+                self._write("instrument:nselect %d" % (index+1))
+                return float(self._ask("measure:current?"))
         return 0
