@@ -47,6 +47,15 @@ class jdsuTB9(ivi.Driver):
         
         self._wavelength = 0
         self._driver_enable = False
+        
+        self.__dict__.setdefault('_docs', dict())
+        self._docs['wavelength'] = ivi.Doc("""
+                        Specifies the center wavelength of the optical grating filter. The units
+                        are meters.
+                        """)
+        self._docs['driver_enable'] = ivi.Doc("""
+                        Control relay driver.  Set to True to enable 5v output, False to disable.
+                        """)
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
