@@ -36,11 +36,34 @@ class rigolDP831A(rigolDP800):
         
         self._output_count = 3
         
-        self._output_range = [[(8.0, 5.0)], [(30.0, 2.0)], [(-30.0, 2.0)]]
-        self._output_range_name = [['P8V'], ['P30V'], ['N30V']]
-        self._output_ovp_max = [8.8, 33.0, -33.0]
-        self._output_ocp_max = [5.5, 2.2, 2.2]
-        self._output_voltage_max = [8.0, 30.0, -30.0]
-        self._output_current_max = [5.0, 2.0, 2.0]
+        self._output_spec = [
+            {
+                'range': {
+                    'P8V': (8.0, 5.0)
+                },
+                'ovp_max': 8.8,
+                'ocp_max': 5.5,
+                'voltage_max': 8.0,
+                'current_max': 5.0
+            },
+            {
+                'range': {
+                    'P30V': (30.0, 2.0)
+                },
+                'ovp_max': 33.0,
+                'ocp_max': 2.2,
+                'voltage_max': 30.0,
+                'current_max': 2.0
+            },
+            {
+                'range': {
+                    'N30V': (-30.0, 2.0)
+                },
+                'ovp_max': -33.0,
+                'ocp_max': 2.2,
+                'voltage_max': -30.0,
+                'current_max': 2.0
+            }
+        ]
     
     

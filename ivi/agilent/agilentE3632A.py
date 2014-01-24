@@ -36,10 +36,17 @@ class agilentE3632A(agilentE3600A):
         
         self._output_count = 1
         
-        self._output_range = [[(16.0, 7.0), (31.0, 4.0)]]
-        self._output_range_name = [['P15V', 'P30V']]
-        self._output_ovp_max = [32.0]
-        self._output_voltage_max = [31.0]
-        self._output_current_max = [4.0]
+        self._output_spec = [
+            {
+                'range': {
+                    'P15V': (16.0, 7.0),
+                    'P30V': (31.0, 4.0)
+                },
+                'ovp_max': 32.0,
+                'ocp_max': 0,
+                'voltage_max': 16.0,
+                'current_max': 7.0
+            }
+        ]
     
     

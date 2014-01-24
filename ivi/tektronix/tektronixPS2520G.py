@@ -40,11 +40,32 @@ class tektronixPS2520G(scpi.dcpwr.Base, scpi.dcpwr.Measurement):
         
         self._output_count = 3
         
-        self._output_range = [[(37.0, 1.5)], [(37.0, 1.5)], [(6.5, 3.0)]]
-        self._output_range_name = [['P36V'], ['P36V'], ['P6V']]
-        self._output_ovp_max = [38.5, 38.5, 7.0]
-        self._output_voltage_max = [37.0, 37.0, 6.5]
-        self._output_current_max = [1.5, 1.5, 5.0]
+        self._output_spec = [
+            {
+                'range': {
+                    'P36V': (37.0, 1.5)
+                },
+                'ovp_max': 38.5,
+                'voltage_max': 37.0,
+                'current_max': 1.5
+            },
+            {
+                'range': {
+                    'P36V': (37.0, 1.5)
+                },
+                'ovp_max': 38.5,
+                'voltage_max': 37.0,
+                'current_max': 1.5
+            },
+            {
+                'range': {
+                    'P6V': (6.5, 3.0)
+                },
+                'ovp_max': 7.0,
+                'voltage_max': 6.5,
+                'current_max': 3.0
+            }
+        ]
         
         self._couple_tracking_enabled = False
         self._couple_tracking_type = 'series'

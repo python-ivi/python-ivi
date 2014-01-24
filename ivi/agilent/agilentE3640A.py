@@ -36,10 +36,17 @@ class agilentE3640A(agilentE3600A):
         
         self._output_count = 1
         
-        self._output_range = [[(9.0, 3.0), (21.0, 1.5)]]
-        self._output_range_name = [['P8V', 'P20V']]
-        self._output_ovp_max = [22.0]
-        self._output_voltage_max = [21.0]
-        self._output_current_max = [3.0]
+        self._output_spec = [
+            {
+                'range': {
+                    'P8V': (9.0, 3.0),
+                    'P20V': (21.0, 1.5)
+                },
+                'ovp_max': 22.0,
+                'ocp_max': 0,
+                'voltage_max': 9.0,
+                'current_max': 3.0
+            }
+        ]
     
     

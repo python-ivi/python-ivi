@@ -44,12 +44,18 @@ class rigolDP1000(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigge
         
         self._output_count = 1
         
-        self._output_range = [[(16.0, 10.0), (32.0, 5.0)]]
-        self._output_range_name = [['P16V', 'P32V']]
-        self._output_ovp_max = [35.2]
-        self._output_ocp_max = [11.0]
-        self._output_voltage_max = [32.0]
-        self._output_current_max = [10.0]
+        self._output_spec = [
+            {
+                'range': {
+                    'P16V': (16.0, 10.0),
+                    'P32V': (32.0, 5.0)
+                },
+                'ovp_max': 35.2,
+                'ocp_max': 11.0,
+                'voltage_max': 16.0,
+                'current_max': 10.0
+            }
+        ]
         
         self._memory_size = 4
         

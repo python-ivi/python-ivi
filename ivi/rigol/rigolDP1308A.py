@@ -36,11 +36,34 @@ class rigolDP1308A(rigolDP1000):
         
         self._output_count = 3
         
-        self._output_range = [[(6.0, 5.0)], [(25.0, 1.0)], [(-25.0, 1.0)]]
-        self._output_range_name = [['P6V'], ['P25V'], ['N25V']]
-        self._output_ovp_max = [6.5, 27.0, -27.0]
-        self._output_ocp_max = [5.5, 1.2, 1.2]
-        self._output_voltage_max = [6.0, 25.0, -25.0]
-        self._output_current_max = [5.0, 1.0, 1.0]
+        self._output_spec = [
+            {
+                'range': {
+                    'P6V': (6.0, 5.0)
+                },
+                'ovp_max': 6.5,
+                'ocp_max': 5.5,
+                'voltage_max': 6.0,
+                'current_max': 5.0
+            },
+            {
+                'range': {
+                    'P25V': (25.0, 1.0)
+                },
+                'ovp_max': 27.0,
+                'ocp_max': 1.2,
+                'voltage_max': 25.0,
+                'current_max': 1.0
+            },
+            {
+                'range': {
+                    'N25V': (-25.0, 1.0)
+                },
+                'ovp_max': -27.0,
+                'ocp_max': 1.2,
+                'voltage_max': -25.0,
+                'current_max': 1.0
+            }
+        ]
     
     

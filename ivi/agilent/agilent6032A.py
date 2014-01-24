@@ -36,10 +36,15 @@ class agilent6032A(agilent603xA):
         
         self._output_count = 1
         
-        self._output_range = [[(61.425, 51.1875)]]
-        self._output_range_name = [['P60V']]
-        self._output_ovp_max = [64.0]
-        self._output_voltage_max = [61.425]
-        self._output_current_max = [51.1875]
+        self._output_spec = [
+            {
+                'range': {
+                    'P60V': (61.425, 51.1875)
+                },
+                'ovp_max': 64.0,
+                'voltage_max': 61.425,
+                'current_max': 51.1875
+            }
+        ]
     
     

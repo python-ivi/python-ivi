@@ -36,10 +36,15 @@ class agilent6030A(agilent603xA):
         
         self._output_count = 1
         
-        self._output_range = [[(204.750, 17.403)]]
-        self._output_range_name = [['P200V']]
-        self._output_ovp_max = [214.0]
-        self._output_voltage_max = [204.750]
-        self._output_current_max = [17.403]
+        self._output_spec = [
+            {
+                'range': {
+                    'P200V': (204.750, 17.403)
+                },
+                'ovp_max': 214.0,
+                'voltage_max': 204.750,
+                'current_max': 17.403
+            }
+        ]
     
     

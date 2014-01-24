@@ -36,10 +36,15 @@ class agilent6035A(agilent603xA):
         
         self._output_count = 1
         
-        self._output_range = [[(511.875, 5.119)]]
-        self._output_range_name = [['P500V']]
-        self._output_ovp_max = [535.0]
-        self._output_voltage_max = [511.875]
-        self._output_current_max = [5.119]
+        self._output_spec = [
+            {
+                'range': {
+                    'P500V': (511.875, 5.119)
+                },
+                'ovp_max': 535.0,
+                'voltage_max': 511.875,
+                'current_max': 5.119
+            }
+        ]
     
     
