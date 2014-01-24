@@ -41,7 +41,7 @@ class tektronixOA5000(ivi.Driver):
         self._identity_instrument_manufacturer = "Tektronix"
         self._identity_instrument_model = ""
         self._identity_instrument_firmware_revision = ""
-        self._identity_specification_major_version = 3
+        self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['OA5002', 'OA5012', 'OA5022', 'OA5032']
         
@@ -49,6 +49,23 @@ class tektronixOA5000(ivi.Driver):
         self._reference = 0.0
         self._wavelength = 1300.0
         self._disable = False
+        
+        self.__dict__.setdefault('_docs', dict())
+        self._docs['attenuation'] = ivi.Doc("""
+                        Specifies the attenuation of the optical path.  The units are dB. 
+                        """)
+        self._docs['reference'] = ivi.Doc("""
+                        Specifies the zero dB reference level for the attenuation setting. The
+                        units are dB.
+                        """)
+        self._docs['wavelength'] = ivi.Doc("""
+                        Specifies the wavelength of light used for accurate attenuation.  The
+                        units are nm.
+                        """)
+        self._docs['disable'] = ivi.Doc("""
+                        Controls a shutter in the optical path.  Shutter is closed when disable is
+                        set to True.
+                        """)
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
