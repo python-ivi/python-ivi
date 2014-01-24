@@ -43,12 +43,22 @@ class colbyPDL10A(ivi.Driver):
         self._identity_instrument_manufacturer = "Colby Instruments"
         self._identity_instrument_model = ""
         self._identity_instrument_firmware_revision = ""
-        self._identity_specification_major_version = 3
+        self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['PDL10A']
         
         self._delay = 0
         self._mode = ''
+        
+        self.__dict__.setdefault('_docs', dict())
+        self._docs['delay'] = ivi.Doc("""
+                        Specifies the delay of the delay line.  The units are seconds.  
+                        """)
+        self._docs['mode'] = ivi.Doc("""
+                        Specifies the mode of the delay line.  If the segments are cascaded, then
+                        the mode should be set to '625ps'.  If the segments are not cascaded, then
+                        the mode should be set to '312.5ps'.  
+                        """)
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
