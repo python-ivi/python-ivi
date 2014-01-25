@@ -540,7 +540,7 @@ class diconGP700(ivi.Driver):
                     self._switch_input[index] = input
                     self._set_cache_valid(True, 'switch_input', index)
         elif name[0] == 'P' or name[0] == 'S':
-            if output < 0 or output > self._switch_output_count[index]:
+            if output < 1 or output > self._switch_output_count[index]:
                 raise ivi.OutOfRangeException()
             if input is not None and input != 1:
                 raise ivi.OutOfRangeException()
