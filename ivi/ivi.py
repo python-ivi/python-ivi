@@ -286,9 +286,10 @@ class Doc(object):
     
     def render(self):
         txt = '.. attribute:: ' + self.name + '\n\n'
-        txt += '   IVI class ' + self.cls + \
-            ', capability group ' + self.cls + self.grp + \
-            ', section ' + self.section + '\n\n'
+        if self.cls != '':
+            txt += '   *IVI class ' + self.cls + \
+                ', capability group ' + self.cls + self.grp + \
+                ', section ' + self.section + '*\n\n'
         txt += '\n'.join('   ' + x for x in self.doc.splitlines())
         txt += '\n'
         return txt
