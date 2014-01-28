@@ -359,18 +359,13 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         self._write(":system:setup?")
         
-        data = self._read_raw()
-        data = ivi.decode_ieee_block(data)
-        
-        return data
+        return self._read_ieee_block()
     
     def _system_load_setup(self, data):
         if self._driver_operation_simulate:
             return
         
-        raw_data = str(':system:setup ').encode('utf-8') + ivi.build_ieee_block(data)
-        
-        self._write_raw(raw_data)
+        self._write_ieee_block(data, ':system:setup ')
     
     def _display_fetch_screenshot(self, format='png', invert=False):
         if self._driver_operation_simulate:
@@ -384,10 +379,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._write(":hardcopy:inksaver %d" % int(bool(invert)))
         self._write(":display:data? %s" % format)
         
-        data = self._read_raw()
-        data = ivi.decode_ieee_block(data)
-        
-        return data
+        return self._read_ieee_block()
     
     def _get_acquisition_start_time(self):
         pos = 0
@@ -943,8 +935,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._write(":waveform:data?")
         
         # Read waveform data
-        raw_data = self._read_raw()
-        raw_data = ivi.decode_ieee_block(raw_data)
+        raw_data = raw_data = self._read_ieee_block()
         
         # Split out points and convert to time and voltage pairs
         

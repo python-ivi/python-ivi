@@ -115,10 +115,7 @@ class agilent90000(agilentBaseScope):
         
         self._write(":display:data? %s, screen, on, %s" % (format, 'invert' if invert else 'normal'))
         
-        data = self._read_raw()
-        data = ivi.decode_ieee_block(data)
-        
-        return data
+        return self._read_ieee_block()
     
     def _get_channel_common_mode(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
@@ -201,8 +198,7 @@ class agilent90000(agilentBaseScope):
         self._write(":waveform:data?")
         
         # Read waveform data
-        raw_data = self._read_raw()
-        raw_data = ivi.decode_ieee_block(raw_data)
+        raw_data = self._read_ieee_block()
         
         # Split out points and convert to time and voltage pairs
         
