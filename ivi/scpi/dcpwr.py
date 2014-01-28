@@ -361,7 +361,7 @@ class Base(ivi.Driver, dcpwr.Base):
             self._write("instrument:nselect %d" % (index+1))
             self._write("source:voltage:protection:clear")
 
-class OCP():
+class OCP(object):
     def __init__(self, *args, **kwargs):
         super(OCP, self).__init__(*args, **kwargs)
         
