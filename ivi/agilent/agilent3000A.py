@@ -26,6 +26,13 @@ THE SOFTWARE.
 
 from .agilentBaseScope import *
 
+ScreenshotImageFormatMapping = {
+        'bmp': 'bmp',
+        'bmp24': 'bmp',
+        'bmp8': 'bmp8bit',
+        'png': 'png',
+        'png24': 'png'}
+
 class agilent3000A(agilentBaseScope):
     "Agilent InfiniiVision 3000A series IVI oscilloscope driver"
     

@@ -138,6 +138,14 @@ MeasurementFunctionMappingDigital = {
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
         'duty_cycle_positive': 'dutycycle'}
+ScreenshotImageFormatMapping = {
+        'tif': 'tiff',
+        'tiff': 'tiff',
+        'bmp': 'bmp',
+        'bmp24': 'bmp',
+        'bmp8': 'bmp8bit',
+        'png': 'png',
+        'png24': 'png'}
 
 class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                 scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
@@ -197,6 +205,12 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         ivi.add_property(self, 'channels[].bw_limit',
                         self._get_channel_bw_limit,
                         self._set_channel_bw_limit)
+        ivi.add_method(self, 'system.get_setup',
+                        self._system_get_setup)
+        ivi.add_method(self, 'system.set_setup',
+                        self._system_set_setup)
+        ivi.add_method(self, 'display.get_screenshot',
+                        self._display_get_screenshot)
         
         self._init_channels()
     
@@ -332,6 +346,42 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
+    
+    def _system_get_setup(self):
+        if self._driver_operation_simulate:
+            return b''
+        
+        self._write(":system:setup?")
+        
+        data = self._read_raw()
+        data = ivi.decode_ieee_block(data)
+        
+        return data
+    
+    def _system_set_setup(self, data):
+        if self._driver_operation_simulate:
+            return
+        
+        raw_data = str(':system:setup ').encode('utf-8') + ivi.build_ieee_block(data)
+        
+        self._write_raw(raw_data)
+    
+    def _display_get_screenshot(self, format='png', invert=False):
+        if self._driver_operation_simulate:
+            return b''
+        
+        if format not in ScreenshotImageFormatMapping:
+            raise ivi.ValueNotSupportedException()
+        
+        format = ScreenshotImageFormatMapping[format]
+        
+        self._write(":save:image:inksaver %d" % int(bool(invert)))
+        self._write(":display:data? %s" % format)
+        
+        data = self._read_raw()
+        data = ivi.decode_ieee_block(data)
+        
+        return data
     
     def _get_acquisition_start_time(self):
         pos = 0

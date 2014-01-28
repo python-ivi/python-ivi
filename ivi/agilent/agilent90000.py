@@ -26,6 +26,17 @@ THE SOFTWARE.
 
 from .agilentBaseScope import *
 
+ScreenshotImageFormatMapping = {
+        'tif': 'tif',
+        'tiff': 'tif',
+        'bmp': 'bmp',
+        'bmp24': 'bmp',
+        'png': 'png',
+        'png24': 'png',
+        'jpg': 'jpg',
+        'jpeg': 'jpg',
+        'gif': 'gif'}
+
 class agilent90000(agilentBaseScope):
     "Agilent Infiniium 90000A/90000X series IVI oscilloscope driver"
     
@@ -91,7 +102,23 @@ class agilent90000(agilentBaseScope):
             self._channel_common_mode.append(False)
             self._channel_differential.append(False)
             self._channel_differential_skew.append(0)
+    
+    
+    def _display_get_screenshot(self, format='png', invert=False):
+        if self._driver_operation_simulate:
+            return b''
         
+        if format not in ScreenshotImageFormatMapping:
+            raise ivi.ValueNotSupportedException()
+        
+        format = ScreenshotImageFormatMapping[format]
+        
+        self._write(":display:data? %s, screen, on, %s" % (format, 'invert' if invert else 'normal'))
+        
+        data = self._read_raw()
+        data = ivi.decode_ieee_block(data)
+        
+        return data
     
     def _get_channel_common_mode(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
