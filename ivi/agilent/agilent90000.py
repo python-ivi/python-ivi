@@ -104,7 +104,7 @@ class agilent90000(agilentBaseScope):
             self._channel_differential_skew.append(0)
     
     
-    def _display_get_screenshot(self, format='png', invert=False):
+    def _display_fetch_screenshot(self, format='png', invert=False):
         if self._driver_operation_simulate:
             return b''
         

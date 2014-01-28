@@ -211,8 +211,8 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         self._system_fetch_setup)
         ivi.add_method(self, 'system.load_setup',
                         self._system_load_setup)
-        ivi.add_method(self, 'display.get_screenshot',
-                        self._display_get_screenshot)
+        ivi.add_method(self, 'display.fetch_screenshot',
+                        self._display_fetch_screenshot)
         ivi.add_method(self, 'memory.save',
                         self._memory_save)
         ivi.add_method(self, 'memory.recall',
@@ -372,7 +372,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         self._write_raw(raw_data)
     
-    def _display_get_screenshot(self, format='png', invert=False):
+    def _display_fetch_screenshot(self, format='png', invert=False):
         if self._driver_operation_simulate:
             return b''
         
