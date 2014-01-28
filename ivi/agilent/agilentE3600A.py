@@ -77,7 +77,7 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
             }
         ]
         
-        self._memory_size = 5
+        self._memory_size = 3
         
         self._output_trigger_delay = list()
         

@@ -58,5 +58,7 @@ class agilentE3648A(agilentE3600A):
                 'current_max': 5.0
             }
         ]
+        
+        self._memory_size = 5
     
     
