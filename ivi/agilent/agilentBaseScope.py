@@ -207,10 +207,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         ivi.add_property(self, 'channels[].bw_limit',
                         self._get_channel_bw_limit,
                         self._set_channel_bw_limit)
-        ivi.add_method(self, 'system.get_setup',
-                        self._system_get_setup)
-        ivi.add_method(self, 'system.set_setup',
-                        self._system_set_setup)
+        ivi.add_method(self, 'system.fetch_setup',
+                        self._system_fetch_setup)
+        ivi.add_method(self, 'system.load_setup',
+                        self._system_load_setup)
         ivi.add_method(self, 'display.get_screenshot',
                         self._display_get_screenshot)
         ivi.add_method(self, 'memory.save',
@@ -353,7 +353,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
     
-    def _system_get_setup(self):
+    def _system_fetch_setup(self):
         if self._driver_operation_simulate:
             return b''
         
@@ -364,7 +364,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         return data
     
-    def _system_set_setup(self, data):
+    def _system_load_setup(self, data):
         if self._driver_operation_simulate:
             return
         
