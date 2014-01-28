@@ -45,12 +45,6 @@ class Base(ivi.Driver, dcpwr.Base):
         
         self._output_count = 1
         
-        self._output_range = [[(9.0, 20.0), (21.0, 10.0)]]
-        self._output_range_name = [['P8V', 'P20V']]
-        self._output_ovp_max = [22.0]
-        self._output_voltage_max = [21.0]
-        self._output_current_max = [10.0]
-        
         self._output_spec = [
             {
                 'range': {
@@ -58,8 +52,8 @@ class Base(ivi.Driver, dcpwr.Base):
                     'P20V': (21.0, 10.0)
                 },
                 'ovp_max': 22.0,
-                'voltage_max': 21.0,
-                'current_max': 10.0
+                'voltage_max': 9.0,
+                'current_max': 20.0
             }
         ]
         
@@ -171,7 +165,10 @@ class Base(ivi.Driver, dcpwr.Base):
     
     
     def _init_outputs(self):
-        super(Base, self)._init_outputs()
+        try:
+            super(Base, self)._init_outputs()
+        except AttributeError:
+            pass
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
@@ -363,6 +360,107 @@ class Base(ivi.Driver, dcpwr.Base):
         if not self._driver_operation_simulate:
             self._write("instrument:nselect %d" % (index+1))
             self._write("source:voltage:protection:clear")
+
+class OCP():
+    def __init__(self, *args, **kwargs):
+        super(OCP, self).__init__(*args, **kwargs)
+        
+        self._output_ocp_enabled = list()
+        self._output_ocp_limit = list()
+        
+        self._output_spec = [
+            {
+                'range': {
+                    'P8V': (9.0, 20.0),
+                    'P20V': (21.0, 10.0)
+                },
+                'ovp_max': 22.0,
+                'ocp_max': 22.0,
+                'voltage_max': 9.0,
+                'current_max': 20.0
+            }
+        ]
+        
+        ivi.add_property(self, 'outputs[].ocp_enabled',
+                        self._get_output_ocp_enabled,
+                        self._set_output_ocp_enabled,
+                        None,
+                        ivi.Doc("""
+                        Specifies whether the power supply provides over-current protection. If
+                        this attribute is set to True, the power supply disables the output when
+                        the output current is greater than or equal to the value of the OCP
+                        Limit attribute.
+                        """))
+        ivi.add_property(self, 'outputs[].ocp_limit',
+                        self._get_output_ocp_limit,
+                        self._set_output_ocp_limit,
+                        None,
+                        ivi.Doc("""
+                        Specifies the current the power supply allows. The units are Amps.
+                        
+                        If the OCP Enabled attribute is set to True, the power supply disables the
+                        output when the output current is greater than or equal to the value of
+                        this attribute.
+                        
+                        If the OCP Enabled is set to False, this attribute does not affect the
+                        behavior of the instrument.
+                        """))
+        
+        self._init_outputs()
+   
+    def _init_outputs(self):
+        try:
+            super(OCP, self)._init_outputs()
+        except AttributeError:
+            pass
+        
+        self._output_ocp_enabled = list()
+        self._output_ocp_limit = list()
+        for i in range(self._output_count):
+            self._output_ocp_enabled.append(True)
+            self._output_ocp_limit.append(0)
+    
+    def _get_output_ocp_enabled(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_ocp_enabled[index] = bool(int(self._ask("source:current:protection:state?")))
+            self._set_cache_valid(index=index)
+        return self._output_ocp_enabled[index]
+    
+    def _set_output_ocp_enabled(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:current:protection:state %d" % int(value))
+        self._output_ocp_enabled[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_output_ocp_limit(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._write("instrument:nselect %d" % (index+1))
+            self._output_ocp_limit[index] = float(self._ask("source:current:protection:level?"))
+            self._set_cache_valid(index=index)
+        return self._output_ocp_limit[index]
+    
+    def _set_output_ocp_limit(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        if value < 0 or value > self._output_spec[index]['ocp_max']:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:current:protection:level %e" % value)
+        self._output_ocp_limit[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _output_reset_output_protection(self, index):
+        if not self._driver_operation_simulate:
+            self._write("instrument:nselect %d" % (index+1))
+            self._write("source:voltage:protection:clear")
+            self._write("source:current:protection:clear")
 
 class Trigger(dcpwr.Trigger):
     def _get_output_trigger_source(self, index):
