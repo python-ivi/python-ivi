@@ -369,8 +369,8 @@ def decode_ieee_block(data):
         return b''
     
     ind = 0
-    while data[ind:ind+1] != '#'.encode('utf-8'):
-        print(data[ind:ind+1])
+    c = '#'.encode('utf-8')
+    while data[ind:ind+1] != c:
         ind += 1
     
     ind += 1
@@ -1820,23 +1820,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         # where l is length of n and n is the
         # length of the data
         # ex: #800002000 prefixes 2000 data bytes
-        ch = self._read(1)
         
-        if len(ch) == 0:
-            return b''
-        
-        while ch != '#':
-            ch = self._read(1)
-        
-        l = int(self._read(1))
-        num = int(self._read_raw(l))
-        
-        # Read data
-        
-        raw_data = self._read_raw()
-        raw_data = raw_data[:num]
-        
-        return raw_data
+        return decode_ieee_block(self._read_raw())
     
     def _write_ieee_block(self, data, prefix = None, encoding = 'utf-8'):
         "Write IEEE block"
