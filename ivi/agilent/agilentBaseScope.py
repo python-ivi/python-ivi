@@ -381,7 +381,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         format = ScreenshotImageFormatMapping[format]
         
-        self._write(":save:image:inksaver %d" % int(bool(invert)))
+        self._write(":hardcopy:inksaver %d" % int(bool(invert)))
         self._write(":display:data? %s" % format)
         
         data = self._read_raw()
