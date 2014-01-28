@@ -39,13 +39,12 @@ class agilentE3644A(agilentE3600A):
         self._output_spec = [
             {
                 'range': {
-                    'P8V': (9.0, 8.0),
-                    'P20V': (21.0, 4.0)
+                    'P8V': (8.24, 8.24),
+                    'P20V': (20.6, 4.12)
                 },
                 'ovp_max': 22.0,
-                'ocp_max': 0,
-                'voltage_max': 21.0,
-                'current_max': 8.0
+                'voltage_max': 8.24,
+                'current_max': 8.24
             }
         ]
         

@@ -39,23 +39,21 @@ class agilentE3649A(agilentE3600A):
         self._output_spec = [
             {
                 'range': {
-                    'P35V': (36.0, 1.4),
-                    'P60V': (61.0, 0.8)
+                    'P35V': (36.05, 1.442),
+                    'P60V': (61.8, 0.824)
                 },
                 'ovp_max': 66.0,
-                'ocp_max': 0,
-                'voltage_max': 36.0,
-                'current_max': 1.4
+                'voltage_max': 36.05,
+                'current_max': 1.442
             },
             {
                 'range': {
-                    'P35V': (36.0, 1.4),
-                    'P60V': (61.0, 0.8)
+                    'P35V': (36.05, 1.442),
+                    'P60V': (61.8, 0.824)
                 },
                 'ovp_max': 66.0,
-                'ocp_max': 0,
-                'voltage_max': 36.0,
-                'current_max': 1.4
+                'voltage_max': 36.05,
+                'current_max': 1.442
             }
         ]
         
