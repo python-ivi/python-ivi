@@ -25,6 +25,8 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
   * DC Power Supplies (dcpwr):
     * Agilent E3600A series
     * Agilent 603xA series
+    * Rigol DP800 series
+    * Rigol DP1000 series
     * Tektronix PS2520G/PS2521G
   * RF Power Meters (pwrmeter):
     * Agilent 436A
@@ -203,6 +205,18 @@ waveform, and read it out of the instrument.
     vpp = mso.channels[0].measurement.fetch_waveform_measurement("voltage_peak_to_peak")
     # measure phase
     phase = mso.channels['channel1'].measurement.fetch_waveform_measurement("phase", "channel2")
+    # save screenshot to file
+    png = mso.display.fetch_screenshot()
+    with open('screenshot.png', 'wb') as f:
+        f.write(png)
+    # save setup to file
+    setup = mso.system.fetch_setup()
+    with open('setup.dat', 'wb') as f:
+        f.write(setup)
+    # restore setup from file
+    with open('setup.dat', 'rb') as f:
+        setup = f.read()
+    mso.system.load_setup(setup)
 
 This sample Python code will use Python IVI to connect to a Tektronix AWG2021,
 generate a sinewave with numpy, and transfer it to channel 1.  
@@ -227,7 +241,7 @@ generate a sinewave with numpy, and transfer it to channel 1.
     # 2 volts peak to peak
     awg.outputs[0].arbitrary.gain = 2.0
     # zero offset
-    awg.outputs[0].arbitrary.gain = 0.0
+    awg.outputs[0].arbitrary.offset = 0.0
     # sample rate 128 MHz
     arb.arbitrary.sample_rate = 128e6
     # enable ouput
