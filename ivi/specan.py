@@ -121,7 +121,7 @@ class Base(object):
                         Specifies the left edge of the frequency domain in Hertz. This is used in
                         conjunction with the Frequency Stop attribute to define the frequency
                         domain. If the Frequency Start attribute value is equal to the Frequency
-                        Stop attribute value then the spectrum analyzer’s horizontal attributes
+                        Stop attribute value then the spectrum analyzer's horizontal attributes
                         are in time-domain.
                         """)
         ivi.add_property(self, 'frequency.stop',
@@ -132,7 +132,7 @@ class Base(object):
                         Specifies the right edge of the frequency domain in Hertz. This is used in
                         conjunction with the Frequency Start attribute to define the frequency
                         domain. If the Frequency Start attribute value is equal to the Frequency
-                        Stop attribute value then the spectrum analyzer’s horizontal attributes are
+                        Stop attribute value then the spectrum analyzer's horizontal attributes are
                         in time-domain.
                         """)
         ivi.add_property(self, 'frequency.offset',
@@ -296,7 +296,7 @@ class Base(object):
                        This function modifies the Frequency Start and Frequency Stop attributes as
                        follows:
                        
-                         Frequency Start = CenterFrequency – Span / 2
+                         Frequency Start = CenterFrequency - Span / 2
                          Frequency Stop = CenterFrequency + Span / 2
                        """)
         ivi.add_method(self, 'frequency.configure_start_stop',
@@ -640,7 +640,7 @@ class Multitrace(object):
                        This function modifies a trace to be the point by point difference between
                        two traces. Any data in the destination trace is deleted.
                        
-                         DestinationTrace = Trace1 – Trace2
+                         DestinationTrace = Trace1 - Trace2
                        """)
     
     def _trace_math_add(self, dest, trace1, trace2):
