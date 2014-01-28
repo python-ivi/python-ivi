@@ -1833,7 +1833,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
         # Read data
         
-        raw_data = self._read_raw(num)
+        raw_data = self._read_raw()
+        raw_data = raw_data[:num]
         
         return raw_data
     
