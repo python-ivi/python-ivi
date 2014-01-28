@@ -50,5 +50,7 @@ class agilentE3634A(agilentE3600A):
         ]
         
         self._memory_size = 3
+        
+        self._init_outputs()
     
     

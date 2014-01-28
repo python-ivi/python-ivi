@@ -49,5 +49,7 @@ class agilentE3640A(agilentE3600A):
         ]
         
         self._memory_size = 5
+        
+        self._init_outputs()
     
     

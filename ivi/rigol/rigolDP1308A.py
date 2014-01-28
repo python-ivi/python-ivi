@@ -65,5 +65,7 @@ class rigolDP1308A(rigolDP1000):
                 'current_max': 1.0
             }
         ]
+        
+        self._init_outputs()
     
     

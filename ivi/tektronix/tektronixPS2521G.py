@@ -62,5 +62,7 @@ class tektronixPS2521G(tektronixPS2520G):
                 'current_max': 5.0
             }
         ]
+        
+        self._init_outputs()
     
     

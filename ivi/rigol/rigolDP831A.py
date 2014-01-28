@@ -65,5 +65,7 @@ class rigolDP831A(rigolDP800):
                 'current_max': 2.0
             }
         ]
+        
+        self._init_outputs()
     
     
