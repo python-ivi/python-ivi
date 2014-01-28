@@ -169,6 +169,8 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         super(agilentBaseScope, self).__init__(*args, **kwargs)
         
+        self._memory_size = 10
+        
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()
@@ -211,6 +213,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         self._system_set_setup)
         ivi.add_method(self, 'display.get_screenshot',
                         self._display_get_screenshot)
+        ivi.add_method(self, 'memory.save',
+                        self._memory_save)
+        ivi.add_method(self, 'memory.recall',
+                        self._memory_recall)
         
         self._init_channels()
     
@@ -1091,6 +1097,20 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     def _measurement_auto_setup(self):
         if not self._driver_operation_simulate:
             self._write(":autoscale")
+    
+    def _memory_save(self, index):
+        index = int(index)
+        if index < 0 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("*sav %d" % index)
+    
+    def _memory_recall(self, index):
+        index = int(index)
+        if index < 0 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("*rcl %d" % index)
     
     
     
