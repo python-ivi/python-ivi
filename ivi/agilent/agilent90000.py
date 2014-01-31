@@ -206,7 +206,7 @@ class agilent90000(agilentBaseScope):
         for i in range(points):
             x = ((i - xreference) * xincrement) + xorigin
             
-            yval = struct.unpack(">H", raw_data[i*2:i*2+2])[0]
+            yval = struct.unpack(">h", raw_data[i*2:i*2+2])[0]
             y = ((yval - yreference) * yincrement) + yorigin
             
             data.append((x, y))
