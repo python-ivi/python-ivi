@@ -50,18 +50,15 @@ class agilent86140B(ivi.Driver):
         self._trace_count = 1
         
         self._level_amplitude_units = 'dBm'
-        self._level_attenuation = 0.0
-        self._level_attenuation_auto = False
         self._acquisition_detector_type = 'sample'
         self._acquisition_detector_type_auto = False
-        self._frequency_start = 1e3
-        self._frequency_stop = 1e9
-        self._frequency_offset = 0.0
-        self._level_input_impedance = 50
+        self._wavelength_start = 600.0e-9
+        self._wavelength_stop = 1700.0e-9
+        self._wavelength_offset = 0.0
         self._acquisition_number_of_sweeps = 1
         self._level_reference = 0.0
         self._level_reference_offset = 0.0
-        self._sweep_coupling_resolution_bandwidth = 1e2
+        self._sweep_coupling_resolution_bandwidth = 11e-9
         self._sweep_coupling_resolution_bandwidth_auto = False
         self._acquisition_sweep_mode_continuous = True
         self._sweep_coupling_sweep_time = 1e-1
@@ -328,8 +325,8 @@ class agilent86140B(ivi.Driver):
                        to complete, and returns the trace in one function call.
                        
                        The Amplitude array returns data that represents the amplitude of the
-                       signals obtained by sweeping from the start frequency to the stop frequency
-                       (in frequency domain, in time domain the amplitude array is ordered from
+                       signals obtained by sweeping from the start wavelength to the stop wavelength
+                       (in wavelength domain, in time domain the amplitude array is ordered from
                        beginning of sweep to end). The Amplitude Units attribute determines the
                        units of the points in the Amplitude array.
                        
@@ -353,7 +350,7 @@ class agilent86140B(ivi.Driver):
                        instrument configuration. It then waits for the acquisition to complete,
                        and returns the trace as an array of amplitude values. The amplitude array
                        returns data that represent the amplitude of the signals obtained by
-                       sweeping from the start frequency to the stop frequency (in frequency
+                       sweeping from the start wavelength to the stop wavelength (in wavelength
                        domain, in time domain the amplitude array is ordered from beginning of
                        sweep to end). The Amplitude Units attribute determines the units of the
                        points in the amplitude array. This function resets the sweep count.
