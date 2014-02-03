@@ -172,4 +172,12 @@ from .agilent436A import agilent436A
 from .agilent8642A import agilent8642A
 from .agilent8642B import agilent8642B
 
+# Optical spectrum analyzers
+from .agilent86140B import agilent86140B
+from .agilent86141B import agilent86141B
+from .agilent86142B import agilent86142B
+from .agilent86144B import agilent86144B
+from .agilent86145B import agilent86145B
+from .agilent86146B import agilent86146B
+
 
