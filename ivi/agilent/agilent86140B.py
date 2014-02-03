@@ -463,7 +463,7 @@ class agilent86140B(ivi.Driver):
         self._trace_name = list()
         self._trace_type = list()
         for i in range(self._trace_count):
-            self._trace_name.append("trace%d" % (i+1))
+            self._trace_name.append("tr%c" % chr(i+ord('a')))
             self._trace_type.append('')
         
         self.traces._set_list(self._trace_name)
@@ -617,11 +617,17 @@ class agilent86140B(ivi.Driver):
         self._set_cache_valid()
     
     def _get_acquisition_sweep_mode_continuous(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_sweep_mode_continuous = bool(int(self._ask("initiate:continuous?")))
+            self._set_cache_valid()
         return self._acquisition_sweep_mode_continuous
     
     def _set_acquisition_sweep_mode_continuous(self, value):
         value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("initiate:continuous %d" % int(value))
         self._acquisition_sweep_mode_continuous = value
+        self._set_cache_valid()
     
     def _get_sweep_coupling_sweep_time(self):
         return self._sweep_coupling_sweep_time
@@ -659,18 +665,30 @@ class agilent86140B(ivi.Driver):
         self._acquisition_vertical_scale = value
     
     def _get_sweep_coupling_video_bandwidth(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._sweep_coupling_video_bandwidth = float(self._ask("sense:bandwidth:video?"))
+            self._set_cache_valid()
         return self._sweep_coupling_video_bandwidth
     
     def _set_sweep_coupling_video_bandwidth(self, value):
         value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("sense:bandwidth:video %e" % value)
         self._sweep_coupling_video_bandwidth = value
+        self._set_cache_valid()
     
     def _get_sweep_coupling_video_bandwidth_auto(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._sweep_coupling_video_bandwidth_auto = bool(int(self._ask("sense:bandwidth:video:auto?")))
+            self._set_cache_valid()
         return self._sweep_coupling_video_bandwidth_auto
     
     def _set_sweep_coupling_video_bandwidth_auto(self, value):
         value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("sense:bandwidth:video:auto %d" % int(value))
         self._sweep_coupling_video_bandwidth_auto = value
+        self._set_cache_valid()
     
     def _acquisition_abort(self):
         pass
@@ -696,15 +714,10 @@ class agilent86140B(ivi.Driver):
         self._set_wavelength_start(start)
         self._set_wavelength_stop(stop)
     
-    def _level_configure(self, amplitude_units, reference, reference_offset, attenuation):
+    def _level_configure(self, amplitude_units, reference, reference_offset):
         self._set_level_amplitude_units(amplitude_units)
         self._set_level_reference(reference)
         self._set_level_reference_offset(reference_offset)
-        if attenuation == 'auto':
-            self._set_level_attenuation_auto(True)
-        else:
-            self._set_level_attenuation_auto(False)
-            self._set_level_attenuation(attenuation)
     
     def _sweep_coupling_configure(self, resolution_bandwidth, video_bandwidth, sweep_time):
         if resolution_bandwidth == 'auto':
@@ -725,11 +738,24 @@ class agilent86140B(ivi.Driver):
     
     def _trace_fetch_y(self, index):
         index = ivi.get_index(self._trace_name, index)
+        name = self._trace_name[index]
+        
+        if self._driver_operation_simulate:
+            return list()
+        
+        self._write('format:data ascii')
+        l = self._ask('trace:data:y? %s' % name)
+        
         data = list()
+        
+        for p in l.split(','):
+            data.append(float(p))
+        
         return data
     
     def _acquisition_initiate(self):
-        pass
+        if not self._driver_operation_simulate:
+            self._write("initiate:immediate")
     
     def _trace_read_y(self, index):
         return self._trace_fetch_y(index)
