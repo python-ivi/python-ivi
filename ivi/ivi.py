@@ -376,10 +376,14 @@ def decode_ieee_block(data):
     ind += 1
     l = int(data[ind:ind+1])
     ind += 1
-    num = int(data[ind:ind+l].decode('utf-8'))
-    ind += l
     
-    return data[ind:ind+num]
+    if (l > 0):
+        num = int(data[ind:ind+l].decode('utf-8'))
+        ind += l
+        
+        return data[ind:ind+num]
+    else:
+        return data[ind:]
 
 
 def get_sig(sig):
