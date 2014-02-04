@@ -24,15 +24,23 @@ THE SOFTWARE.
 
 """
 
-from .rigolBaseDCPwr import *
+from .. import ivi
+from .. import dcpwr
+from .. import scpi
 
-class rigolDP800(rigolBaseDCPwr):
-    "Rigol DP800 series IVI DC power supply driver"
+TrackingType = set(['floating'])
+TriggerSourceMapping = {
+        'immediate': 'imm',
+        'bus': 'bus'}
+
+class rigolBaseDCPwr(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigger,
+                scpi.dcpwr.Measurement):
+    "Rigol generic IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
         
-        super(rigolDP800, self).__init__(*args, **kwargs)
+        super(rigolBaseDCPwr, self).__init__(*args, **kwargs)
         
         self._output_count = 3
         
@@ -68,7 +76,7 @@ class rigolDP800(rigolBaseDCPwr):
         
         self._memory_size = 10
         
-        self._identity_description = "Rigol DP800 series IVI DC power supply driver"
+        self._identity_description = "Rigol generic IVI DC power supply driver"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
@@ -79,7 +87,28 @@ class rigolDP800(rigolBaseDCPwr):
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['DP831A', 'DP832', 'DP832A']
         
+        ivi.add_method(self, 'memory.save',
+                        self._memory_save)
+        ivi.add_method(self, 'memory.recall',
+                        self._memory_recall)
+        
         self._init_outputs()
         
     
+    def _memory_save(self, index):
+        index = int(index)
+        if index < 1 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("*sav %d" % index)
     
+    def _memory_recall(self, index):
+        index = int(index)
+        if index < 1 or index > self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("*rcl %d" % index)
+    
+    
+    
+
