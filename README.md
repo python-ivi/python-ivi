@@ -33,6 +33,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
   * Other
+    * Agilent 86140B series optical spectrum analyzer
     * Colby Instruments PDL10A Programmable Delay Line
     * DiCon Fiberoptics GP700 Programmable Fiberoptic Instrument
     * JDS Uniphase TB9 Series Optical Grating Filter
