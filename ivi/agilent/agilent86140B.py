@@ -25,6 +25,7 @@ THE SOFTWARE.
 """
 
 from .. import ivi
+import time
 
 AmplitudeUnitsMapping = {'dBm' : 'dbm',
                          'watt' : 'w'}
@@ -476,10 +477,10 @@ class agilent86140B(ivi.Driver):
         
         format = ScreenshotImageFormatMapping[format]
         
-        self._write("hcopy:device:language %s" % format)
-        self._write("hcopy:destination \"system:communicate:internal\"")
-        self._write("hcopy:immediate")
-        self._write("hcopy:data? %s" % format)
+        self._write("hcopy:device:language \"%s\"" % format)
+        self._write("hcopy:data?")
+        
+        time.sleep(25)
         
         return self._read_ieee_block()
     
