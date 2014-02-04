@@ -175,7 +175,7 @@ class agilent8590E(ivi.Driver, specan.Base):
         if value not in AmplitudeUnitsMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":aunits %s" % AmplitudeUnitsMapping[value])
+            self._write("aunits %s" % AmplitudeUnitsMapping[value])
         self._level_amplitude_units = value
         self._set_cache_valid()
     
