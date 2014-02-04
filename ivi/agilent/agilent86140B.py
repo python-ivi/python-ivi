@@ -630,18 +630,30 @@ class agilent86140B(ivi.Driver):
         self._set_cache_valid()
     
     def _get_sweep_coupling_sweep_time(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._sweep_coupling_sweep_time = float(self._ask("sense:sweep:time?"))
+            self._set_cache_valid()
         return self._sweep_coupling_sweep_time
     
     def _set_sweep_coupling_sweep_time(self, value):
         value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("sense:sweep:time %e" % value)
         self._sweep_coupling_sweep_time = value
+        self._set_cache_valid()
     
     def _get_sweep_coupling_sweep_time_auto(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._sweep_coupling_sweep_time_auto = bool(int(self._ask("sense:sweep:time:auto?")))
+            self._set_cache_valid()
         return self._sweep_coupling_sweep_time_auto
     
     def _set_sweep_coupling_sweep_time_auto(self, value):
         value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("sense:sweep:time:auto %d" % int(value))
         self._sweep_coupling_sweep_time_auto = value
+        self._set_cache_valid()
     
     def _get_trace_name(self, index):
         index = ivi.get_index(self._trace_name, index)
