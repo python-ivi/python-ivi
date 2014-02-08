@@ -364,6 +364,8 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
             return
         
         self._write_ieee_block(data, ':system:setup ')
+        
+        self.driver_operation.invalidate_all_attributes()
     
     def _display_fetch_screenshot(self, format='png', invert=False):
         if self._driver_operation_simulate:
@@ -1100,6 +1102,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
             raise OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("*rcl %d" % index)
+            self.driver_operation.invalidate_all_attributes()
     
     
     
