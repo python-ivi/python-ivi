@@ -127,10 +127,9 @@ class agilent8156A(ivi.Driver):
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_message = self._ask("err?").strip('"')
-            error_code = 1
-            if error_message == '0':
-                error_code = 0
+            error_code, error_message = self._ask(":system:error?").split(',')
+            error_code = int(error_code)
+            error_message = error_message.strip(' "')
         return (error_code, error_message)
     
     def _utility_lock_object(self):
