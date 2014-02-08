@@ -178,6 +178,19 @@ class agilent90000(agilentBaseScope):
         
         return self._read_ieee_block()
     
+    def _get_display_vectors(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._display_vectors = bool(int(self._ask(":display:connect?")))
+            self._set_cache_valid()
+        return self._display_vectors
+    
+    def _set_display_vectors(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write(":display:connect %d" % int(value))
+        self._display_vectors = value
+        self._set_cache_valid()
+    
     def _get_channel_common_mode(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):

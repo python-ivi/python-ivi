@@ -176,6 +176,8 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
+        self._display_vectors = True
+        
         self._identity_description = "Agilent generic IVI oscilloscope driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -238,6 +240,13 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         ivi.Doc("""
                         Specifies the vertical scale, or units per division, of the channel.  Units
                         are volts.
+                        """))
+        ivi.add_property(self, 'display.vectors',
+                        self._get_display_vectors,
+                        self._set_display_vectors,
+                        None,
+                        ivi.Doc("""
+                        When enabled, draws a line between consecutive waveform data points.
                         """))
         ivi.add_method(self, 'system.fetch_setup',
                         self._system_fetch_setup,
@@ -435,6 +444,19 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._write(":display:data? %s" % format)
         
         return self._read_ieee_block()
+    
+    def _get_display_vectors(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._display_vectors = bool(int(self._ask(":display:vectors?")))
+            self._set_cache_valid()
+        return self._display_vectors
+    
+    def _set_display_vectors(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write(":display:vectors %d" % int(value))
+        self._display_vectors = value
+        self._set_cache_valid()
     
     def _get_acquisition_start_time(self):
         pos = 0
