@@ -139,8 +139,6 @@ MeasurementFunctionMappingDigital = {
         'width_positive': 'pwidth',
         'duty_cycle_positive': 'dutycycle'}
 ScreenshotImageFormatMapping = {
-        'tif': 'tiff',
-        'tiff': 'tiff',
         'bmp': 'bmp',
         'bmp24': 'bmp',
         'bmp8': 'bmp8bit',
