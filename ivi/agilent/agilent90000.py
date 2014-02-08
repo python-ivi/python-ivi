@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 from .agilentBaseScope import *
 
+VerticalCoupling = set(['dc'])
 ScreenshotImageFormatMapping = {
         'tif': 'tif',
         'tiff': 'tif',
