@@ -271,6 +271,20 @@ class agilent90000(agilentBaseScope):
         self._channel_display_scale[index] = value
         self._set_cache_valid(index=index)
     
+    def _get_channel_input_impedance(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        # fixed
+        self._channel_input_impedance[index] = 50
+        return self._channel_input_impedance[index]
+    
+    def _set_channel_input_impedance(self, index, value):
+        value = float(value)
+        index = ivi.get_index(self._analog_channel_name, index)
+        if value != 50:
+            raise Exception('Invalid impedance selection')
+        self._channel_input_impedance[index] = value
+        self._set_cache_valid(index=index)
+    
     def _measurement_fetch_waveform(self, index):
         index = ivi.get_index(self._channel_name, index)
         
