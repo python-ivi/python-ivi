@@ -261,6 +261,12 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         Transfers a binary block of setup data to the scope to reload a setup
                         previously saved with system.fetch_setup.
                         """))
+        ivi.add_method(self, 'system.display_string',
+                        self._system_display_string,
+                        ivi.Doc("""
+                        Writes a string to the advisory line on the instrument display.  Send None
+                        or an empty string to clear the advisory line.  
+                        """))
         ivi.add_method(self, 'display.fetch_screenshot',
                         self._display_fetch_screenshot,
                         ivi.Doc("""
@@ -430,6 +436,13 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._write_ieee_block(data, ':system:setup ')
         
         self.driver_operation.invalidate_all_attributes()
+    
+    def _system_display_string(self, string = None):
+        if string is None:
+            string = ""
+        
+        if not self._driver_operation_simulate:
+            self._write(":system:dsp \"%s\"" % string)
     
     def _display_fetch_screenshot(self, format='png', invert=False):
         if self._driver_operation_simulate:
