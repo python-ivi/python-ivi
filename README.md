@@ -18,6 +18,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
   * Oscilloscopes (scope):
     * Agilent InfiniiVision 2000A/3000A series
+    * Agilent InfiniiVision 6000A series
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
   * Function Generators (fgen):

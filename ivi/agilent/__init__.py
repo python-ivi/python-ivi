@@ -57,6 +57,23 @@ from .agilentMSOX3052A import agilentMSOX3052A
 from .agilentMSOX3054A import agilentMSOX3054A
 from .agilentMSOX3102A import agilentMSOX3102A
 from .agilentMSOX3104A import agilentMSOX3104A
+# InfiniiVision 6000A
+from .agilentDSO6012A import agilentDSO6012A
+from .agilentDSO6014A import agilentDSO6014A
+from .agilentDSO6032A import agilentDSO6032A
+from .agilentDSO6034A import agilentDSO6034A
+from .agilentDSO6052A import agilentDSO6052A
+from .agilentDSO6054A import agilentDSO6054A
+from .agilentDSO6102A import agilentDSO6102A
+from .agilentDSO6104A import agilentDSO6104A
+from .agilentMSO6012A import agilentMSO6012A
+from .agilentMSO6014A import agilentMSO6014A
+from .agilentMSO6032A import agilentMSO6032A
+from .agilentMSO6034A import agilentMSO6034A
+from .agilentMSO6052A import agilentMSO6052A
+from .agilentMSO6054A import agilentMSO6054A
+from .agilentMSO6102A import agilentMSO6102A
+from .agilentMSO6104A import agilentMSO6104A
 # InfiniiVision 7000A
 from .agilentDSO7012A import agilentDSO7012A
 from .agilentDSO7014A import agilentDSO7014A
