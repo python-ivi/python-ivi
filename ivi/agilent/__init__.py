@@ -180,4 +180,7 @@ from .agilent86144B import agilent86144B
 from .agilent86145B import agilent86145B
 from .agilent86146B import agilent86146B
 
+# Optical attenuators
+from .agilent8156A import agilent8156A
+
 
