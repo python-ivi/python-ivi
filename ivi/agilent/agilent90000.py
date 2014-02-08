@@ -51,6 +51,10 @@ class agilent90000(agilentBaseScope):
         self._channel_common_mode = list()
         self._channel_differential = list()
         self._channel_differential_skew = list()
+        self._channel_display_auto = list()
+        self._channel_display_offset = list()
+        self._channel_display_range = list()
+        self._channel_display_scale = list()
         
         super(agilent90000, self).__init__(*args, **kwargs)
         
@@ -146,11 +150,19 @@ class agilent90000(agilentBaseScope):
         self._channel_common_mode = list()
         self._channel_differential = list()
         self._channel_differential_skew = list()
+        self._channel_display_auto = list()
+        self._channel_display_offset = list()
+        self._channel_display_range = list()
+        self._channel_display_scale = list()
         
         for i in range(self._analog_channel_count):
             self._channel_common_mode.append(False)
             self._channel_differential.append(False)
             self._channel_differential_skew.append(0)
+            self._channel_display_auto.append(True)
+            self._channel_display_offset.append(0.0)
+            self._channel_display_range.append(1.0)
+            self._channel_display_scale.append(0.1)
     
     
     def _display_fetch_screenshot(self, format='png', invert=False):
