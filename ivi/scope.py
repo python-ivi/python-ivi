@@ -348,7 +348,9 @@ class Base(object):
                         oscilloscope cannot sample a value for a point in the waveform, the driver
                         sets the corresponding element in the waveformArray to an IEEE-defined NaN
                         (Not a Number) value. Check for this value with math.isnan() or
-                        numpy.isnan().
+                        numpy.isnan(). Check an entire array with
+                        
+                        any(any(math.isnan(b) for b in a) for a in waveform)
                         """, cls, grp, '4.3.16'))
         ivi.add_property(self, 'measurement.status',
                         self._get_measurement_status,
@@ -1486,7 +1488,9 @@ class MinMaxWaveform(object):
                         oscilloscope cannot sample a value for a point in the waveform, the driver
                         sets the corresponding element in the waveformArray to an IEEE-defined NaN
                         (Not a Number) value. Check for this value with math.isnan() or
-                        numpy.isnan().
+                        numpy.isnan(). Check an entire array with
+                        
+                        any(any(math.isnan(b) for b in a) for a in waveform)
                         
                         This function does not check the instrument status. Typically, the
                         end-user calls this function only in a sequence of calls to other
@@ -1524,7 +1528,9 @@ class MinMaxWaveform(object):
                         oscilloscope cannot sample a value for a point in the waveform, the driver
                         sets the corresponding element in the waveformArray to an IEEE-defined NaN
                         (Not a Number) value. Check for this value with math.isnan() or
-                        numpy.isnan().
+                        numpy.isnan(). Check an entire array with
+                        
+                        any(any(math.isnan(b) for b in a) for a in waveform)
                         
                         This function does not check the instrument status. Typically, the
                         end-user calls this function only in a sequence of calls to other
