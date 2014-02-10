@@ -1049,7 +1049,12 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
             x = ((i - xreference) * xincrement) + xorigin
             
             yval = struct.unpack(">H", raw_data[i*2:i*2+2])[0]
-            y = ((yval - yreference) * yincrement) + yorigin
+            
+            if yval == 0:
+                # hole value
+                y = float('nan')
+            else:
+                y = ((yval - yreference) * yincrement) + yorigin
             
             data.append((x, y))
         

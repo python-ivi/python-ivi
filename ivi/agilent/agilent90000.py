@@ -411,7 +411,12 @@ class agilent90000(agilentBaseScope):
             x = ((i - xreference) * xincrement) + xorigin
             
             yval = struct.unpack(">h", raw_data[i*2:i*2+2])[0]
-            y = ((yval - yreference) * yincrement) + yorigin
+            
+            if yval == 31232:
+                # hole value
+                y = float('nan')
+            else:
+                y = ((yval - yreference) * yincrement) + yorigin
             
             data.append((x, y))
         
