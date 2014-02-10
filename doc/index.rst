@@ -24,6 +24,7 @@ Contents:
    intro
    examples
    ivi
+   scope
    fgen
    dcpwr
    newdriver
