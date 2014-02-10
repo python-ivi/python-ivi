@@ -1326,6 +1326,28 @@ class WaveformMeasurement(object):
                         end-user uses the low-level functions to optimize one or more aspects of
                         interaction with the instrument. Call the Error Query function at the
                         conclusion of the sequence to check the instrument status.
+                        
+                        Values for measurement_function:
+                        * 'rise_time'
+                        * 'fall_time'
+                        * 'frequency'
+                        * 'period'
+                        * 'voltage_rms'
+                        * 'voltage_peak_to_peak'
+                        * 'voltage_max'
+                        * 'voltage_min'
+                        * 'voltage_high'
+                        * 'voltage_low'
+                        * 'voltage_average'
+                        * 'width_negative'
+                        * 'width_positive'
+                        * 'duty_cycle_negative'
+                        * 'duty_cycle_positive'
+                        * 'amplitude'
+                        * 'voltage_cycle_rms'
+                        * 'voltage_cycle_average'
+                        * 'overshoot'
+                        * 'preshoot'
                         """, cls, grp, '11.3.2'))
         ivi.add_method(self, 'channels[].measurement.read_waveform_measurement',
                         self._measurement_read_waveform_measurement,
