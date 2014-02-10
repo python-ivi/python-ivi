@@ -48,6 +48,9 @@ class agilent3000A(agilentBaseScope):
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
+        self._horizontal_divisions = 10
+        self._vertical_divisions = 8
+        
         self._identity_description = "Agilent InfiniiVision 3000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX3012A','DSOX3014A','DSOX3024A',
                 'DSOX3032A','DSOX3034A','DSOX3052A','DSOX3054A','DSOX3104A','MSOX3012A','MSOX3014A',

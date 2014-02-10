@@ -41,6 +41,9 @@ class agilent7000(agilentBaseScope):
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
+        self._horizontal_divisions = 10
+        self._vertical_divisions = 8
+        
         self._identity_description = "Agilent InfiniiVision 7000 series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',

@@ -176,6 +176,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
         
+        self._horizontal_divisions = 10
+        self._vertical_divisions = 8
+        
         self._display_vectors = True
         
         self._identity_description = "Agilent generic IVI oscilloscope driver"

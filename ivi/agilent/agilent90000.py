@@ -65,6 +65,9 @@ class agilent90000(agilentBaseScope):
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 13e9
         
+        self._horizontal_divisions = 10
+        self._vertical_divisions = 8
+        
         self._display_color_grade = False
         
         self._identity_description = "Agilent Infiniium 90000A/90000X series IVI oscilloscope driver"

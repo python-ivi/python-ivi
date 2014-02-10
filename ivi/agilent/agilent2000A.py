@@ -48,6 +48,9 @@ class agilent2000A(agilentBaseScope):
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 200e6
         
+        self._horizontal_divisions = 10
+        self._vertical_divisions = 8
+        
         self._identity_description = "Agilent InfiniiVision 2000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX2002A','DSOX2004A','DSOX2012A',
                 'DSOX2014A','DSOX2022A','DSOX2024A','MSOX2002A','MSOX2004A','MSOX2012A','MSOX2014A',
