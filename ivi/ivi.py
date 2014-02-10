@@ -458,7 +458,7 @@ def doc(obj=None, itm=None, docs=None, prefix=None):
     
     # if something passed in docs, iterate over it
     if docs is not None:
-        for n in docs:
+        for n in sorted(docs.keys()):
             d = docs[n]
             if type(d) == dict:
                 # recurse into node
@@ -517,7 +517,7 @@ def doc(obj=None, itm=None, docs=None, prefix=None):
     
     if hasattr(obj, '__dict__'):
         # if obj has __dict__, iterate over it
-        for n in obj.__dict__:
+        for n in sorted(obj.__dict__.keys()):
             o = obj.__dict__[n]
             
             # add brackets for indexed property collections
