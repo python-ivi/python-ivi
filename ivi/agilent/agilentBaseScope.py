@@ -484,7 +484,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         pass
     
     def _init_channels(self):
-        super(agilentBaseScope, self)._init_channels()
+        try:
+            super(agilentBaseScope, self)._init_channels()
+        except AttributeError:
+            pass
         
         self._channel_name = list()
         self._channel_label = list()

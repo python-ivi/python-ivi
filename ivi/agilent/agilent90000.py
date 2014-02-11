@@ -184,7 +184,10 @@ class agilent90000(agilentBaseScope):
         return (error_code, error_message)
     
     def _init_channels(self):
-        super(agilent90000, self)._init_channels()
+        try:
+            super(agilent90000, self)._init_channels()
+        except AttributeError:
+            pass
         
         self._channel_common_mode = list()
         self._channel_differential = list()

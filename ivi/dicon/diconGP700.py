@@ -279,7 +279,7 @@ class diconGP700(ivi.Driver):
     def _init_channels(self):
         try:
             super(diconGP700, self)._init_channels()
-        except:
+        except AttributeError:
             pass
         
         if self._initialized:

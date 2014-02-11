@@ -156,7 +156,10 @@ class agilent603xA(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
     
     
     def _init_outputs(self):
-        super(agilent603xA, self)._init_outputs()
+        try:
+            super(agilent603xA, self)._init_outputs()
+        except AttributeError:
+            pass
         
         self._output_current_limit = list()
         self._output_current_limit_behavior = list()
