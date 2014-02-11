@@ -453,7 +453,7 @@ def doc(obj=None, itm=None, docs=None, prefix=None):
     # add a dot to prefix when needed
     if prefix is None or len(prefix) == 0:
         prefix = ''
-    else:
+    elif not prefix[-1] == '.':
         prefix += '.'
     
     # if something passed in docs, iterate over it
@@ -530,7 +530,7 @@ def doc(obj=None, itm=None, docs=None, prefix=None):
                 st += doc(docs=o, prefix=prefix)
             elif hasattr(o, '_docs'):
                 # process object that contains a documentation dict
-                st += doc(docs=o._docs, prefix=prefix+n+extra)
+                st += doc(o, prefix=prefix+n)
         
         # if we got something, return it
         if len(st) > 0:
