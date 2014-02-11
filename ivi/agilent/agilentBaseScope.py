@@ -303,7 +303,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         self._set_timebase_range,
                         None,
                         ivi.Doc("""
-                        Sets the full- scale horizontal time in seconds for the main window. The
+                        Sets the full-scale horizontal time in seconds for the main window. The
                         range is 10 times the current time-per-division setting.
                         """))
         ivi.add_property(self, 'timebase.scale',
@@ -328,7 +328,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         self._set_timebase_window_range,
                         None,
                         ivi.Doc("""
-                        Sets the full- scale horizontal time in seconds for the zoomed (delayed)
+                        Sets the fullscale horizontal time in seconds for the zoomed (delayed)
                         window. The range is 10 times the current zoomed view window seconds per
                         division setting. The main sweep range determines the range for this
                         command. The maximum value is one half of the timebase.range value.
