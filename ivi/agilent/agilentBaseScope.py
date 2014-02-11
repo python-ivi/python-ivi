@@ -655,7 +655,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     def _get_timebase_window_range(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._timebase_window_range = float(self._ask(":timebase:window:range?"))
+            self._timebase_window_scale = self._timebase_window_range / self._horizontal_divisions
             self._set_cache_valid()
+            self._set_cache_valid(True, 'timebase_window_scale')
         return self._timebase_window_range
     
     def _set_timebase_window_range(self, value):
@@ -663,13 +665,16 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate:
             self._write(":timebase:window:range %e" % value)
         self._timebase_window_range = value
+        self._timebase_window_scale = value / self._horizontal_divisions
         self._set_cache_valid()
-        self._set_cache_valid(False, 'timebase_window_scale')
+        self._set_cache_valid(True, 'timebase_window_scale')
         
     def _get_timebase_window_scale(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._timebase_window_scale = float(self._ask(":timebase:window:scale?"))
+            self._timebase_window_range = self._timebase_window_scale * self._horizontal_divisions
             self._set_cache_valid()
+            self._set_cache_valid(True, 'timebase_window_range')
         return self._timebase_window_scale
     
     def _set_timebase_window_scale(self, value):
@@ -677,8 +682,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate:
             self._write(":timebase:window:scale %e" % value)
         self._timebase_window_scale = value
+        self._timebase_window_range = value * self._horizontal_divisions
         self._set_cache_valid()
-        self._set_cache_valid(False, 'timebase_window_range')
+        self._set_cache_valid(True, 'timebase_window_range')
     
     def _get_display_vectors(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
