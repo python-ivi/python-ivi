@@ -1422,12 +1422,12 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             if k in kwargs:
                 kw[k] = kwargs.pop(k)
         
-        super(Driver, self).__init__(*args, **kwargs)
-        
         self._interface = None
         self._initialized = False
         self.__dict__.setdefault('_instrument_id', '')
         self._cache_valid = list()
+        
+        super(Driver, self).__init__(*args, **kwargs)
         
         self.__dict__.setdefault('_docs', dict())
         self._docs['initialize'] = """
