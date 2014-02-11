@@ -691,11 +691,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._set_cache_valid()
     
     def _get_acquisition_start_time(self):
-        pos = 0
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            pos = float(self._ask(":timebase:position?"))
+            self._acquisition_start_time = float(self._ask(":waveform:xorigin?"))
             self._set_cache_valid()
-        self._acquisition_start_time = pos - self._get_acquisition_time_per_record() * 5 / 10
         return self._acquisition_start_time
     
     def _set_acquisition_start_time(self, value):
