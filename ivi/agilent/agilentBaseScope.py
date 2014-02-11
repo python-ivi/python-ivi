@@ -923,7 +923,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_range[index] = float(self._ask(":%s:range?" % self._channel_name[index]))
+            self._channel_scale[index] = self._channel_range[index] / self._vertical_divisions
             self._set_cache_valid(index=index)
+            self._set_cache_valid(True, "channel_scale", index)
         return self._channel_range[index]
     
     def _set_channel_range(self, index, value):
@@ -932,13 +934,17 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate:
             self._write(":%s:range %e" % (self._channel_name[index], value))
         self._channel_range[index] = value
+        self._channel_scale[index] = value / self._vertical_divisions
         self._set_cache_valid(index=index)
+        self._set_cache_valid(True, "channel_scale", index)
     
     def _get_channel_scale(self, index):
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_scale[index] = float(self._ask(":%s:scale?" % self._channel_name[index]))
+            self._channel_range[index] = self._channel_scale[index] * self._vertical_divisions
             self._set_cache_valid(index=index)
+            self._set_cache_valid(True, "channel_range", index)
         return self._channel_scale[index]
     
     def _set_channel_scale(self, index, value):
@@ -947,7 +953,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate:
             self._write(":%s:scale %e" % (self._channel_name[index], value))
         self._channel_scale[index] = value
+        self._channel_range[index] = value * self._vertical_divisions
         self._set_cache_valid(index=index)
+        self._set_cache_valid(True, "channel_range", index)
     
     def _get_measurement_status(self):
         return self._measurement_status
