@@ -144,6 +144,15 @@ ScreenshotImageFormatMapping = {
         'bmp8': 'bmp8bit',
         'png': 'png',
         'png24': 'png'}
+TimebaseModeMapping = {
+        'main': 'main',
+        'window': 'wind',
+        'xy': 'xy',
+        'roll': 'roll'}
+TimebaseReferenceMapping = {
+        'left': 'left',
+        'center': 'cent',
+        'right': 'righ'}
 
 class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                 scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
@@ -179,6 +188,14 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
         
+        self._timebase_mode = 'main'
+        self._timebase_reference = 'center'
+        self._timebase_position = 0.0
+        self._timebase_range = 1e-3
+        self._timebase_scale = 100e-6
+        self._timebase_window_position = 0.0
+        self._timebase_window_range = 5e-6
+        self._timebase_window_scale = 500e-9
         self._display_vectors = True
         
         self._identity_description = "Agilent generic IVI oscilloscope driver"
@@ -243,6 +260,87 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         ivi.Doc("""
                         Specifies the vertical scale, or units per division, of the channel.  Units
                         are volts.
+                        """))
+        ivi.add_property(self, 'timebase.mode',
+                        self._get_timebase_mode,
+                        self._set_timebase_mode,
+                        None,
+                        ivi.Doc("""
+                        Sets the current time base. There are four time base modes:
+                        
+                        * 'main': normal timebase
+                        * 'window': zoomed or delayed timebase
+                        * 'xy': channels are plotted against each other, no timebase
+                        * 'roll': data moves continuously from left to right
+                        """))
+        ivi.add_property(self, 'timebase.reference',
+                        self._get_timebase_reference,
+                        self._set_timebase_reference,
+                        None,
+                        ivi.Doc("""
+                        Sets the time reference to one division from the left side of the screen,
+                        to the center of the screen, or to one division from the right side of the
+                        screen. Time reference is the point on the display where the trigger point
+                        is referenced.
+                        
+                        Values:
+                        * 'left'
+                        * 'center'
+                        * 'right'
+                        """))
+        ivi.add_property(self, 'timebase.position',
+                        self._get_timebase_position,
+                        self._set_timebase_position,
+                        None,
+                        ivi.Doc("""
+                        Sets the time interval between the trigger event and the display reference
+                        point on the screen. The display reference point is either left, right, or
+                        center and is set with the timebase.reference property. The maximum
+                        position value depends on the time/division settings.
+                        """))
+        ivi.add_property(self, 'timebase.range',
+                        self._get_timebase_range,
+                        self._set_timebase_range,
+                        None,
+                        ivi.Doc("""
+                        Sets the full- scale horizontal time in seconds for the main window. The
+                        range is 10 times the current time-per-division setting.
+                        """))
+        ivi.add_property(self, 'timebase.scale',
+                        self._get_timebase_scale,
+                        self._set_timebase_scale,
+                        None,
+                        ivi.Doc("""
+                        Sets the horizontal scale or units per division for the main window.
+                        """))
+        ivi.add_property(self, 'timebase.window.position',
+                        self._get_timebase_window_position,
+                        self._set_timebase_window_position,
+                        None,
+                        ivi.Doc("""
+                        Sets the horizontal position in the zoomed (delayed) view of the main
+                        sweep. The main sweep range and the main sweep horizontal position
+                        determine the range for this command. The value for this command must
+                        keep the zoomed view window within the main sweep range.
+                        """))
+        ivi.add_property(self, 'timebase.window.range',
+                        self._get_timebase_window_range,
+                        self._set_timebase_window_range,
+                        None,
+                        ivi.Doc("""
+                        Sets the full- scale horizontal time in seconds for the zoomed (delayed)
+                        window. The range is 10 times the current zoomed view window seconds per
+                        division setting. The main sweep range determines the range for this
+                        command. The maximum value is one half of the timebase.range value.
+                        """))
+        ivi.add_property(self, 'timebase.window.scale',
+                        self._get_timebase_window_scale,
+                        self._set_timebase_window_scale,
+                        None,
+                        ivi.Doc("""
+                        Sets the zoomed (delayed) window horizontal scale (seconds/division). The
+                        main sweep scale determines the range for this command. The maximum value
+                        is one half of the timebase.scale value.
                         """))
         ivi.add_property(self, 'display.vectors',
                         self._get_display_vectors,
@@ -460,6 +558,124 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._write(":display:data? %s" % format)
         
         return self._read_ieee_block()
+    
+    def _get_timebase_mode(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":timebase:mode?").lower()
+            self._timebase_mode = [k for k,v in TimebaseModeMapping.items() if v==value][0]
+            self._set_cache_valid
+        return self._timebase_mode
+    
+    def _set_timebase_mode(self, value):
+        if value not in TimebaseModeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":timebase:mode %s" % TimebaseModeMapping[value])
+        self._timebase_mode = value
+        self._set_cache_valid()
+    
+    def _get_timebase_reference(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":timebase:reference?").lower()
+            self._timebase_reference = [k for k,v in TimebaseReferenceMapping.items() if v==value][0]
+            self._set_cache_valid
+        return self._timebase_reference
+    
+    def _set_timebase_reference(self, value):
+        if value not in TimebaseReferenceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":timebase:reference %s" % TimebaseReferenceMapping[value])
+        self._timebase_reference = value
+        self._set_cache_valid()
+        
+    def _get_timebase_position(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._timebase_position = float(self._ask(":timebase:position?"))
+            self._set_cache_valid()
+        return self._timebase_position
+    
+    def _set_timebase_position(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":timebase:position %e" % value)
+        self._timebase_position = value
+        self._set_cache_valid()
+        
+    def _get_timebase_range(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._timebase_range = float(self._ask(":timebase:range?"))
+            self._timebase_scale = self._timebase_range / self._horizontal_divisions
+            self._set_cache_valid()
+            self._set_cache_valid(True, 'timebase_scale')
+        return self._timebase_range
+    
+    def _set_timebase_range(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":timebase:range %e" % value)
+        self._timebase_range = value
+        self._timebase_scale = value / self._horizontal_divisions
+        self._set_cache_valid()
+        self._set_cache_valid(True, 'timebase_scale')
+        
+    def _get_timebase_scale(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._timebase_scale = float(self._ask(":timebase:scale?"))
+            self._timebase_range = self._timebase_scale * self._horizontal_divisions
+            self._set_cache_valid()
+            self._set_cache_valid(True, 'timebase_range')
+        return self._timebase_scale
+    
+    def _set_timebase_scale(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":timebase:scale %e" % value)
+        self._timebase_scale = value
+        self._timebase_range = value * self._horizontal_divisions
+        self._set_cache_valid()
+        self._set_cache_valid(True, 'timebase_range')
+        
+    def _get_timebase_window_position(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._timebase_window_position = float(self._ask(":timebase:window:position?"))
+            self._set_cache_valid()
+        return self._timebase_window_position
+    
+    def _set_timebase_window_position(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":timebase:window:position %e" % value)
+        self._timebase_window_position = value
+        self._set_cache_valid()
+        
+    def _get_timebase_window_range(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._timebase_window_range = float(self._ask(":timebase:window:range?"))
+            self._set_cache_valid()
+        return self._timebase_window_range
+    
+    def _set_timebase_window_range(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":timebase:window:range %e" % value)
+        self._timebase_window_range = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'timebase_window_scale')
+        
+    def _get_timebase_window_scale(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._timebase_window_scale = float(self._ask(":timebase:window:scale?"))
+            self._set_cache_valid()
+        return self._timebase_window_scale
+    
+    def _set_timebase_window_scale(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":timebase:window:scale %e" % value)
+        self._timebase_window_scale = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'timebase_window_range')
     
     def _get_display_vectors(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
