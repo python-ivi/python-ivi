@@ -159,7 +159,7 @@ class Base(object):
                         
                         If the value that the user passes for the Index parameter is less than
                         zero or greater than the value of the Output Channel Count, the attribute
-                        returns an empty string for the value and returns an error.
+                        raises a SelectorRangeException.
                         """, cls, grp, '4.2.9'))
         ivi.add_method(self, 'outputs[].configure_current_limit',
                         self._output_configure_current_limit,
