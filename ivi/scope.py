@@ -221,7 +221,7 @@ class Base(object):
                         this attribute is not set, the amplitude calculations will be incorrect.
                         
                         Querying this value will return the probe attenuation corresponding to the
-                        instrument’s actual probe attenuation. Setting this property sets Probe
+                        instrument's actual probe attenuation. Setting this property sets Probe
                         Attenuation Auto to False Negative values are not valid.
                         """, cls, grp, '4.2.16'))
         ivi.add_property(self, 'channels[].coupling',
@@ -1720,7 +1720,7 @@ class TriggerModifier(object):
                         None,
                         ivi.Doc("""
                         Specifies the trigger modifier. The trigger modifier determines the
-                        oscilloscope’s behavior in the absence of the configured trigger.
+                        oscilloscope's behavior in the absence of the configured trigger.
                         
                         Values:
                         * 'none'
