@@ -180,7 +180,10 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     
     
     def _init_outputs(self):
-        super(tektronixAWG2000, self)._init_outputs()
+        try:
+            super(tektronixAWG2000, self)._init_outputs()
+        except AttributeError:
+            pass
         
         self._output_enabled = list()
         for i in range(self._output_count):
