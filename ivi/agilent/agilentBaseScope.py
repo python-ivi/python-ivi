@@ -349,6 +349,14 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         ivi.Doc("""
                         When enabled, draws a line between consecutive waveform data points.
                         """))
+        ivi.add_method(self, 'display.clear',
+                        self._display_clear,
+                        ivi.Doc("""
+                        Clears the display and resets all associated measurements. If the
+                        oscilloscope is stopped, all currently displayed data is erased. If the
+                        oscilloscope is running, all the data in active channels and functions is
+                        erased; however, new data is displayed on the next acquisition.
+                        """))
         ivi.add_method(self, 'system.fetch_setup',
                         self._system_fetch_setup,
                         ivi.Doc("""
@@ -698,6 +706,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
             self._write(":display:vectors %d" % int(value))
         self._display_vectors = value
         self._set_cache_valid()
+    
+    def _display_clear(self):
+        if not self._driver_operation_simulate:
+            self._write(":cdisplay")
     
     def _get_acquisition_start_time(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
