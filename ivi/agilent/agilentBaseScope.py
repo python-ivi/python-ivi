@@ -197,6 +197,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._timebase_window_range = 5e-6
         self._timebase_window_scale = 500e-9
         self._display_vectors = True
+        self._display_labels = True
         
         self._identity_description = "Agilent generic IVI oscilloscope driver"
         self._identity_identifier = ""
@@ -348,6 +349,13 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         None,
                         ivi.Doc("""
                         When enabled, draws a line between consecutive waveform data points.
+                        """))
+        ivi.add_property(self, 'display.labels',
+                        self._get_display_labels,
+                        self._set_display_labels,
+                        None,
+                        ivi.Doc("""
+                        Turns the analog and digital channel labels on and off.
                         """))
         ivi.add_method(self, 'display.clear',
                         self._display_clear,
@@ -705,6 +713,19 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate:
             self._write(":display:vectors %d" % int(value))
         self._display_vectors = value
+        self._set_cache_valid()
+    
+    def _get_display_labels(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._display_labels = bool(int(self._ask(":display:label?")))
+            self._set_cache_valid()
+        return self._display_labels
+    
+    def _set_display_labels(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write(":display:label %d" % int(value))
+        self._display_labels = value
         self._set_cache_valid()
     
     def _display_clear(self):
