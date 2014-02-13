@@ -101,7 +101,8 @@ GlitchConditionMapping = {'less_than': 'less',
         'greater_than': 'gre'}
 WidthConditionMapping = {'within': 'rang'}
 SampleModeMapping = {'real_time': 'rtim',
-        'equivalent_time': 'etim'}
+        'equivalent_time': 'etim',
+        'segmented': 'segm'}
 SlopeMapping = {
         'positive': 'pos',
         'negative': 'neg',
@@ -188,6 +189,8 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
         
+        self._acquisition_segmented_count = 2
+        self._acquisition_segmented_index = 1
         self._timebase_mode = 'main'
         self._timebase_reference = 'center'
         self._timebase_position = 0.0
@@ -214,6 +217,75 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                 'DSO7034B','DSO7052B','DSO7054B','DSO7104B','MSO7012B','MSO7014B','MSO7032B',
                 'MSO7034B','MSO7052B','MSO7054B','MSO7104B']
         
+        ivi.add_method(self, 'acquisition.segmented.analyze',
+                        self._acquisition_segmented_analyze,
+                        ivi.Doc("""
+                        Calculates measurement statistics and/or infinite persistence over all
+                        segments that have been acquired. It corresponds to the front panel
+                        Analyze Segments softkey which appears in both the Measurement Statistics
+                        and Segmented Memory Menus. In order to use this command, the oscilloscope
+                        must be stopped and in segmented acquisition mode, with either quick
+                        measurements or infinite persistence on.
+                        """))
+        ivi.add_property(self, 'acquisition.segmented.count',
+                        self._get_acquisition_segmented_count,
+                        self._set_acquisition_segmented_count,
+                        None,
+                        ivi.Doc("""
+                        Sets the number of memory segments to acquire.
+
+                        The segmented memory acquisition mode is enabled with the :ACQuire:MODE
+                        command, and data is acquired using the :DIGitize, :SINGle, or :RUN
+                        commands. The number of memory segments in the current acquisition is
+                        returned by the acquisition.segmented.acquired_count property.
+
+                        The maximum number of segments may be limited by the memory depth of your
+                        oscilloscope. For example, an oscilloscope with 1M memory allows a maximum
+                        of 250 segments.
+                        """))
+        ivi.add_property(self, 'acquisition.segmented.index',
+                        self._get_acquisition_segmented_index,
+                        self._set_acquisition_segmented_index,
+                        None,
+                        ivi.Doc("""
+                        Sets the index into the memory segments that have been acquired.
+
+                        The segmented memory acquisition mode is enabled with the 
+                        cquisition.sample_mode property. The number of segments to acquire is set
+                        using the acquisition.segmented.count property, and data is acquired using
+                        the :DIGitize, :SINGle, or :RUN commands. The number of memory segments
+                        that have been acquired is returned by the
+                        acquisition.segmented.acquired_count property. The time tag of the
+                        currently indexed memory segment is returned by the
+                        acquisition.segmented.time_tag property.
+
+                        The maximum number of segments may be limited by the memory depth of your
+                        oscilloscope. For example, an oscilloscope with 1M memory allows a maximum
+                        of 250 segments.
+                        """))
+        ivi.add_property(self, 'acquisition.segmented.acquired_count',
+                        self._get_acquisition_segmented_acquired_count,
+                        None,
+                        None,
+                        ivi.Doc("""
+                        Returns the number of memory segments in the acquired data. You can use
+                        the acquisition.segmented.acquired_count property while segments are being
+                        acquired (although :DIGitize blocks subsequent queries until the full
+                        segmented acquisition is complete).
+
+                        The segmented memory acquisition mode is enabled with the
+                        acquisition.sample_mode property. The number of segments to acquire is set
+                        using the acquisition.segmented.count property, and data is acquired using
+                        the :DIGitize, :SINGle, or :RUN commands.
+                        """))
+        ivi.add_property(self, 'acquisition.segmented.time_tag',
+                        self._get_acquisition_segmented_time_tag,
+                        None,
+                        None,
+                        ivi.Doc("""
+                        Returns the time tag of the currently selected segmented memory index. The
+                        index is selected using the acquisition.segmented.index property.
+                        """))
         ivi.add_property(self, 'channels[].bw_limit',
                         self._get_channel_bw_limit,
                         self._set_channel_bw_limit,
@@ -578,6 +650,46 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         
         return self._read_ieee_block()
     
+    def _acquisition_segmented_analyze(self):
+        if not self._driver_operation_simulate:
+            self._write(':acquire:segmented:analyze')
+
+    def _get_acquisition_segmented_count(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_segmented_count = int(self._ask(":acquire:segmented:count?"))
+            self._set_cache_valid()
+        return self._acquisition_segmented_count
+
+    def _set_acquisition_segmented_count(self, value):
+        vaue = int(value)
+        if not self._driver_operation_simulate:
+            self._write(":acquire:segmented:count %d" % value)
+        self._acquisition_segmented_count = value
+        self._set_cache_valid()
+
+    def _get_acquisition_segmented_index(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_segmented_index = int(self._ask(":acquire:segmented:index?"))
+            self._set_cache_valid()
+        return self._acquisition_segmented_index
+
+    def _set_acquisition_segmented_index(self, value):
+        vaue = int(value)
+        if not self._driver_operation_simulate:
+            self._write(":acquire:segmented:index %d" % value)
+        self._acquisition_segmented_index = value
+        self._set_cache_valid()
+
+    def _get_acquisition_segmented_acquired_count(self):
+        if not self._driver_operation_simulate:
+            return int(self._ask(":waveform:segmented:count?"))
+        return 1
+
+    def _get_acquisition_segmented_time_tag(self):
+        if not self._driver_operation_simulate:
+            return float(self._ask(":waveform:segmented:ttag?"))
+        return 0.0
+
     def _get_timebase_mode(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":timebase:mode?").lower()
