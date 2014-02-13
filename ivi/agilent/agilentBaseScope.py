@@ -582,7 +582,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":timebase:mode?").lower()
             self._timebase_mode = [k for k,v in TimebaseModeMapping.items() if v==value][0]
-            self._set_cache_valid
+            self._set_cache_valid()
         return self._timebase_mode
     
     def _set_timebase_mode(self, value):
@@ -597,7 +597,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":timebase:reference?").lower()
             self._timebase_reference = [k for k,v in TimebaseReferenceMapping.items() if v==value][0]
-            self._set_cache_valid
+            self._set_cache_valid()
         return self._timebase_reference
     
     def _set_timebase_reference(self, value):
