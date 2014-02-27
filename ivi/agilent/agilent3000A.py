@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 """
 
-from .agilentBaseScope import *
+from .agilent2000A import *
 
 ScreenshotImageFormatMapping = {
         'bmp': 'bmp',
@@ -33,7 +33,7 @@ ScreenshotImageFormatMapping = {
         'png': 'png',
         'png24': 'png'}
 
-class agilent3000A(agilentBaseScope):
+class agilent3000A(agilent2000A):
     "Agilent InfiniiVision 3000A series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
