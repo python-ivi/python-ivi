@@ -171,6 +171,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._channel_label = list()
         self._channel_probe_skew = list()
+        self._channel_scale = list()
         self._channel_invert = list()
         self._channel_probe_id = list()
         self._channel_bw_limit = list()
@@ -582,6 +583,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._channel_probe_skew = list()
         self._channel_invert = list()
         self._channel_probe_id = list()
+        self._channel_scale = list()
         self._channel_bw_limit = list()
         
         self._analog_channel_name = list()
@@ -590,6 +592,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
             self._channel_label.append("%d" % (i+1))
             self._analog_channel_name.append("channel%d" % (i+1))
             self._channel_probe_skew.append(0)
+            self._channel_scale.append(1.0)
             self._channel_invert.append(False)
             self._channel_probe_id.append("NONE")
             self._channel_bw_limit.append(False)
