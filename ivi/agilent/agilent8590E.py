@@ -24,8 +24,11 @@ THE SOFTWARE.
 
 """
 
+import io
 import time
 import struct
+
+from . import hprtl
 
 from .. import ivi
 from .. import specan
@@ -50,6 +53,8 @@ class agilent8590E(ivi.Driver, specan.Base):
         
         super(agilent8590E, self).__init__(*args, **kwargs)
         
+        self._memory_size = 9
+        
         self._frequency_low = 9e3
         self._frequency_high = 1.8e9
         
@@ -65,6 +70,52 @@ class agilent8590E(ivi.Driver, specan.Base):
         self._identity_supported_instrument_models = ['8590L', '8591C', '8591E', '8591EM', '8592L', '8593E',
                         '8593EM', '8594E', '8594EM', '8594L', '8594Q', '8595E', '8595EM', '8596E', '8596EM']
         
+        ivi.add_method(self, 'display.clear',
+                        self._display_clear,
+                        ivi.Doc("""
+                        Clears the display and resets all associated measurements. If the
+                        oscilloscope is stopped, all currently displayed data is erased. If the
+                        oscilloscope is running, all the data in active channels and functions is
+                        erased; however, new data is displayed on the next acquisition.
+                        """))
+        ivi.add_method(self, 'system.fetch_setup',
+                        self._system_fetch_setup,
+                        ivi.Doc("""
+                        Returns the current oscilloscope setup in the form of a binary block.  The
+                        setup can be stored in memory or written to a file and then reloaded to the
+                        oscilloscope at a later time with system.load_setup.
+                        """))
+        ivi.add_method(self, 'system.load_setup',
+                        self._system_load_setup,
+                        ivi.Doc("""
+                        Transfers a binary block of setup data to the scope to reload a setup
+                        previously saved with system.fetch_setup.
+                        """))
+        ivi.add_method(self, 'system.display_string',
+                        self._system_display_string,
+                        ivi.Doc("""
+                        Writes a string to the advisory line on the instrument display.  Send None
+                        or an empty string to clear the advisory line.  
+                        """))
+        ivi.add_method(self, 'display.fetch_screenshot',
+                        self._display_fetch_screenshot,
+                        ivi.Doc("""
+                        Captures the oscilloscope screen and transfers it in the specified format.
+                        The display graticule is optionally inverted.
+                        """))
+        ivi.add_method(self, 'memory.save',
+                        self._memory_save,
+                        ivi.Doc("""
+                        Stores the current state of the instrument into an internal storage
+                        register.  Use memory.recall to restore the saved state.
+                        """))
+        ivi.add_method(self, 'memory.recall',
+                        self._memory_recall,
+                        ivi.Doc("""
+                        Recalls the state of the instrument from an internal storage register
+                        that was previously saved with memory.save.
+                        """))
+
         self._init_traces()
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
@@ -74,7 +125,9 @@ class agilent8590E(ivi.Driver, specan.Base):
         
         # interface clear
         if not self._driver_operation_simulate:
-            self._clear()
+            # don't clear; actually resets device
+            #self._clear()
+            pass
         
         # check ID
         if id_query and not self._driver_operation_simulate:
@@ -163,7 +216,76 @@ class agilent8590E(ivi.Driver, specan.Base):
     
     def _utility_unlock_object(self):
         pass
+
+
+    def _system_fetch_setup(self):
+        if self._driver_operation_simulate:
+            return b''
+        
+        self._write("OL?")
+        
+        return self._read_raw()
     
+    def _system_load_setup(self, data):
+        if self._driver_operation_simulate:
+            return
+        
+        self._write_raw(data)
+    
+    def _system_display_string(self, string = None):
+        if string is None:
+            string = ""
+        
+        if not self._driver_operation_simulate:
+            self._write("PU")
+            self._write("PA 8,137")
+            self._write("TEXT @%s@" % string)
+    
+    def _display_clear(self):
+        if not self._driver_operation_simulate:
+            self._write("CLRDSP")
+    
+    def _display_fetch_screenshot(self, format='bmp', invert=False):
+        if self._driver_operation_simulate:
+            return b''
+        
+        #if format not in ScreenshotImageFormatMapping:
+        #    raise ivi.ValueNotSupportedException()
+        
+        #format = ScreenshotImageFormatMapping[format]
+        
+        self._write("PRNPRT 0")
+        self._write("PRINT 1")
+        
+        rtl = io.BytesIO(self._read_raw())
+
+        img = hprtl.parse_hprtl(rtl)
+
+        # rescale to get white background
+        # presuming background of (90, 88, 85)
+        img[:,:,0] *= 255/90
+        img[:,:,1] *= 255/88
+        img[:,:,2] *= 255/85
+
+        bmp = hprtl.generate_bmp(img)
+
+        return bmp
+    
+    def _memory_save(self, index):
+        index = int(index)
+        if index < 0 or index >= self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("SAVES %d" % index+1)
+    
+    def _memory_recall(self, index):
+        index = int(index)
+        if index < 0 or index >= self._memory_size:
+            raise OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("RCLS %d" % index+1)
+            self.driver_operation.invalidate_all_attributes()
+
     def _get_level_amplitude_units(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask("aunits?").lower()
