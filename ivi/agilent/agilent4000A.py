@@ -43,11 +43,16 @@ class agilent4000A(agilent3000A):
         
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
+
+        # wavegen option
+        self._output_count = 2
         
         self._identity_description = "Agilent InfiniiVision 3000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX4022A','DSOX4024A','DSOX4032A',
                 'DSOX4034A','DSOX4052A','DSOX4054A','DSOX4104A','DSOX4154A','MSOX4022A','MSOX4024A',
                 'MSOX4032A','MSOX4034A','MSOX4052A','MSOX4054A','MSOX4104A','MSOX4154A']
+
+        self._init_outputs()
         
     
     

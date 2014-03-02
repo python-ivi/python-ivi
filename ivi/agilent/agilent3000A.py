@@ -26,12 +26,23 @@ THE SOFTWARE.
 
 from .agilent2000A import *
 
-ScreenshotImageFormatMapping = {
-        'bmp': 'bmp',
-        'bmp24': 'bmp',
-        'bmp8': 'bmp8bit',
-        'png': 'png',
-        'png24': 'png'}
+OutputMode = set(['function', 'arbitrary'])
+StandardWaveformMapping = {
+        'sine': 'sin',
+        'square': 'squ',
+        #'triangle': 'tri',
+        'ramp_up': 'ramp',
+        #'ramp_down',
+        #'dc'
+        'pulse': 'puls',
+        'noise': 'nois',
+        'dc': 'dc',
+        'sinc': 'sinc',
+        'exprise': 'expr',
+        'expfall': 'expf',
+        'cardiac': 'card',
+        'gaussian': 'gaus'
+        }
 
 class agilent3000A(agilent2000A):
     "Agilent InfiniiVision 3000A series IVI oscilloscope driver"
@@ -50,11 +61,16 @@ class agilent3000A(agilent2000A):
         
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
+
+        # wavegen option
+        self._output_count = 1
         
         self._identity_description = "Agilent InfiniiVision 3000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX3012A','DSOX3014A','DSOX3024A',
                 'DSOX3032A','DSOX3034A','DSOX3052A','DSOX3054A','DSOX3104A','MSOX3012A','MSOX3014A',
                 'MSOX3024A','MSOX3032A','MSOX3034A','MSOX3052A','MSOX3054A','MSOX3104A']
+
+        self._init_outputs()
         
     
     

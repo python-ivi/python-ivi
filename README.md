@@ -24,6 +24,9 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
   * Function Generators (fgen):
+    * Agilent InfiniiVision 2000A series (Wavegen option)
+    * Agilent InfiniiVision 3000A series (Wavegen option)
+    * Agilent InfiniiVision 4000A series (Wavegen option)
     * Tektronix AWG2000 series
   * DC Power Supplies (dcpwr):
     * Agilent E3600A series
