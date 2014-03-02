@@ -182,7 +182,7 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
     def _get_output_standard_waveform_dc_offset(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            resp = self._ask(":%s:offset?" % self._output_name[index])
+            resp = self._ask(":%s:voltage:offset?" % self._output_name[index])
             self._output_standard_waveform_dc_offset[index] = float(resp)
             self._set_cache_valid(index=index)
         return self._output_standard_waveform_dc_offset[index]
@@ -191,7 +191,7 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
         index = ivi.get_index(self._output_name, index)
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write(":%s:offset %e" % (self._output_name[index], value))
+            self._write(":%s:voltage:offset %e" % (self._output_name[index], value))
         self._output_standard_waveform_dc_offset[index] = value
         self._set_cache_valid(index=index)
 
