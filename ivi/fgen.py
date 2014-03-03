@@ -1722,7 +1722,7 @@ class ModulateAM(object):
                         * 'ramp_down'
                         * 'dc'
                         """)
-        ivi.add_method(self, 'am.configure_internernal',
+        ivi.add_method(self, 'am.configure_internal',
                         self._am_configure_internal,
                         """
                         Configures the attributes that control the function generator's internal
@@ -1862,7 +1862,7 @@ class ModulateFM(object):
                         * 'ramp_down'
                         * 'dc'
                         """)
-        ivi.add_method(self, 'fm.configure_internernal',
+        ivi.add_method(self, 'fm.configure_internal',
                         self._fm_configure_internal,
                         """
                         Specifies the source of the signal that the function generator uses as the
