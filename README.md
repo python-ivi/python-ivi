@@ -36,6 +36,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Tektronix PS2520G/PS2521G
   * RF Power Meters (pwrmeter):
     * Agilent 436A
+    * Agilent 437B
   * Spectrum Analyzers (specan):
     * Agilent 859xE series
   * RF Signal Generators (rfsiggen):

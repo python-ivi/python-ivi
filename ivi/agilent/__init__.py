@@ -201,6 +201,7 @@ from .agilentE3649A import agilentE3649A
 
 # RF Power Meters
 from .agilent436A import agilent436A
+from .agilent437B import agilent437B
 
 # RF Signal Generators
 from .agilent8642A import agilent8642A
