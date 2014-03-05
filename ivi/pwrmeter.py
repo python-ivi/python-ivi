@@ -456,7 +456,7 @@ class DutyCycleCorrection(object):
     
     def _set_channel_duty_cycle_value(self, index, value):
         index = ivi.get_index(self._channel_name, index)
-        value = bool(value)
+        value = float(value)
         self._channel_duty_cycle_value[index] = value
     
     def _channel_duty_cycle_configure(self, index, enabled, correction):
