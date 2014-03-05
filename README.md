@@ -17,16 +17,16 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 ## Included drivers
 
   * Oscilloscopes (scope):
-    * Agilent InfiniiVision 2000A series
-    * Agilent InfiniiVision 3000A series
-    * Agilent InfiniiVision 4000A series
+    * Agilent InfiniiVision 2000A X-series
+    * Agilent InfiniiVision 3000A X-series
+    * Agilent InfiniiVision 4000A X-series
     * Agilent InfiniiVision 6000A series
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
   * Function Generators (fgen):
-    * Agilent InfiniiVision 2000A series (Wavegen option)
-    * Agilent InfiniiVision 3000A series (Wavegen option)
-    * Agilent InfiniiVision 4000A series (Wavegen option)
+    * Agilent InfiniiVision 2000A X-series (Wavegen option)
+    * Agilent InfiniiVision 3000A X-series (Wavegen option)
+    * Agilent InfiniiVision 4000A X-series (Wavegen option)
     * Tektronix AWG2000 series
   * DC Power Supplies (dcpwr):
     * Agilent E3600A series
@@ -36,6 +36,8 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Tektronix PS2520G/PS2521G
   * RF Power Meters (pwrmeter):
     * Agilent 436A
+  * Spectrum Analyzers (specan):
+    * Agilent 859xE series
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
   * Other
