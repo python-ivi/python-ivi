@@ -23,6 +23,9 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent InfiniiVision 6000A series
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
+  * Digital Multimeters (dmm):
+    * Agilent 34401A
+    * Agilent 34410A
   * Function Generators (fgen):
     * Agilent InfiniiVision 2000A X-series (Wavegen option)
     * Agilent InfiniiVision 3000A X-series (Wavegen option)
