@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 # import libraries
 import inspect
-import numpy
+import numpy as np
 from functools import partial
 
 # try importing drivers
@@ -391,21 +391,21 @@ def get_sig(sig):
     if type(sig) == tuple and len(sig) == 2:
         # tuple of two lists or arrays
         x, y = sig
-        x = numpy.array(x)
-        y = numpy.array(y)
+        x = np.array(x)
+        y = np.array(y)
     elif type(sig) == list and type(sig[0]) == tuple and len(sig[0]) == 2:
         # list of tuples
         x, y = zip(*sig)
-        x = numpy.array(x)
-        y = numpy.array(y)
-    elif (type(sig) == numpy.ndarray or type(sig) == numpy.matrix) and len(sig.shape) == 2 and sig.shape[0] == 2:
+        x = np.array(x)
+        y = np.array(y)
+    elif (type(sig) == np.ndarray or type(sig) == np.matrix) and len(sig.shape) == 2 and sig.shape[0] == 2:
         # 2D array, hieght 2
-        x = numpy.array(sig[0])
-        y = numpy.array(sig[1])
-    elif (type(sig) == numpy.ndarray or type(sig) == numpy.matrix) and len(sig.shape) == 2 and sig.shape[1] == 2:
+        x = np.array(sig[0])
+        y = np.array(sig[1])
+    elif (type(sig) == np.ndarray or type(sig) == np.matrix) and len(sig.shape) == 2 and sig.shape[1] == 2:
         # 2D array, width 2
-        x = numpy.array(sig[:,0])
-        y = numpy.array(sig[:,1])
+        x = np.array(sig[:,0])
+        y = np.array(sig[:,1])
     else:
         raise Exception('Unknown argument')
     
@@ -417,7 +417,7 @@ def get_sig(sig):
 
 def rms(y):
     "Calculate the RMS value of the signal"
-    return numpy.linalg.norm(y) / numpy.sqrt(y.size)
+    return np.linalg.norm(y) / np.sqrt(y.size)
 
 
 def trim_doc(docstring):
