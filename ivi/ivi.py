@@ -1719,6 +1719,9 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         elif 'vxi11' in globals() and type(resource) == vxi11.Instrument:
             # Got a vxi11 instrument, can use it as is
             self._interface = resource
+        elif 'usbtmc' in globals() and type(resource) == usbtmc.Instrument:
+            # Got a usbtmc instrument, can use it as is
+            self._interface = resource
         else:
             # don't have a usable resource
             raise IOException('Invalid resource')
