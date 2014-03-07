@@ -1649,7 +1649,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # ASRL::COM1,9600,8n1::INSTR
             # ASRL::/dev/ttyUSB0,9600::INSTR
             # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
-            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<suffix>INSTR))?$', resource, re.I)
+            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<suffix>INSTR))$', resource, re.I)
             if m is None:
                 raise IOException('Invalid resource string')
             
