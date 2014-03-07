@@ -27,6 +27,7 @@ THE SOFTWARE.
 # import libraries
 import inspect
 import numpy as np
+import re
 from functools import partial
 
 # try importing drivers
@@ -1636,6 +1637,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # TCPIP0::10.0.0.1::INSTR
             # TCPIP::10.0.0.1::gpib,5::INSTR
             # TCPIP0::10.0.0.1::gpib,5::INSTR
+            # TCPIP0::10.0.0.1::usb0::INSTR
+            # TCPIP0::10.0.0.1::usb0[1234::5678::MYSERIAL::0]::INSTR
             # USB::1234::5678::INSTR
             # USB::1234::5678::SERIAL::INSTR
             # USB0::0x1234::0x5678::INSTR
@@ -1646,46 +1649,51 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # ASRL::COM1,9600,8n1::INSTR
             # ASRL::/dev/ttyUSB0,9600::INSTR
             # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
-            res = resource.split("::")
-            if len(res) == 1:
-                raise IOException('Invalid resource name')
+            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<suffix>INSTR))?$', resource, re.I)
+            if m is None:
+                raise IOException('Invalid resource string')
             
-            t = res[0].upper()
-            
-            if t[:5] == 'TCPIP':
+            res_type = m.group('type').upper()
+            res_prefix = m.group('prefix')
+            res_arg1 = m.group('arg1')
+            res_arg2 = m.group('arg2')
+            res_arg3 = m.group('arg3')
+            res_suffix = m.group('suffix')
+
+            if res_type == 'TCPIP':
                 # TCP connection
                 if 'vxi11' in globals():
                     # connect with VXI-11
                     self._interface = vxi11.Instrument(resource)
                 else:
-                    raise IOException('Cannot use resource type %s' % t)
-            elif t[:3] == 'USB':
+                    raise IOException('Cannot use resource type %s' % res_type)
+            elif res_type == 'USB':
                 # USB connection
                 if 'usbtmc' in globals():
                     self._interface = usbtmc.Instrument(resource)
                 else:
-                    raise IOException('Cannot use resource type %s' % t)
-            elif t[:4] == 'GPIB':
+                    raise IOException('Cannot use resource type %s' % res_type)
+            elif res_type == 'GPIB':
                 # GPIB connection
-                index = t[4:]
+                index = res_prefix[4:]
                 if len(index) > 0:
                     index = int(index)
                 else:
                     index = 0
                 
-                addr = int(res[1])
+                addr = int(res_arg1)
                 
                 if 'linuxgpib' in globals():
                     # connect with linux-gpib
                     self._interface = linuxgpib.LinuxGpibInstrument(index, addr)
                 else:
-                    raise IOException('Cannot use resource type %s' % t)
-            elif t[:4] == 'ASRL':
+                    raise IOException('Cannot use resource type %s' % res_type)
+            elif res_type == 'ASRL':
                 # Serial connection
                 port = 0
                 baudrate = 9600
                 
-                index = t[4:]
+                index = res_prefix[4:]
                 if len(index) > 0:
                     port = int(index)
                 else:
@@ -1693,7 +1701,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                     # n = data bits (5,6,7,8)
                     # p = parity (n,o,e,m,s)
                     # s = stop bits (1,1.5,2)
-                    t = res[1].split(',')
+                    t = res_arg1.split(',')
                     port = t[0]
                     if len(t) > 1:
                        baudrate = int(t[1])
@@ -1701,10 +1709,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 if 'pyserial' in globals():
                     self._interface = pyserial.SerialInstrument(port,baudrate=baudrate)
                 else:
-                    raise IOException('Cannot use resource type %s' % t)
+                    raise IOException('Cannot use resource type %s' % res_type)
                 
             else:
-                raise IOException('Unknown resource type %s' % t)
+                raise IOException('Unknown resource type %s' % res_type)
             
             _driver_operation_io_resource_descriptor = resource
             
