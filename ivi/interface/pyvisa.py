@@ -25,6 +25,7 @@ THE SOFTWARE.
 """
 
 import visa
+import io
 
 class PyVisaInstrument:
     "PyVisa wrapper instrument interface client"
@@ -33,6 +34,8 @@ class PyVisaInstrument:
             self.instrument = visa.instrument(resource, *args, **kwargs)
         else:
             self.instrument = resource
+        
+        self.buffer = io.BytesIO()
 
     def write_raw(self, data):
         "Write binary data to instrument"
@@ -42,10 +45,16 @@ class PyVisaInstrument:
     def read_raw(self, num=-1):
         "Read binary data from instrument"
         
-        if num < 0:
-            num = 512
+        # PyVISA only supports reading entire buffer
+        #return self.instrument.read_raw()
         
-        return self.instrument.read_raw()
+        data = self.buffer.read(num)
+        
+        if len(data) == 0:
+            self.buffer = io.BytesIO(self.instrument.read_raw())
+            data = self.buffer.read(num)
+        
+        return data
     
     def ask_raw(self, data, num=-1):
         "Write then read binary data"
