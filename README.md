@@ -55,14 +55,15 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
 
 ## Instrument communication
 
-Python IVI can use Python VXI-11, Python USBTMC, pySerial and linux-gpib to
-connect to instruments.  The implementation of the initialize method takes a
-VISA resource string and attempts to connect to an instrument.  If the resource
-string starts with TCPIP, then Python IVI will attempt to use Python VXI-11.
-If it starts with USB, it attempts to use Python USBTMC.  If it starts with
-GPIB, it will attempt to use linux-gpib's python interface.  If it starts with
-ASRL, it attemps to use pySerial.  Integration with PyVISA is planned, but not
-currently supported.  
+Python IVI can use Python VXI-11, Python USBTMC, PyVISA, pySerial and
+linux-gpib to connect to instruments.  The implementation of the initialize
+method takes a VISA resource string and attempts to connect to an instrument.
+If the resource string starts with TCPIP, then Python IVI will attempt to use
+Python VXI-11. If it starts with USB, it attempts to use Python USBTMC.  If it
+starts with GPIB, it will attempt to use linux-gpib's python interface.  If it
+starts with ASRL, it attemps to use pySerial.  Python IVI will fall back on
+PyVISA if it is detected.  It is also possible to configure IVI to prefer
+PyVISA over the other supported interfaces.  
 
 ## A note on standards compliance
 
@@ -121,6 +122,32 @@ http://alexforencich.com/wiki/en/python-usbtmc/start
 
 GitHub repository:
 https://github.com/alexforencich/python-usbtmc
+
+#### PyVISA
+
+A Python package for support of the Virtual Instrument Software Architecture
+(VISA), in order to control measurement devices and test equipment via GPIB,
+RS232, or USB.
+
+Home page:
+http://pyvisa.readthedocs.org/
+
+Python IVI will use PyVISA as a fallback for all connections, if it is
+detected.  If a connection with PyVISA is preferred, then there are two ways
+of changing this.  First, the prefer_pyvisa option can be set when
+initalizing an instrument:
+
+    mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR", prefer_pyvisa = True)
+
+or:
+
+    mso = ivi.agilent.agilentMSO7104A()
+    mso.initialize("TCPIP0::192.168.1.104::INSTR", prefer_pyvisa = True)
+
+This can also be set globally like so:
+
+    ivi.set_prefer_pyvisa(True)
+    mso = ivi.agilent.agilentMSO7104A()
 
 #### Linux GPIB
 
