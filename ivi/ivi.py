@@ -56,6 +56,24 @@ try:
 except ImportError:
     pass
 
+# pyvisa wrapper for PyVISA library support
+try:
+    from .interface import pyvisa
+except ImportError:
+    pass
+
+# set to True to try loading PyVISA first before
+# other interface libraries
+_prefer_pyvisa = False
+
+def get_prefer_pyvisa():
+    global _prefer_pyvisa
+    return _prefer_pyvisa
+
+def set_prefer_pyvisa(value):
+    global _prefer_pyvisa
+    _prefer_pyvisa = bool(value)
+
 class X(object):
     def __init__(self,_d={},**kwargs):
         kwargs.update(_d)
@@ -1419,7 +1437,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         # process out args for initialize
         kw = {}
         for k in ('range_check', 'query_instr_status', 'cache', 'simulate', 'record_coercions',
-                'interchange_check', 'driver_setup'):
+                'interchange_check', 'driver_setup', 'prefer_pyvisa'):
             if k in kwargs:
                 kw[k] = kwargs.pop(k)
         
@@ -1554,6 +1572,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                         +-------------------------+----------------------+---------------------+
                         | Driver Setup            | ''                   | driver_setup        |
                         +-------------------------+----------------------+---------------------+
+                        | Prefer PyVISA           | False                | prefer_pyvisa       |
+                        +-------------------------+----------------------+---------------------+
                         
                         Each IVI specific driver defines it own meaning and valid values for the
                         Driver Setup attribute. Many specific drivers ignore the value of the
@@ -1602,6 +1622,9 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                         * May deallocate internal resources used by the IVI session.
                         """
         
+        # inherit prefer_pyvisa from global setting
+        self._prefer_pyvisa = _prefer_pyvisa
+        
         # call initialize if resource string or other args present
         self._initialized_from_constructor = False
         if resource is not None or len(kw) > 0:
@@ -1628,6 +1651,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 self._driver_operation_interchange_check = bool(val)
             elif op == 'driver_setup':
                 self._driver_operation_driver_setup = val
+            elif op == 'prefer_pyvisa':
+                self._prefer_pyvisa = bool(val)
             else:
                 raise UnknownOptionException('Invalid option')
         
@@ -1657,7 +1682,11 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
             m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<suffix>INSTR))$', resource, re.I)
             if m is None:
-                raise IOException('Invalid resource string')
+                if 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
+                else:
+                    raise IOException('Invalid resource string')
             
             res_type = m.group('type').upper()
             res_prefix = m.group('prefix')
@@ -1668,15 +1697,28 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
 
             if res_type == 'TCPIP':
                 # TCP connection
-                if 'vxi11' in globals():
+                if self._prefer_pyvisa and 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
+                elif 'vxi11' in globals():
                     # connect with VXI-11
                     self._interface = vxi11.Instrument(resource)
+                elif 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
                 else:
                     raise IOException('Cannot use resource type %s' % res_type)
             elif res_type == 'USB':
                 # USB connection
-                if 'usbtmc' in globals():
+                if self._prefer_pyvisa and 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
+                elif 'usbtmc' in globals():
+                    # connect with USBTMC
                     self._interface = usbtmc.Instrument(resource)
+                elif 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
                 else:
                     raise IOException('Cannot use resource type %s' % res_type)
             elif res_type == 'GPIB':
@@ -1689,9 +1731,15 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 
                 addr = int(res_arg1)
                 
-                if 'linuxgpib' in globals():
+                if self._prefer_pyvisa and 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
+                elif 'linuxgpib' in globals():
                     # connect with linux-gpib
                     self._interface = linuxgpib.LinuxGpibInstrument(index, addr)
+                elif 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
                 else:
                     raise IOException('Cannot use resource type %s' % res_type)
             elif res_type == 'ASRL':
@@ -1712,11 +1760,21 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                     if len(t) > 1:
                        baudrate = int(t[1])
                 
-                if 'pyserial' in globals():
+                if self._prefer_pyvisa and 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
+                elif 'pyserial' in globals():
+                    # connect with PySerial
                     self._interface = pyserial.SerialInstrument(port,baudrate=baudrate)
+                elif 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
                 else:
                     raise IOException('Cannot use resource type %s' % res_type)
                 
+            elif 'pyvisa' in globals():
+                # connect with PyVISA
+                self._interface = pyvisa.PyVisaInstrument(resource)
             else:
                 raise IOException('Unknown resource type %s' % res_type)
             
