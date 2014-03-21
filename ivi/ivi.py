@@ -1722,13 +1722,13 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             
             _driver_operation_io_resource_descriptor = resource
             
-        elif 'vxi11' in globals() and type(resource) == vxi11.Instrument:
+        elif 'vxi11' in globals() and resource.__class__ == vxi11.Instrument:
             # Got a vxi11 instrument, can use it as is
             self._interface = resource
-        elif 'usbtmc' in globals() and type(resource) == usbtmc.Instrument:
+        elif 'usbtmc' in globals() and resource.__class__ == usbtmc.Instrument:
             # Got a usbtmc instrument, can use it as is
             self._interface = resource
-        elif set(['read_raw', 'write_raw']).issubset(set(type(resource).__dict__)):
+        elif set(['read_raw', 'write_raw']).issubset(set(resource.__class__.__dict__)):
             # has read_raw and write_raw, so should be a usable interface
             self._interface = resource
         else:
