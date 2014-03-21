@@ -1722,6 +1722,9 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         elif 'usbtmc' in globals() and type(resource) == usbtmc.Instrument:
             # Got a usbtmc instrument, can use it as is
             self._interface = resource
+        elif set(['read_raw', 'write_raw']).issubset(set(type(resource).__dict__)):
+            # has read_raw and write_raw, so should be a usable interface
+            self._interface = resource
         else:
             # don't have a usable resource
             raise IOException('Invalid resource')
@@ -1810,7 +1813,12 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             return b''
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        return self._interface.ask_raw(data, num)
+        try:
+            return self._interface.ask_raw(data, num)
+        except AttributeError:
+            # if interface does not implement ask_raw, emulate it
+            self._write_raw(data)
+            return self._read_raw(num)
     
     def _write(self, data, encoding = 'utf-8'):
         "Write string to instrument"
@@ -1819,7 +1827,16 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             return
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        self._interface.write(data, encoding)
+        try:
+            self._interface.write(data, encoding)
+        except AttributeError:
+            if type(data) is tuple or type(data) is list:
+                # recursive call for a list of commands
+                for data_i in data:
+                    self._write(data_i, encoding)
+                return
+
+            self._write_raw(str(data).encode(encoding))
     
     def _read(self, num=-1, encoding = 'utf-8'):
         "Read string from instrument"
@@ -1828,7 +1845,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             return ''
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        return self._interface.read(num, encoding)
+        try:
+            return self._interface.read(num, encoding)
+        except AttributeError:
+            return self._read_raw(num).decode(encoding).rstrip('\r\n')
     
     def _ask(self, data, num=-1, encoding = 'utf-8'):
         "Write then read string"
@@ -1837,7 +1857,19 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             return ''
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        return self._interface.ask(data, num, encoding)
+        try:
+            return self._interface.ask(data, num, encoding)
+        except AttributeError:
+            # if interface does not implement ask, emulate it
+            if type(data) is tuple or type(data) is list:
+            #    # recursive call for a list of commands
+                val = list()
+                for data_i in data:
+                    val.append(self._ask(data_i, num, encoding))
+                return val
+
+            self._write(data, encoding)
+            return self._read(num, encoding)
     
     def _read_stb(self):
         "Read status byte"
@@ -1846,7 +1878,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             return 0
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        return self._interface.read_stb()
+        try:
+            return self._interface.read_stb()
+        except (AttributeError, NotImplementedError):
+            return int(self._ask("*STB?"))
     
     def _trigger(self):
         "Device trigger"
@@ -1854,7 +1889,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             print("[simulating] Trigger")
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        return self._interface.trigger()
+        try:
+            self._interface.trigger()
+        except (AttributeError, NotImplementedError):
+            self._write("*TRG")
     
     def _clear(self):
         "Device clear"
@@ -1862,7 +1900,10 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             print("[simulating] Clear")
         if not self._initialized or self._interface is None:
             raise NotInitializedException()
-        return self._interface.clear()
+        try:
+            return self._interface.clear()
+        except (AttributeError, NotImplementedError):
+            self._write("*CLS")
     
     def _remote(self):
         "Device set remote"
