@@ -179,7 +179,8 @@ class diconGP700(ivi.Driver):
                         Recall device configuration from the specified memory slot.
                         """))
         
-        self._init_channels()
+        if self._initialized_from_constructor:
+            self._init_channels()
         
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
@@ -203,7 +204,8 @@ class diconGP700(ivi.Driver):
         if reset:
             self.utility_reset()
         
-        #self._init_channels()
+        if not self._initialized_from_constructor:
+            self._init_channels()
     
     def _load_id_string(self):
         if self._driver_operation_simulate:
@@ -282,10 +284,7 @@ class diconGP700(ivi.Driver):
         except AttributeError:
             pass
         
-        if self._initialized:
-            config = self._get_config()
-        else:
-            config = self._config
+        config = self._get_config()
         
         self._attenuator_count = 0
         self._attenuator_name = list()
