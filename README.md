@@ -147,7 +147,7 @@ or:
 This can also be set globally like so:
 
     ivi.set_prefer_pyvisa(True)
-    mso = ivi.agilent.agilentMSO7104A()
+    mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
 
 #### Linux GPIB
 
