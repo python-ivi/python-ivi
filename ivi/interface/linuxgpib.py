@@ -51,12 +51,12 @@ class LinuxGpibInstrument:
     
     def write(self, message, encoding = 'utf-8'):
         "Write string to instrument"
-        if message.__class__ is tuple or message.__class__ is list:
+        if type(message) is tuple or type(message) is list:
             # recursive call for a list of commands
             for message_i in message:
                 self.write(message_i, encoding)
             return
-        
+
         self.write_raw(str(message).encode(encoding))
 
     def read(self, num=-1, encoding = 'utf-8'):
@@ -65,6 +65,13 @@ class LinuxGpibInstrument:
 
     def ask(self, message, num=-1, encoding = 'utf-8'):
         "Write then read string"
+        if type(message) is tuple or type(message) is list:
+            # recursive call for a list of commands
+            val = list()
+            for message_i in message:
+                val.append(self.ask(message_i, num, encoding))
+            return val
+
         self.write(message, encoding)
         return self.read(num, encoding)
     
