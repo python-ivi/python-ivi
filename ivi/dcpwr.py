@@ -304,7 +304,7 @@ class Base(object):
     def _set_output_current_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if value < 0 or value > self._output_current_max[index]:
+        if value < 0 or value > self._output_spec[index]['current_max']:
             raise ivi.OutOfRangeException()
         self._output_current_limit[index] = value
     
@@ -343,7 +343,7 @@ class Base(object):
     def _set_output_ovp_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if value < 0 or value > self._output_ovp_max[index]:
+        if value < 0 or value > self._output_spec[index]['ovp_max']:
             raise ivi.OutOfRangeException()
         self._output_ovp_limit[index] = value
     
@@ -354,7 +354,7 @@ class Base(object):
     def _set_output_voltage_level(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if value < 0 or value > self._output_voltage_max[index]:
+        if value < 0 or value > self._output_spec[index]['voltage_max']:
             raise ivi.OutOfRangeException()
         self._output_voltage_level[index] = value
     
@@ -377,8 +377,8 @@ class Base(object):
         k = dcpwr.get_range(self._output_range[index], t, range_val)
         if k < 0:
             raise ivi.OutOfRangeException()
-        self._output_voltage_max[index] = self._output_range[index][k][0]
-        self._output_current_max[index] = self._output_range[index][k][1]
+        self._output_spec[index]['voltage_max'] = self._output_range[index][k][0]
+        self._output_spec[index]['current_max'] = self._output_range[index][k][1]
         pass
     
     def _output_configure_ovp(self, index, enabled, limit):
@@ -388,15 +388,15 @@ class Base(object):
     
     def _output_query_current_limit_max(self, index, voltage_level):
         index = ivi.get_index(self._output_name, index)
-        if voltage_level < 0 or voltage_level > self._output_voltage_max[index]:
+        if voltage_level < 0 or voltage_level > self._output_spec[index]['voltage_max']:
             raise ivi.OutOfRangeException()
-        return self._output_current_max[index]
+        return self._output_spec[index]['current_max']
     
     def _output_query_voltage_level_max(self, index, current_limit):
         index = ivi.get_index(self._output_name, index)
-        if current_limit < 0 or current_limit > self._output_current_max[index]:
+        if current_limit < 0 or current_limit > self._output_spec[index]['current_limit_max']:
             raise ivi.OutOfRangeException()
-        return self._output_voltage_max[index]
+        return self._output_spec[index]['voltage_max']
     
     def _output_query_output_state(self, index, state):
         index = ivi.get_index(self._output_name, index)
