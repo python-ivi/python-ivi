@@ -297,7 +297,7 @@ class Base(ivi.Driver, dcpwr.Base):
     def _set_output_voltage_level(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if value < 0 or value > self._output_voltage_max[index]:
+        if value < 0 or value > self._output_spec[index]['voltage_max']:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("instrument:nselect %d" % (index+1))
