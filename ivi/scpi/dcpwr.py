@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 from .. import ivi
 from .. import dcpwr
+from .. import extra
 
 TrackingType = set(['floating'])
 TriggerSourceMapping = {
@@ -375,65 +376,7 @@ class Base(ivi.Driver, dcpwr.Base):
                 self._write("instrument:nselect %d" % (index+1))
             self._write("source:voltage:protection:clear")
 
-class OCP(object):
-    def __init__(self, *args, **kwargs):
-        super(OCP, self).__init__(*args, **kwargs)
-        
-        self._output_ocp_enabled = list()
-        self._output_ocp_limit = list()
-        
-        self._output_spec = [
-            {
-                'range': {
-                    'P8V': (9.0, 20.0),
-                    'P20V': (21.0, 10.0)
-                },
-                'ovp_max': 22.0,
-                'ocp_max': 22.0,
-                'voltage_max': 9.0,
-                'current_max': 20.0
-            }
-        ]
-        
-        ivi.add_property(self, 'outputs[].ocp_enabled',
-                        self._get_output_ocp_enabled,
-                        self._set_output_ocp_enabled,
-                        None,
-                        ivi.Doc("""
-                        Specifies whether the power supply provides over-current protection. If
-                        this attribute is set to True, the power supply disables the output when
-                        the output current is greater than or equal to the value of the OCP
-                        Limit attribute.
-                        """))
-        ivi.add_property(self, 'outputs[].ocp_limit',
-                        self._get_output_ocp_limit,
-                        self._set_output_ocp_limit,
-                        None,
-                        ivi.Doc("""
-                        Specifies the current the power supply allows. The units are Amps.
-                        
-                        If the OCP Enabled attribute is set to True, the power supply disables the
-                        output when the output current is greater than or equal to the value of
-                        this attribute.
-                        
-                        If the OCP Enabled is set to False, this attribute does not affect the
-                        behavior of the instrument.
-                        """))
-        
-        self._init_outputs()
-   
-    def _init_outputs(self):
-        try:
-            super(OCP, self)._init_outputs()
-        except AttributeError:
-            pass
-        
-        self._output_ocp_enabled = list()
-        self._output_ocp_limit = list()
-        for i in range(self._output_count):
-            self._output_ocp_enabled.append(True)
-            self._output_ocp_limit.append(0)
-    
+class OCP(extra.dcpwr.OCP):
     def _get_output_ocp_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
