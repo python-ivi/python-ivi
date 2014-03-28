@@ -34,7 +34,8 @@ TriggerSourceMapping = {
         'bus': 'bus'}
 
 class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigger,
-                scpi.dcpwr.Measurement):
+                scpi.dcpwr.Measurement,
+                scpi.common.Memory):
     "Agilent E3600A series IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
@@ -75,6 +76,7 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
         ]
         
         self._memory_size = 3
+        self._memory_offset = 1
         
         self._output_trigger_delay = list()
         
@@ -109,10 +111,6 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
                         self._get_couple_tracking_type,
                         self._set_couple_tracking_type)
         
-        ivi.add_method(self, 'memory.save',
-                        self._memory_save)
-        ivi.add_method(self, 'memory.recall',
-                        self._memory_recall)
         ivi.add_method(self, 'memory.set_name',
                         self._set_memory_name)
         ivi.add_method(self, 'memory.get_name',
@@ -185,34 +183,20 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
         self._couple_trigger = value
         self._set_cache_valid()
     
-    def _memory_save(self, index):
-        index = int(index)
-        if index < 1 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*sav %d" % index)
-    
-    def _memory_recall(self, index):
-        index = int(index)
-        if index < 1 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*rcl %d" % index)
-    
     def _get_memory_name(self, index):
         index = int(index)
-        if index < 1 or index > self._memory_size:
+        if index < 0 or index >= self._memory_size:
             raise OutOfRangeException()
         if not self._driver_operation_simulate:
-            return self._ask("memory:state:name? %d" % index).strip(' "')
+            return self._ask(":memory:state:name? %d" % (index+1)).strip(' "')
     
     def _set_memory_name(self, index, value):
         index = int(index)
         value = str(value)
-        if index < 1 or index > self._memory_size:
+        if index < 0 or index >= self._memory_size:
             raise OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write("memory:state:name %d, \"%s\"" % (index, value))
+            self._write(":memory:state:name %d, \"%s\"" % (index+1, value))
     
     
     
