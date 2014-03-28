@@ -34,5 +34,7 @@ class agilent8642B(agilent8642A):
         
         super(agilent8642B, self).__init__(*args, **kwargs)
         
+        self._frequency_low = 10e3
+        self._frequency_high = 2100e6
     
     

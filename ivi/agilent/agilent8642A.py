@@ -171,6 +171,9 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         self._identity_specification_major_version = 2
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = list(['8642A','8642B'])
+        
+        self._frequency_low = 10e3
+        self._frequency_high = 1050e6
     
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
