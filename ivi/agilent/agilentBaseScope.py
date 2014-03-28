@@ -29,6 +29,8 @@ import struct
 
 from .. import ivi
 from .. import scope
+from .. import scpi
+from .. import extra
 
 AcquisitionTypeMapping = {
         'normal': 'norm',
@@ -159,7 +161,9 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                 scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
                 scope.WaveformMeasurement, scope.MinMaxWaveform,
                 scope.ContinuousAcquisition, scope.AverageAcquisition,
-                scope.SampleMode, scope.AutoSetup):
+                scope.SampleMode, scope.AutoSetup,
+                scpi.common.Memory,
+                extra.common.SystemSetup, extra.common.Screenshot):
     "Agilent generic IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
@@ -438,42 +442,11 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
                         oscilloscope is running, all the data in active channels and functions is
                         erased; however, new data is displayed on the next acquisition.
                         """))
-        ivi.add_method(self, 'system.fetch_setup',
-                        self._system_fetch_setup,
-                        ivi.Doc("""
-                        Returns the current oscilloscope setup in the form of a binary block.  The
-                        setup can be stored in memory or written to a file and then reloaded to the
-                        oscilloscope at a later time with system.load_setup.
-                        """))
-        ivi.add_method(self, 'system.load_setup',
-                        self._system_load_setup,
-                        ivi.Doc("""
-                        Transfers a binary block of setup data to the scope to reload a setup
-                        previously saved with system.fetch_setup.
-                        """))
         ivi.add_method(self, 'system.display_string',
                         self._system_display_string,
                         ivi.Doc("""
                         Writes a string to the advisory line on the instrument display.  Send None
                         or an empty string to clear the advisory line.  
-                        """))
-        ivi.add_method(self, 'display.fetch_screenshot',
-                        self._display_fetch_screenshot,
-                        ivi.Doc("""
-                        Captures the oscilloscope screen and transfers it in the specified format.
-                        The display graticule is optionally inverted.
-                        """))
-        ivi.add_method(self, 'memory.save',
-                        self._memory_save,
-                        ivi.Doc("""
-                        Stores the current state of the instrument into an internal storage
-                        register.  Use memory.recall to restore the saved state.
-                        """))
-        ivi.add_method(self, 'memory.recall',
-                        self._memory_recall,
-                        ivi.Doc("""
-                        Recalls the state of the instrument from an internal storage register
-                        that was previously saved with memory.save.
                         """))
         
         self._init_channels()
@@ -1580,21 +1553,6 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     def _measurement_auto_setup(self):
         if not self._driver_operation_simulate:
             self._write(":autoscale")
-    
-    def _memory_save(self, index):
-        index = int(index)
-        if index < 0 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*sav %d" % index)
-    
-    def _memory_recall(self, index):
-        index = int(index)
-        if index < 0 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*rcl %d" % index)
-            self.driver_operation.invalidate_all_attributes()
     
     
     
