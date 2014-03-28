@@ -130,13 +130,29 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
         self._set_cache_valid(index=index)
     
     def _get_output_impedance(self, index):
-        index = ivi.get_index(self._output_name, index)
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            val = self._ask(":%s:output:load?" % self._output_name[index])
+            if val == 'ONEM':
+                self._output_impedance[index] = 1000000
+            elif val == 'FIFT':
+                self._output_impedance[index] = 50
+            self._set_cache_valid(index=index)
         return self._output_impedance[index]
     
     def _set_output_impedance(self, index, value):
-        index = ivi.get_index(self._output_name, index)
-        value = 50
+        value = float(value)
+        index = ivi.get_index(self._analog_channel_name, index)
+        if value != 50 and value != 1000000:
+            raise Exception('Invalid impedance selection')
+        if not self._driver_operation_simulate:
+            if value == 1000000:
+                self._write(":%s:output:load onemeg" % self._output_name[index])
+            elif value == 50:
+                self._write(":%s:output:load fifty" % self._output_name[index])
         self._output_impedance[index] = value
+        self._set_cache_valid(index=index)
+        self._set_cache_valid(False, 'output_standard_waveform_amplitude', index)
     
     def _get_output_mode(self, index):
         index = ivi.get_index(self._output_name, index)
