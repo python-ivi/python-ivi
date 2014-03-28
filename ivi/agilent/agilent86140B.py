@@ -25,6 +25,8 @@ THE SOFTWARE.
 """
 
 from .. import ivi
+from .. import extra
+from .. import scpi
 import time
 
 AmplitudeUnitsMapping = {'dBm' : 'dbm',
@@ -38,7 +40,7 @@ ScreenshotImageFormatMapping = {
         'cgm': 'cgm',
         'gif': 'gif'}
 
-class agilent86140B(ivi.Driver):
+class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
     "Agilent 86140B Series Optical Spectrum Analyzer Driver"
     
     def __init__(self, *args, **kwargs):
@@ -82,12 +84,6 @@ class agilent86140B(ivi.Driver):
         self._identity_supported_instrument_models = ['86140B', '86141B', '86142B', '86143B',
                                                       '86144B', '86145B', '86146B']
         
-        ivi.add_method(self, 'display.fetch_screenshot',
-                        self._display_fetch_screenshot)
-        ivi.add_method(self, 'memory.save',
-                        self._memory_save)
-        ivi.add_method(self, 'memory.recall',
-                        self._memory_recall)
         ivi.add_property(self, 'level.amplitude_units',
                         self._get_level_amplitude_units,
                         self._set_level_amplitude_units,
@@ -483,20 +479,6 @@ class agilent86140B(ivi.Driver):
         time.sleep(25)
         
         return self._read_ieee_block()
-    
-    def _memory_save(self, index):
-        index = int(index)
-        if index < 0 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*sav %d" % index)
-    
-    def _memory_recall(self, index):
-        index = int(index)
-        if index < 0 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*rcl %d" % index)
     
     def _get_level_amplitude_units(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
