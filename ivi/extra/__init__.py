@@ -25,6 +25,8 @@ THE SOFTWARE.
 """
 
 __all__ = [
+        # Common functions
+        "common",
         # Extra base classes
         "dcpwr"]
 
