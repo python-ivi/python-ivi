@@ -936,7 +936,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     def _get_channel_input_impedance(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            val = float(self._ask(":%s:impedance?" % self._channel_name[index]))
+            val = self._ask(":%s:impedance?" % self._channel_name[index])
             if val == 'ONEM':
                 self._channel_input_impedance[index] = 1000000
             elif val == 'FIFT':
