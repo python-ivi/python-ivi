@@ -27,7 +27,7 @@ THE SOFTWARE.
 from .agilentE3600A import *
 from .. import scpi
 
-class agilentE3633A(agilentE3600A, scpi.dcpwr.OCP):
+class agilentE3633A(scpi.dcpwr.OCP, agilentE3600A):
     "Agilent E3633A IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
