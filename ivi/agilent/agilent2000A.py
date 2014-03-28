@@ -222,6 +222,8 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
     def _set_output_standard_waveform_duty_cycle_high(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
+        if value < 20.0 or value > 80.0:
+            raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write(":%s:function:square:dcycle %e" % (self._output_name[index], value))
         self._output_standard_waveform_duty_cycle_high[index] = value
