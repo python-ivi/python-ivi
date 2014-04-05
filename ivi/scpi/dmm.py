@@ -72,6 +72,11 @@ MeasurementResolutionMapping = {
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
 
+TriggerSourceMapping = {
+        'bus': 'bus',
+        'external': 'ext',
+        'immediate': 'imm'}
+
 class Base(ivi.Driver, dmm.Base):
     "Generic SCPI IVI DMM driver"
     
@@ -303,10 +308,18 @@ class Base(ivi.Driver, dmm.Base):
         self._set_cache_valid()
     
     def _get_trigger_source(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:source?").lower()
+            value = [k for k,v in TriggerSourceMapping.items() if v==value][0]
+            self._trigger_source = value
+            self._set_cache_valid()
         return self._trigger_source
     
     def _set_trigger_source(self, value):
-        value = str(value)
+        if value not in TriggerSourceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":trigger:source %s" % TriggerSourceMapping[value])
         self._trigger_source = value
     
     def _measurement_abort(self):
@@ -335,6 +348,75 @@ class Base(ivi.Driver, dmm.Base):
         if not self._driver_operation_simulate:
             return float(self._ask(":read?"))
         return 0.0
+    
+    
+class MultiPoint(dmm.MultiPoint):
+    "Extension IVI methods for DMMs capable of acquiring measurements based on multiple triggers"
+    
+    def _get_trigger_measurement_complete_destination(self):
+        return self._trigger_measurement_complete_destination
+    
+    def _set_trigger_measurement_complete_destination(self, value):
+        value = str(value)
+        self._trigger_measurement_complete_destination = value
+    
+    def _get_trigger_multi_point_sample_count(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = int(self._ask("sample:count?"))
+            self._trigger_multi_point_sample_count = value
+            self._set_cache_valid()
+        return self._trigger_multi_point_sample_count
+    
+    def _set_trigger_multi_point_sample_count(self, value):
+        value = int(value)
+        if not self._driver_operation_simulate:
+            self._write("sample:count %d" % value)
+        self._trigger_multi_point_sample_count = value
+        self._set_cache_valid()
+    
+    def _get_trigger_multi_point_sample_interval(self):
+        return self._trigger_multi_point_sample_interval
+    
+    def _set_trigger_multi_point_sample_interval(self, value):
+        value = int(value)
+        self._trigger_multi_point_sample_interval = value
+    
+    def _get_trigger_multi_point_sample_trigger(self):
+        return self._trigger_multi_point_sample_trigger
+    
+    def _set_trigger_multi_point_sample_trigger(self, value):
+        value = str(value)
+        self._trigger_multi_point_sample_trigger = value
+    
+    def _get_trigger_multi_point_count(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:count?")
+            if float(value) >= 9.9e37:
+                value = float('inf')
+            else:
+                value = int(value)
+            self._trigger_multi_point_count = value
+            self._set_cache_valid()
+        return self._trigger_multi_point_count
+    
+    def _set_trigger_multi_point_count(self, value):
+        if float(value) >= 9.9e37 or float(value) == float('inf'):
+            value = float('inf')
+        else:
+            value = int(value)
+        if not self._driver_operation_simulate:
+            if value == float('inf'):
+                self._write("trigger:count inf")
+            else:
+                self._write("trigger:count %d" % value)
+        self._trigger_multi_point_count = value
+        self._set_cache_valid()
+    
+    def _measurement_fetch_multi_point(self, max_time, num_of_measurements = 0):
+        pass
+    
+    def _measurement_read_multi_point(self, max_time, num_of_measurements = 0):
+        pass
     
     
 class SoftwareTrigger(dmm.SoftwareTrigger):

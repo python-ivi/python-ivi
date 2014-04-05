@@ -67,7 +67,7 @@ MeasurementResolutionMapping = {
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
 
-class agilent34401A(scpi.dmm.Base):
+class agilent34401A(scpi.dmm.Base, scpi.dmm.MultiPoint, scpi.dmm.SoftwareTrigger):
     "Agilent 34401A IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
