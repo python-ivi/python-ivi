@@ -4,7 +4,7 @@ For more information and updates:
 http://alexforencich.com/wiki/en/python-ivi/start
 
 GitHub repository:
-https://github.com/alexforencich/python-ivi
+https://github.com/python-ivi/python-ivi
 
 Google group:
 https://groups.google.com/d/forum/python-ivi

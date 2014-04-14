@@ -13,7 +13,7 @@ See also:
 - `IVI Foundation`_
 
 .. _`Python IVI home page`: http://alexforencich.com/wiki/en/python-ivi/start
-.. _`GitHub repository`: https://github.com/alexforencich/python-ivi
+.. _`GitHub repository`: https://github.com/python-ivi/python-ivi
 .. _`IVI Foundation`: http://www.ivifoundation.org/
 
 Contents:
