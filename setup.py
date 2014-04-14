@@ -17,7 +17,7 @@ electronic test equipment that is remotely controllable.''',
     author = 'Alex Forencich',
     author_email = 'alex@alexforencich.com',
     url = 'http://alexforencich.com/wiki/en/python-ivi/start',
-    download_url = 'http://github.com/alexforencich/python-ivi/tarball/master',
+    download_url = 'http://github.com/python-ivi/python-ivi/tarball/master',
     keywords = 'IVI measurement instrument',
     license = 'MIT License',
     classifiers=[
