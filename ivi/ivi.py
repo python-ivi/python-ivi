@@ -70,7 +70,7 @@ def get_prefer_pyvisa():
     global _prefer_pyvisa
     return _prefer_pyvisa
 
-def set_prefer_pyvisa(value):
+def set_prefer_pyvisa(value=True):
     global _prefer_pyvisa
     _prefer_pyvisa = bool(value)
 
