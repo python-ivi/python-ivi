@@ -139,12 +139,12 @@ initalizing an instrument:
 
     mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR", prefer_pyvisa = True)
 
-or:
+or equivalently:
 
     mso = ivi.agilent.agilentMSO7104A()
     mso.initialize("TCPIP0::192.168.1.104::INSTR", prefer_pyvisa = True)
 
-This can also be set globally like so:
+Second, the prefer_pyvisa option can be set globally:
 
     ivi.set_prefer_pyvisa(True)
     mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
