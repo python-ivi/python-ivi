@@ -74,6 +74,10 @@ def set_prefer_pyvisa(value=True):
     global _prefer_pyvisa
     _prefer_pyvisa = bool(value)
 
+# version information
+from .version import __version__
+version = __version__
+
 class X(object):
     def __init__(self,_d={},**kwargs):
         kwargs.update(_d)
