@@ -1,4 +1,5 @@
 
+from __future__ import with_statement
 
 # http://docs.python.org/distutils/
 # http://packages.python.org/distribute/
@@ -7,10 +8,18 @@ try:
 except:
     from distutils.core import setup
 
+import os.path
+
+version_py = os.path.join(os.path.dirname(__file__), 'ivi', 'version.py')
+with open(version_py, 'r') as f:
+    d = dict()
+    exec(f.read(), d)
+    version = d['__version__']
+
 setup(
     name = 'python-ivi',
     description = 'Python Interchangeable Virtual Instrument Library',
-    version = '0.1',
+    version = version,
     long_description = '''This package is a Python-based interpretation of the
 Interchangeable Virtual Instrument standard, a software abstraction for
 electronic test equipment that is remotely controllable.''',
