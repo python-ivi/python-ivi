@@ -204,6 +204,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._timebase_window_position = 0.0
         self._timebase_window_range = 5e-6
         self._timebase_window_scale = 500e-9
+        self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
         self._display_vectors = True
         self._display_labels = True
         
@@ -616,10 +617,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if self._driver_operation_simulate:
             return b''
         
-        if format not in ScreenshotImageFormatMapping:
+        if format not in self._display_screenshot_image_format_mapping:
             raise ivi.ValueNotSupportedException()
         
-        format = ScreenshotImageFormatMapping[format]
+        format = self._display_screenshot_image_format_mapping[format]
         
         self._write(":hardcopy:inksaver %d" % int(bool(invert)))
         self._write(":display:data? %s" % format)

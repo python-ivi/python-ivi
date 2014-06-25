@@ -68,6 +68,8 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
 
+        self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
+
         # wavegen option
         self._output_count = 1
         self._output_standard_waveform_mapping = StandardWaveformMapping
