@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 """
 
-from .agilentBaseScope import *
+from .agilentBaseInfiniiVision import *
 
 from .. import ivi
 from .. import fgen
@@ -50,7 +50,7 @@ StandardWaveformMapping = {
         'dc': 'dc'
         }
 
-class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, fgen.ModulateFM):
+class agilent2000A(agilentBaseInfiniiVision, fgen.Base, fgen.StdFunc, fgen.ModulateAM, fgen.ModulateFM):
     "Agilent InfiniiVision 2000A series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):

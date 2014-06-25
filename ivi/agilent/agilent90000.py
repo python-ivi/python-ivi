@@ -24,8 +24,21 @@ THE SOFTWARE.
 
 """
 
-from .agilentBaseScope import *
+from .agilentBaseInfiniium import *
 
+AcquisitionModeMapping = {
+        'etim': ('normal', 'equivalent_time'),
+        'rtim': ('normal', 'real_time'),
+        'pdet': ('peak_detect', 'real_time'),
+        'hres': ('high_resolution', 'real_time'),
+        'segm': ('normal', 'segmented'),
+        'segp': ('peak_detect', 'segmented'),
+        'segh': ('high_resolution', 'segmented')
+}
+AcquisitionTypeMapping = {
+        'normal': 'norm',
+        'peak_detect': 'peak',
+        'high_resolution': 'hres'}
 VerticalCoupling = set(['dc'])
 ScreenshotImageFormatMapping = {
         'tif': 'tif',
@@ -38,7 +51,7 @@ ScreenshotImageFormatMapping = {
         'jpeg': 'jpg',
         'gif': 'gif'}
 
-class agilent90000(agilentBaseScope):
+class agilent90000(agilentBaseInfiniium):
     "Agilent Infiniium 90000A/90000X series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
@@ -135,40 +148,6 @@ class agilent90000(agilentBaseScope):
                         Sets the displayed scale of the selected channel per division.  Setting
                         this parameter disables display_auto.  Units are volts.  
                         """))
-        ivi.add_property(self, 'display.color_grade',
-                        self._get_display_color_grade,
-                        self._set_display_color_grade,
-                        None,
-                        ivi.Doc("""
-                        Controls color grade persistance.
-                        
-                        When in the color grade persistance mode, all waveforms are mapped into a
-                        database and shown with different colors representing varying number of
-                        hits in a pixel.  Vector display mode is disabled when color grade is
-                        enabled.
-                        """))
-        ivi.add_method(self, 'display.fetch_color_grade_levels',
-                        self._fetch_display_color_grade_levels,
-                        ivi.Doc("""
-                        Returns the range of hits represented by each color.  Fourteen values are
-                        returned, representing the minimum and maximum count for each of seven
-                        colors.  The values are returned in the following order:
-                        
-                        * White minimum value
-                        * White maximum value
-                        * Yellow minimum value
-                        * Yellow maximum value
-                        * Orange minimum value
-                        * Orange maximum value
-                        * Red minimum value
-                        * Red maximum value
-                        * Pink minimum value
-                        * Pink maximum value
-                        * Blue minimum value
-                        * Blue maximum value
-                        * Green minimum value
-                        * Green maximum value
-                        """))
         
         self._init_channels()
         
@@ -219,39 +198,6 @@ class agilent90000(agilentBaseScope):
         self._write(":display:data? %s, screen, on, %s" % (format, 'invert' if invert else 'normal'))
         
         return self._read_ieee_block()
-    
-    def _get_display_vectors(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._display_vectors = bool(int(self._ask(":display:connect?")))
-            self._set_cache_valid()
-        return self._display_vectors
-    
-    def _set_display_vectors(self, value):
-        value = bool(value)
-        if not self._driver_operation_simulate:
-            self._write(":display:connect %d" % int(value))
-        self._display_vectors = value
-        self._set_cache_valid()
-    
-    def _get_display_color_grade(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._display_color_grade = bool(int(self._ask(":display:cgrade?")))
-            self._set_cache_valid()
-        return self._display_color_grade
-    
-    def _set_display_color_grade(self, value):
-        value = bool(value)
-        if not self._driver_operation_simulate:
-            self._write(":display:cgrade %d" % int(value))
-        self._display_color_grade = value
-        self._set_cache_valid()
-    
-    def _fetch_display_color_grade_levels(self):
-        if self._driver_operation_simulate():
-            return [0]*14
-        
-        lst = self._ask(":display:cgrade:levels?").split(',')
-        return [int(x) for x in lst]
     
     def _get_channel_common_mode(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
@@ -356,20 +302,6 @@ class agilent90000(agilentBaseScope):
         if not self._driver_operation_simulate:
             self._write(":%s:display:scale %e" % (self._channel_name[index], value))
         self._channel_display_scale[index] = value
-        self._set_cache_valid(index=index)
-    
-    def _get_channel_input_impedance(self, index):
-        index = ivi.get_index(self._analog_channel_name, index)
-        # fixed
-        self._channel_input_impedance[index] = 50
-        return self._channel_input_impedance[index]
-    
-    def _set_channel_input_impedance(self, index, value):
-        value = float(value)
-        index = ivi.get_index(self._analog_channel_name, index)
-        if value != 50:
-            raise Exception('Invalid impedance selection')
-        self._channel_input_impedance[index] = value
         self._set_cache_valid(index=index)
     
     def _measurement_fetch_waveform(self, index):
