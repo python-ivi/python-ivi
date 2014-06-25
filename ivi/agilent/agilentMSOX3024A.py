@@ -32,7 +32,7 @@ class agilentMSOX3024A(agilent3000A):
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', 'MSO-X 3024A')
         
-        super(agilentMSOX34A, self).__init__(*args, **kwargs)
+        super(agilentMSOX3024A, self).__init__(*args, **kwargs)
         
         self._analog_channel_count = 4
         self._digital_channel_count = 16
