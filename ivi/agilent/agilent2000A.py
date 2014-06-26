@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 """
 
-from .agilentBaseScope import *
+from .agilentBaseInfiniiVision import *
 
 from .. import ivi
 from .. import fgen
@@ -50,7 +50,7 @@ StandardWaveformMapping = {
         'dc': 'dc'
         }
 
-class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, fgen.ModulateFM):
+class agilent2000A(agilentBaseInfiniiVision, fgen.Base, fgen.StdFunc, fgen.ModulateAM, fgen.ModulateFM):
     "Agilent InfiniiVision 2000A series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
@@ -68,8 +68,11 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
 
+        self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
+
         # wavegen option
         self._output_count = 1
+        self._output_standard_waveform_mapping = StandardWaveformMapping
         
         self._identity_description = "Agilent InfiniiVision 2000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX2002A','DSOX2004A','DSOX2012A',
@@ -259,17 +262,17 @@ class agilent2000A(agilentBaseScope, fgen.Base, fgen.StdFunc, fgen.ModulateAM, f
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             resp = self._ask(":%s:function?" % self._output_name[index])
             value = resp.lower()
-            value = [k for k,v in StandardWaveformMapping.items() if v==value][0]
+            value = [k for k,v in self._output_standard_waveform_mapping.items() if v==value][0]
             self._output_standard_waveform_waveform[index] = value
             self._set_cache_valid(index=index)
         return self._output_standard_waveform_waveform[index]
     
     def _set_output_standard_waveform_waveform(self, index, value):
         index = ivi.get_index(self._output_name, index)
-        if value not in StandardWaveformMapping:
+        if value not in self._output_standard_waveform_mapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":%s:function %s" % (self._output_name[index], StandardWaveformMapping[value]))
+            self._write(":%s:function %s" % (self._output_name[index], self._output_standard_waveform_mapping[value]))
         self._output_standard_waveform_waveform[index] = value
         self._set_cache_valid(index=index)
     

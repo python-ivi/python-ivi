@@ -24,15 +24,15 @@ THE SOFTWARE.
 
 """
 
-from .agilentBaseInfiniiVision import *
+from .agilentBaseScope import *
 
-class agilent7000(agilentBaseInfiniiVision):
-    "Agilent InfiniiVision 7000 series IVI oscilloscope driver"
+class agilentBaseInfiniiVision(agilentBaseScope):
+    "Agilent InfiniiVision series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
         
-        super(agilent7000, self).__init__(*args, **kwargs)
+        super(agilentBaseInfiniiVision, self).__init__(*args, **kwargs)
         
         self._analog_channel_name = list()
         self._analog_channel_count = 4
@@ -44,7 +44,7 @@ class agilent7000(agilentBaseInfiniiVision):
         self._horizontal_divisions = 10
         self._vertical_divisions = 8
         
-        self._identity_description = "Agilent InfiniiVision 7000 series IVI oscilloscope driver"
+        self._identity_description = "Agilent InfiniiVision series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSO7012A','DSO7014A','DSO7032A',
                 'DSO7034A','DSO7052A','DSO7054A','DSO7104A','MSO7012A','MSO7014A','MSO7032A',
                 'MSO7034A','MSO7052A','MSO7054A','MSO7104A','DSO7012B','DSO7014B','DSO7032B',

@@ -86,6 +86,7 @@ specification.
 ## Requirements
 
 * Python 2 or Python 3
+* [NumPy](http://www.numpy.org)
 * One or more communication extensions
 
 ## Installation

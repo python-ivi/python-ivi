@@ -204,6 +204,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         self._timebase_window_position = 0.0
         self._timebase_window_range = 5e-6
         self._timebase_window_scale = 500e-9
+        self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
         self._display_vectors = True
         self._display_labels = True
         
@@ -616,10 +617,10 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         if self._driver_operation_simulate:
             return b''
         
-        if format not in ScreenshotImageFormatMapping:
+        if format not in self._display_screenshot_image_format_mapping:
             raise ivi.ValueNotSupportedException()
         
-        format = ScreenshotImageFormatMapping[format]
+        format = self._display_screenshot_image_format_mapping[format]
         
         self._write(":hardcopy:inksaver %d" % int(bool(invert)))
         self._write(":display:data? %s" % format)
@@ -1012,7 +1013,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     def _get_channel_coupling(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_enabled[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
+            self._channel_coupling[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
             self._set_cache_valid(index=index)
         return self._channel_coupling[index]
     
@@ -1504,7 +1505,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         return data
     
     def _measurement_read_waveform_min_max(self, index, maximum_time):
-        return _measurement_fetch_waveform_min_max(index)
+        return self._measurement_fetch_waveform_min_max(index)
     
     def _get_trigger_continuous(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():

@@ -64,6 +64,7 @@ class agilent3000A(agilent2000A):
 
         # wavegen option
         self._output_count = 1
+        self._output_standard_waveform_mapping = StandardWaveformMapping
         
         self._identity_description = "Agilent InfiniiVision 3000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX3012A','DSOX3014A','DSOX3024A',
