@@ -1782,7 +1782,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             else:
                 raise IOException('Unknown resource type %s' % res_type)
             
-            _driver_operation_io_resource_descriptor = resource
+            self._driver_operation_io_resource_descriptor = resource
             
         elif 'vxi11' in globals() and resource.__class__ == vxi11.Instrument:
             # Got a vxi11 instrument, can use it as is
