@@ -153,10 +153,10 @@ class agilentBaseInfiniium(agilentBaseScope):
         if self._driver_operation_simulate:
             return b''
         
-        if format not in ScreenshotImageFormatMapping:
+        if format not in self._display_screenshot_image_format_mapping:
             raise ivi.ValueNotSupportedException()
         
-        format = ScreenshotImageFormatMapping[format]
+        format = self._display_screenshot_image_format_mapping[format]
         
         self._write(":display:data? %s, screen, on, %s" % (format, 'invert' if invert else 'normal'))
         
