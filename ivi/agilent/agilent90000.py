@@ -35,10 +35,7 @@ AcquisitionModeMapping = {
         'segp': ('peak_detect', 'segmented'),
         'segh': ('high_resolution', 'segmented')
 }
-AcquisitionTypeMapping = {
-        'normal': 'norm',
-        'peak_detect': 'peak',
-        'high_resolution': 'hres'}
+AcquisitionType = set(['normal', 'peak_detect', 'high_resolution'])
 VerticalCoupling = set(['dc'])
 ScreenshotImageFormatMapping = {
         'tif': 'tif',
@@ -50,6 +47,7 @@ ScreenshotImageFormatMapping = {
         'jpg': 'jpg',
         'jpeg': 'jpg',
         'gif': 'gif'}
+SampleMode = set(['real_time', 'equivalent_time', 'segmented'])
 
 class agilent90000(agilentBaseInfiniium):
     "Agilent Infiniium 90000A/90000X series IVI oscilloscope driver"
@@ -367,8 +365,4 @@ class agilent90000(agilentBaseInfiniium):
             self._write(":acquire:complete 100")
             self._write(":digitize")
             self._set_cache_valid(False, 'trigger_continuous')
-    
-    
-    
-
 

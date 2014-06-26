@@ -35,10 +35,7 @@ AcquisitionModeMapping = {
         'segp': ('peak_detect', 'segmented'),
         'segh': ('high_resolution', 'segmented')
 }
-AcquisitionTypeMapping = {
-        'normal': 'norm',
-        'peak_detect': 'peak',
-        'high_resolution': 'hres'}
+AcquisitionType = set(['normal', 'peak_detect', 'high_resolution'])
 VerticalCoupling = set(['dc'])
 ScreenshotImageFormatMapping = {
         'tif': 'tif',
@@ -50,6 +47,7 @@ ScreenshotImageFormatMapping = {
         'jpg': 'jpg',
         'jpeg': 'jpg',
         'gif': 'gif'}
+SampleMode = set(['real_time', 'equivalent_time', 'segmented'])
 
 class agilentBaseInfiniium(agilentBaseScope):
     "Agilent Infiniium series IVI oscilloscope driver"
@@ -271,18 +269,8 @@ class agilentBaseInfiniium(agilentBaseScope):
             self._write(":acquire:complete 100")
             self._write(":digitize")
             self._set_cache_valid(False, 'trigger_continuous')
-    
-# AcquisitionModeMapping = {
-#         'etim': ('normal', 'equivalent_time'),
-#         'rtim': ('normal', 'real_time'),
-#         'pdet': ('peak_detect', 'real_time'),
-#         'hres': ('high_resolution', 'real_time'),
-#         'segm': ('norma', 'segmented'),
-#         'segp': ('peak_detect', 'segmented'),
-#         'segh': ('high_resolution', 'segmented')
-# }
 
-    def _get_acquisition_type(self):
+    def _get_acquisition_mode(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":acquire:mode?").lower()
             t = AcquisitionModeMapping[value]
@@ -290,35 +278,47 @@ class agilentBaseInfiniium(agilentBaseScope):
             self._acquisition_sample_mode = t[1]
             self._set_cache_valid()
             self._set_cache_valid(True, 'acquisition_sample_mode')
+            self._set_cache_valid(True, 'acquisition_type')
+
+    def _set_acquisition_mode(self, t, value):
+        f1 = None
+        f2 = None
+
+        if t == 'type':
+            f1 = [k for k,v in AcquisitionModeMapping.items() if v[0] == value]
+            f2 = [k for k,v in AcquisitionModeMapping.items() if v[1] == self._acquisition_sample_mode and k in f1]
+        elif t == 'mode':
+            f1 = [k for k,v in AcquisitionModeMapping.items() if v[1] == value]
+            f2 = [k for k,v in AcquisitionModeMapping.items() if v[0] == self._acquisition_type and k in f1]
+
+        if len(f2):
+            v = f2[0]
+        else:
+            v = f1[0]
+        t = AcquisitionModeMapping[v]
+        if not self._driver_operation_simulate:
+            self._write(":acquire:mode %s" % v)
+        self._acquisition_type = t[0]
+        self._acquisition_sample_mode = t[1]
+        self._set_cache_valid()
+        self._set_cache_valid(True, 'acquisition_sample_mode')
+        self._set_cache_valid(True, 'acquisition_type')
+
+    def _get_acquisition_type(self):
+        self._get_acquisition_mode()
         return self._acquisition_type
     
     def _set_acquisition_type(self, value):
-        if value not in AcquisitionTypeMapping:
+        if value not in AcquisitionType:
             raise ivi.ValueNotSupportedException()
-        if not self._driver_operation_simulate:
-            self._write(":acquire:type %s" % AcquisitionTypeMapping[value])
-        self._acquisition_type = value
-        self._set_cache_valid()
+        self._set_acquisition_mode('type', value)
     
     def _get_acquisition_sample_mode(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            value = self._ask(":acquire:mode?").lower()
-            t = AcquisitionModeMapping[value]
-            self._acquisition_type = t[0]
-            self._acquisition_sample_mode = t[1]
-            self._set_cache_valid()
-            self._set_cache_valid(True, 'acquisition_type')
+        self._get_acquisition_mode()
         return self._acquisition_sample_mode
     
     def _set_acquisition_sample_mode(self, value):
-        if value not in SampleModeMapping:
+        if value not in SampleMode:
             raise ivi.ValueNotSupportedException()
-        if not self._driver_operation_simulate:
-            self._write(":acquire:mode %s" % SampleModeMapping[value])
-        self._acquisition_sample_mode = value
-        self._set_cache_valid()
-    
-    
-    
-
+        self._set_acquisition_mode('mode', value)
 
