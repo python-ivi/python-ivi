@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2014 Alex Forencich
+Copyright (c) 2013-2014 Alex Forencich
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,31 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "swtch", "pwrmeter", "specan",
-        "rfsiggen", "counter",
-        # Extra IVI base classes
-        "extra",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "dicon", "chroma", "colby", "jdsu", "rigol", "tektronix"]
+from .chroma62000p import *
 
-from .ivi import *
-from . import *
+class chroma62006p3080(chroma62000p):
+    "Chroma ATE 62006P-30-80 series IVI DC power supply driver"
+    
+    def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', '62006P-30-80')
+        
+        super(chroma62006p3080, self).__init__(*args, **kwargs)
+        
+        self._output_count = 1
+        
+        self._output_spec = [
+            {
+                'range': {
+                    'P30V': (30.0, 80.0)
+                },
+                'ovp_max': 33.0,
+                'ocp_max': 88.0,
+                'voltage_max': 30.0,
+                'current_max': 80.0
+            }
+        ]
 
+        self._init_outputs()
+        
+    
+    

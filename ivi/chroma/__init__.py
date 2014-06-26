@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2014 Alex Forencich
+Copyright (c) 2012 Alex Forencich
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,18 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "swtch", "pwrmeter", "specan",
-        "rfsiggen", "counter",
-        # Extra IVI base classes
-        "extra",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "dicon", "chroma", "colby", "jdsu", "rigol", "tektronix"]
+# DC Power Supply
+# Chroma 62000P Programmable DC Power Supply
 
-from .ivi import *
-from . import *
-
+from .chroma62006p10025 import chroma62006p10025
+from .chroma62006p3008 import chroma62006p3008
+from .chroma62006p3080 import chroma62006p3080
+from .chroma62012p10050 import chroma62012p10050
+from .chroma62012p40120 import chroma62012p40120
+from .chroma62012p6008 import chroma62012p6008
+from .chroma62012p8060 import chroma62012p8060
+from .chroma62024p10050 import chroma62024p10050
+from .chroma62024p40120 import chroma62024p40120
+from .chroma62024p6008 import chroma62024p6008
+from .chroma62024p8060 import chroma62024p8060
+from .chroma62050p100100 import chroma62050p100100
