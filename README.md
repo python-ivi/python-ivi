@@ -34,6 +34,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
   * DC Power Supplies (dcpwr):
     * Agilent E3600A series
     * Agilent 603xA series
+    * Chroma 62000P series
     * Rigol DP800 series
     * Rigol DP1000 series
     * Tektronix PS2520G/PS2521G
