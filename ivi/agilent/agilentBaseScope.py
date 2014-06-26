@@ -1013,7 +1013,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
     def _get_channel_coupling(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_enabled[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
+            self._channel_coupling[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
             self._set_cache_valid(index=index)
         return self._channel_coupling[index]
     
@@ -1505,7 +1505,7 @@ class agilentBaseScope(ivi.Driver, scope.Base, scope.TVTrigger,
         return data
     
     def _measurement_read_waveform_min_max(self, index, maximum_time):
-        return _measurement_fetch_waveform_min_max(index)
+        return self._measurement_fetch_waveform_min_max(index)
     
     def _get_trigger_continuous(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
