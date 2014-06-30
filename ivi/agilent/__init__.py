@@ -156,9 +156,11 @@ from .agilentMSOX93204A import agilentMSOX93204A
 
 # Spectrum Analyzers
 # 859x series
+from .agilent8590E import agilent8590E
 from .agilent8590L import agilent8590L
 from .agilent8591C import agilent8591C
 from .agilent8591E import agilent8591E
+from .agilent8591EM import agilent8591EM
 from .agilent8593E import agilent8593E
 from .agilent8593EM import agilent8593EM
 from .agilent8594E import agilent8594E

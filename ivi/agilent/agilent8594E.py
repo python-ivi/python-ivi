@@ -24,13 +24,13 @@ THE SOFTWARE.
 
 """
 
-from .agilent8590E import *
+from .agilentBase8590E import *
 
-class agilent8594E(agilent8590E):
+class agilent8594E(agilentBase8590E):
     "Agilent 8594E IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', '')
+        self.__dict__.setdefault('_instrument_id', 'HP8594E')
         
         super(agilent8594E, self).__init__(*args, **kwargs)
         
