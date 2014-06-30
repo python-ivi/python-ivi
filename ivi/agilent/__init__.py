@@ -209,6 +209,10 @@ from .agilent437B import agilent437B
 from .agilent8642A import agilent8642A
 from .agilent8642B import agilent8642B
 
+# Tracking sources
+from .agilent85644A import agilent85644A
+from .agilent85645A import agilent85645A
+
 # Optical spectrum analyzers
 from .agilent86140B import agilent86140B
 from .agilent86141B import agilent86141B
