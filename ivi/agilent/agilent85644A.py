@@ -27,9 +27,21 @@ THE SOFTWARE.
 import time
 
 from .. import ivi
-from .. import extra
+from .. import scpi
 
-class agilent85644A(ivi.Driver):
+Source = set(['internal', 'external'])
+ALCSourceMapping = {'internal': 'int',
+                    'external': 'diode'}
+PowerMode = set(['fixed', 'sweep'])
+FrequencyModeMapping = {'cw': 'cw',
+                        'sweep': 'sweep'}
+TrackingHost = set(['hp8560', 'hp8561', 'hp8562', 'hp8562old', 'hp8563', 'hp8563e', 'hp8566',
+                    'hp8593', 'hp8594', 'hp8595', 'hp8596', 'hp8340_5', 'hp8340_1', 'hp8341_5',
+                    'hp8341_1', 'hp70909', 'hp70910', 'hp83590_5', 'hp83590_1', 'hp83592_5',
+                    'hp83592_1', 'hp83594_5', 'hp83594_1', 'hp83595_5', 'hp83595_1'])
+SweeptuneSetting = set(['default', 'custom'])
+
+class agilent85644A(ivi.Driver, scpi.common.Memory):
     "Agilent 85644A IVI tracking source driver"
 
     def __init__(self, *args, **kwargs):
@@ -37,10 +49,26 @@ class agilent85644A(ivi.Driver):
 
         super(agilent85644A, self).__init__(*args, **kwargs)
 
-        self._rf_frequency = 1e8
-        self._rf_level = 0
+        self._memory_size = 10
+
+        self._rf_frequency = 3e9
+        self._rf_frequency_offset = 0.0
+        self._rf_frequency_mode = 'cw'
+        self._rf_level = 0.0
+        self._rf_attenuation = 0.0
+        self._rf_attenuation_auto = True
         self._rf_output_enabled = False
+        self._rf_power_mode = 'fixed'
+        self._rf_power_slope = 0.0
+        self._rf_power_center = 0.0
+        self._rf_power_span = 0.0
+        self._rf_tracking_adjust = 0
+        self._rf_tracking_host = 'hp8560'
+        self._rf_tracking_sweeptune = 'default'
         self._alc_enabled = True
+        self._alc_source = 'internal'
+
+        self._reference_oscillator_source = 'internal'
 
         self._identity_description = "Agilent 85644/5A IVI tracking source driver"
         self._identity_identifier = ""
@@ -59,17 +87,58 @@ class agilent85644A(ivi.Driver):
         ivi.add_property(self, 'rf.frequency',
                         self._get_rf_frequency,
                         self._set_rf_frequency)
+        ivi.add_property(self, 'rf.frequency_offset',
+                        self._get_rf_frequency_offset,
+                        self._set_rf_frequency_offset)
+        ivi.add_property(self, 'rf.frequency_mode',
+                        self._get_rf_frequency_mode,
+                        self._set_rf_frequency_mode)
         ivi.add_property(self, 'rf.level',
                         self._get_rf_level,
                         self._set_rf_level)
+        ivi.add_property(self, 'rf.attenuation',
+                        self._get_rf_attenuation,
+                        self._set_rf_attenuation)
+        ivi.add_property(self, 'rf.attenuation_auto',
+                        self._get_rf_attenuation_auto,
+                        self._set_rf_attenuation_auto)
         ivi.add_property(self, 'rf.output_enabled',
                         self._get_rf_output_enabled,
                         self._set_rf_output_enabled)
+        ivi.add_property(self, 'rf.power_mode',
+                        self._get_rf_power_mode,
+                        self._set_rf_power_mode)
+        ivi.add_property(self, 'rf.power_slope',
+                        self._get_rf_power_slope,
+                        self._set_rf_power_slope)
+        ivi.add_property(self, 'rf.power_center',
+                        self._get_rf_power_center,
+                        self._set_rf_power_center)
+        ivi.add_property(self, 'rf.power_span',
+                        self._get_rf_power_span,
+                        self._set_rf_power_span)
+        ivi.add_property(self, 'rf.tracking_adjust',
+                        self._get_rf_tracking_adjust,
+                        self._set_rf_tracking_adjust)
+        ivi.add_property(self, 'rf.tracking_host',
+                        self._get_rf_tracking_host,
+                        self._set_rf_tracking_host)
+        ivi.add_property(self, 'rf.tracking_sweeptune',
+                        self._get_rf_tracking_sweeptune,
+                        self._set_rf_tracking_sweeptune)
         ivi.add_method(self, 'rf.configure',
                         self._rf_configure)
+        ivi.add_method(self, 'rf.is_unleveled',
+                        self._rf_is_unleveled)
         ivi.add_property(self, 'alc.enabled',
                         self._get_alc_enabled,
                         self._set_alc_enabled)
+        ivi.add_property(self, 'alc.source',
+                        self._get_alc_source,
+                        self._set_alc_source)
+        ivi.add_property(self, 'reference_oscillator.source',
+                        self._get_reference_oscillator_source)
+
 
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
@@ -77,8 +146,8 @@ class agilent85644A(ivi.Driver):
         super(agilent85644A, self).initialize(resource, id_query, reset, **keywargs)
 
         # interface clear
-        if not self._driver_operation_simulate:
-            self._clear()
+        #if not self._driver_operation_simulate:
+        #    self._clear()
 
         # check ID
         if id_query and not self._driver_operation_simulate:
@@ -132,13 +201,9 @@ class agilent85644A(ivi.Driver):
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_code = int(self._ask("OE"))
-            if error_code == 0:
-                error_code = int(self._ask("OH"))
-            if error_code != 0:
-                error_message = "Unknown error"
-            if error_code in Messages:
-                error_message = Messages[error_code]
+            error_code, error_message = self._ask(":system:error?").split(',')
+            error_code = int(error_code)
+            error_message = error_message.strip(' "')
         return (error_code, error_message)
 
     def _utility_lock_object(self):
@@ -181,6 +246,34 @@ class agilent85644A(ivi.Driver):
         self._rf_frequency = value
         self._set_cache_valid()
 
+    def _get_rf_frequency_offset(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_frequency_offset = float(self._ask("source:frequency:offset?"))
+            self._set_cache_valid()
+        return self._rf_frequency_offset
+
+    def _set_rf_frequency_offset(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("source:frequency:offset %e" % value)
+        self._rf_frequency_offset = value
+        self._set_cache_valid()
+
+    def _get_rf_frequency_mode(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("source:frequency:mode?").lower()
+            self._rf_frequency_mode = [k for k,v in FrequencyModeMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._rf_frequency_mode
+
+    def _set_rf_frequency_mode(self, value):
+        if value not in FrequencyModeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("source:frequency:mode %s" % FrequencyModeMapping[value])
+        self._rf_frequency_mode = value
+        self._set_cache_valid()
+
     def _get_rf_level(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._rf_level = float(self._ask("source:power:level?"))
@@ -192,6 +285,34 @@ class agilent85644A(ivi.Driver):
         if not self._driver_operation_simulate:
             self._write("source:power:level %e" % value)
         self._rf_level = value
+        self._set_cache_valid(False, 'rf_power_center')
+        self._set_cache_valid()
+
+    def _get_rf_attenuation(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_attenuation = float(self._ask("source:power:attenuation?"))
+            self._set_cache_valid()
+        return self._rf_attenuation
+
+    def _set_rf_attenuation(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("source:power:attenuation %e" % value)
+        self._rf_attenuation = value
+        self._rf_attenuation_auto = False
+        self._set_cache_valid()
+
+    def _get_rf_attenuation_auto(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_attenuation_auto = bool(int(self._ask("source:power:attenuation:auto?")))
+            self._set_cache_valid()
+        return self._rf_attenuation_auto
+
+    def _set_rf_attenuation_auto(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("source:power:attenuation:auto %d" % int(value))
+        self._rf_attenuation_auto = value
         self._set_cache_valid()
 
     def _get_rf_output_enabled(self):
@@ -206,31 +327,146 @@ class agilent85644A(ivi.Driver):
         self._rf_output_enabled = value
         self._set_cache_valid()
 
+    def _get_rf_power_mode(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_power_mode = self._ask("source:power:mode?").lower()
+            self._set_cache_valid()
+        return self._rf_power_mode
+
+    def _set_rf_power_mode(self, value):
+        if value not in PowerMode:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("source:power:mode %s" % value)
+        self._rf_power_mode = value
+        self._set_cache_valid(False, 'rf_power_span')
+        self._set_cache_valid()
+
+    def _get_rf_power_slope(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_power_slope = float(self._ask("source:power:slope?"))
+            self._set_cache_valid()
+        return self._rf_power_slope
+
+    def _set_rf_power_slope(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("source:power:slope %e" % value)
+        self._rf_power_slope = value
+        self._set_cache_valid()
+
+    def _get_rf_power_center(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_power_center = float(self._ask("source:power:center?"))
+            self._set_cache_valid()
+        return self._rf_power_center
+
+    def _set_rf_power_center(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("source:power:center %e" % value)
+        self._rf_power_center = value
+        self._set_cache_valid(False, 'rf_level')
+        self._set_cache_valid()
+
+    def _get_rf_power_span(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_power_span = float(self._ask("source:power:span?"))
+            self._set_cache_valid()
+        return self._rf_power_span
+
+    def _set_rf_power_span(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("source:power:span %e" % value)
+        self._rf_power_span = value
+        self._set_cache_valid(False, 'rf_power_mode')
+        self._set_cache_valid()
+
+    def _get_rf_tracking_adjust(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_tracking_adjust = int(self._ask("calibration:track:adj?"))
+            self._set_cache_valid()
+        return self._rf_tracking_adjust
+
+    def _set_rf_tracking_adjust(self, value):
+        value = int(value)
+        if not self._driver_operation_simulate:
+            self._write("calibration:track:adj %d" % value)
+        self._rf_tracking_adjust = value
+        self._set_cache_valid()
+
+    def _get_rf_tracking_host(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_tracking_host = self._ask("source:sweep:rselect?").lower()
+            self._set_cache_valid()
+        return self._rf_tracking_host
+
+    def _set_rf_tracking_host(self, value):
+        if value not in TrackingHost:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("source:sweep:rselect %s" % value)
+        self._rf_tracking_host = value
+        self._set_cache_valid()
+
+    def _get_rf_tracking_sweeptune(self):
+        # read not implemented
+        #if not self._driver_operation_simulate and not self._get_cache_valid():
+        #    self._rf_tracking_sweeptune = self._ask("calibration:sweeptune:setting?").lower()
+        #    self._set_cache_valid()
+        return self._rf_tracking_sweeptune
+
+    def _set_rf_tracking_sweeptune(self, value):
+        if value not in SweeptuneSetting:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            # appears that the options are swapped (firmware bug)
+            self._write("calibration:sweeptune:setting %s" % ('default' if value == 'custom' else 'custom'))
+            #self._write("calibration:sweeptune:setting %s" % value)
+        self._rf_tracking_sweeptune = value
+        self._set_cache_valid()
+
     def _rf_configure(self, frequency, level):
         self._set_rf_frequency(frequency)
         self._set_rf_level(level)
 
+    def _rf_is_unleveled(self):
+        if not self._driver_operation_simulate:
+            return bool(int(self._ask("diagnostic:unleveled?")))
+        return False
+
     def _get_alc_enabled(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._alc_enabled = bool(int(self._ask("power:alc:state?")))
+            self._alc_enabled = bool(int(self._ask("source:power:alc:state?")))
+            self._set_cache_valid()
         return self._alc_enabled
 
     def _set_alc_enabled(self, value):
         value = bool(value)
         if not self._driver_operation_simulate:
-            self._write("power:alc:state %d" % int(value))
-        value = bool(value)
+            self._write("source:power:alc:state %d" % int(value))
+            self._set_cache_valid()
         self._alc_enabled = value
 
-    def _rf_is_settled(self):
-        if not self._driver_operation_simulate:
-            return self._read_stb() & (1 << 4) != 0
-        return True
+    def _get_alc_source(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("source:power:alc:source?").lower()
+            self._alc_source = [k for k,v in ALCSourceMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._alc_source
 
-    def _rf_wait_until_settled(self, maximum_time):
-        t = 0
-        while not self._rf_is_settled() and t < maximum_time:
-            time.sleep(0.01)
-            t = t + 0.01
+    def _set_alc_source(self, value):
+        if value not in ALCSourceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("source:power:alc:source %s" % ALCSourceMapping[value])
+            self._set_cache_valid()
+        self._alc_source = value
+
+    def _get_reference_oscillator_source(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._reference_oscillator_source = 'external' if int(self._ask("source:roscillator:source?")) else 'internal'
+        return self._reference_oscillator_source
 
 

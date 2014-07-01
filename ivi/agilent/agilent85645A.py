@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 """
 
+import time
+
 from .agilent85644A import *
 
 OutputCoupling = set(['ac', 'dc'])
@@ -44,6 +46,8 @@ class agilent85645A(agilent85644A):
         ivi.add_property(self, 'rf.output_coupling',
                         self._get_rf_output_coupling,
                         self._set_rf_output_coupling)
+        ivi.add_method(self, 'rf.ytm_peak',
+                        self._rf_ytm_peak)
 
 
     def _get_rf_output_coupling(self):
@@ -59,3 +63,7 @@ class agilent85645A(agilent85644A):
         self._rf_output_coupling = value
         self._set_cache_valid()
 
+    def _rf_ytm_peak(self):
+        if not self._driver_operation_simulate:
+            self._write("calibration:peaking:execute")
+            time.sleep(30)
