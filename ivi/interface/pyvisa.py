@@ -52,7 +52,7 @@ class PyVisaInstrument:
     def write_raw(self, data):
         "Write binary data to instrument"
         
-        self.instrument.write(data)
+        self.instrument.write_raw(data)
 
     def read_raw(self, num=-1):
         "Read binary data from instrument"
