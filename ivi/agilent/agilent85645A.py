@@ -66,4 +66,7 @@ class agilent85645A(agilent85644A):
     def _rf_ytm_peak(self):
         if not self._driver_operation_simulate:
             self._write("calibration:peaking:execute")
-            time.sleep(30)
+            for i in range(30):
+                time.sleep(1)
+                if (int(self._ask("status:operation:condition?")) & (1 << 0)) == 0:
+                    break
