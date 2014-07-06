@@ -211,7 +211,7 @@ class agilent85644A(ivi.Driver, scpi.common.Memory):
 
     def _utility_reset(self):
         if not self._driver_operation_simulate:
-            self._write("IP")
+            self._write("*RST")
             self.driver_operation.invalidate_all_attributes()
 
     def _utility_reset_with_defaults(self):
