@@ -54,7 +54,7 @@ class Base(object):
         ivi.add_group_capability(self, cls+grp)
         
         self._rf_frequency = 1e8
-        self._rf_level = 0
+        self._rf_level = 0.0
         self._rf_output_enabled = False
         self._alc_enabled = False
         
@@ -151,10 +151,10 @@ class ModulateAM(object):
         
         self._analog_modulation_am_enabled = False
         self._analog_modulation_am_source = ""
-        self._analog_modulation_am_scaling = 0
-        self._analog_modulation_am_external_coupling = 0
-        self._analog_modulation_am_nominal_voltage = 0
-        self._analog_modulation_am_depth = 0
+        self._analog_modulation_am_scaling = 'linear'
+        self._analog_modulation_am_external_coupling = 'dc'
+        self._analog_modulation_am_nominal_voltage = 0.0
+        self._analog_modulation_am_depth = 0.0
         
         ivi.add_property(self, 'analog_modulation.am.enabled',
                         self._get_analog_modulation_am_enabled,
@@ -203,7 +203,8 @@ class ModulateAM(object):
         return self._analog_modulation_am_external_coupling
     
     def _set_analog_modulation_am_external_coupling(self, value):
-        value = int(value)
+        if value not in ExternalCoupling:
+            raise ivi.ValueNotSupportedException()
         self._analog_modulation_am_external_coupling = value
     
     def _get_analog_modulation_am_nominal_voltage(self):
@@ -238,9 +239,9 @@ class ModulateFM(object):
         
         self._analog_modulation_fm_enabled = False
         self._analog_modulation_fm_source = ""
-        self._analog_modulation_fm_external_coupling = 0
-        self._analog_modulation_fm_nominal_voltage = 0
-        self._analog_modulation_fm_deviation = 0
+        self._analog_modulation_fm_external_coupling = 'dc'
+        self._analog_modulation_fm_nominal_voltage = 0.0
+        self._analog_modulation_fm_deviation = 0.0
         
         ivi.add_property(self, 'analog_modulation.fm.enabled',
                         self._get_analog_modulation_fm_enabled,
@@ -279,7 +280,8 @@ class ModulateFM(object):
         return self._analog_modulation_fm_external_coupling
     
     def _set_analog_modulation_fm_external_coupling(self, value):
-        value = int(value)
+        if value not in ExternalCoupling:
+            raise ivi.ValueNotSupportedException()
         self._analog_modulation_fm_external_coupling = value
     
     def _get_analog_modulation_fm_nominal_voltage(self):
@@ -313,9 +315,9 @@ class ModulatePM(object):
         
         self._analog_modulation_pm_enabled = False
         self._analog_modulation_pm_source = ""
-        self._analog_modulation_pm_external_coupling = 0
-        self._analog_modulation_pm_nominal_voltage = 0
-        self._analog_modulation_pm_deviation = 0
+        self._analog_modulation_pm_external_coupling = 'dc'
+        self._analog_modulation_pm_nominal_voltage = 0.0
+        self._analog_modulation_pm_deviation = 0.0
         
         ivi.add_property(self, 'analog_modulation.pm.enabled',
                         self._get_analog_modulation_pm_enabled,
@@ -354,7 +356,8 @@ class ModulatePM(object):
         return self._analog_modulation_pm_external_coupling
     
     def _set_analog_modulation_pm_external_coupling(self, value):
-        value = int(value)
+        if value not in ExternalCoupling:
+            raise ivi.ValueNotSupportedException()
         self._analog_modulation_pm_external_coupling = value
     
     def _get_analog_modulation_pm_nominal_voltage(self):
@@ -409,7 +412,7 @@ class ModulatePulse(object):
         
         self._pulse_modulation_enabled = False
         self._pulse_modulation_source = ""
-        self._pulse_modulation_external_polarity = 0
+        self._pulse_modulation_external_polarity = 'normal'
         
         ivi.add_property(self, 'pulse_modulation.enabled',
                         self._get_pulse_modulation_enabled,
@@ -440,7 +443,8 @@ class ModulatePulse(object):
         return self._pulse_modulation_external_polarity
     
     def _set_pulse_modulation_external_polarity(self, value):
-        value = int(value)
+        if value not in Polarity:
+            raise ivi.ValueNotSupportedException()
         self._pulse_modulation_external_polarity = value
     
     
@@ -457,8 +461,8 @@ class LFGenerator(object):
         self._lf_generator_active_lf_generator = ""
         self._lf_generator_count = 0
         self._lf_generator_name = list()
-        self._lf_generator_frequency = 0
-        self._lf_generator_waveform = 0
+        self._lf_generator_frequency = 0.0
+        self._lf_generator_waveform = 'sine'
         
         ivi.add_property(self, 'lf_generator.active_lf_generator',
                         self._get_lf_generator_active_lf_generator,
@@ -497,7 +501,8 @@ class LFGenerator(object):
         return self._lf_generator_waveform
     
     def _set_lf_generator_waveform(self, value):
-        value = int(value)
+        if value not in LFGeneratorWaveform:
+            raise ivi.ValueNotSupportedException()
         self._lf_generator_waveform = value
     
     def _lf_generator_configure(self, frequency, waveform):
@@ -515,8 +520,8 @@ class LFGeneratorOutput(object):
         grp = 'LFGeneratorOutput'
         ivi.add_group_capability(self, cls+grp)
         
-        self._lf_generator_output_amplitude = 0
-        self._lf_generator_output_enabled = 0
+        self._lf_generator_output_amplitude = 0.0
+        self._lf_generator_output_enabled = False
         
         ivi.add_property(self, 'lf_generator.output.enabled',
                         self._get_lf_generator_output_enabled,
@@ -556,12 +561,12 @@ class PulseGenerator(object):
         grp = 'PulseGenerator'
         ivi.add_group_capability(self, cls+grp)
         
-        self._pulse_generator_internal_trigger_period = 0
-        self._pulse_generator_width = 0
+        self._pulse_generator_internal_trigger_period = 0.0
+        self._pulse_generator_width = 0.0
         self._pulse_generator_gating_enabled = False
         self._pulse_generator_trigger_source = ""
-        self._pulse_generator_external_trigger_slope = 0
-        self._pulse_generator_external_trigger_delay = 0
+        self._pulse_generator_external_trigger_slope = 0.0
+        self._pulse_generator_external_trigger_delay = 0.0
         
         ivi.add_property(self, 'pulse_generator.internal_trigger_period',
                         self._get_pulse_generator_internal_trigger_period,
@@ -650,7 +655,7 @@ class PulseDoubleGenerator(object):
         ivi.add_group_capability(self, cls+grp)
         
         self._pulse_generator_double_pulse_enabled = False
-        self._pulse_generator_double_pulse_delay = 0
+        self._pulse_generator_double_pulse_delay = 0.0
         
         ivi.add_property(self, 'pulse_generator.double_pulse.enabled',
                         self._get_pulse_generator_double_pulse_enabled,
@@ -690,8 +695,8 @@ class PulseGeneratorOutput(object):
         grp = 'PulseGeneratorOutput'
         ivi.add_group_capability(self, cls+grp)
         
-        self._pulse_generator_output_polarity = 0
-        self._pulse_generator_output_enabled = 0
+        self._pulse_generator_output_polarity = 'normal'
+        self._pulse_generator_output_enabled = False
         
         ivi.add_property(self, 'pulse_generator.output.polarity',
                         self._get_pulse_generator_output_polarity,
@@ -706,7 +711,8 @@ class PulseGeneratorOutput(object):
         return self._pulse_generator_output_polarity
     
     def _set_pulse_generator_output_polarity(self, value):
-        value = int(value)
+        if value not in Polarity:
+            raise ivi.ValueNotSupportedException()
         self._pulse_generator_output_polarity = value
     
     def _get_pulse_generator_output_enabled(self):
@@ -731,7 +737,7 @@ class Sweep(object):
         grp = 'Sweep'
         ivi.add_group_capability(self, cls+grp)
         
-        self._sweep_mode = 0
+        self._sweep_mode = 'none'
         self._sweep_trigger_source = ""
         
         ivi.add_property(self, 'sweep.mode',
@@ -747,7 +753,8 @@ class Sweep(object):
         return self._sweep_mode
     
     def _set_sweep_mode(self, value):
-        value = int(value)
+        if value not in SweepMode:
+            raise ivi.ValueNotSupportedException()
         self._sweep_mode = value
     
     def _get_sweep_trigger_source(self):
@@ -773,9 +780,9 @@ class FrequencySweep(object):
         grp = 'FrequencySweep'
         ivi.add_group_capability(self, cls+grp)
         
-        self._sweep_frequency_sweep_start = 0
-        self._sweep_frequency_sweep_stop = 0
-        self._sweep_frequency_sweep_time = 0
+        self._sweep_frequency_sweep_start = 0.0
+        self._sweep_frequency_sweep_stop = 0.0
+        self._sweep_frequency_sweep_time = 0.0
         
         ivi.add_property(self, 'sweep.frequency_sweep.start',
                         self._get_sweep_frequency_sweep_start,
@@ -831,9 +838,9 @@ class PowerSweep(object):
         grp = 'PowerSweep'
         ivi.add_group_capability(self, cls+grp)
         
-        self._sweep_power_sweep_start = 0
-        self._sweep_power_sweep_stop = 0
-        self._sweep_power_sweep_time = 0
+        self._sweep_power_sweep_start = 0.0
+        self._sweep_power_sweep_stop = 0.0
+        self._sweep_power_sweep_time = 0.0
         
         ivi.add_property(self, 'sweep.power_sweep.start',
                         self._get_sweep_power_sweep_start,
@@ -883,12 +890,12 @@ class FrequencyStep(object):
         grp = 'FrequencyStep'
         ivi.add_group_capability(self, cls+grp)
         
-        self._sweep_frequency_step_start = 0
-        self._sweep_frequency_step_stop = 0
+        self._sweep_frequency_step_start = 0.0
+        self._sweep_frequency_step_stop = 0.0
         self._sweep_frequency_step_scaling = 'linear'
-        self._sweep_frequency_step_size = 0
+        self._sweep_frequency_step_size = 0.0
         self._sweep_frequency_step_single_step_enabled = False
-        self._sweep_frequency_step_dwell = 0
+        self._sweep_frequency_step_dwell = 0.0
         
         ivi.add_property(self, 'sweep.frequency_step.start',
                         self._get_sweep_frequency_step_start,
@@ -982,11 +989,11 @@ class PowerStep(object):
         grp = 'PowerStep'
         ivi.add_group_capability(self, cls+grp)
         
-        self._sweep_power_step_start = 0
-        self._sweep_power_step_stop = 0
-        self._sweep_power_step_size = 0
+        self._sweep_power_step_start = 0.0
+        self._sweep_power_step_stop = 0.0
+        self._sweep_power_step_size = 0.0
         self._sweep_power_step_single_step_enabled = False
-        self._sweep_power_step_dwell = 0
+        self._sweep_power_step_dwell = 0.0
         
         ivi.add_property(self, 'sweep.power_step.start',
                         self._get_sweep_power_step_start,
@@ -1070,7 +1077,7 @@ class List(object):
         
         self._sweep_list_selected_list = ''
         self._sweep_list_single_step_enabled = False
-        self._sweep_list_dwell = 0
+        self._sweep_list_dwell = 0.0
         
         ivi.add_property(self, 'sweep.list.selected_list',
                         self._get_sweep_list_selected_list,
@@ -1146,7 +1153,7 @@ class ALC(object):
         ivi.add_group_capability(self, cls+grp)
         
         self._alc_source = 'internal'
-        self._alc_bandwidth = 0
+        self._alc_bandwidth = 0.0
         
         ivi.add_property(self, 'alc.source',
                         self._get_alc_source,
@@ -1245,7 +1252,7 @@ class ModulateIQ(object):
         
         self._iq_enabled = False
         self._iq_source = 'digital_modulation_base'
-        self._iq_nominal_voltage = 0
+        self._iq_nominal_voltage = 0.0
         self._iq_swap_enabled = False
         
         ivi.add_property(self, 'iq.enabled',
@@ -1313,10 +1320,10 @@ class IQImpairment(object):
         ivi.add_group_capability(self, cls+grp)
         
         self._iq_impairment_enabled = False
-        self._iq_impairment_i_offset = 0
-        self._iq_impairment_q_offset = 0
-        self._iq_impairment_iq_ratio = 0
-        self._iq_impairment_iq_skew = 0
+        self._iq_impairment_i_offset = 0.0
+        self._iq_impairment_q_offset = 0.0
+        self._iq_impairment_iq_ratio = 0.0
+        self._iq_impairment_iq_skew = 0.0
         
         ivi.add_property(self, 'iq.impairment.enabled',
                         self._get_iq_impairment_enabled,
@@ -1389,12 +1396,12 @@ class ArbGenerator(object):
         ivi.add_group_capability(self, cls+grp)
         
         self._digital_modulation_arb_selected_waveform = ''
-        self._digital_modulation_arb_clock_frequency = 0
-        self._digital_modulation_arb_filter_frequency = 0
-        self._digital_modulation_arb_max_number_waveforms = 0
-        self._digital_modulation_arb_waveform_quantum = 0
-        self._digital_modulation_arb_waveform_size_min = 0
-        self._digital_modulation_arb_waveform_size_max = 0
+        self._digital_modulation_arb_clock_frequency = 0.0
+        self._digital_modulation_arb_filter_frequency = 0.0
+        self._digital_modulation_arb_max_number_waveforms = 0.0
+        self._digital_modulation_arb_waveform_quantum = 0.0
+        self._digital_modulation_arb_waveform_size_min = 0.0
+        self._digital_modulation_arb_waveform_size_max = 0.0
         self._digital_modulation_arb_trigger_source = 'immediate'
         self._digital_modulation_arb_external_trigger_slope = 'positive'
         
