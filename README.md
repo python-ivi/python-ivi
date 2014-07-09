@@ -42,7 +42,8 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 436A
     * Agilent 437B
   * Spectrum Analyzers (specan):
-    * Agilent 859xE series
+    * Agilent 859xA/B series
+    * Agilent 859xE/EM/C/L series
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
   * Other
