@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 """
 
+import time
+
 from .agilentBase8590 import *
 
 class agilentBase8590A(agilentBase8590):
@@ -37,4 +39,30 @@ class agilentBase8590A(agilentBase8590):
         self._identity_description = "Agilent 8590 series IVI spectrum analyzer driver"
         self._identity_supported_instrument_models = ['8590A', '8590B', '8591A', '8592A', '8592B',
                                                       '8593A', '8594A', '8595A']
+
+
+    def _display_fetch_screenshot(self, format='bmp', invert=False):
+        if self._driver_operation_simulate:
+            return b''
+
+        #if format not in ScreenshotImageFormatMapping:
+        #    raise ivi.ValueNotSupportedException()
+
+        #format = ScreenshotImageFormatMapping[format]
+
+        self._write("PRINT 1")
+
+        rtl = io.BytesIO(self._read_raw())
+
+        img = hprtl.parse_hprtl(rtl)
+
+        # rescale to get white background
+        # presuming background of (90, 88, 85)
+        img[:,:,0] *= 255/90
+        img[:,:,1] *= 255/88
+        img[:,:,2] *= 255/85
+
+        bmp = hprtl.generate_bmp(img)
+
+        return bmp
 
