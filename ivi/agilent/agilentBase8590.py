@@ -70,9 +70,10 @@ class agilentBase8590(ivi.Driver, specan.Base,
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 4
         self._identity_specification_minor_version = 1
-        self._identity_supported_instrument_models = ['8590E', '8590L', '8591C', '8591E', '8591EM', '8592L',
-                        '8593E', '8593EM', '8594E', '8594EM', '8594L', '8594Q', '8595E', '8595EM', '8596E',
-                        '8596EM']
+        self._identity_supported_instrument_models = ['8590A', '8590B', '8591A', '8592A', '8592B',
+                        '8593A', '8594A', '8595A''8590E', '8590L', '8591C', '8591E', '8591EM',
+                        '8592L', '8593E', '8593EM', '8594E', '8594EM', '8594L', '8594Q', '8595E',
+                        '8595EM', '8596E', '8596EM']
         
         ivi.add_method(self, 'display.clear',
                         self._display_clear,
