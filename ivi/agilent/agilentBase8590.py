@@ -45,9 +45,12 @@ DetectorTypeMapping = {'maximum_peak' : 'pos',
 #TraceType = set(['clear_write', 'maximum_hold', 'minimum_hold', 'video_average', 'view', 'store'])
 #VerticalScale = set(['linear', 'logarithmic'])
 #AcquisitionStatus = set(['complete', 'in_progress', 'unknown'])
+ALCSourceMapping = {'internal': 'int',
+                    'external': 'ext'}
+PowerMode = set(['fixed', 'sweep'])
 
 class agilentBase8590(ivi.Driver, specan.Base,
-                extra.common.Memory, extra.common.SystemSetup, extra.common.Screenshot):
+                extra.common.Memory, extra.common.Title, extra.common.SystemSetup, extra.common.Screenshot):
     "Agilent Base8590 series IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
@@ -60,7 +63,17 @@ class agilentBase8590(ivi.Driver, specan.Base,
         self._input_impedance = 50
         self._frequency_low = 9e3
         self._frequency_high = 1.8e9
-        
+
+        self._rf_level = 0.0
+        self._rf_attenuation = 0.0
+        self._rf_attenuation_auto = True
+        self._rf_output_enabled = False
+        self._rf_power_mode = 'fixed'
+        self._rf_power_offset = 0.0
+        self._rf_power_span = 0.0
+        self._rf_tracking_adjust = 0
+        self._alc_source = 'internal'
+
         self._identity_description = "Agilent 8590 series IVI spectrum analyzer driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -89,6 +102,36 @@ class agilentBase8590(ivi.Driver, specan.Base,
                         Writes a string to the advisory line on the instrument display.  Send None
                         or an empty string to clear the advisory line.  
                         """))
+
+        ivi.add_property(self, 'rf.level',
+                        self._get_rf_level,
+                        self._set_rf_level)
+        ivi.add_property(self, 'rf.attenuation',
+                        self._get_rf_attenuation,
+                        self._set_rf_attenuation)
+        ivi.add_property(self, 'rf.attenuation_auto',
+                        self._get_rf_attenuation_auto,
+                        self._set_rf_attenuation_auto)
+        ivi.add_property(self, 'rf.output_enabled',
+                        self._get_rf_output_enabled,
+                        self._set_rf_output_enabled)
+        ivi.add_property(self, 'rf.power_mode',
+                        self._get_rf_power_mode,
+                        self._set_rf_power_mode)
+        ivi.add_property(self, 'rf.power_offset',
+                        self._get_rf_power_offset,
+                        self._set_rf_power_offset)
+        ivi.add_property(self, 'rf.power_span',
+                        self._get_rf_power_span,
+                        self._set_rf_power_span)
+        ivi.add_property(self, 'rf.tracking_adjust',
+                        self._get_rf_tracking_adjust,
+                        self._set_rf_tracking_adjust)
+        ivi.add_method(self, 'rf.tracking_peak',
+                        self._rf_tracking_peak)
+        ivi.add_property(self, 'alc.source',
+                        self._get_alc_source,
+                        self._set_alc_source)
 
         self._init_traces()
     
@@ -159,7 +202,8 @@ class agilentBase8590(ivi.Driver, specan.Base,
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_code, error_message = self._ask(":system:error?").split(',')
+            # TODO is there a command for this?
+            #error_code, error_message = self._ask(":system:error?").split(',')
             error_code = int(error_code)
             error_message = error_message.strip(' "')
         return (error_code, error_message)
@@ -206,19 +250,32 @@ class agilentBase8590(ivi.Driver, specan.Base,
         
         self._write_raw(data)
     
-    def _system_display_string(self, string = None):
+    def _system_display_string(self, string=None):
         if string is None:
             string = ""
         
         if not self._driver_operation_simulate:
             self._write("PU")
             self._write("PA 8,137")
-            self._write("TEXT @%s@" % string)
+            self._write("HD")
+            self._write("TEXT \\%s\\" % string)
     
     def _display_clear(self):
         if not self._driver_operation_simulate:
+            self._write("HD")
             self._write("CLRDSP")
     
+    def _get_display_title(self):
+        # cannot read
+        return self._display_title
+
+    def _set_display_title(self, value):
+        value = str(value)
+        if not self._driver_operation_simulate:
+            self._write("TITLE \\%s\\" % value)
+        self._display_title = value
+        self._set_cache_valid()
+
     def _display_fetch_screenshot(self, format='bmp', invert=False):
         if self._driver_operation_simulate:
             return b''
@@ -259,6 +316,132 @@ class agilentBase8590(ivi.Driver, specan.Base,
         if not self._driver_operation_simulate:
             self._write("RCLS %d" % index+1)
             self.driver_operation.invalidate_all_attributes()
+
+    def _get_rf_level(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_level = float(self._ask("srcpwr?"))
+            self._set_cache_valid()
+        return self._rf_level
+
+    def _set_rf_level(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("srcpwr %e" % value)
+        self._rf_level = value
+        self._set_cache_valid()
+
+    def _get_rf_attenuation(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_attenuation = float(self._ask("srcat?"))
+            self._set_cache_valid()
+        return self._rf_attenuation
+
+    def _set_rf_attenuation(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("srcat %e" % value)
+        self._rf_attenuation = value
+        self._rf_attenuation_auto = False
+        self._set_cache_valid()
+
+    def _get_rf_attenuation_auto(self):
+        # TODO is it possible to read this?
+        return self._rf_attenuation_auto
+
+    def _set_rf_attenuation_auto(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("srcat %s" % ('auto' if value else 'man'))
+        self._rf_attenuation_auto = value
+        self._set_cache_valid()
+
+    def _get_rf_output_enabled(self):
+        # TODO is it possible to read this?
+        return self._rf_output_enabled
+
+    def _set_rf_output_enabled(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("srcpwr %s" % ('on' if value else 'off'))
+        self._rf_output_enabled = value
+        self._set_cache_valid()
+
+    def _get_rf_power_mode(self):
+        # TODO is it possible to read this?
+        return self._rf_power_mode
+
+    def _set_rf_power_mode(self, value):
+        if value not in PowerMode:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("srcpswp %s" % ('on' if value == 'sweep' else 'off'))
+        self._rf_power_mode = value
+        self._set_cache_valid(False, 'rf_power_span')
+        self._set_cache_valid()
+
+    def _get_rf_power_offset(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_power_offset = float(self._ask("srcpofs?"))
+            self._set_cache_valid()
+        return self._rf_power_offset
+
+    def _set_rf_power_offset(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("srcpofs %e" % value)
+        self._rf_power_offset = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'rf_level')
+
+    def _get_rf_power_span(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_power_span = float(self._ask("srcpswp?"))
+            self._set_cache_valid()
+        return self._rf_power_span
+
+    def _set_rf_power_span(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("srcpswp %e" % value)
+        self._rf_power_span = value
+        self._set_cache_valid(False, 'rf_power_mode')
+        self._set_cache_valid()
+
+    def _get_rf_tracking_adjust(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rf_tracking_adjust = int(self._ask("srctk?"))
+            self._set_cache_valid()
+        return self._rf_tracking_adjust
+
+    def _set_rf_tracking_adjust(self, value):
+        value = int(value)
+        if not self._driver_operation_simulate:
+            self._write("srctk %d" % value)
+        self._rf_tracking_adjust = value
+        self._set_cache_valid()
+
+    def _rf_tracking_peak(self):
+        if not self._driver_operation_simulate:
+            self._write("srctkpk")
+
+    def _rf_configure(self, frequency, level):
+        self._set_rf_frequency(frequency)
+        self._set_rf_level(level)
+
+    def _get_alc_source(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("srcalc?").lower()
+            self._alc_source = [k for k,v in ALCSourceMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._alc_source
+
+    def _set_alc_source(self, value):
+        if value not in ALCSourceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("srcalc %s" % ALCSourceMapping[value])
+            self._set_cache_valid()
+        self._alc_source = value
 
     def _get_level_amplitude_units(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
