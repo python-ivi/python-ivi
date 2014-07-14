@@ -78,14 +78,7 @@ def set_prefer_pyvisa(value=True):
 from .version import __version__
 version = __version__
 
-class X(object):
-    def __init__(self,_d={},**kwargs):
-        kwargs.update(_d)
-        self.__dict__=kwargs
-
-
 # Exceptions
-
 class IviException(Exception): pass
 class IviDriverException(IviException): pass
 class FileFormatException(IviDriverException): pass
