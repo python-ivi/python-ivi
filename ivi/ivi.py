@@ -1448,7 +1448,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         self._interface = None
         self._initialized = False
         self.__dict__.setdefault('_instrument_id', '')
-        self._cache_valid = list()
+        self._cache_valid = dict()
         
         super(Driver, self).__init__(*args, **kwargs)
         
@@ -1833,29 +1833,28 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         if tag[0] == "_": tag = tag[1:]
         
         return tag
-    
+
     def _get_cache_valid(self, tag=None, index=-1, skip_disable=False):
         if not skip_disable and not self._driver_operation_cache:
             return False
         tag = self._get_cache_tag(tag, 2)
         if index >= 0:
             tag = tag + '_%d' % index
-        return tag in self._cache_valid
-    
+        try:
+            return self._cache_valid[tag]
+        except KeyError:
+            self._cache_valid[tag] = False
+            return False
+
     def _set_cache_valid(self, valid=True, tag=None, index=-1):
         tag = self._get_cache_tag(tag, 2)
         if index >= 0:
             tag = tag + '_%d' % index
-        if valid:
-            if tag not in self._cache_valid:
-                self._cache_valid.append(tag)
-        else:
-            if tag in self._cache_valid:
-                self._cache_valid.remove(tag)
-    
+        self._cache_valid[tag] = valid
+
     def _driver_operation_invalidate_all_attributes(self):
-        self._cache_valid = list()
-    
+        self._cache_valid = dict()
+
     def _write_raw(self, data):
         "Write binary data to instrument"
         if self._driver_operation_simulate:
