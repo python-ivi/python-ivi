@@ -60,6 +60,30 @@ class Memory(object):
         pass
 
 
+class Title(object):
+    "Extension IVI methods for instruments that support setting a title"
+
+    def __init__(self, *args, **kwargs):
+        super(Title, self).__init__(*args, **kwargs)
+
+        self._display_title = ""
+
+        ivi.add_property(self, 'display.title',
+                        self._get_display_title,
+                        self._set_display_title,
+                        None,
+                        ivi.Doc("""
+                        Sets the instrument display title.
+                        """))
+
+    def _get_display_title(self):
+        return self._display_title
+
+    def _set_display_title(self, value):
+        value = str(value)
+        self._display_title = value
+
+
 class SystemSetup(object):
     "Extension IVI methods for instruments that support fetching and reloading of the system setup"
     
@@ -96,7 +120,7 @@ class Screenshot(object):
         ivi.add_method(self, 'display.fetch_screenshot',
                         self._display_fetch_screenshot,
                         ivi.Doc("""
-                        Captures the oscilloscope screen and transfers it in the specified format.
+                        Captures the screen and transfers it in the specified format.
                         The display graticule is optionally inverted.
                         """))
     
