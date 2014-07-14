@@ -24,8 +24,6 @@ THE SOFTWARE.
 
 """
 
-import time
-
 from .agilentBase8590 import *
 
 class agilentBase8590A(agilentBase8590):
