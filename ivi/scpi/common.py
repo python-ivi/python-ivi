@@ -24,8 +24,98 @@ THE SOFTWARE.
 
 """
 
+import time
+
 from .. import ivi
 from .. import extra
+
+
+class IdnCommand(extra.common.SerialNumber):
+    "Implementation of standard SCPI instrument identity query"
+
+    def _load_id_string(self):
+        if self._driver_operation_simulate:
+            self._identity_instrument_manufacturer = "Not available while simulating"
+            self._identity_instrument_model = "Not available while simulating"
+            self._identity_instrument_serial = "Not available while simulating"
+            self._identity_instrument_firmware_revision = "Not available while simulating"
+        else:
+            lst = self._ask("*IDN?").split(",")
+            self._identity_instrument_manufacturer = lst[0].strip()
+            self._identity_instrument_model = lst[1].strip()
+            self._identity_instrument_serial_number = lst[2].strip()
+            self._identity_instrument_firmware_revision = lst[3].strip()
+            self._set_cache_valid(True, 'identity_instrument_manufacturer')
+            self._set_cache_valid(True, 'identity_instrument_model')
+            self._set_cache_valid(True, 'identity_instrument_serial_number')
+            self._set_cache_valid(True, 'identity_instrument_firmware_revision')
+
+    def _get_identity_instrument_manufacturer(self):
+        if not self._get_cache_valid():
+            self._load_id_string()
+        return self._identity_instrument_manufacturer
+
+    def _get_identity_instrument_model(self):
+        if not self._get_cache_valid():
+            self._load_id_string()
+        return self._identity_instrument_model
+
+    def _get_identity_instrument_serial_number(self):
+        if not self._get_cache_valid():
+            self._load_id_string()
+        return self._identity_instrument_serial_number
+
+    def _get_identity_instrument_firmware_revision(self):
+        if not self._get_cache_valid():
+            self._load_id_string()
+        return self._identity_instrument_firmware_revision
+
+
+class ErrorQuery(object):
+    "Implementation of standard SCPI error query"
+
+    def _utility_error_query(self):
+        error_code = 0
+        error_message = "No error"
+        if not self._driver_operation_simulate:
+            error_code, error_message = self._ask(":system:error?").split(',')
+            error_code = int(error_code)
+            error_message = error_message.strip(' "')
+        return (error_code, error_message)
+
+
+class Reset(object):
+    "Implementation of standard SCPI reset"
+
+    def _utility_reset(self):
+        if not self._driver_operation_simulate:
+            self._write("*RST")
+            self.driver_operation.invalidate_all_attributes()
+
+    def _utility_reset_with_defaults(self):
+        self._utility_reset()
+
+
+class SelfTest(object):
+    "Implementation of standard SCPI self test"
+
+    def __init__(self, *args, **kwargs):
+        super(SelfTest, self).__init__(*args, **kwargs)
+
+        self._self_test_delay = 10
+
+    def _utility_self_test(self):
+        code = 0
+        message = "Self test passed"
+        if not self._driver_operation_simulate:
+            self._write("*TST?")
+            # wait for test to complete
+            time.sleep(self._self_test_delay)
+            code = int(self._read())
+            if code != 0:
+                message = "Self test failed"
+        return (code, message)
+
 
 class Memory(extra.common.Memory):
     "Extension IVI methods for instruments that support storing configurations in internal memory"
