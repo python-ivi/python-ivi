@@ -27,25 +27,30 @@ THE SOFTWARE.
 from .. import ivi
 from .. import dcpwr
 from .. import extra
+from . import common
 
 TrackingType = set(['floating'])
 TriggerSourceMapping = {
         'immediate': 'imm',
         'bus': 'bus'}
 
-class Base(ivi.Driver, dcpwr.Base):
+class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
+           dcpwr.Base,
+           ivi.Driver):
     "Generic SCPI IVI DC power supply driver"
     
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
-        
+
         # early define of _do_scpi_init
         self.__dict__.setdefault('_do_scpi_init', True)
-        
+
         super(Base, self).__init__(*args, **kwargs)
-        
+
+        self._self_test_delay = 5
+
         self._output_count = 1
-        
+
         self._output_spec = [
             {
                 'range': {
@@ -57,7 +62,7 @@ class Base(ivi.Driver, dcpwr.Base):
                 'current_max': 20.0
             }
         ]
-        
+
         self._identity_description = "Generic SCPI DC power supply driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -68,21 +73,21 @@ class Base(ivi.Driver, dcpwr.Base):
         self._identity_specification_major_version = 3
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['PSU']
-        
+
         self._init_outputs()
-    
+
     def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
-        
+
         super(Base, self).initialize(resource, id_query, reset, **keywargs)
-        
+
         if not self._do_scpi_init:
             return
-        
+
         # interface clear
         if not self._driver_operation_simulate:
             self._clear()
-        
+
         # check ID
         if id_query and not self._driver_operation_simulate:
             id = self.identity.instrument_model
@@ -90,81 +95,21 @@ class Base(ivi.Driver, dcpwr.Base):
             id_short = id[:len(id_check)]
             if id_short != id_check:
                 raise Exception("Instrument ID mismatch, expecting %s, got %s", id_check, id_short)
-        
+
         # reset
         if reset:
             self.utility_reset()
-        
-    
-    def _load_id_string(self):
-        if self._driver_operation_simulate:
-            self._identity_instrument_manufacturer = "Not available while simulating"
-            self._identity_instrument_model = "Not available while simulating"
-            self._identity_instrument_firmware_revision = "Not available while simulating"
-        else:
-            lst = self._ask("*IDN?").split(",")
-            self._identity_instrument_manufacturer = lst[0]
-            self._identity_instrument_model = lst[1]
-            self._identity_instrument_firmware_revision = lst[3]
-            self._set_cache_valid(True, 'identity_instrument_manufacturer')
-            self._set_cache_valid(True, 'identity_instrument_model')
-            self._set_cache_valid(True, 'identity_instrument_firmware_revision')
-    
-    def _get_identity_instrument_manufacturer(self):
-        if self._get_cache_valid():
-            return self._identity_instrument_manufacturer
-        self._load_id_string()
-        return self._identity_instrument_manufacturer
-    
-    def _get_identity_instrument_model(self):
-        if self._get_cache_valid():
-            return self._identity_instrument_model
-        self._load_id_string()
-        return self._identity_instrument_model
-    
-    def _get_identity_instrument_firmware_revision(self):
-        if self._get_cache_valid():
-            return self._identity_instrument_firmware_revision
-        self._load_id_string()
-        return self._identity_instrument_firmware_revision
-    
+
+
     def _utility_disable(self):
         pass
-    
-    def _utility_error_query(self):
-        error_code = 0
-        error_message = "No error"
-        if not self._driver_operation_simulate:
-            error_code, error_message = self._ask("system:error?").split(',')
-            error_code = int(error_code)
-            error_message = error_message.strip(' "')
-        return (error_code, error_message)
-    
+
     def _utility_lock_object(self):
         pass
-    
-    def _utility_reset(self):
-        if not self._driver_operation_simulate:
-            self._write("*RST")
-            self.driver_operation.invalidate_all_attributes()
-    
-    def _utility_reset_with_defaults(self):
-        self._utility_reset()
-    
-    def _utility_self_test(self):
-        code = 0
-        message = "Self test passed"
-        if not self._driver_operation_simulate:
-            code = int(self._ask("*TST?"))
-            if code != 0:
-                message = "Self test failed"
-        return (code, message)
-    
+
     def _utility_unlock_object(self):
         pass
-    
-    
-    
+
     def _init_outputs(self):
         try:
             super(Base, self)._init_outputs()
