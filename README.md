@@ -113,7 +113,7 @@ Home page:
 http://www.alexforencich.com/wiki/en/python-vxi11/start
 
 GitHub repository:
-https://github.com/alexforencich/python-vxi11
+https://github.com/python-ivi/python-vxi11
 
 #### Python USBTMC
 
@@ -125,7 +125,7 @@ Home page:
 http://alexforencich.com/wiki/en/python-usbtmc/start
 
 GitHub repository:
-https://github.com/alexforencich/python-usbtmc
+https://github.com/python-ivi/python-usbtmc
 
 #### PyVISA
 
