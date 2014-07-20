@@ -1733,28 +1733,12 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                     raise IOException('Cannot use resource type %s' % res_type)
             elif res_type == 'ASRL':
                 # Serial connection
-                port = 0
-                baudrate = 9600
-                
-                index = res_prefix[4:]
-                if len(index) > 0:
-                    port = int(index)
-                else:
-                    # port[,baud[,nps]]
-                    # n = data bits (5,6,7,8)
-                    # p = parity (n,o,e,m,s)
-                    # s = stop bits (1,1.5,2)
-                    t = res_arg1.split(',')
-                    port = t[0]
-                    if len(t) > 1:
-                       baudrate = int(t[1])
-                
                 if self._prefer_pyvisa and 'pyvisa' in globals():
                     # connect with PyVISA
                     self._interface = pyvisa.PyVisaInstrument(resource)
                 elif 'pyserial' in globals():
                     # connect with PySerial
-                    self._interface = pyserial.SerialInstrument(port,baudrate=baudrate)
+                    self._interface = pyserial.SerialInstrument(resource)
                 elif 'pyvisa' in globals():
                     # connect with PyVISA
                     self._interface = pyvisa.PyVisaInstrument(resource)

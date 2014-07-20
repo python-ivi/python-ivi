@@ -26,18 +26,58 @@ THE SOFTWARE.
 
 import serial
 import time
+import re
+
+def parse_visa_resource_string(resource_string):
+    # valid resource strings:
+    # ASRL1::INSTR
+    # ASRL::COM1::INSTR
+    # ASRL::COM1,9600::INSTR
+    # ASRL::COM1,9600,8n1::INSTR
+    # ASRL::/dev/ttyUSB0::INSTR
+    # ASRL::/dev/ttyUSB0,9600::INSTR
+    # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
+    m = re.match('^(?P<prefix>(?P<type>ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<suffix>INSTR))$',
+            resource_string, re.I)
+
+    if m is not None:
+        return dict(
+                type = m.group('type').upper(),
+                prefix = m.group('prefix'),
+                arg1 = m.group('arg1'),
+                suffix = m.group('suffix'),
+        )
 
 class SerialInstrument:
     "Serial instrument interface client"
     def __init__(self, port = None, baudrate=9600, bytesize=8, paritymode=0, stopbits=1, timeout=None,
                 xonxoff=False, rtscts=False, dsrdtr=False):
-        
+
+        if port.upper().startswith("ASRL") and '::' in port:
+            res = parse_visa_resource_string(port)
+
+            if res is None:
+                raise IOError("Invalid resource string")
+
+            index = res['prefix'][4:]
+            if len(index) > 0:
+                port = int(index)
+            else:
+                # port[,baud[,nps]]
+                # n = data bits (5,6,7,8)
+                # p = parity (n,o,e,m,s)
+                # s = stop bits (1,1.5,2)
+                t = res['arg1'].split(',')
+                port = t[0]
+                if len(t) > 1:
+                    baudrate = int(t[1])
+
         self.serial = serial.Serial(port)
-        
+
         self.term_char = '\n'
-        
+
         self.port = port
-        
+
         self.baudrate = baudrate
         self.bytesize = bytesize
         self.paritymode = paritymode
@@ -46,10 +86,10 @@ class SerialInstrument:
         self.xonxoff = xonxoff
         self.rtscts = rtscts
         self.dsrdtr = dsrdtr
-        
+
         self.wait_dsr = False
         self.message_delay = 0
-        
+
         self.update_settings()
     
     def update_settings(self):
