@@ -26,6 +26,42 @@ THE SOFTWARE.
 
 from .. import ivi
 
+class SerialNumber(object):
+    "Extension IVI methods for instruments that can report a serial number"
+
+    def __init__(self, *args, **kwargs):
+        super(SerialNumber, self).__init__(*args, **kwargs)
+
+        self._identity_instrument_serial_number = "Cannot query from instrument"
+
+        ivi.add_property(self, 'identity.instrument_serial_number',
+                        self._get_identity_instrument_serial_number,
+                        None,
+                        None,
+                        """
+                        Returns the serial number of the physical instrument. The IVI specific
+                        driver returns the value it queries from the instrument or a string
+                        indicating that it cannot query the instrument identity.
+
+                        In some cases, it is not possible for the specific driver to query the
+                        serial number of the instrument. This can occur when the Simulate
+                        attribute is set to True or if the instrument is not capable of returning
+                        the serial number. For these cases, the specific driver returns defined
+                        strings for this attribute. If the Simulate attribute is set to True,
+                        the specific driver returns "Not available while simulating" as the value
+                        of this attribute. If the instrument is not capable of returning the
+                        serial number and the Simulate attribute is set to False, the specific
+                        driver returns "Cannot query from instrument" as the value of this
+                        attribute.
+
+                        The string that this attribute returns does not have a predefined maximum
+                        length.
+                        """)
+
+    def _get_identity_instrument_serial(self):
+        return self._identity_instrument_serial
+
+
 class Memory(object):
     "Extension IVI methods for instruments that support storing configurations in internal memory"
     
