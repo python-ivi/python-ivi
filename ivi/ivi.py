@@ -1720,20 +1720,12 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                     raise IOException('Cannot use resource type %s' % res_type)
             elif res_type == 'GPIB':
                 # GPIB connection
-                index = res_prefix[4:]
-                if len(index) > 0:
-                    index = int(index)
-                else:
-                    index = 0
-                
-                addr = int(res_arg1)
-                
                 if self._prefer_pyvisa and 'pyvisa' in globals():
                     # connect with PyVISA
                     self._interface = pyvisa.PyVisaInstrument(resource)
                 elif 'linuxgpib' in globals():
                     # connect with linux-gpib
-                    self._interface = linuxgpib.LinuxGpibInstrument(index, addr)
+                    self._interface = linuxgpib.LinuxGpibInstrument(resource)
                 elif 'pyvisa' in globals():
                     # connect with PyVISA
                     self._interface = pyvisa.PyVisaInstrument(resource)

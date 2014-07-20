@@ -25,10 +25,44 @@ THE SOFTWARE.
 """
 
 import Gpib
+import re
+
+def parse_visa_resource_string(resource_string):
+    # valid resource strings:
+    # GPIB::10::INSTR
+    # GPIB0::10::INSTR
+    m = re.match('^(?P<prefix>(?P<type>GPIB)\d*)(::(?P<arg1>[^\s:]+))(::(?P<suffix>INSTR))$',
+            resource_string, re.I)
+
+    if m is not None:
+        return dict(
+                type = m.group('type').upper(),
+                prefix = m.group('prefix'),
+                arg1 = m.group('arg1'),
+                suffix = m.group('suffix'),
+        )
 
 class LinuxGpibInstrument:
     "Linux GPIB wrapper instrument interface client"
     def __init__(self, name = 'gpib0', pad = None, sad = 0, timeout = 13, send_eoi = 1, eos_mode = 0):
+
+        if name.upper().startswith('GPIB') and '::' in name:
+            res = parse_visa_resource_string(name)
+
+            if res is None:
+                raise IOError("Invalid resource string")
+
+            index = res['prefix'][4:]
+            if len(index) > 0:
+                index = int(index)
+            else:
+                index = 0
+
+            addr = int(res['arg1'])
+
+            name = index
+            pad = addr
+
         self.gpib = Gpib.Gpib(name, pad, sad, timeout, send_eoi, eos_mode)
 
     def write_raw(self, data):
