@@ -216,8 +216,26 @@ from .agilent436A import agilent436A
 from .agilent437B import agilent437B
 
 # RF Signal Generators
+# 8642A/B
 from .agilent8642A import agilent8642A
 from .agilent8642B import agilent8642B
+# E4400B ESG
+from .agilentE4400B import agilentE4400B
+from .agilentE4420B import agilentE4420B
+from .agilentE4421B import agilentE4421B
+from .agilentE4422B import agilentE4422B
+from .agilentE4423B import agilentE4423B
+from .agilentE4424B import agilentE4424B
+from .agilentE4425B import agilentE4425B
+from .agilentE4426B import agilentE4426B
+from .agilentE4430B import agilentE4430B
+from .agilentE4431B import agilentE4431B
+from .agilentE4432B import agilentE4432B
+from .agilentE4433B import agilentE4433B
+from .agilentE4434B import agilentE4434B
+from .agilentE4435B import agilentE4435B
+from .agilentE4436B import agilentE4436B
+from .agilentE4437B import agilentE4437B
 
 # Tracking sources
 from .agilent85644A import agilent85644A
