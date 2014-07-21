@@ -46,6 +46,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 859xE/EM/C/L series
   * RF Signal Generators (rfsiggen):
     * Agilent 8642 A/B
+    * Agilent ESG E4400B series
   * Other
     * Agilent 8156A optical attenuator
     * Agilent 86140B series optical spectrum analyzer
@@ -310,3 +311,37 @@ and configure an output.
     psu.outputs[0].ovp_limit = 14.0
     psu.outputs[0].ovp_enabled = True
     psu.outputs[0].enabled = True
+
+
+It is also possible to control multiple instruments.  This example configures
+an Agilent ESG E4433B vector signal generator to output an IQ modulated multitone
+waveform which is then received on an Agilent 8593E spectrum analyzer.
+
+    # import Python IVI
+    import ivi
+    # import numpy
+    import numpy as np
+    # connect to E4433B via E2050A
+    esg = ivi.agilent.agilentE4433B("TCPIP::192.168.1.110::gpib,19::INSTR")
+    # connect to 8593E via E2050A
+    sa = ivi.agilent.agilent8593E("TCPIP::192.168.1.110::gpib,18::INSTR")
+    # create multitone IQ waveform
+    n = 2000
+    f1 = 1
+    a1 = 0.5
+    f2 = 3
+    a2 = 0.5
+    t = np.arange(0,n)
+    yi = a1*np.sin(2*np.pi/n*f1*t)+a2*np.sin(2*np.pi/n*f2*t)
+    yq = np.zeros(n)
+    # configure ESG
+    esg.rf.frequency = 4e9
+    esg.rf.level = -10
+    esg.digital_modulation.arb.write_waveform('wfm', yi, yq)
+    esg.digital_modulation.arb.selected_waveform = 'wfm'
+    esg.digital_modulation.arb.clock_frequency = 10e6
+    esg.iq.source = 'arb_generator'
+    esg.iq.enabled = True
+    esg.rf.output_enabled = True
+    # configure SA
+    sa.frequency.configure_center_span(4e9, 100e3)
