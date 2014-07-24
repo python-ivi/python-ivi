@@ -7,6 +7,7 @@
 """
 
 import unittest
+from mock import MagicMock
 
 from ivi.agilent.agilentMSOX3024A import agilentMSOX3024A
 
@@ -104,17 +105,33 @@ class TestAgilentMSOX3024A(unittest.TestCase):
             (0, 'trash_mode'))
 
     def test_get_output_enabled_while_simulating_driver_operation(self):
-        # TODO(mdr) Need to test _get_output_enabled() using mocks/spies when
-        # self.scope._driver_operation_simulate = False
         self.scope._driver_operation_simulate = True
         self.assertEqual(self.scope._get_output_enabled(0), False)
 
+    def test_get_output_enabled_when_scope_query_returns_0(self):
+        self.scope._ask = MagicMock(return_value='0')
+        self.assertEqual(self.scope._get_output_enabled(0), False)
+        self.scope._ask.assert_called_with(
+            ':{}:output?'.format(self.scope._output_name[0]))
+
+    def test_get_output_enabled_when_scope_query_returns_1(self):
+        self.scope._ask = MagicMock(return_value='1')
+        self.assertEqual(self.scope._get_output_enabled(0), True)
+        self.scope._ask.assert_called_with(
+            ':{}:output?'.format(self.scope._output_name[0]))
+
     def test_set_output_enabled_while_simulating_driver_operation(self):
-        # TODO(mdr) Need to test _set_output_enabled() using mocks/spies when
-        # self.scope._driver_operation_simulate = False
         self.scope._driver_operation_simulate = True
         # Make sure an exception isn't raised
         self.scope._set_output_enabled(0, True)
+
+    def test_set_output_enabled_without_simulating_driver_operation(self):
+        self.scope._write = MagicMock()
+        for is_output_enabled in (True, False):
+            self.scope._set_output_enabled(0, is_output_enabled)
+            self.scope._ask = MagicMock(return_value=is_output_enabled)
+            self.assertEqual(self.scope._get_output_enabled(0),
+                             is_output_enabled)
 
     def test_get_output_impedance_while_simulating_driver_operation(self):
         # TODO(mdr) Need to test _get_output_impedance() using mocks/spies when
@@ -126,8 +143,10 @@ class TestAgilentMSOX3024A(unittest.TestCase):
         # TODO(mdr) Need to test _set_output_impedance() using mocks/spies when
         # self.scope._driver_operation_simulate = False
         self.scope._driver_operation_simulate = True
-        # Make sure an exception isn't raised
+        # Make sure an exception isn't raised when setting a valid output
+        # impedance
         self.scope._set_output_impedance(0, 1000000)
+        self.scope._set_output_impedance(0, 50)
 
     def test_output_impedance_must_be_set_to_valid_impedance(self):
         self.scope._driver_operation_simulate = True
