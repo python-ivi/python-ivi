@@ -132,24 +132,42 @@ class TestAgilentMSOX3024A(unittest.TestCase):
             self.scope._ask = MagicMock(return_value=is_output_enabled)
             self.assertEqual(self.scope._get_output_enabled(0),
                              is_output_enabled)
+            self.scope._write.assert_called_with(
+                ':{}:output {}'.format('wgen', int(is_output_enabled)))
 
     def test_get_output_impedance_while_simulating_driver_operation(self):
-        # TODO(mdr) Need to test _get_output_impedance() using mocks/spies when
-        # self.scope._driver_operation_simulate = False
         self.scope._driver_operation_simulate = True
         self.assertEqual(self.scope._get_output_impedance(0), 50)
 
+    def test_get_output_impedance_for_fifty_ohms(self):
+        self.scope._ask = MagicMock(return_value='FIFT')
+        self.assertEqual(self.scope._get_output_impedance(0), 50)
+        self.scope._ask.assert_called_with(
+            ':{}:output:load?'.format('wgen'))
+
+    def test_get_output_impedance_for_one_megaohm(self):
+        self.scope._ask = MagicMock(return_value='ONEM')
+        self.assertEqual(self.scope._get_output_impedance(0), 1000000)
+        self.scope._ask.assert_called_with(
+            ':{}:output:load?'.format('wgen'))
+
     def test_set_output_impedance_while_simulating_driver_operation(self):
-        # TODO(mdr) Need to test _set_output_impedance() using mocks/spies when
-        # self.scope._driver_operation_simulate = False
         self.scope._driver_operation_simulate = True
         # Make sure an exception isn't raised when setting a valid output
         # impedance
         self.scope._set_output_impedance(0, 1000000)
         self.scope._set_output_impedance(0, 50)
 
+    def test_set_output_impedance(self):
+        self.scope._write = MagicMock()
+        for impedance, load in zip(
+                (50, 1000000), ('fifty', 'onemeg')):
+            self.scope._set_output_impedance(0, impedance)
+            self.assertEqual(self.scope._output_impedance[0], impedance)
+            self.scope._write.assert_called_with(
+                ':{}:output:load {}'.format('wgen', load))
+
     def test_output_impedance_must_be_set_to_valid_impedance(self):
-        self.scope._driver_operation_simulate = True
         invalid_impedances = (25, 75, 100, 1000001)
         for invalid_impedance in invalid_impedances:
             self.assertRaises(
