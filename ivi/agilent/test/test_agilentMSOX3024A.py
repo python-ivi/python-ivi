@@ -175,3 +175,32 @@ class TestAgilentMSOX3024A(unittest.TestCase):
                 self.scope._set_output_impedance,
                 0,
                 invalid_impedance)
+
+    def test_get_output_mode(self):
+        self.assertEqual(self.scope._get_output_mode(0), 'function')
+
+    def test_set_output_mode(self):
+        for bad_mode in ('trash', 'not-function'):
+            self.assertRaises(
+                Exception,
+                self.scope._set_output_mode,
+                0,
+                bad_mode)
+        # Make sure an exception isn't raised when setting a valid output
+        # mode
+        self.scope._set_output_mode(0, 'function')
+        self.assertEqual(self.scope._get_output_mode(0), 'function')
+
+    def test_get_output_reference_clock_source(self):
+        self.assertEqual(
+            self.scope._get_output_reference_clock_source(0),
+            '')
+
+    def test_set_output_reference_clock_source(self):
+        # FIXME(mdr): Seems strange that no matter what value you pass into the
+        # _set_output_reference_clock_source function, the value is set to
+        # 'internal'. Should the fcn in agilent2000A.py change?
+        self.scope._set_output_reference_clock_source(0, 'blah')
+        self.assertEqual(
+            self.scope._get_output_reference_clock_source(0),
+            'internal')
