@@ -39,7 +39,7 @@ ArmType = set(['immediate', 'external'])
 ReferenceType = set(['voltage', 'percent'])
 MeasurementStatus = set(['complete', 'in_progress', 'unknown'])
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for all frequency counters"
     
     def __init__(self, *args, **kwargs):
@@ -111,8 +111,11 @@ class Base(object):
         self._arm_stop_external_slope = 'positive'
         self._arm_stop_external_delay = 0.0
         
-        self.__dict__.setdefault('_docs', dict())
-        self._docs['measurement_function'] = ivi.Doc("""
+        self._add_property('measurement_function',
+                        self._get_measurement_function,
+                        self._set_measurement_function,
+                        None,
+                        ivi.Doc("""
                         Specifies the current measurement function of the Counter. The user sets
                         the function by calling one of the configure measurement functions or the
                         set attribute function. See configure measurement functions for details on
@@ -139,9 +142,8 @@ class Base(object):
                         * 'minimum_voltage'
                         * 'rms_voltage'
                         * 'peak_to_peak_voltage'
-                        """, cls, grp, '4.2.1')
-        
-        ivi.add_property(self, 'channels[].name',
+                        """, cls, grp, '4.2.1'))
+        self._add_property('channels[].name',
                         self._get_channel_name,
                         None,
                         None,
@@ -153,7 +155,7 @@ class Base(object):
                         invalid value for the Index parameter, the value of this attribute is an
                         empty string.
                         """, cls, grp, '4.2.3'))
-        ivi.add_property(self, 'channels[].impedance',
+        self._add_property('channels[].impedance',
                         self._get_channel_impedance,
                         self._set_channel_impedance,
                         None,
@@ -162,7 +164,7 @@ class Base(object):
                         
                         Common values are 50, 75, and 1,000,000.
                         """, cls, grp, '4.2.5'))
-        ivi.add_property(self, 'channels[].coupling',
+        self._add_property('channels[].coupling',
                         self._get_channel_coupling,
                         self._set_channel_coupling,
                         None,
@@ -174,7 +176,7 @@ class Base(object):
                         * 'ac'
                         * 'dc'
                         """, cls, grp, '4.2.6'))
-        ivi.add_property(self, 'channels[].attenuation',
+        self._add_property('channels[].attenuation',
                         self._get_channel_attenuation,
                         self._set_channel_attenuation,
                         None,
@@ -183,7 +185,7 @@ class Base(object):
                         Increasing this value decreases the sensitivity. For instance, setting
                         this value to 10 attenuates the input by a factor of 10.
                         """, cls, grp, '4.2.7'))
-        ivi.add_property(self, 'channels[].level',
+        self._add_property('channels[].level',
                         self._get_channel_level,
                         self._set_channel_level,
                         None,
@@ -192,7 +194,7 @@ class Base(object):
                         a count. Level is specified as the voltage at the input terminals and is
                         independent of attenuation.
                         """, cls, grp, '4.2.8'))
-        ivi.add_property(self, 'channels[].hysteresis',
+        self._add_property('channels[].hysteresis',
                         self._get_channel_hysteresis,
                         self._set_channel_hysteresis,
                         None,
@@ -204,7 +206,7 @@ class Base(object):
                         noise. Hysteresis is specified as the voltage at the input terminals and
                         is independent of attenuation.
                         """, cls, grp, '4.2.9'))
-        ivi.add_property(self, 'channels[].slope',
+        self._add_property('channels[].slope',
                         self._get_channel_slope,
                         self._set_channel_slope,
                         None,
@@ -217,21 +219,21 @@ class Base(object):
                         * 'positive'
                         * 'negative'
                         """, cls, grp, '4.2.10'))
-        ivi.add_property(self, 'channels[].filter_enabled',
+        self._add_property('channels[].filter_enabled',
                         self._get_channel_filter_enabled,
                         self._set_channel_filter_enabled,
                         None,
                         ivi.Doc("""
                         Specifies if the filter on the selected channel is enabled.
                         """, cls, grp, '4.2.11'))
-        ivi.add_property(self, 'frequency.channel',
+        self._add_property('frequency.channel',
                         self._get_frequency_channel,
                         self._set_frequency_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the frequency is measured on.
                         """, cls, grp, '4.2.12'))
-        ivi.add_property(self, 'frequency.estimate',
+        self._add_property('frequency.estimate',
                         self._get_frequency_estimate,
                         self._set_frequency_estimate,
                         None,
@@ -244,7 +246,7 @@ class Base(object):
                         Setting this attribute overrides the Frequency Aperture Time and sets the
                         Frequency Estimate Auto to false.
                         """, cls, grp, '4.2.13'))
-        ivi.add_property(self, 'frequency.resolution',
+        self._add_property('frequency.resolution',
                         self._get_frequency_resolution,
                         self._set_frequency_resolution,
                         None,
@@ -255,7 +257,7 @@ class Base(object):
                         Setting this attribute overrides the Frequency Aperture Time and sets the
                         Frequency Resolution Auto to false.
                         """, cls, grp, '4.2.14'))
-        ivi.add_property(self, 'frequency.aperture_time',
+        self._add_property('frequency.aperture_time',
                         self._get_frequency_aperture_time,
                         self._set_frequency_aperture_time,
                         None,
@@ -268,7 +270,7 @@ class Base(object):
                         time selected by the driver based on the Frequency Estimate and Frequency
                         Resolution.
                         """, cls, grp, '4.2.15'))
-        ivi.add_property(self, 'frequency.estimate_auto',
+        self._add_property('frequency.estimate_auto',
                         self._get_frequency_estimate_auto,
                         self._set_frequency_estimate_auto,
                         None,
@@ -280,7 +282,7 @@ class Base(object):
                         False, the user specifies the frequency estimate of the measurement by
                         explicitly setting the Frequency Estimate attribute.
                         """, cls, grp, '4.2.16'))
-        ivi.add_property(self, 'frequency.resolution_auto',
+        self._add_property('frequency.resolution_auto',
                         self._get_frequency_resolution_auto,
                         self._set_frequency_resolution_auto,
                         None,
@@ -292,14 +294,14 @@ class Base(object):
                         set to False, the user specifies the frequency resolution of the
                         measurement by explicitly setting the Frequency Resolution attribute.
                         """, cls, grp, '4.2.17'))
-        ivi.add_property(self, 'period.channel',
+        self._add_property('period.channel',
                         self._get_period_channel,
                         self._set_period_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the period is measured on.
                         """, cls, grp, '4.2.18'))
-        ivi.add_property(self, 'period.estimate',
+        self._add_property('period.estimate',
                         self._get_period_estimate,
                         self._set_period_estimate,
                         None,
@@ -309,7 +311,7 @@ class Base(object):
                         The driver typically use this to set the duration of the measurement. The
                         units are seconds.
                         """, cls, grp, '4.2.19'))
-        ivi.add_property(self, 'period.resolution',
+        self._add_property('period.resolution',
                         self._get_period_resolution,
                         self._set_period_resolution,
                         None,
@@ -317,7 +319,7 @@ class Base(object):
                         Specifies the resolution of the measurement for the period function. The
                         units are seconds.
                         """, cls, grp, '4.2.20'))
-        ivi.add_property(self, 'period.aperture_time',
+        self._add_property('period.aperture_time',
                         self._get_period_aperture_time,
                         self._set_period_aperture_time,
                         None,
@@ -329,14 +331,14 @@ class Base(object):
                         Resolution. This attribute can be read to determine the value of aperture
                         time selected by the driver based on the Estimate and Period Resolution.
                         """, cls, grp, '4.2.21'))
-        ivi.add_property(self, 'pulse_width.channel',
+        self._add_property('pulse_width.channel',
                         self._get_pulse_width_channel,
                         self._set_pulse_width_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the pulse width is measured on.
                         """, cls, grp, '4.2.22'))
-        ivi.add_property(self, 'pulse_width.estimate',
+        self._add_property('pulse_width.estimate',
                         self._get_pulse_width_estimate,
                         self._set_pulse_width_estimate,
                         None,
@@ -346,7 +348,7 @@ class Base(object):
                         input signal. The driver typically use this to set the duration of the
                         measurement. The units are seconds.
                         """, cls, grp, '4.2.23'))
-        ivi.add_property(self, 'pulse_width.resolution',
+        self._add_property('pulse_width.resolution',
                         self._get_pulse_width_resolution,
                         self._set_pulse_width_resolution,
                         None,
@@ -354,14 +356,14 @@ class Base(object):
                         Specifies the resolution of the measurement for the pulse width function.
                         The units are seconds.
                         """, cls, grp, '4.2.24'))
-        ivi.add_property(self, 'duty_cycle.channel',
+        self._add_property('duty_cycle.channel',
                         self._get_duty_cycle_channel,
                         self._set_duty_cycle_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the duty cycle is measured on.
                         """, cls, grp, '4.2.25'))
-        ivi.add_property(self, 'duty_cycle.frequency_estimate',
+        self._add_property('duty_cycle.frequency_estimate',
                         self._get_duty_cycle_frequency_estimate,
                         self._set_duty_cycle_frequency_estimate,
                         None,
@@ -371,7 +373,7 @@ class Base(object):
                         the input signal. The driver typically use this to set the duration of the
                         measurement.
                         """, cls, grp, '4.2.26'))
-        ivi.add_property(self, 'duty_cycle.resolution',
+        self._add_property('duty_cycle.resolution',
                         self._get_duty_cycle_resolution,
                         self._set_duty_cycle_resolution,
                         None,
@@ -379,14 +381,14 @@ class Base(object):
                         Specifies the resolution for the duty cycle function. Duty Cycle
                         Resolution is a unitless value.
                         """, cls, grp, '4.2.27'))
-        ivi.add_property(self, 'edge_time.channel',
+        self._add_property('edge_time.channel',
                         self._get_edge_time_channel,
                         self._set_edge_time_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the edge time is measured on.
                         """, cls, grp, '4.2.28'))
-        ivi.add_property(self, 'edge_time.reference_type',
+        self._add_property('edge_time.reference_type',
                         self._get_edge_time_reference_type,
                         self._set_edge_time_reference_type,
                         None,
@@ -400,7 +402,7 @@ class Base(object):
                         * 'voltage'
                         * 'percent'
                         """, cls, grp, '4.2.29'))
-        ivi.add_property(self, 'edge_time.estimate',
+        self._add_property('edge_time.estimate',
                         self._get_edge_time_estimate,
                         self._set_edge_time_estimate,
                         None,
@@ -408,7 +410,7 @@ class Base(object):
                         Specifies the estimated edge time for the edge time function. The units
                         are seconds.
                         """, cls, grp, '4.2.30'))
-        ivi.add_property(self, 'edge_time.resolution',
+        self._add_property('edge_time.resolution',
                         self._get_edge_time_resolution,
                         self._set_edge_time_resolution,
                         None,
@@ -416,7 +418,7 @@ class Base(object):
                         Specifies the resolution of the measurement for the edge time function.
                         The units are seconds.
                         """, cls, grp, '4.2.31'))
-        ivi.add_property(self, 'edge_time.high_reference',
+        self._add_property('edge_time.high_reference',
                         self._get_edge_time_high_reference,
                         self._set_edge_time_high_reference,
                         None,
@@ -425,7 +427,7 @@ class Base(object):
                         Time measurement, this is the level where the measurement stops and for a
                         Fall Time measurements, this is the level where the measurement starts.
                         """, cls, grp, '4.2.32'))
-        ivi.add_property(self, 'edge_time.low_reference',
+        self._add_property('edge_time.low_reference',
                         self._get_edge_time_low_reference,
                         self._set_edge_time_low_reference,
                         None,
@@ -434,21 +436,21 @@ class Base(object):
                         Time measurement, this is the level where the measurement starts and for a
                         Fall Time measurements, this is the level where the measurement stops.
                         """, cls, grp, '4.2.33'))
-        ivi.add_property(self, 'frequency_ratio.numerator_channel',
+        self._add_property('frequency_ratio.numerator_channel',
                         self._get_frequency_ratio_numerator_channel,
                         self._set_frequency_ratio_numerator_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the frequency ratio is measured on.
                         """, cls, grp, '4.2.34'))
-        ivi.add_property(self, 'frequency_ratio.denominator_channel',
+        self._add_property('frequency_ratio.denominator_channel',
                         self._get_frequency_ratio_denominator_channel,
                         self._set_frequency_ratio_denominator_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input denominator channel the frequency ratio is measured on.
                         """, cls, grp, '4.2.35'))
-        ivi.add_property(self, 'frequency_ratio.numerator_frequency_estimate',
+        self._add_property('frequency_ratio.numerator_frequency_estimate',
                         self._get_frequency_ratio_numerator_frequency_estimate,
                         self._set_frequency_ratio_numerator_frequency_estimate,
                         None,
@@ -458,7 +460,7 @@ class Base(object):
                         instrument for the input signal. The driver typically use this to set the
                         duration of the measurement.
                         """, cls, grp, '4.2.36'))
-        ivi.add_property(self, 'frequency_ratio.estimate',
+        self._add_property('frequency_ratio.estimate',
                         self._get_frequency_ratio_estimate,
                         self._set_frequency_ratio_estimate,
                         None,
@@ -466,7 +468,7 @@ class Base(object):
                         Specifies the estimated frequency ratio for the frequency ratio function.
                         Frequency Ratio Estimate is unitless value.
                         """, cls, grp, '4.2.37'))
-        ivi.add_property(self, 'frequency_ratio.resolution',
+        self._add_property('frequency_ratio.resolution',
                         self._get_frequency_ratio_resolution,
                         self._set_frequency_ratio_resolution,
                         None,
@@ -474,21 +476,21 @@ class Base(object):
                         Specifies the frequency ratio resolution of the frequency ratio function.
                         Frequency Ratio Resolution is unitless value.
                         """, cls, grp, '4.2.38'))
-        ivi.add_property(self, 'time_interval.start_channel',
+        self._add_property('time_interval.start_channel',
                         self._get_time_interval_start_channel,
                         self._set_time_interval_start_channel,
                         None,
                         ivi.Doc("""
                         Specifies the start channel used to perform the time interval function.
                         """, cls, grp, '4.2.39'))
-        ivi.add_property(self, 'time_interval.stop_channel',
+        self._add_property('time_interval.stop_channel',
                         self._get_time_interval_stop_channel,
                         self._set_time_interval_stop_channel,
                         None,
                         ivi.Doc("""
                         Specifies the stop channel used to perform the time interval function.
                         """, cls, grp, '4.2.40'))
-        ivi.add_property(self, 'time_interval.estimate',
+        self._add_property('time_interval.estimate',
                         self._get_time_interval_estimate,
                         self._set_time_interval_estimate,
                         None,
@@ -496,7 +498,7 @@ class Base(object):
                         Specifies the estimated time interval for the time interval function. The
                         units are seconds.
                         """, cls, grp, '4.2.41'))
-        ivi.add_property(self, 'time_interval.resolution',
+        self._add_property('time_interval.resolution',
                         self._get_time_interval_resolution,
                         self._set_time_interval_resolution,
                         None,
@@ -504,21 +506,21 @@ class Base(object):
                         Specifies the resolution of the measurement for the time interval
                         function. The units are seconds.
                         """, cls, grp, '4.2.42'))
-        ivi.add_property(self, 'phase.input_channel',
+        self._add_property('phase.input_channel',
                         self._get_phase_input_channel,
                         self._set_phase_input_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the phase is measured on.
                         """, cls, grp, '4.2.43'))
-        ivi.add_property(self, 'phase.reference_channel',
+        self._add_property('phase.reference_channel',
                         self._get_phase_reference_channel,
                         self._set_phase_reference_channel,
                         None,
                         ivi.Doc("""
                         Specifies the reference channel for the phase measurement.
                         """, cls, grp, '4.2.44'))
-        ivi.add_property(self, 'phase.frequency_estimate',
+        self._add_property('phase.frequency_estimate',
                         self._get_phase_frequency_estimate,
                         self._set_phase_frequency_estimate,
                         None,
@@ -528,7 +530,7 @@ class Base(object):
                         the instrument for the input signal. The driver typically use this to set
                         the duration of the measurement.
                         """, cls, grp, '4.2.45'))
-        ivi.add_property(self, 'phase.resolution',
+        self._add_property('phase.resolution',
                         self._get_phase_resolution,
                         self._set_phase_resolution,
                         None,
@@ -536,28 +538,28 @@ class Base(object):
                         Specifies the resolution of the measurement, in degrees, for the phase
                         function reference channel.
                         """, cls, grp, '4.2.46'))
-        ivi.add_property(self, 'totalize_continuous.channel',
+        self._add_property('totalize_continuous.channel',
                         self._get_totalize_continuous_channel,
                         self._set_totalize_continuous_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel for the continuous totalize function.
                         """, cls, grp, '4.2.47'))
-        ivi.add_property(self, 'totalize_gated.channel',
+        self._add_property('totalize_gated.channel',
                         self._get_totalize_gated_channel,
                         self._set_totalize_gated_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel for the gated totalize function.
                         """, cls, grp, '4.2.48'))
-        ivi.add_property(self, 'totalize_gated.gate_source',
+        self._add_property('totalize_gated.gate_source',
                         self._get_totalize_gated_gate_source,
                         self._set_totalize_gated_gate_source,
                         None,
                         ivi.Doc("""
                         Specifies the gate source for the gated totalize function.
                         """, cls, grp, '4.2.49'))
-        ivi.add_property(self, 'totalize_gated.gate_slope',
+        self._add_property('totalize_gated.gate_slope',
                         self._get_totalize_gated_gate_slope,
                         self._set_totalize_gated_gate_slope,
                         None,
@@ -569,14 +571,14 @@ class Base(object):
                         * 'positive'
                         * 'negative'
                         """, cls, grp, '4.2.50'))
-        ivi.add_property(self, 'totalize_timed.channel',
+        self._add_property('totalize_timed.channel',
                         self._get_totalize_timed_channel,
                         self._set_totalize_timed_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel for the timed totalize function.
                         """, cls, grp, '4.2.51'))
-        ivi.add_property(self, 'totalize_timed.gate_time',
+        self._add_property('totalize_timed.gate_time',
                         self._get_totalize_timed_gate_time,
                         self._set_totalize_timed_gate_time,
                         None,
@@ -584,28 +586,28 @@ class Base(object):
                         Specifies the gate time for the timed totalize function. The units are
                         seconds.
                         """, cls, grp, '4.2.52'))
-        ivi.add_property(self, 'arm.start.type',
+        self._add_property('arm.start.type',
                         self._get_arm_start_type,
                         self._set_arm_start_type,
                         None,
                         ivi.Doc("""
                         Specifies the start arm type for armed measurements.
                         """, cls, grp, '4.2.53'))
-        ivi.add_property(self, 'arm.start.external.source',
+        self._add_property('arm.start.external.source',
                         self._get_arm_start_external_source,
                         self._set_arm_start_external_source,
                         None,
                         ivi.Doc("""
                         Specifies the start arm source for external armed measurements.
                         """, cls, grp, '4.2.54'))
-        ivi.add_property(self, 'arm.start.external.level',
+        self._add_property('arm.start.external.level',
                         self._get_arm_start_external_level,
                         self._set_arm_start_external_level,
                         None,
                         ivi.Doc("""
                         Specifies the voltage level in volts that starts external armed measurements.
                         """, cls, grp, '4.2.55'))
-        ivi.add_property(self, 'arm.start.external.slope',
+        self._add_property('arm.start.external.slope',
                         self._get_arm_start_external_slope,
                         self._set_arm_start_external_slope,
                         None,
@@ -617,7 +619,7 @@ class Base(object):
                         * 'positive'
                         * 'negative'
                         """, cls, grp, '4.2.56'))
-        ivi.add_property(self, 'arm.start.external.delay',
+        self._add_property('arm.start.external.delay',
                         self._get_arm_start_external_delay,
                         self._set_arm_start_external_delay,
                         None,
@@ -625,21 +627,21 @@ class Base(object):
                         Specifies the delay used after an external armed measurement has been
                         armed. The units are seconds.
                         """, cls, grp, '4.2.57'))
-        ivi.add_property(self, 'arm.stop.type',
+        self._add_property('arm.stop.type',
                         self._get_arm_stop_type,
                         self._set_arm_stop_type,
                         None,
                         ivi.Doc("""
                         Specifies the stop arm type for armed measurements.
                         """, cls, grp, '4.2.58'))
-        ivi.add_property(self, 'arm.stop.external.source',
+        self._add_property('arm.stop.external.source',
                         self._get_arm_stop_external_source,
                         self._set_arm_stop_external_source,
                         None,
                         ivi.Doc("""
                         Specifies the stop arm source for external armed measurements.
                         """, cls, grp, '4.2.59'))
-        ivi.add_property(self, 'arm.stop.external.level',
+        self._add_property('arm.stop.external.level',
                         self._get_arm_stop_external_level,
                         self._set_arm_stop_external_level,
                         None,
@@ -648,7 +650,7 @@ class Base(object):
                         measurements. The External Stop Arm Delay, if non-zero, is applied before
                         the measurement stops.
                         """, cls, grp, '4.2.60'))
-        ivi.add_property(self, 'arm.stop.external.slope',
+        self._add_property('arm.stop.external.slope',
                         self._get_arm_stop_external_slope,
                         self._set_arm_stop_external_slope,
                         None,
@@ -662,7 +664,7 @@ class Base(object):
                         * 'positive'
                         * 'negative'
                         """, cls, grp, '4.2.61'))
-        ivi.add_property(self, 'arm.stop.external.delay',
+        self._add_property('arm.stop.external.delay',
                         self._get_arm_stop_external_delay,
                         self._set_arm_stop_external_delay,
                         None,
@@ -670,29 +672,29 @@ class Base(object):
                         Specifies the delay after the External Arm Stop event has occurred until
                         the measurement stops. The units are seconds.
                         """, cls, grp, '4.2.62'))
-        ivi.add_method(self, 'measurement.abort',
+        self._add_method('measurement.abort',
                         self._measurement_abort,
                         ivi.Doc("""
                         Aborts a previously initiated measurement.
                         """, cls, grp, '4.3.1'))
-        ivi.add_method(self, 'measurement.is_measurement_complete',
+        self._add_method('measurement.is_measurement_complete',
                         self._measurement_is_measurement_complete,
                         ivi.Doc("""
                         Returns whether a measurement is in progress, complete, or if the status
                         is unknown.
                         """, cls, grp, '4.3.2'))
-        ivi.add_method(self, 'channels[].configure',
+        self._add_method('channels[].configure',
                         self._channel_configure,
                         ivi.Doc("""
                         Configures the Impedance, Coupling, and Attenuation attributes of the
                         counter channel.
                         """, cls, grp, '4.3.4'))
-        ivi.add_method(self, 'channels[].configure_level',
+        self._add_method('channels[].configure_level',
                         self._channel_configure_level,
                         ivi.Doc("""
                         Configures the Level and Hysteresis attributes for a channel.
                         """, cls, grp, '4.3.5'))
-        ivi.add_method(self, 'frequency.configure',
+        self._add_method('frequency.configure',
                         self._frequency_configure,
                         ivi.Doc("""
                         These functions provide both manual and auto frequency configuration. The
@@ -716,7 +718,7 @@ class Base(object):
                         * Coupling: AC
                         * Filter: Off
                         """, cls, grp, '4.3.8'))
-        ivi.add_method(self, 'frequency.configure_manual',
+        self._add_method('frequency.configure_manual',
                         self._frequency_configure_manual,
                         ivi.Doc("""
                         These functions provide both manual and auto frequency configuration. The
@@ -740,35 +742,35 @@ class Base(object):
                         * Coupling: AC
                         * Filter: Off
                         """, cls, grp, '4.3.8'))
-        ivi.add_method(self, 'frequency.configure_with_aperture',
+        self._add_method('frequency.configure_with_aperture',
                         self._frequency_configure_with_aperture,
                         ivi.Doc("""
                         Configures a frequency measurement based on the specified aperture time.
                         """, cls, grp, '4.3.9'))
-        ivi.add_method(self, 'period.configure',
+        self._add_method('period.configure',
                         self._period_configure,
                         ivi.Doc("""
                         Configures the estimate and resolution attributes for a period
                         measurement.
                         """, cls, grp, '4.3.10'))
-        ivi.add_method(self, 'period.configure_with_aperture',
+        self._add_method('period.configure_with_aperture',
                         self._period_configure_with_aperture,
                         ivi.Doc("""
                         Configures a period measurement based on the specified aperture time.
                         """, cls, grp, '4.3.11'))
-        ivi.add_method(self, 'pulse_width.configure',
+        self._add_method('pulse_width.configure',
                         self._pulse_width_configure,
                         ivi.Doc("""
                         Configures the estimate and resolution attributes for a pulse width
                         measurement.
                         """, cls, grp, '4.3.12'))
-        ivi.add_method(self, 'duty_cycle.configure',
+        self._add_method('duty_cycle.configure',
                         self._duty_cycle_configure,
                         ivi.Doc("""
                         Configures the frequency estimate and resolution attributes for a duty
                         cycle measurement.
                         """, cls, grp, '4.3.13'))
-        ivi.add_method(self, 'edge_time.configure',
+        self._add_method('edge_time.configure',
                         self._edge_time_configure,
                         ivi.Doc("""
                         Configures an edge time measurement. The estimate and resolution
@@ -778,7 +780,7 @@ class Base(object):
                         positive a rise-time measurement is performed, if the channel slope is
                         negative, a fall-time measurement is performed.
                         """, cls, grp, '4.3.14'))
-        ivi.add_method(self, 'edge_time.configure',
+        self._add_method('edge_time.configure',
                         self._edge_time_configure_reference_levels,
                         ivi.Doc("""
                         Configures the reference type, estimate, resolution, high reference level,
@@ -786,26 +788,26 @@ class Base(object):
                         channel slope is positive a rise-time measurement is performed, if the
                         channel slope is negative, a fall-time measurement is performed.
                         """, cls, grp, '4.3.15'))
-        ivi.add_method(self, 'frequency_ratio.configure',
+        self._add_method('frequency_ratio.configure',
                         self._frequency_ratio_configure,
                         ivi.Doc("""
                         Configures the estimated frequencies, and resolution attributes and
                         specifies the numerator and denominator channels for a frequency ratio
                         measurement.
                         """, cls, grp, '4.3.16'))
-        ivi.add_method(self, 'time_interval.configure',
+        self._add_method('time_interval.configure',
                         self._time_interval_configure,
                         ivi.Doc("""
                         Configures the estimate and resolution attributes and specifies the start
                         and stop channels for a time interval measurement.
                         """, cls, grp, '4.3.17'))
-        ivi.add_method(self, 'phase.configure',
+        self._add_method('phase.configure',
                         self._phase_configure,
                         ivi.Doc("""
                         Configures the estimate and resolution attributes and specifies the input
                         and reference channels for a phase measurement.
                         """, cls, grp, '4.3.18'))
-        ivi.add_method(self, 'totalize_continuous.configure',
+        self._add_method('totalize_continuous.configure',
                         self._totalize_continuous_configure,
                         ivi.Doc("""
                         Configures the counter for a continuous totalize measurement. Start
@@ -814,50 +816,50 @@ class Base(object):
                         continuous totalize can be called if the count is accumulating or stopped
                         to retrieve the current count.
                         """, cls, grp, '4.3.19'))
-        ivi.add_method(self, 'totalize_continuous.start',
+        self._add_method('totalize_continuous.start',
                         self._totalize_continuous_start,
                         ivi.Doc("""
                         Clears the count and starts the counter for a continuous totalize
                         measurement. Refer to Section 4.3.19, Configure Continuous Totalize for
                         details.
                         """, cls, grp, '4.3.20'))
-        ivi.add_method(self, 'totalize_continuous.stop',
+        self._add_method('totalize_continuous.stop',
                         self._totalize_continuous_stop,
                         ivi.Doc("""
                         Stops the accumulation of counts for a continuous totalize measurement.
                         Refer to Section 4.3.19, Configure Continuous Totalize for details.
                         """, cls, grp, '4.3.21'))
-        ivi.add_method(self, 'totalize_continuous.fetch_count',
+        self._add_method('totalize_continuous.fetch_count',
                         self._totalize_continuous_fetch_count,
                         ivi.Doc("""
                         Retrieves the current count while the counter is continuously totalizing.
                         Refer to Section 4.3.19, Configure Continuous Totalize for details.
                         """, cls, grp, '4.3.22'))
-        ivi.add_method(self, 'totalize_gated.configure',
+        self._add_method('totalize_gated.configure',
                         self._totalize_gated_configure,
                         ivi.Doc("""
                         Specifies the channel to use for the gate source and configures the gate
                         slope attribute for a gated totalize measurement.
                         """, cls, grp, '4.3.23'))
-        ivi.add_method(self, 'totalize_timed.configure',
+        self._add_method('totalize_timed.configure',
                         self._totalize_timed_configure,
                         ivi.Doc("""
                         Sets the measurement function to Timed Totalize and configures the gate
                         time attribute.
                         """, cls, grp, '4.3.24'))
-        ivi.add_method(self, 'arm.start.external.configure',
+        self._add_method('arm.start.external.configure',
                         self._arm_start_external_configure,
                         ivi.Doc("""
                         Specifies the External Start Arm Source and configures the Level, Slope
                         and Delay attributes.
                         """, cls, grp, '4.3.26'))
-        ivi.add_method(self, 'arm.stop.external.configure',
+        self._add_method('arm.stop.external.configure',
                         self._arm_stop_external_configure,
                         ivi.Doc("""
                         Specifies the External Stop Arm Source and configures the Level, Slope and
                         Delay attributes.
                         """, cls, grp, '4.3.28'))
-        ivi.add_method(self, 'measurement.fetch',
+        self._add_method('measurement.fetch',
                         self._measurement_fetch,
                         ivi.Doc("""
                         Retrieves the result from a previously initiated measurement.
@@ -879,7 +881,7 @@ class Base(object):
                         instrument. If you want to check the instrument status, call the Error
                         Query function at the conclusion of the sequence.
                         """, cls, grp, '4.3.29'))
-        ivi.add_method(self, 'measurement.initiate',
+        self._add_method('measurement.initiate',
                         self._measurement_initiate,
                         ivi.Doc("""
                         Initiates a measurement based on the current configuration. You must
@@ -896,7 +898,7 @@ class Base(object):
                         instrument. If you want to check the instrument status, call the
                         IviCounter_error_query function at the conclusion of the sequence.
                         """, cls, grp, '4.3.30'))
-        ivi.add_method(self, 'measurement.read',
+        self._add_method('measurement.read',
                         self._measurement_read,
                         ivi.Doc("""
                         Initiates and fetches a measurement based on the current configuration.
@@ -942,9 +944,6 @@ class Base(object):
         if value not in MeasurementFunction:
             raise ivi.ValueNotSupportedException()
         self._measurement_function = value
-    
-    measurement_function = property(lambda self: self._get_measurement_function(),
-                                    lambda self, value: self._set_measurement_function(value))
     
     def _get_channel_count(self):
         return self._channel_count
@@ -1523,7 +1522,7 @@ class Base(object):
         return self._measurement_fetch()
     
     
-class Filter(object):
+class Filter(ivi.IviContainer):
     "Extension IVI methods for frequency counters that support filtering the input frequency"
     
     def __init__(self, *args, **kwargs):
@@ -1536,7 +1535,7 @@ class Filter(object):
         self._channel_minimum_frequency = list()
         self._channel_maximum_frequency = list()
         
-        ivi.add_property(self, 'channels[].minimum_frequency',
+        self._add_property('channels[].minimum_frequency',
                         self._get_channel_minimum_frequency,
                         self._set_channel_minimum_frequency,
                         None,
@@ -1544,7 +1543,7 @@ class Filter(object):
                         Specifies the low cutoff frequency for the filter in hertz. Set to zero to
                         disable low frequency filtering.
                         """, cls, grp, '5.2.1'))
-        ivi.add_property(self, 'channels[].maximum_frequency',
+        self._add_property('channels[].maximum_frequency',
                         self._get_channel_maximum_frequency,
                         self._set_channel_maximum_frequency,
                         None,
@@ -1552,7 +1551,7 @@ class Filter(object):
                         Specifies the high cutoff frequency for the filter in hertz. Set to
                         positive infinity to disable high frequency filtering.
                         """, cls, grp, '5.2.2'))
-        ivi.add_method(self, 'channels[].filter.configure',
+        self._add_method('channels[].filter.configure',
                         self._channel_filter_configure,
                         ivi.Doc("""
                         
@@ -1595,7 +1594,7 @@ class Filter(object):
         self._set_channel_maximum_frequency(index, maximum)
     
     
-class TimeIntervalStopHoldoff(object):
+class TimeIntervalStopHoldoff(ivi.IviContainer):
     "Extension IVI methods for frequency counters that support setting a delay time for the time interval functions"
     
     def __init__(self, *args, **kwargs):
@@ -1607,7 +1606,7 @@ class TimeIntervalStopHoldoff(object):
         
         self._time_interval_stop_holdoff = 0.0
         
-        ivi.add_property(self, 'time_interval.stop_holdoff',
+        self._add_property('time_interval.stop_holdoff',
                         self._get_time_interval_stop_holdoff,
                         self._set_time_interval_stop_holdoff,
                         None,
@@ -1633,7 +1632,7 @@ class TimeIntervalStopHoldoff(object):
         self._time_interval_stop_holdoff[index] = value
     
     
-class VoltageMeasurement(object):
+class VoltageMeasurement(ivi.IviContainer):
     "Extension IVI methods for frequency counters that support taking voltage measurements on the input signal"
     
     def __init__(self, *args, **kwargs):
@@ -1647,21 +1646,21 @@ class VoltageMeasurement(object):
         self._voltage_estimate = 0
         self._voltage_resolution = 0.01
         
-        ivi.add_property(self, 'voltage.channel',
+        self._add_property('voltage.channel',
                         self._get_voltage_channel,
                         self._set_voltage_channel,
                         None,
                         ivi.Doc("""
                         Specifies the input channel the voltage is measured on.
                         """, cls, grp, '7.2.1'))
-        ivi.add_property(self, 'voltage.estimate',
+        self._add_property('voltage.estimate',
                         self._get_voltage_estimate,
                         self._set_voltage_estimate,
                         None,
                         ivi.Doc("""
                         Specifies the estimated voltage, in volts, for the voltage function.
                         """, cls, grp, '7.2.2'))
-        ivi.add_property(self, 'voltage.resolution',
+        self._add_property('voltage.resolution',
                         self._get_voltage_resolution,
                         self._set_voltage_resolution,
                         None,
@@ -1669,7 +1668,7 @@ class VoltageMeasurement(object):
                         Specifies the resolution of the measurement, in volts, for the voltage
                         function.
                         """, cls, grp, '7.2.3'))
-        ivi.add_method(self, 'voltage.configure',
+        self._add_method('voltage.configure',
                         self._voltage_configure,
                         ivi.Doc("""
                         Configures the voltage function, the estimate, and the resolution
@@ -1704,7 +1703,7 @@ class VoltageMeasurement(object):
         self._set_voltage_resolution(resolution)
 
 
-class EdgeTimeReferenceLevels(object):
+class EdgeTimeReferenceLevels(ivi.IviContainer):
     "Extension IVI methods for frequency counters that support taking percentage based edge time measurements"
     
     def __init__(self, *args, **kwargs):

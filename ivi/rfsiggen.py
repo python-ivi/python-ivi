@@ -43,7 +43,7 @@ DigitalModulationBaseDataSource = set(['external', 'prbs', 'bit_sequence'])
 DigitalModulationBasePRBSType = set(['prbs9', 'prbs11', 'prbs15', 'prbs16', 'prbs20', 'prbs21', 'prbs23'])
 ClockType = set(['bit', 'symbol'])
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for all RF signal generators"
     
     def __init__(self, *args, **kwargs):
@@ -58,24 +58,24 @@ class Base(object):
         self._rf_output_enabled = False
         self._alc_enabled = False
         
-        ivi.add_property(self, 'rf.frequency',
+        self._add_property('rf.frequency',
                         self._get_rf_frequency,
                         self._set_rf_frequency)
-        ivi.add_property(self, 'rf.level',
+        self._add_property('rf.level',
                         self._get_rf_level,
                         self._set_rf_level)
-        ivi.add_property(self, 'rf.output_enabled',
+        self._add_property('rf.output_enabled',
                         self._get_rf_output_enabled,
                         self._set_rf_output_enabled)
-        ivi.add_method(self, 'rf.configure',
+        self._add_method('rf.configure',
                         self._rf_configure)
-        ivi.add_method(self, 'rf.disable_all_modulation',
+        self._add_method('rf.disable_all_modulation',
                         self._rf_disable_all_modulation)
-        ivi.add_method(self, 'rf.is_settled',
+        self._add_method('rf.is_settled',
                         self._rf_is_settled)
-        ivi.add_method(self, 'rf.wait_until_settled',
+        self._add_method('rf.wait_until_settled',
                         self._rf_wait_until_settled)
-        ivi.add_property(self, 'alc.enabled',
+        self._add_property('alc.enabled',
                         self._get_alc_enabled,
                         self._set_alc_enabled)
     
@@ -139,7 +139,7 @@ class Base(object):
             t = t + 0.01
     
     
-class ModulateAM(object):
+class ModulateAM(ivi.IviContainer):
     "Extension IVI methods for generators supporting amplitude modulation"
     
     def __init__(self, *args, **kwargs):
@@ -156,25 +156,25 @@ class ModulateAM(object):
         self._analog_modulation_am_nominal_voltage = 0.0
         self._analog_modulation_am_depth = 0.0
         
-        ivi.add_property(self, 'analog_modulation.am.enabled',
+        self._add_property('analog_modulation.am.enabled',
                         self._get_analog_modulation_am_enabled,
                         self._set_analog_modulation_am_enabled)
-        ivi.add_property(self, 'analog_modulation.am.source',
+        self._add_property('analog_modulation.am.source',
                         self._get_analog_modulation_am_source,
                         self._set_analog_modulation_am_source)
-        ivi.add_property(self, 'analog_modulation.am.scaling',
+        self._add_property('analog_modulation.am.scaling',
                         self._get_analog_modulation_am_scaling,
                         self._set_analog_modulation_am_scaling)
-        ivi.add_property(self, 'analog_modulation.am.external_coupling',
+        self._add_property('analog_modulation.am.external_coupling',
                         self._get_analog_modulation_am_external_coupling,
                         self._set_analog_modulation_am_external_coupling)
-        ivi.add_property(self, 'analog_modulation.am.nominal_voltage',
+        self._add_property('analog_modulation.am.nominal_voltage',
                         self._get_analog_modulation_am_nominal_voltage,
                         self._set_analog_modulation_am_nominal_voltage)
-        ivi.add_property(self, 'analog_modulation.am.depth',
+        self._add_property('analog_modulation.am.depth',
                         self._get_analog_modulation_am_depth,
                         self._set_analog_modulation_am_depth)
-        ivi.add_method(self, 'analog_modulation.am.configure',
+        self._add_method('analog_modulation.am.configure',
                         self._analog_modulation_am_configure)
     
     def _get_analog_modulation_am_enabled(self):
@@ -227,7 +227,7 @@ class ModulateAM(object):
         self._set_analog_modulation_am_depth(depth)
     
     
-class ModulateFM(object):
+class ModulateFM(ivi.IviContainer):
     "Extension IVI methods for generators supporting frequency modulation"
     
     def __init__(self, *args, **kwargs):
@@ -243,22 +243,22 @@ class ModulateFM(object):
         self._analog_modulation_fm_nominal_voltage = 0.0
         self._analog_modulation_fm_deviation = 0.0
         
-        ivi.add_property(self, 'analog_modulation.fm.enabled',
+        self._add_property('analog_modulation.fm.enabled',
                         self._get_analog_modulation_fm_enabled,
                         self._set_analog_modulation_fm_enabled)
-        ivi.add_property(self, 'analog_modulation.fm.source',
+        self._add_property('analog_modulation.fm.source',
                         self._get_analog_modulation_fm_source,
                         self._set_analog_modulation_fm_source)
-        ivi.add_property(self, 'analog_modulation.fm.external_coupling',
+        self._add_property('analog_modulation.fm.external_coupling',
                         self._get_analog_modulation_fm_external_coupling,
                         self._set_analog_modulation_fm_external_coupling)
-        ivi.add_property(self, 'analog_modulation.fm.nominal_voltage',
+        self._add_property('analog_modulation.fm.nominal_voltage',
                         self._get_analog_modulation_fm_nominal_voltage,
                         self._set_analog_modulation_fm_nominal_voltage)
-        ivi.add_property(self, 'analog_modulation.fm.deviation',
+        self._add_property('analog_modulation.fm.deviation',
                         self._get_analog_modulation_fm_deviation,
                         self._set_analog_modulation_fm_deviation)
-        ivi.add_method(self, 'analog_modulation.fm.configure',
+        self._add_method('analog_modulation.fm.configure',
                         self._analog_modulation_fm_configure)
     
     def _get_analog_modulation_fm_enabled(self):
@@ -303,7 +303,7 @@ class ModulateFM(object):
         self._set_analog_modulation_fm_deviation(deviation)
     
     
-class ModulatePM(object):
+class ModulatePM(ivi.IviContainer):
     "Extension IVI methods for generators supporting phase modulation"
     
     def __init__(self, *args, **kwargs):
@@ -319,22 +319,22 @@ class ModulatePM(object):
         self._analog_modulation_pm_nominal_voltage = 0.0
         self._analog_modulation_pm_deviation = 0.0
         
-        ivi.add_property(self, 'analog_modulation.pm.enabled',
+        self._add_property('analog_modulation.pm.enabled',
                         self._get_analog_modulation_pm_enabled,
                         self._set_analog_modulation_pm_enabled)
-        ivi.add_property(self, 'analog_modulation.pm.source',
+        self._add_property('analog_modulation.pm.source',
                         self._get_analog_modulation_pm_source,
                         self._set_analog_modulation_pm_source)
-        ivi.add_property(self, 'analog_modulation.pm.external_coupling',
+        self._add_property('analog_modulation.pm.external_coupling',
                         self._get_analog_modulation_pm_external_coupling,
                         self._set_analog_modulation_pm_external_coupling)
-        ivi.add_property(self, 'analog_modulation.pm.nominal_voltage',
+        self._add_property('analog_modulation.pm.nominal_voltage',
                         self._get_analog_modulation_pm_nominal_voltage,
                         self._set_analog_modulation_pm_nominal_voltage)
-        ivi.add_property(self, 'analog_modulation.pm.deviation',
+        self._add_property('analog_modulation.pm.deviation',
                         self._get_analog_modulation_pm_deviation,
                         self._set_analog_modulation_pm_deviation)
-        ivi.add_method(self, 'analog_modulation.pm.configure',
+        self._add_method('analog_modulation.pm.configure',
                         self._analog_modulation_pm_configure)
     
     def _get_analog_modulation_pm_enabled(self):
@@ -379,7 +379,7 @@ class ModulatePM(object):
         self._set_analog_modulation_pm_deviation(deviation)
     
     
-class AnalogModulationSource(object):
+class AnalogModulationSource(ivi.IviContainer):
     "Extension IVI methods for generators supporting analog modulation"
     
     def __init__(self, *args, **kwargs):
@@ -400,7 +400,7 @@ class AnalogModulationSource(object):
         return self._analog_modulation_source_name[index]
     
     
-class ModulatePulse(object):
+class ModulatePulse(ivi.IviContainer):
     "Extension IVI methods for generators supporting pulse modulation"
     
     def __init__(self, *args, **kwargs):
@@ -414,13 +414,13 @@ class ModulatePulse(object):
         self._pulse_modulation_source = ""
         self._pulse_modulation_external_polarity = 'normal'
         
-        ivi.add_property(self, 'pulse_modulation.enabled',
+        self._add_property('pulse_modulation.enabled',
                         self._get_pulse_modulation_enabled,
                         self._set_pulse_modulation_enabled)
-        ivi.add_property(self, 'pulse_modulation.source',
+        self._add_property('pulse_modulation.source',
                         self._get_pulse_modulation_source,
                         self._set_pulse_modulation_source)
-        ivi.add_property(self, 'pulse_modulation.external_polarity',
+        self._add_property('pulse_modulation.external_polarity',
                         self._get_pulse_modulation_external_polarity,
                         self._set_pulse_modulation_external_polarity)
     
@@ -448,7 +448,7 @@ class ModulatePulse(object):
         self._pulse_modulation_external_polarity = value
     
     
-class LFGenerator(object):
+class LFGenerator(ivi.IviContainer):
     "Extension IVI methods for generators with internal analog modulation sources"
     
     def __init__(self, *args, **kwargs):
@@ -464,16 +464,16 @@ class LFGenerator(object):
         self._lf_generator_frequency = 0.0
         self._lf_generator_waveform = 'sine'
         
-        ivi.add_property(self, 'lf_generator.active_lf_generator',
+        self._add_property('lf_generator.active_lf_generator',
                         self._get_lf_generator_active_lf_generator,
                         self._set_lf_generator_active_lf_generator)
-        ivi.add_property(self, 'lf_generator.frequency',
+        self._add_property('lf_generator.frequency',
                         self._get_lf_generator_frequency,
                         self._set_lf_generator_frequency)
-        ivi.add_property(self, 'lf_generator.waveform',
+        self._add_property('lf_generator.waveform',
                         self._get_lf_generator_waveform,
                         self._set_lf_generator_waveform)
-        ivi.add_method(self, 'lf_generator.configure',
+        self._add_method('lf_generator.configure',
                         self._lf_generator_configure)
     
     def _get_lf_generator_active_lf_generator(self):
@@ -510,7 +510,7 @@ class LFGenerator(object):
         self._set_lf_generator_waveform(waveform)
     
     
-class LFGeneratorOutput(object):
+class LFGeneratorOutput(ivi.IviContainer):
     "Extension IVI methods for generators with internal analog modulation sources"
     
     def __init__(self, *args, **kwargs):
@@ -523,13 +523,13 @@ class LFGeneratorOutput(object):
         self._lf_generator_output_amplitude = 0.0
         self._lf_generator_output_enabled = False
         
-        ivi.add_property(self, 'lf_generator.output.enabled',
+        self._add_property('lf_generator.output.enabled',
                         self._get_lf_generator_output_enabled,
                         self._set_lf_generator_output_enabled)
-        ivi.add_property(self, 'lf_generator.output.amplitude',
+        self._add_property('lf_generator.output.amplitude',
                         self._get_lf_generator_output_amplitude,
                         self._set_lf_generator_output_amplitude)
-        ivi.add_method(self, 'lf_generator.output.configure',
+        self._add_method('lf_generator.output.configure',
                         self._lf_generator_output_configure)
     
     def _get_lf_generator_output_amplitude(self):
@@ -551,7 +551,7 @@ class LFGeneratorOutput(object):
         self._set_lf_generator_output_enabled(enabled)
     
     
-class PulseGenerator(object):
+class PulseGenerator(ivi.IviContainer):
     "Extension IVI methods for generators with internal pulse modulation sources"
     
     def __init__(self, *args, **kwargs):
@@ -568,27 +568,27 @@ class PulseGenerator(object):
         self._pulse_generator_external_trigger_slope = 0.0
         self._pulse_generator_external_trigger_delay = 0.0
         
-        ivi.add_property(self, 'pulse_generator.internal_trigger_period',
+        self._add_property('pulse_generator.internal_trigger_period',
                         self._get_pulse_generator_internal_trigger_period,
                         self._set_pulse_generator_internal_trigger_period)
-        ivi.add_property(self, 'pulse_generator.width',
+        self._add_property('pulse_generator.width',
                         self._get_pulse_generator_width,
                         self._set_pulse_generator_width)
-        ivi.add_property(self, 'pulse_generator.gating_enabled',
+        self._add_property('pulse_generator.gating_enabled',
                         self._get_pulse_generator_gating_enabled,
                         self._set_pulse_generator_gating_enabled)
-        ivi.add_property(self, 'pulse_generator.trigger_source',
+        self._add_property('pulse_generator.trigger_source',
                         self._get_pulse_generator_trigger_source,
                         self._set_pulse_generator_trigger_source)
-        ivi.add_property(self, 'pulse_generator.external_trigger_slope',
+        self._add_property('pulse_generator.external_trigger_slope',
                         self._get_pulse_generator_external_trigger_slope,
                         self._set_pulse_generator_external_trigger_slope)
-        ivi.add_property(self, 'pulse_generator.external_trigger_delay',
+        self._add_property('pulse_generator.external_trigger_delay',
                         self._get_pulse_generator_external_trigger_delay,
                         self._set_pulse_generator_external_trigger_delay)
-        ivi.add_method(self, 'pulse_generator.configure_external_trigger',
+        self._add_method('pulse_generator.configure_external_trigger',
                         self._pulse_generator_configure_external_trigger)
-        ivi.add_method(self, 'pulse_generator.configure',
+        self._add_method('pulse_generator.configure',
                         self._pulse_generator_configure)
     
     def _get_pulse_generator_internal_trigger_period(self):
@@ -644,7 +644,7 @@ class PulseGenerator(object):
         self._set_pulse_generator_gating_enabled(gating_enabled)
     
     
-class PulseDoubleGenerator(object):
+class PulseDoubleGenerator(ivi.IviContainer):
     "Extension IVI methods for generators with internal double pulse modulation sources"
     
     def __init__(self, *args, **kwargs):
@@ -657,13 +657,13 @@ class PulseDoubleGenerator(object):
         self._pulse_generator_double_pulse_enabled = False
         self._pulse_generator_double_pulse_delay = 0.0
         
-        ivi.add_property(self, 'pulse_generator.double_pulse.enabled',
+        self._add_property('pulse_generator.double_pulse.enabled',
                         self._get_pulse_generator_double_pulse_enabled,
                         self._set_pulse_generator_double_pulse_enabled)
-        ivi.add_property(self, 'pulse_generator.double_pulse.delay',
+        self._add_property('pulse_generator.double_pulse.delay',
                         self._get_pulse_generator_double_pulse_delay,
                         self._set_pulse_generator_double_pulse_delay)
-        ivi.add_method(self, 'pulse_generator.double_pulse.configure',
+        self._add_method('pulse_generator.double_pulse.configure',
                         self._pulse_generator_double_pulse_configure)
     
     def _get_pulse_generator_double_pulse_enabled(self):
@@ -685,7 +685,7 @@ class PulseDoubleGenerator(object):
         self._set_pulse_generator_double_pulse_delay(delay)
     
     
-class PulseGeneratorOutput(object):
+class PulseGeneratorOutput(ivi.IviContainer):
     "Extension IVI methods for generators with internal pulse modulation sources"
     
     def __init__(self, *args, **kwargs):
@@ -698,13 +698,13 @@ class PulseGeneratorOutput(object):
         self._pulse_generator_output_polarity = 'normal'
         self._pulse_generator_output_enabled = False
         
-        ivi.add_property(self, 'pulse_generator.output.polarity',
+        self._add_property('pulse_generator.output.polarity',
                         self._get_pulse_generator_output_polarity,
                         self._set_pulse_generator_output_polarity)
-        ivi.add_property(self, 'pulse_generator.output.enabled',
+        self._add_property('pulse_generator.output.enabled',
                         self._get_pulse_generator_output_enabled,
                         self._set_pulse_generator_output_enabled)
-        ivi.add_method(self, 'pulse_generator.output.configure',
+        self._add_method('pulse_generator.output.configure',
                         self._pulse_generator_output_configure)
     
     def _get_pulse_generator_output_polarity(self):
@@ -727,7 +727,7 @@ class PulseGeneratorOutput(object):
         self._set_pulse_generator_output_enabled(enabled)
     
     
-class Sweep(object):
+class Sweep(ivi.IviContainer):
     "Extension IVI methods for generators that support sweeping"
     
     def __init__(self, *args, **kwargs):
@@ -740,13 +740,13 @@ class Sweep(object):
         self._sweep_mode = 'none'
         self._sweep_trigger_source = ""
         
-        ivi.add_property(self, 'sweep.mode',
+        self._add_property('sweep.mode',
                         self._get_sweep_mode,
                         self._set_sweep_mode)
-        ivi.add_property(self, 'sweep.trigger_source',
+        self._add_property('sweep.trigger_source',
                         self._get_sweep_trigger_source,
                         self._set_sweep_trigger_source)
-        ivi.add_method(self, 'sweep.configure',
+        self._add_method('sweep.configure',
                         self._sweep_configure)
     
     def _get_sweep_mode(self):
@@ -770,7 +770,7 @@ class Sweep(object):
         self._set_sweep_trigger_source(trigger_source)
     
     
-class FrequencySweep(object):
+class FrequencySweep(ivi.IviContainer):
     "Extension IVI methods for generators that support frequency sweeping"
     
     def __init__(self, *args, **kwargs):
@@ -784,18 +784,18 @@ class FrequencySweep(object):
         self._sweep_frequency_sweep_stop = 0.0
         self._sweep_frequency_sweep_time = 0.0
         
-        ivi.add_property(self, 'sweep.frequency_sweep.start',
+        self._add_property('sweep.frequency_sweep.start',
                         self._get_sweep_frequency_sweep_start,
                         self._set_sweep_frequency_sweep_start)
-        ivi.add_property(self, 'sweep.frequency_sweep.stop',
+        self._add_property('sweep.frequency_sweep.stop',
                         self._get_sweep_frequency_sweep_stop,
                         self._set_sweep_frequency_sweep_stop)
-        ivi.add_property(self, 'sweep.frequency_sweep.time',
+        self._add_property('sweep.frequency_sweep.time',
                         self._get_sweep_frequency_sweep_time,
                         self._set_sweep_frequency_sweep_time)
-        ivi.add_method(self, 'sweep.frequency_sweep.configure_start_stop',
+        self._add_method('sweep.frequency_sweep.configure_start_stop',
                         self._sweep_frequency_sweep_configure_start_stop)
-        ivi.add_method(self, 'sweep.frequency_sweep.configure_center_span',
+        self._add_method('sweep.frequency_sweep.configure_center_span',
                         self._sweep_frequency_sweep_configure_center_span)
     
     def _get_sweep_frequency_sweep_start(self):
@@ -828,7 +828,7 @@ class FrequencySweep(object):
         self._set_sweep_frequency_sweep_stop(center + span/2)
     
     
-class PowerSweep(object):
+class PowerSweep(ivi.IviContainer):
     "Extension IVI methods for generators that support power sweeping"
     
     def __init__(self, *args, **kwargs):
@@ -842,16 +842,16 @@ class PowerSweep(object):
         self._sweep_power_sweep_stop = 0.0
         self._sweep_power_sweep_time = 0.0
         
-        ivi.add_property(self, 'sweep.power_sweep.start',
+        self._add_property('sweep.power_sweep.start',
                         self._get_sweep_power_sweep_start,
                         self._set_sweep_power_sweep_start)
-        ivi.add_property(self, 'sweep.power_sweep.stop',
+        self._add_property('sweep.power_sweep.stop',
                         self._get_sweep_power_sweep_stop,
                         self._set_sweep_power_sweep_stop)
-        ivi.add_property(self, 'sweep.power_sweep.time',
+        self._add_property('sweep.power_sweep.time',
                         self._get_sweep_power_sweep_time,
                         self._set_sweep_power_sweep_time)
-        ivi.add_method(self, 'sweep.power_sweep.configure_start_stop',
+        self._add_method('sweep.power_sweep.configure_start_stop',
                         self._sweep_power_sweep_configure_start_stop)
     
     def _get_sweep_power_sweep_start(self):
@@ -880,7 +880,7 @@ class PowerSweep(object):
         self._set_sweep_power_sweep_stop(stop)
     
     
-class FrequencyStep(object):
+class FrequencyStep(ivi.IviContainer):
     "Extension IVI methods for generators that support frequency sweeping in steps"
     
     def __init__(self, *args, **kwargs):
@@ -897,29 +897,29 @@ class FrequencyStep(object):
         self._sweep_frequency_step_single_step_enabled = False
         self._sweep_frequency_step_dwell = 0.0
         
-        ivi.add_property(self, 'sweep.frequency_step.start',
+        self._add_property('sweep.frequency_step.start',
                         self._get_sweep_frequency_step_start,
                         self._set_sweep_frequency_step_start)
-        ivi.add_property(self, 'sweep.frequency_step.stop',
+        self._add_property('sweep.frequency_step.stop',
                         self._get_sweep_frequency_step_stop,
                         self._set_sweep_frequency_step_stop)
-        ivi.add_property(self, 'sweep.frequency_step.scaling',
+        self._add_property('sweep.frequency_step.scaling',
                         self._get_sweep_frequency_step_scaling,
                         self._set_sweep_frequency_step_scaling)
-        ivi.add_property(self, 'sweep.frequency_step.size',
+        self._add_property('sweep.frequency_step.size',
                         self._get_sweep_frequency_step_size,
                         self._set_sweep_frequency_step_size)
-        ivi.add_property(self, 'sweep.frequency_step.single_step_enabled',
+        self._add_property('sweep.frequency_step.single_step_enabled',
                         self._get_sweep_frequency_step_single_step_enabled,
                         self._set_sweep_frequency_step_single_step_enabled)
-        ivi.add_property(self, 'sweep.frequency_step.dwell',
+        self._add_property('sweep.frequency_step.dwell',
                         self._get_sweep_frequency_step_dwell,
                         self._set_sweep_frequency_step_dwell)
-        ivi.add_method(self, 'sweep.frequency_step.configure_start_stop',
+        self._add_method('sweep.frequency_step.configure_start_stop',
                         self._sweep_frequency_step_configure_start_stop)
-        ivi.add_method(self, 'sweep.frequency_step.configure_dwell',
+        self._add_method('sweep.frequency_step.configure_dwell',
                         self._sweep_frequency_step_configure_dwell)
-        ivi.add_method(self, 'sweep.frequency_step.reset',
+        self._add_method('sweep.frequency_step.reset',
                         self._sweep_frequency_step_reset)
     
     def _get_sweep_frequency_step_start(self):
@@ -979,7 +979,7 @@ class FrequencyStep(object):
         pass
     
     
-class PowerStep(object):
+class PowerStep(ivi.IviContainer):
     "Extension IVI methods for generators that support power sweeping in steps"
     
     def __init__(self, *args, **kwargs):
@@ -995,26 +995,26 @@ class PowerStep(object):
         self._sweep_power_step_single_step_enabled = False
         self._sweep_power_step_dwell = 0.0
         
-        ivi.add_property(self, 'sweep.power_step.start',
+        self._add_property('sweep.power_step.start',
                         self._get_sweep_power_step_start,
                         self._set_sweep_power_step_start)
-        ivi.add_property(self, 'sweep.power_step.stop',
+        self._add_property('sweep.power_step.stop',
                         self._get_sweep_power_step_stop,
                         self._set_sweep_power_step_stop)
-        ivi.add_property(self, 'sweep.power_step.size',
+        self._add_property('sweep.power_step.size',
                         self._get_sweep_power_step_size,
                         self._set_sweep_power_step_size)
-        ivi.add_property(self, 'sweep.power_step.single_step_enabled',
+        self._add_property('sweep.power_step.single_step_enabled',
                         self._get_sweep_power_step_single_step_enabled,
                         self._set_sweep_power_step_single_step_enabled)
-        ivi.add_property(self, 'sweep.power_step.dwell',
+        self._add_property('sweep.power_step.dwell',
                         self._get_sweep_power_step_dwell,
                         self._set_sweep_power_step_dwell)
-        ivi.add_method(self, 'sweep.power_step.configure_start_stop',
+        self._add_method('sweep.power_step.configure_start_stop',
                         self._sweep_power_step_configure_start_stop)
-        ivi.add_method(self, 'sweep.power_step.configure_dwell',
+        self._add_method('sweep.power_step.configure_dwell',
                         self._sweep_power_step_configure_dwell)
-        ivi.add_method(self, 'sweep.power_step.reset',
+        self._add_method('sweep.power_step.reset',
                         self._sweep_power_step_reset)
     
     def _get_sweep_power_step_start(self):
@@ -1065,7 +1065,7 @@ class PowerStep(object):
         pass
     
     
-class List(object):
+class List(ivi.IviContainer):
     "Extension IVI methods for generators that support frequency and power selection a list"
     
     def __init__(self, *args, **kwargs):
@@ -1079,26 +1079,26 @@ class List(object):
         self._sweep_list_single_step_enabled = False
         self._sweep_list_dwell = 0.0
         
-        ivi.add_property(self, 'sweep.list.selected_list',
+        self._add_property('sweep.list.selected_list',
                         self._get_sweep_list_selected_list,
                         self._set_sweep_list_selected_list)
-        ivi.add_property(self, 'sweep.list.single_step_enabled',
+        self._add_property('sweep.list.single_step_enabled',
                         self._get_sweep_list_single_step_enabled,
                         self._set_sweep_list_single_step_enabled)
-        ivi.add_property(self, 'sweep.list.dwell',
+        self._add_property('sweep.list.dwell',
                         self._get_sweep_list_dwell,
                         self._set_sweep_list_dwell)
-        ivi.add_method(self, 'sweep.list.create_frequency',
+        self._add_method('sweep.list.create_frequency',
                         self._sweep_list_create_frequency)
-        ivi.add_method(self, 'sweep.list.create_power',
+        self._add_method('sweep.list.create_power',
                         self._sweep_list_create_power)
-        ivi.add_method(self, 'sweep.list.create_frequency_power',
+        self._add_method('sweep.list.create_frequency_power',
                         self._sweep_list_create_frequency_power)
-        ivi.add_method(self, 'sweep.list.clear_all',
+        self._add_method('sweep.list.clear_all',
                         self._sweep_list_clear_all)
-        ivi.add_method(self, 'sweep.list.configure_dwell',
+        self._add_method('sweep.list.configure_dwell',
                         self._sweep_list_configure_dwell)
-        ivi.add_method(self, 'sweep.list.reset',
+        self._add_method('sweep.list.reset',
                         self._sweep_list_reset)
     
     def _get_sweep_list_selected_list(self):
@@ -1142,7 +1142,7 @@ class List(object):
         pass
     
     
-class ALC(object):
+class ALC(ivi.IviContainer):
     "Extension IVI methods for generators that support automatic level control"
     
     def __init__(self, *args, **kwargs):
@@ -1155,13 +1155,13 @@ class ALC(object):
         self._alc_source = 'internal'
         self._alc_bandwidth = 0.0
         
-        ivi.add_property(self, 'alc.source',
+        self._add_property('alc.source',
                         self._get_alc_source,
                         self._set_alc_source)
-        ivi.add_property(self, 'alc.bandwidth',
+        self._add_property('alc.bandwidth',
                         self._get_alc_bandwidth,
                         self._set_alc_bandwidth)
-        ivi.add_method(self, 'alc.configure',
+        self._add_method('alc.configure',
                         self._alc_configure)
     
     def _get_alc_source(self):
@@ -1184,7 +1184,7 @@ class ALC(object):
         self._set_alc_bandwidth = bandwidth
     
     
-class ReferenceOscillator(object):
+class ReferenceOscillator(ivi.IviContainer):
     "Extension IVI methods for generators that support a configurable frequency reference"
     
     def __init__(self, *args, **kwargs):
@@ -1197,13 +1197,13 @@ class ReferenceOscillator(object):
         self._reference_oscillator_source = 'internal'
         self._reference_oscillator_external_frequency = 0
         
-        ivi.add_property(self, 'reference_oscillator.source',
+        self._add_property('reference_oscillator.source',
                         self._get_reference_oscillator_source,
                         self._set_reference_oscillator_source)
-        ivi.add_property(self, 'reference_oscillator.external_frequency',
+        self._add_property('reference_oscillator.external_frequency',
                         self._get_reference_oscillator_external_frequency,
                         self._set_reference_oscillator_external_frequency)
-        ivi.add_method(self, 'reference_oscillator.configure',
+        self._add_method('reference_oscillator.configure',
                         self._reference_oscillator_configure)
     
     def _get_reference_oscillator_source(self):
@@ -1226,7 +1226,7 @@ class ReferenceOscillator(object):
         self._set_reference_oscillator_external_frequency = external_frequency
     
     
-class SoftwareTrigger(object):
+class SoftwareTrigger(ivi.IviContainer):
     "Extension IVI methods for generators that support software triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1235,12 +1235,42 @@ class SoftwareTrigger(object):
         cls = 'IviRFSigGen'
         grp = 'SoftwareTrigger'
         ivi.add_group_capability(self, cls+grp)
-    
-    def send_software_trigger(self):
+
+        self._add_method('send_software_trigger',
+                        self._send_software_trigger,
+                        """
+                        This function sends a software-generated trigger to the instrument. It is
+                        only applicable for instruments using interfaces or protocols which
+                        support an explicit trigger function. For example, with GPIB this function
+                        could send a group execute trigger to the instrument. Other
+                        implementations might send a ``*TRG`` command.
+
+                        Since instruments interpret a software-generated trigger in a wide variety
+                        of ways, the precise response of the instrument to this trigger is not
+                        defined. Note that SCPI details a possible implementation.
+
+                        This function should not use resources which are potentially shared by
+                        other devices (for example, the VXI trigger lines). Use of such shared
+                        resources may have undesirable effects on other devices.
+
+                        This function should not check the instrument status. Typically, the
+                        end-user calls this function only in a sequence of calls to other
+                        low-level driver functions. The sequence performs one operation. The
+                        end-user uses the low-level functions to optimize one or more aspects of
+                        interaction with the instrument. To check the instrument status, call the
+                        appropriate error query function at the conclusion of the sequence.
+
+                        The trigger source attribute must accept Software Trigger as a valid
+                        setting for this function to work. If the trigger source is not set to
+                        Software Trigger, this function does nothing and returns the error Trigger
+                        Not Software.
+                        """)
+
+    def _send_software_trigger(self):
         pass
     
     
-class ModulateIQ(object):
+class ModulateIQ(ivi.IviContainer):
     "Extension IVI methods for generators supporting IQ (vector) modulation"
     
     def __init__(self, *args, **kwargs):
@@ -1255,21 +1285,21 @@ class ModulateIQ(object):
         self._iq_nominal_voltage = 0.0
         self._iq_swap_enabled = False
         
-        ivi.add_property(self, 'iq.enabled',
+        self._add_property('iq.enabled',
                         self._get_iq_enabled,
                         self._set_iq_enabled)
-        ivi.add_property(self, 'iq.source',
+        self._add_property('iq.source',
                         self._get_iq_source,
                         self._set_iq_source)
-        ivi.add_property(self, 'iq.nominal_voltage',
+        self._add_property('iq.nominal_voltage',
                         self._get_iq_nominal_voltage,
                         self._set_iq_nominal_voltage)
-        ivi.add_property(self, 'iq.swap_enabled',
+        self._add_property('iq.swap_enabled',
                         self._get_iq_swap_enabled,
                         self._set_iq_swap_enabled)
-        ivi.add_method(self, 'iq.configure',
+        self._add_method('iq.configure',
                         self._iq_configure)
-        ivi.add_method(self, 'iq.calibrate',
+        self._add_method('iq.calibrate',
                         self._iq_calibrate)
     
     def _get_iq_enabled(self):
@@ -1309,7 +1339,7 @@ class ModulateIQ(object):
         pass
     
     
-class IQImpairment(object):
+class IQImpairment(ivi.IviContainer):
     "Extension IVI methods for generators supporting IQ modulation simulation or correction of IQ impairment"
     
     def __init__(self, *args, **kwargs):
@@ -1325,22 +1355,22 @@ class IQImpairment(object):
         self._iq_impairment_iq_ratio = 0.0
         self._iq_impairment_iq_skew = 0.0
         
-        ivi.add_property(self, 'iq.impairment.enabled',
+        self._add_property('iq.impairment.enabled',
                         self._get_iq_impairment_enabled,
                         self._set_iq_impairment_enabled)
-        ivi.add_property(self, 'iq.impairment.i_offset',
+        self._add_property('iq.impairment.i_offset',
                         self._get_iq_impairment_i_offset,
                         self._set_iq_impairment_i_offset)
-        ivi.add_property(self, 'iq.impairment.q_offset',
+        self._add_property('iq.impairment.q_offset',
                         self._get_iq_impairment_q_offset,
                         self._set_iq_impairment_q_offset)
-        ivi.add_property(self, 'iq.impairment.iq_ratio',
+        self._add_property('iq.impairment.iq_ratio',
                         self._get_iq_impairment_iq_ratio,
                         self._set_iq_impairment_iq_ratio)
-        ivi.add_property(self, 'iq.impairment.iq_skew',
+        self._add_property('iq.impairment.iq_skew',
                         self._get_iq_impairment_iq_skew,
                         self._set_iq_impairment_iq_skew)
-        ivi.add_method(self, 'iq.impairment.configure',
+        self._add_method('iq.impairment.configure',
                         self._iq_impairment_configure)
     
     def _get_iq_impairment_enabled(self):
@@ -1385,7 +1415,7 @@ class IQImpairment(object):
         self._set_iq_impairment_iq_skew(iq_skew)
     
     
-class ArbGenerator(object):
+class ArbGenerator(ivi.IviContainer):
     "Extension IVI methods for generators with internal arbitrary waveform generators"
     
     def __init__(self, *args, **kwargs):
@@ -1405,34 +1435,34 @@ class ArbGenerator(object):
         self._digital_modulation_arb_trigger_source = 'immediate'
         self._digital_modulation_arb_external_trigger_slope = 'positive'
         
-        ivi.add_property(self, 'digital_modulation.arb.selected_waveform',
+        self._add_property('digital_modulation.arb.selected_waveform',
                         self._get_digital_modulation_arb_selected_waveform,
                         self._set_digital_modulation_arb_selected_waveform)
-        ivi.add_property(self, 'digital_modulation.arb.clock_frequency',
+        self._add_property('digital_modulation.arb.clock_frequency',
                         self._get_digital_modulation_arb_clock_frequency,
                         self._set_digital_modulation_arb_clock_frequency)
-        ivi.add_property(self, 'digital_modulation.arb.filter_frequency',
+        self._add_property('digital_modulation.arb.filter_frequency',
                         self._get_digital_modulation_arb_filter_frequency,
                         self._set_digital_modulation_arb_filter_frequency)
-        ivi.add_property(self, 'digital_modulation.arb.max_number_waveforms',
+        self._add_property('digital_modulation.arb.max_number_waveforms',
                         self._get_digital_modulation_arb_max_number_waveforms)
-        ivi.add_property(self, 'digital_modulation.arb.waveform_quantum',
+        self._add_property('digital_modulation.arb.waveform_quantum',
                         self._get_digital_modulation_arb_waveform_quantum)
-        ivi.add_property(self, 'digital_modulation.arb.waveform_size_min',
+        self._add_property('digital_modulation.arb.waveform_size_min',
                         self._get_digital_modulation_arb_waveform_size_min)
-        ivi.add_property(self, 'digital_modulation.arb.waveform_size_max',
+        self._add_property('digital_modulation.arb.waveform_size_max',
                         self._get_digital_modulation_arb_waveform_size_max)
-        ivi.add_property(self, 'digital_modulation.arb.trigger_source',
+        self._add_property('digital_modulation.arb.trigger_source',
                         self._get_digital_modulation_arb_trigger_source,
                         self._set_digital_modulation_arb_trigger_source)
-        ivi.add_property(self, 'digital_modulation.arb.external_trigger_slope',
+        self._add_property('digital_modulation.arb.external_trigger_slope',
                         self._get_digital_modulation_arb_external_trigger_slope,
                         self._set_digital_modulation_arb_external_trigger_slope)
-        ivi.add_method(self, 'digital_modulation.arb.configure',
+        self._add_method('digital_modulation.arb.configure',
                         self._digital_modulation_arb_configure)
-        ivi.add_method(self, 'digital_modulation.arb.write_waveform',
+        self._add_method('digital_modulation.arb.write_waveform',
                         self._digital_modulation_arb_write_waveform)
-        ivi.add_method(self, 'digital_modulation.arb.clear_all_waveforms',
+        self._add_method('digital_modulation.arb.clear_all_waveforms',
                         self._digital_modulation_arb_clear_all_waveforms)
     
     def _get_digital_modulation_arb_selected_waveform(self):
@@ -1495,7 +1525,7 @@ class ArbGenerator(object):
         pass
     
     
-class DigitalModulationBase(object):
+class DigitalModulationBase(ivi.IviContainer):
     "Extension IVI methods for generators supporting generation of standard wireless communication signals"
     
     def __init__(self, *args, **kwargs):
@@ -1513,31 +1543,31 @@ class DigitalModulationBase(object):
         self._digital_modulation_base_clock_source = 'internal'
         self._digital_modulation_base_external_clock_type = 'bit'
         
-        ivi.add_property(self, 'digital_modulation.base.standard_names',
+        self._add_property('digital_modulation.base.standard_names',
                         self._get_digital_modulation_base_standard_names)
-        ivi.add_property(self, 'digital_modulation.base.selected_standard',
+        self._add_property('digital_modulation.base.selected_standard',
                         self._get_digital_modulation_base_selected_standard,
                         self._set_digital_modulation_base_selected_standard)
-        ivi.add_property(self, 'digital_modulation.base.data_source',
+        self._add_property('digital_modulation.base.data_source',
                         self._get_digital_modulation_base_data_source,
                         self._set_digital_modulation_base_data_source)
-        ivi.add_property(self, 'digital_modulation.base.prbs_type',
+        self._add_property('digital_modulation.base.prbs_type',
                         self._get_digital_modulation_base_prbs_type,
                         self._set_digital_modulation_base_prbs_type)
-        ivi.add_property(self, 'digital_modulation.base.selected_bit_sequence',
+        self._add_property('digital_modulation.base.selected_bit_sequence',
                         self._get_digital_modulation_base_selected_bit_sequence,
                         self._set_digital_modulation_base_selected_bit_sequence)
-        ivi.add_property(self, 'digital_modulation.base.clock_source',
+        self._add_property('digital_modulation.base.clock_source',
                         self._get_digital_modulation_base_clock_source,
                         self._set_digital_modulation_base_clock_source)
-        ivi.add_property(self, 'digital_modulation.base.external_clock_type',
+        self._add_property('digital_modulation.base.external_clock_type',
                         self._get_digital_modulation_base_external_clock_type,
                         self._set_digital_modulation_base_external_clock_type)
-        ivi.add_method(self, 'digital_modulation.base.configure_clock_source',
+        self._add_method('digital_modulation.base.configure_clock_source',
                         self._digital_modulation_base_configure_clock_source)
-        ivi.add_method(self, 'digital_modulation.base.create_bit_sequence',
+        self._add_method('digital_modulation.base.create_bit_sequence',
                         self._digital_modulation_base_create_bit_sequence)
-        ivi.add_method(self, 'digital_modulation.base.clear_all_bit_sequences',
+        self._add_method('digital_modulation.base.clear_all_bit_sequences',
                         self._digital_modulation_base_clear_all_bit_sequences)
     
     def _get_digital_modulation_base_standard_names(self):
@@ -1600,7 +1630,7 @@ class DigitalModulationBase(object):
         pass
     
     
-class CDMABase(object):
+class CDMABase(ivi.IviContainer):
     "Extension IVI methods for generators supporting generation of CDMA wireless communication signals"
     
     def __init__(self, *args, **kwargs):
@@ -1618,23 +1648,23 @@ class CDMABase(object):
         self._digital_modulation_cdma_selected_test_model = ''
         self._digital_modulation_cdma_clock_source = 'internal'
         
-        ivi.add_property(self, 'digital_modulation.cdma.standard_names',
+        self._add_property('digital_modulation.cdma.standard_names',
                         self._get_digital_modulation_cdma_standard_names)
-        ivi.add_property(self, 'digital_modulation.cdma.selected_standard',
+        self._add_property('digital_modulation.cdma.selected_standard',
                         self._get_digital_modulation_cdma_selected_standard,
                         self._set_digital_modulation_cdma_selected_standard)
-        ivi.add_property(self, 'digital_modulation.cdma.trigger_source',
+        self._add_property('digital_modulation.cdma.trigger_source',
                         self._get_digital_modulation_cdma_trigger_source,
                         self._set_digital_modulation_cdma_trigger_source)
-        ivi.add_property(self, 'digital_modulation.cdma.external_trigger_slope',
+        self._add_property('digital_modulation.cdma.external_trigger_slope',
                         self._get_digital_modulation_cdma_external_trigger_slope,
                         self._set_digital_modulation_cdma_external_trigger_slope)
-        ivi.add_property(self, 'digital_modulation.cdma.test_model_names',
+        self._add_property('digital_modulation.cdma.test_model_names',
                         self._get_digital_modulation_cdma_test_model_names)
-        ivi.add_property(self, 'digital_modulation.cdma.selected_test_model',
+        self._add_property('digital_modulation.cdma.selected_test_model',
                         self._get_digital_modulation_cdma_selected_test_model,
                         self._set_digital_modulation_cdma_selected_test_model)
-        ivi.add_property(self, 'digital_modulation.cdma.clock_source',
+        self._add_property('digital_modulation.cdma.clock_source',
                         self._get_digital_modulation_cdma_clock_source,
                         self._set_digital_modulation_cdma_clock_source)
     
@@ -1683,7 +1713,7 @@ class CDMABase(object):
         self._digital_modulation_cdma_clock_source = value
     
     
-class TDMABase(object):
+class TDMABase(ivi.IviContainer):
     "Extension IVI methods for generators supporting generation of TDMA wireless communication signals"
     
     def __init__(self, *args, **kwargs):
@@ -1702,29 +1732,29 @@ class TDMABase(object):
         self._digital_modulation_tdma_clock_source = 'internal'
         self._digital_modulation_tdma_external_clock_type = 'bit'
         
-        ivi.add_property(self, 'digital_modulation.tdma.standard_names',
+        self._add_property('digital_modulation.tdma.standard_names',
                         self._get_digital_modulation_tdma_standard_names)
-        ivi.add_property(self, 'digital_modulation.tdma.selected_standard',
+        self._add_property('digital_modulation.tdma.selected_standard',
                         self._get_digital_modulation_tdma_selected_standard,
                         self._set_digital_modulation_tdma_selected_standard)
-        ivi.add_property(self, 'digital_modulation.tdma.trigger_source',
+        self._add_property('digital_modulation.tdma.trigger_source',
                         self._get_digital_modulation_tdma_trigger_source,
                         self._set_digital_modulation_tdma_trigger_source)
-        ivi.add_property(self, 'digital_modulation.tdma.external_trigger_slope',
+        self._add_property('digital_modulation.tdma.external_trigger_slope',
                         self._get_digital_modulation_tdma_external_trigger_slope,
                         self._set_digital_modulation_tdma_external_trigger_slope)
-        ivi.add_property(self, 'digital_modulation.tdma.frame_names',
+        self._add_property('digital_modulation.tdma.frame_names',
                         self._get_digital_modulation_tdma_frame_names)
-        ivi.add_property(self, 'digital_modulation.tdma.selected_frame',
+        self._add_property('digital_modulation.tdma.selected_frame',
                         self._get_digital_modulation_tdma_selected_frame,
                         self._set_digital_modulation_tdma_selected_frame)
-        ivi.add_property(self, 'digital_modulation.tdma.clock_source',
+        self._add_property('digital_modulation.tdma.clock_source',
                         self._get_digital_modulation_tdma_clock_source,
                         self._set_digital_modulation_tdma_clock_source)
-        ivi.add_property(self, 'digital_modulation.tdma.external_clock_type',
+        self._add_property('digital_modulation.tdma.external_clock_type',
                         self._get_digital_modulation_tdma_external_clock_type,
                         self._set_digital_modulation_tdma_external_clock_type)
-        ivi.add_method(self, 'digital_modulation.tdma.configure_clock_source',
+        self._add_method('digital_modulation.tdma.configure_clock_source',
                         self._digital_modulation_tdma_configure_clock_source)
     
     def _get_digital_modulation_tdma_standard_names(self):

@@ -46,7 +46,7 @@ TerminalConfiguration = set(['single_ended', 'differential'])
 TriggerSlope = set(['positive', 'negative', 'either'])
 
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for all function generators"
     
     def __init__(self, *args, **kwargs):
@@ -67,7 +67,7 @@ class Base(object):
         self._output_reference_clock_source = list()
         self._output_count = 1
         
-        ivi.add_property(self, 'outputs[].name',
+        self._add_property('outputs[].name',
                         self._get_output_name,
                         None,
                         None,
@@ -79,7 +79,7 @@ class Base(object):
                         Index parameter is less than zero or greater than the value of Output
                         Count, the property returns an empty string and returns an error.
                         """)
-        ivi.add_property(self, 'outputs[].operation_mode',
+        self._add_property('outputs[].operation_mode',
                         self._get_output_operation_mode,
                         self._set_output_operation_mode,
                         None,
@@ -91,7 +91,7 @@ class Base(object):
                         * 'continuous'
                         * 'burst'
                         """)
-        ivi.add_property(self, 'outputs[].enabled',
+        self._add_property('outputs[].enabled',
                         self._get_output_enabled,
                         self._set_output_enabled,
                         None,
@@ -100,14 +100,14 @@ class Base(object):
                         output connector. If set to False, the signal the function generator
                         produces does not appear at the output connector.
                         """)
-        ivi.add_property(self, 'outputs[].impedance',
+        self._add_property('outputs[].impedance',
                         self._get_output_impedance,
                         self._set_output_impedance,
                         None,
                         """
                         Specifies the impedance of the output channel. The units are Ohms.
                         """)
-        ivi.add_property(self, 'outputs[].output_mode',
+        self._add_property('outputs[].output_mode',
                         self._get_output_mode,
                         self._set_output_mode,
                         None,
@@ -122,7 +122,7 @@ class Base(object):
                         * 'arbitrary'
                         * 'sequence'
                         """)
-        ivi.add_property(self, 'outputs[].reference_clock_source',
+        self._add_property('outputs[].reference_clock_source',
                         self._get_output_reference_clock_source,
                         self._set_output_reference_clock_source,
                         None,
@@ -142,8 +142,9 @@ class Base(object):
                         Capabilities Specification if needed.
                         """)
         
-        self.__dict__.setdefault('_docs', dict())
-        self._docs['abort_generation'] = """
+        self._add_method('abort_generation',
+                        self._abort_generation,
+                        """
                         Aborts a previously initiated signal generation. If the function generator
                         is in the Output Generation State, this function moves the function
                         generator to the Configuration State. If the function generator is already
@@ -175,8 +176,10 @@ class Base(object):
                         these functions if they want to optimize their application for instruments
                         that exhibit increased performance when output configuration is performed
                         while the instrument is not generating a signal.
+                        """)
+        self._add_method('initiate_generation',
+                        self._initiate_generation,
                         """
-        self._docs['initiate_generation'] = """
                         Initiates signal generation. If the function generator is in the
                         Configuration State, this function moves the function generator to the
                         Output Generation State. If the function generator is already in the
@@ -210,7 +213,7 @@ class Base(object):
                         these functions if they want to optimize their application for instruments
                         that exhibit increased performance when output configuration is performed
                         while the instrument is not generating a signal.
-                        """
+                        """)
         
         self._init_outputs()
     
@@ -286,14 +289,14 @@ class Base(object):
         value = str(value)
         self._output_reference_clock_source[index] = value
     
-    def abort_generation(self):
+    def _abort_generation(self):
         pass
     
-    def initiate_generation(self):
+    def _initiate_generation(self):
         pass
     
     
-class StdFunc(object):
+class StdFunc(ivi.IviContainer):
     "Extension IVI methods for function generators that can produce manufacturer-supplied periodic waveforms"
     
     def __init__(self, *args, **kwargs):
@@ -310,7 +313,7 @@ class StdFunc(object):
         self._output_standard_waveform_start_phase = list()
         self._output_standard_waveform_waveform = list()
         
-        ivi.add_property(self, 'outputs[].standard_waveform.amplitude',
+        self._add_property('outputs[].standard_waveform.amplitude',
                         self._get_output_standard_waveform_amplitude,
                         self._set_output_standard_waveform_amplitude,
                         None,
@@ -319,7 +322,7 @@ class StdFunc(object):
                         produces. When the Waveform attribute is set to Waveform DC, this
                         attribute does not affect signal output. The units are volts.
                         """)
-        ivi.add_property(self, 'outputs[].standard_waveform.dc_offset',
+        self._add_property('outputs[].standard_waveform.dc_offset',
                         self._get_output_standard_waveform_dc_offset,
                         self._set_output_standard_waveform_dc_offset,
                         None,
@@ -329,7 +332,7 @@ class StdFunc(object):
                         specifies the DC level the function generator produces. The units are
                         volts.
                         """)
-        ivi.add_property(self, 'outputs[].standard_waveform.duty_cycle_high',
+        self._add_property('outputs[].standard_waveform.duty_cycle_high',
                         self._get_output_standard_waveform_duty_cycle_high,
                         self._set_output_standard_waveform_duty_cycle_high,
                         None,
@@ -338,7 +341,7 @@ class StdFunc(object):
                         function generator behavior only when the Waveform attribute is set to
                         Waveform Square. The value is expressed as a percentage.
                         """)
-        ivi.add_property(self, 'outputs[].standard_waveform.start_phase',
+        self._add_property('outputs[].standard_waveform.start_phase',
                         self._get_output_standard_waveform_start_phase,
                         self._set_output_standard_waveform_start_phase,
                         None,
@@ -347,7 +350,7 @@ class StdFunc(object):
                         produces. When the Waveform attribute is set to Waveform DC, this
                         attribute does not affect signal output. The units are degrees.
                         """)
-        ivi.add_property(self, 'outputs[].standard_waveform.frequency',
+        self._add_property('outputs[].standard_waveform.frequency',
                         self._get_output_standard_waveform_frequency,
                         self._set_output_standard_waveform_frequency,
                         None,
@@ -356,7 +359,7 @@ class StdFunc(object):
                         produces. When the Waveform attribute is set to Waveform DC, this
                         attribute does not affect signal output. The units are Hertz.
                         """)
-        ivi.add_property(self, 'outputs[].standard_waveform.waveform',
+        self._add_property('outputs[].standard_waveform.waveform',
                         self._get_output_standard_waveform_waveform,
                         self._set_output_standard_waveform_waveform,
                         None,
@@ -372,7 +375,7 @@ class StdFunc(object):
                         * 'ramp_down'
                         * 'dc'
                         """)
-        ivi.add_method(self, 'outputs[].standard_waveform.configure',
+        self._add_method('outputs[].standard_waveform.configure',
                         self._output_standard_waveform_configure,
                         """
                         This function configures the attributes of the function generator that
@@ -471,7 +474,7 @@ class StdFunc(object):
             self._set_output_standard_waveform_start_phase(index, start_phase)
     
     
-class ArbWfm(object):
+class ArbWfm(ivi.IviContainer):
     "Extension IVI methods for function generators that can produce arbitrary waveforms"
     
     def __init__(self, *args, **kwargs):
@@ -490,7 +493,7 @@ class ArbWfm(object):
         self._arbitrary_waveform_size_min = 0
         self._arbitrary_waveform_quantum = 0
         
-        ivi.add_property(self, 'outputs[].arbitrary.gain',
+        self._add_property('outputs[].arbitrary.gain',
                         self._get_output_arbitrary_gain,
                         self._set_output_arbitrary_gain,
                         None,
@@ -498,7 +501,7 @@ class ArbWfm(object):
                         Specifies the gain of the arbitrary waveform the function generator
                         produces. This value is unitless.
                         """)
-        ivi.add_property(self, 'outputs[].arbitrary.offset',
+        self._add_property('outputs[].arbitrary.offset',
                         self._get_output_arbitrary_offset,
                         self._set_output_arbitrary_offset,
                         None,
@@ -506,20 +509,20 @@ class ArbWfm(object):
                         Specifies the offset of the arbitrary waveform the function generator
                         produces. The units are volts.
                         """)
-        ivi.add_property(self, 'outputs[].arbitrary.waveform',
+        self._add_property('outputs[].arbitrary.waveform',
                         self._get_output_arbitrary_waveform,
                         self._set_output_arbitrary_waveform,
                         None,
                         """
                         """)
-        ivi.add_method(self, 'outputs[].arbitrary.configure',
+        self._add_method('outputs[].arbitrary.configure',
                         self._arbitrary_waveform_configure,
                         """
                         Configures the attributes of the function generator that affect arbitrary
                         waveform generation. These attributes are the arbitrary waveform handle,
                         gain, and offset.
                         """)
-        ivi.add_property(self, 'arbitrary.sample_rate',
+        self._add_property('arbitrary.sample_rate',
                         self._get_arbitrary_sample_rate,
                         self._set_arbitrary_sample_rate,
                         None,
@@ -527,7 +530,7 @@ class ArbWfm(object):
                         Specifies the sample rate of the arbitrary waveforms the function
                         generator produces. The units are samples per second.
                         """)
-        ivi.add_property(self, 'arbitrary.waveform.number_waveforms_max',
+        self._add_property('arbitrary.waveform.number_waveforms_max',
                         self._get_arbitrary_waveform_number_waveforms_max,
                         None,
                         None,
@@ -535,7 +538,7 @@ class ArbWfm(object):
                         Returns the maximum number of arbitrary waveforms that the function
                         generator allows.
                         """)
-        ivi.add_property(self, 'arbitrary.waveform.size_max',
+        self._add_property('arbitrary.waveform.size_max',
                         self._get_arbitrary_waveform_size_max,
                         None,
                         None,
@@ -543,7 +546,7 @@ class ArbWfm(object):
                         Returns the maximum number of points the function generator allows in an
                         arbitrary waveform.
                         """)
-        ivi.add_property(self, 'arbitrary.waveform.size_min',
+        self._add_property('arbitrary.waveform.size_min',
                         self._get_arbitrary_waveform_size_min,
                         None,
                         None,
@@ -551,7 +554,7 @@ class ArbWfm(object):
                         Returns the minimum number of points the function generator allows in an
                         arbitrary waveform.
                         """)
-        ivi.add_property(self, 'arbitrary.waveform.quantum',
+        self._add_property('arbitrary.waveform.quantum',
                         self._get_arbitrary_waveform_quantum,
                         None,
                         None,
@@ -561,14 +564,14 @@ class ArbWfm(object):
                         allows. For example, if this attribute returns a value of 8, all waveform
                         sizes must be a multiple of 8.
                         """)
-        ivi.add_method(self, 'arbitrary.waveform.configure',
+        self._add_method('arbitrary.waveform.configure',
                         self._arbitrary_waveform_configure,
                         """
                         Configures the attributes of the function generator that affect arbitrary
                         waveform generation. These attributes are the arbitrary waveform handle,
                         gain, and offset.
                         """)
-        ivi.add_method(self, 'arbitrary.waveform.clear',
+        self._add_method('arbitrary.waveform.clear',
                         self._arbitrary_waveform_clear,
                         """
                         Removes a previously created arbitrary waveform from the function
@@ -578,7 +581,7 @@ class ArbWfm(object):
                         or it is specified as part of an existing arbitrary waveform sequence,
                         this function returns the Waveform In Use error.
                         """)
-        ivi.add_method(self, 'arbitrary.waveform.create',
+        self._add_method('arbitrary.waveform.create',
                         self._arbitrary_waveform_create,
                         """
                         Creates an arbitrary waveform from an array of data points. The function
@@ -661,7 +664,7 @@ class ArbWfm(object):
         return "handle"
     
     
-class ArbFrequency(object):
+class ArbFrequency(ivi.IviContainer):
     "Extension IVI methods for function generators that can produce arbitrary waveforms with variable rate"
     
     def __init__(self, *args, **kwargs):
@@ -673,7 +676,7 @@ class ArbFrequency(object):
         
         self._output_arbitrary_frequency = list()
         
-        ivi.add_property(self, 'outputs[].arbitrary.frequency',
+        self._add_property('outputs[].arbitrary.frequency',
                         self._get_output_arbitrary_frequency,
                         self._set_output_arbitrary_frequency,
                         None,
@@ -705,7 +708,7 @@ class ArbFrequency(object):
         self._output_arbitrary_frequency[index] = value
     
     
-class ArbSeq(object):
+class ArbSeq(ivi.IviContainer):
     "Extension IVI methods for function generators that can produce sequences of arbitrary waveforms"
     
     def __init__(self, *args, **kwargs):
@@ -720,7 +723,7 @@ class ArbSeq(object):
         self._arbitrary_sequence_length_max = 0
         self._arbitrary_sequence_length_min = 0
         
-        ivi.add_property(self, 'arbitrary.sequence.number_sequences_max',
+        self._add_property('arbitrary.sequence.number_sequences_max',
                         self._get_arbitrary_sequence_number_sequences_max,
                         None,
                         None,
@@ -728,7 +731,7 @@ class ArbSeq(object):
                         Returns the maximum number of arbitrary sequences that the function
                         generator allows.
                         """)
-        ivi.add_property(self, 'arbitrary.sequence.loop_count_max',
+        self._add_property('arbitrary.sequence.loop_count_max',
                         self._get_arbitrary_sequence_loop_count_max,
                         None,
                         None,
@@ -736,7 +739,7 @@ class ArbSeq(object):
                         Returns the maximum number of times that the function generator can repeat
                         a waveform in a sequence.
                         """)
-        ivi.add_property(self, 'arbitrary.sequence.length_max',
+        self._add_property('arbitrary.sequence.length_max',
                         self._get_arbitrary_sequence_length_max,
                         None,
                         None,
@@ -744,7 +747,7 @@ class ArbSeq(object):
                         Returns the maximum number of arbitrary waveforms that the function
                         generator allows in an arbitrary sequence.
                         """)
-        ivi.add_property(self, 'arbitrary.sequence.length_min',
+        self._add_property('arbitrary.sequence.length_min',
                         self._get_arbitrary_sequence_length_min,
                         None,
                         None,
@@ -752,7 +755,7 @@ class ArbSeq(object):
                         Returns the minimum number of arbitrary waveforms that the function
                         generator allows in an arbitrary sequence.
                         """)
-        ivi.add_method(self, 'arbitrary.clear_memory',
+        self._add_method('arbitrary.clear_memory',
                         self._arbitrary_clear_memory,
                         """
                         Removes all previously created arbitrary waveforms and sequences from the
@@ -765,7 +768,7 @@ class ArbSeq(object):
                         If a sequence cannot be cleared because it is currently being generated,
                         this function returns the error Sequence In Use.
                         """)
-        ivi.add_method(self, 'arbitrary.sequence.clear',
+        self._add_method('arbitrary.sequence.clear',
                         self._arbitrary_sequence_clear,
                         """
                         Removes a previously created arbitrary sequence from the function
@@ -774,14 +777,14 @@ class ArbSeq(object):
                         If the sequence cannot be cleared because it is currently being generated,
                         this function returns the error Sequence In Use.
                         """)
-        ivi.add_method(self, 'arbitrary.sequence.configure',
+        self._add_method('arbitrary.sequence.configure',
                         self._arbitrary_sequence_configure,
                         """
                         Configures the attributes of the function generator that affect arbitrary
                         sequence generation. These attributes are the arbitrary sequence handle,
                         gain, and offset.
                         """)
-        ivi.add_method(self, 'arbitrary.sequence.create',
+        self._add_method('arbitrary.sequence.create',
                         self._arbitrary_sequence_create,
                         """
                         Creates an arbitrary waveform sequence from an array of waveform handles
@@ -793,7 +796,7 @@ class ArbSeq(object):
                         If the function generator cannot store any more arbitrary sequences, this
                         function returns the error No Sequences Available.
                         """)
-        ivi.add_method(self, 'outputs[].arbitrary.sequence.configure',
+        self._add_method('outputs[].arbitrary.sequence.configure',
                         self._arbitrary_sequence_configure,
                         """
                         Configures the attributes of the function generator that affect arbitrary
@@ -826,7 +829,7 @@ class ArbSeq(object):
         return "handle"
     
     
-class Trigger(object):
+class Trigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support triggering"
     
     def __init__(self, *args, **kwargs):
@@ -838,7 +841,7 @@ class Trigger(object):
         
         self._output_trigger_source = list()
         
-        ivi.add_property(self, 'outputs[].trigger.source',
+        self._add_property('outputs[].trigger.source',
                         self._get_output_trigger_source,
                         self._set_output_trigger_source,
                         None,
@@ -870,7 +873,7 @@ class Trigger(object):
         self._output_trigger_source[index] = value
     
     
-class StartTrigger(object):
+class StartTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support start triggering"
     
     def __init__(self, *args, **kwargs):
@@ -885,7 +888,7 @@ class StartTrigger(object):
         self._output_start_trigger_source = list()
         self._output_start_trigger_threshold = list()
         
-        ivi.add_property(self, 'outputs[].trigger.start.delay',
+        self._add_property('outputs[].trigger.start.delay',
                         self._get_output_start_trigger_delay,
                         self._set_output_start_trigger_delay,
                         None,
@@ -893,7 +896,7 @@ class StartTrigger(object):
                         Specifies an additional length of time to delay from the start trigger to
                         the first point in the waveform generation. The units are seconds.  
                         """)
-        ivi.add_property(self, 'outputs[].trigger.start.slope',
+        self._add_property('outputs[].trigger.start.slope',
                         self._get_output_start_trigger_slope,
                         self._set_output_start_trigger_slope,
                         None,
@@ -906,14 +909,14 @@ class StartTrigger(object):
                         * 'negative'
                         * 'either'
                         """)
-        ivi.add_property(self, 'outputs[].trigger.start.source',
+        self._add_property('outputs[].trigger.start.source',
                         self._get_output_start_trigger_source,
                         self._set_output_start_trigger_source,
                         None,
                         """
                         Specifies the source of the start trigger.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.start.threshold',
+        self._add_property('outputs[].trigger.start.threshold',
                         self._get_output_start_trigger_threshold,
                         self._set_output_start_trigger_threshold,
                         None,
@@ -921,17 +924,17 @@ class StartTrigger(object):
                         Specifies the voltage threshold for the start trigger. The units are
                         volts.
                         """)
-        ivi.add_method(self, 'outputs[].trigger.start.configure',
+        self._add_method('outputs[].trigger.start.configure',
                         self._output_start_trigger_configure,
                         """
                         This function configures the start trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.start.configure',
+        self._add_method('trigger.start.configure',
                         self._output_start_trigger_configure,
                         """
                         This function configures the start trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.start.send_software_trigger',
+        self._add_method('trigger.start.send_software_trigger',
                         self._start_trigger_send_software_trigger,
                         """
                         This function sends a software-generated start trigger to the instrument.
@@ -1001,7 +1004,7 @@ class StartTrigger(object):
         pass
     
     
-class StopTrigger(object):
+class StopTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support stop triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1016,7 +1019,7 @@ class StopTrigger(object):
         self._output_stop_trigger_source = list()
         self._output_stop_trigger_threshold = list()
         
-        ivi.add_property(self, 'outputs[].trigger.stop.delay',
+        self._add_property('outputs[].trigger.stop.delay',
                         self._get_output_stop_trigger_delay,
                         self._set_output_stop_trigger_delay,
                         None,
@@ -1024,7 +1027,7 @@ class StopTrigger(object):
                         Specifies an additional length of time to delay from the stop trigger to
                         the termination of the generation. The units are seconds.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.stop.slope',
+        self._add_property('outputs[].trigger.stop.slope',
                         self._get_output_stop_trigger_slope,
                         self._set_output_stop_trigger_slope,
                         None,
@@ -1037,32 +1040,32 @@ class StopTrigger(object):
                         * 'negative'
                         * 'either'
                         """)
-        ivi.add_property(self, 'outputs[].trigger.stop.source',
+        self._add_property('outputs[].trigger.stop.source',
                         self._get_output_stop_trigger_source,
                         self._set_output_stop_trigger_source,
                         None,
                         """
                         Specifies the source of the stop trigger.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.stop.threshold',
+        self._add_property('outputs[].trigger.stop.threshold',
                         self._get_output_stop_trigger_threshold,
                         self._set_output_stop_trigger_threshold,
                         None,
                         """
                         Specifies the voltage threshold for the stop trigger. The units are volts.
                         """)
-        ivi.add_method(self, 'outputs[].trigger.stop.configure',
+        self._add_method('outputs[].trigger.stop.configure',
                         self._output_stop_trigger_configure,
                         None,
                         """
                         This function configures the stop trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.stop.configure',
+        self._add_method('trigger.stop.configure',
                         self._output_stop_trigger_configure,
                         """
                         This function configures the stop trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.stop.send_software_trigger',
+        self._add_method('trigger.stop.send_software_trigger',
                         self._stop_trigger_send_software_trigger,
                         """
                         This function sends a software-generated stop trigger to the instrument.
@@ -1132,7 +1135,7 @@ class StopTrigger(object):
         pass
     
     
-class HoldTrigger(object):
+class HoldTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support hold triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1147,7 +1150,7 @@ class HoldTrigger(object):
         self._output_hold_trigger_source = list()
         self._output_hold_trigger_threshold = list()
         
-        ivi.add_property(self, 'outputs[].trigger.hold.delay',
+        self._add_property('outputs[].trigger.hold.delay',
                         self._get_output_hold_trigger_delay,
                         self._set_output_hold_trigger_delay,
                         None,
@@ -1155,7 +1158,7 @@ class HoldTrigger(object):
                         Specifies an additional length of time to delay from the hold trigger to
                         the pause of the generation. The units are seconds.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.hold.slope',
+        self._add_property('outputs[].trigger.hold.slope',
                         self._get_output_hold_trigger_slope,
                         self._set_output_hold_trigger_slope,
                         None,
@@ -1168,31 +1171,31 @@ class HoldTrigger(object):
                         * 'negative'
                         * 'either'
                         """)
-        ivi.add_property(self, 'outputs[].trigger.hold.source',
+        self._add_property('outputs[].trigger.hold.source',
                         self._get_output_hold_trigger_source,
                         self._set_output_hold_trigger_source,
                         None,
                         """
                         Specifies the source of the hold trigger.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.hold.threshold',
+        self._add_property('outputs[].trigger.hold.threshold',
                         self._get_output_hold_trigger_threshold,
                         self._set_output_hold_trigger_threshold,
                         None,
                         """
                         Specifies the voltage threshold for the hold trigger. The units are volts.
                         """)
-        ivi.add_method(self, 'outputs[].trigger.hold.configure',
+        self._add_method('outputs[].trigger.hold.configure',
                         self._output_hold_trigger_configure,
                         """
                         This function configures the hold trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.hold.configure',
+        self._add_method('trigger.hold.configure',
                         self._output_hold_trigger_configure,
                         """
                         This function configures the hold trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.hold.send_software_trigger',
+        self._add_method('trigger.hold.send_software_trigger',
                         self._hold_trigger_send_software_trigger,
                         """
                         This function sends a software-generated hold trigger to the instrument.
@@ -1262,7 +1265,7 @@ class HoldTrigger(object):
         pass
     
     
-class ResumeTrigger(object):
+class ResumeTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support resume triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1277,7 +1280,7 @@ class ResumeTrigger(object):
         self._output_resume_trigger_source = list()
         self._output_resume_trigger_threshold = list()
         
-        ivi.add_property(self, 'outputs[].trigger.resume.delay',
+        self._add_property('outputs[].trigger.resume.delay',
                         self._get_output_resume_trigger_delay,
                         self._set_output_resume_trigger_delay,
                         None,
@@ -1285,7 +1288,7 @@ class ResumeTrigger(object):
                         Specifies an additional length of time to delay from the resume trigger to
                         the resumption of the generation. The units are seconds.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.resume.slope',
+        self._add_property('outputs[].trigger.resume.slope',
                         self._get_output_resume_trigger_slope,
                         self._set_output_resume_trigger_slope,
                         None,
@@ -1298,14 +1301,14 @@ class ResumeTrigger(object):
                         * 'negative'
                         * 'either'
                         """)
-        ivi.add_property(self, 'outputs[].trigger.resume.source',
+        self._add_property('outputs[].trigger.resume.source',
                         self._get_output_resume_trigger_source,
                         self._set_output_resume_trigger_source,
                         None,
                         """
                         Specifies the source of the resume trigger.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.resume.threshold',
+        self._add_property('outputs[].trigger.resume.threshold',
                         self._get_output_resume_trigger_threshold,
                         self._set_output_resume_trigger_threshold,
                         None,
@@ -1313,17 +1316,17 @@ class ResumeTrigger(object):
                         Specifies the voltage threshold for the resume trigger. The units are
                         volts.
                         """)
-        ivi.add_method(self, 'outputs[].trigger.resume.configure',
+        self._add_method('outputs[].trigger.resume.configure',
                         self._output_resume_trigger_configure,
                         """
                         This function configures the resume trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.resume.configure',
+        self._add_method('trigger.resume.configure',
                         self._output_resume_trigger_configure,
                         """
                         This function configures the resume trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.resume.send_software_trigger',
+        self._add_method('trigger.resume.send_software_trigger',
                         self._resume_trigger_send_software_trigger,
                         """
                         This function sends a software-generated resume trigger to the instrument.
@@ -1393,7 +1396,7 @@ class ResumeTrigger(object):
         pass
     
     
-class AdvanceTrigger(object):
+class AdvanceTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support advance triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1408,7 +1411,7 @@ class AdvanceTrigger(object):
         self._output_advance_trigger_source = list()
         self._output_advance_trigger_threshold = list()
         
-        ivi.add_property(self, 'outputs[].trigger.advance.delay',
+        self._add_property('outputs[].trigger.advance.delay',
                         self._get_output_advance_trigger_delay,
                         self._set_output_advance_trigger_delay,
                         None,
@@ -1416,7 +1419,7 @@ class AdvanceTrigger(object):
                         Specifies an additional length of time to delay from the advance trigger
                         to the advancing to the end of the current waveform. Units are seconds.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.advance.slope',
+        self._add_property('outputs[].trigger.advance.slope',
                         self._get_output_advance_trigger_slope,
                         self._set_output_advance_trigger_slope,
                         None,
@@ -1429,14 +1432,14 @@ class AdvanceTrigger(object):
                         * 'negative'
                         * 'either'
                         """)
-        ivi.add_property(self, 'outputs[].trigger.advance.source',
+        self._add_property('outputs[].trigger.advance.source',
                         self._get_output_advance_trigger_source,
                         self._set_output_advance_trigger_source,
                         None,
                         """
                         Specifies the source of the advance trigger.
                         """)
-        ivi.add_property(self, 'outputs[].trigger.advance.threshold',
+        self._add_property('outputs[].trigger.advance.threshold',
                         self._get_output_advance_trigger_threshold,
                         self._set_output_advance_trigger_threshold,
                         None,
@@ -1444,17 +1447,17 @@ class AdvanceTrigger(object):
                         Specifies the voltage threshold for the advance trigger. The units are
                         volts.
                         """)
-        ivi.add_method(self, 'outputs[].trigger.advance.configure',
+        self._add_method('outputs[].trigger.advance.configure',
                         self._output_advance_trigger_configure,
                         """
                         This function configures the advance trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.advance.configure',
+        self._add_method('trigger.advance.configure',
                         self._output_advance_trigger_configure,
                         """
                         This function configures the advance trigger properties.
                         """)
-        ivi.add_method(self, 'trigger.advance.send_software_trigger',
+        self._add_method('trigger.advance.send_software_trigger',
                         self._advance_trigger_send_software_trigger,
                         """
                         This function sends a software-generated advance trigger to the
@@ -1525,7 +1528,7 @@ class AdvanceTrigger(object):
         pass
     
     
-class InternalTrigger(object):
+class InternalTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support internal triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1537,7 +1540,7 @@ class InternalTrigger(object):
         
         self._internal_trigger_rate = 0
         
-        ivi.add_property(self, 'trigger.internal_rate',
+        self._add_property('trigger.internal_rate',
                         self._get_internal_trigger_rate,
                         self._set_internal_trigger_rate,
                         None,
@@ -1554,7 +1557,7 @@ class InternalTrigger(object):
         self._internal_trigger_rate = value
     
     
-class SoftwareTrigger(object):
+class SoftwareTrigger(ivi.IviContainer):
     "Extension IVI methods for function generators that support software triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1564,8 +1567,9 @@ class SoftwareTrigger(object):
         grp = 'SoftwareTrigger'
         ivi.add_group_capability(self, cls+grp)
         
-        self.__dict__.setdefault('_docs', dict())
-        self._docs['send_software_trigger'] = """
+        self._add_method('send_software_trigger',
+                        self._send_software_trigger,
+                        """
                         This function sends a software-generated trigger to the instrument. It is
                         only applicable for instruments using interfaces or protocols which
                         support an explicit trigger function. For example, with GPIB this function
@@ -1591,25 +1595,25 @@ class SoftwareTrigger(object):
                         setting for this function to work. If the trigger source is not set to
                         Software Trigger, this function does nothing and returns the error Trigger
                         Not Software.
-                        """
+                        """)
     
-    def send_software_trigger(self):
+    def _send_software_trigger(self):
         pass
-    
-    
-class Burst(object):
+
+
+class Burst(ivi.IviContainer):
     "Extension IVI methods for function generators that support triggered burst output"
-    
+
     def __init__(self, *args, **kwargs):
         super(Burst, self).__init__(*args, **kwargs)
-        
+
         cls = 'IviFgen'
         grp = 'Burst'
         ivi.add_group_capability(self, cls+grp)
-        
+
         self._output_burst_count = list()
-        
-        ivi.add_property(self, 'outputs[].burst_count',
+
+        self._add_property('outputs[].burst_count',
                         self._get_output_burst_count,
                         self._set_output_burst_count,
                         None,
@@ -1617,47 +1621,47 @@ class Burst(object):
                         Specifies the number of waveform cycles that the function generator
                         produces after it receives a trigger.
                         """)
-        
-    
+
+
     def _init_outputs(self):
         try:
             super(Burst, self)._init_outputs()
         except AttributeError:
             pass
-        
+
         self._output_burst_count = list()
         for i in range(self._output_count):
             self._output_burst_count.append(1)
-        
+
         self.outputs._set_list(self._output_name)
-    
+
     def _get_output_burst_count(self, index):
         index = ivi.get_index(self._output_name, index)
         return self._output_burst_count[index]
-    
+
     def _set_output_burst_count(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = int(value)
         self._output_burst_count[index] = value
-    
-    
-class ModulateAM(object):
+
+
+class ModulateAM(ivi.IviContainer):
     "Extension IVI methods for function generators that support amplitude modulation"
-    
+
     def __init__(self, *args, **kwargs):
         super(ModulateAM, self).__init__(*args, **kwargs)
-        
+
         cls = 'IviFgen'
         grp = 'ModulateAM'
         ivi.add_group_capability(self, cls+grp)
-        
+
         self._output_am_enabled = list()
         self._am_internal_depth = 0
         self._am_internal_frequency = 0
         self._am_internal_waveform = 0
         self._output_am_source = list()
-        
-        ivi.add_property(self, 'outputs[].am.enabled',
+
+        self._add_property('outputs[].am.enabled',
                         self._get_output_am_enabled,
                         self._set_output_am_enabled,
                         None,
@@ -1669,7 +1673,7 @@ class ModulateAM(object):
                         set to False, the function generator does not apply amplitude modulation
                         to the output signal.
                         """)
-        ivi.add_property(self, 'outputs[].am.source',
+        self._add_property('outputs[].am.source',
                         self._get_output_am_source,
                         self._set_output_am_source,
                         None,
@@ -1680,7 +1684,7 @@ class ModulateAM(object):
                         This attribute affects instrument behavior only when the AM Enabled
                         attribute is set to True.
                         """)
-        ivi.add_property(self, 'am.internal_depth',
+        self._add_property('am.internal_depth',
                         self._get_am_internal_depth,
                         self._set_am_internal_depth,
                         None,
@@ -1692,7 +1696,7 @@ class ModulateAM(object):
                         This attribute affects the behavior of the instrument only when the AM 
                         ource attribute is set to AM Internal.
                         """)
-        ivi.add_property(self, 'am.internal_frequency',
+        self._add_property('am.internal_frequency',
                         self._get_am_internal_frequency,
                         self._set_am_internal_frequency,
                         None,
@@ -1703,7 +1707,7 @@ class ModulateAM(object):
                         This attribute affects the behavior of the instrument only when the AM 
                         ource attribute is set to AM Internal.
                         """)
-        ivi.add_property(self, 'am.internal_waveform',
+        self._add_property('am.internal_waveform',
                         self._get_am_internal_waveform,
                         self._set_am_internal_waveform,
                         None,
@@ -1722,7 +1726,7 @@ class ModulateAM(object):
                         * 'ramp_down'
                         * 'dc'
                         """)
-        ivi.add_method(self, 'am.configure_internal',
+        self._add_method('am.configure_internal',
                         self._am_configure_internal,
                         """
                         Configures the attributes that control the function generator's internal
@@ -1788,7 +1792,7 @@ class ModulateAM(object):
         self._set_am_internal_frequency(frequency)
     
     
-class ModulateFM(object):
+class ModulateFM(ivi.IviContainer):
     "Extension IVI methods for function generators that support frequency modulation"
     
     def __init__(self, *args, **kwargs):
@@ -1804,7 +1808,7 @@ class ModulateFM(object):
         self._fm_internal_waveform = 0
         self._output_fm_source = list()
         
-        ivi.add_property(self, 'outputs[].fm.enabled',
+        self._add_property('outputs[].fm.enabled',
                         self._get_output_fm_enabled,
                         self._set_output_fm_enabled,
                         None,
@@ -1814,13 +1818,13 @@ class ModulateFM(object):
                         frequency modulation to the output signal. If set to False, the function
                         generator does not apply frequency modulation to the output signal.
                         """)
-        ivi.add_property(self, 'outputs[].fm.source',
+        self._add_property('outputs[].fm.source',
                         self._get_output_fm_source,
                         self._set_output_fm_source,
                         None,
                         """
                         """)
-        ivi.add_property(self, 'fm.internal_deviation',
+        self._add_property('fm.internal_deviation',
                         self._get_fm_internal_deviation,
                         self._set_fm_internal_deviation,
                         None,
@@ -1832,7 +1836,7 @@ class ModulateFM(object):
                         This attribute affects the behavior of the instrument only when the FM
                         Source attribute is set to FM Internal.
                         """)
-        ivi.add_property(self, 'fm.internal_frequency',
+        self._add_property('fm.internal_frequency',
                         self._get_fm_internal_frequency,
                         self._set_fm_internal_frequency,
                         None,
@@ -1843,7 +1847,7 @@ class ModulateFM(object):
                         This attribute affects the behavior of the instrument only when the FM
                         Source attribute is set to FM Internal.
                         """)
-        ivi.add_property(self, 'fm.internal_waveform',
+        self._add_property('fm.internal_waveform',
                         self._get_fm_internal_waveform,
                         self._set_fm_internal_waveform,
                         None,
@@ -1862,7 +1866,7 @@ class ModulateFM(object):
                         * 'ramp_down'
                         * 'dc'
                         """)
-        ivi.add_method(self, 'fm.configure_internal',
+        self._add_method('fm.configure_internal',
                         self._fm_configure_internal,
                         """
                         Specifies the source of the signal that the function generator uses as the
@@ -1930,7 +1934,7 @@ class ModulateFM(object):
         self._set_fm_internal_frequency(frequency)
     
     
-class SampleClock(object):
+class SampleClock(ivi.IviContainer):
     "Extension IVI methods for function generators that support external sample clocks"
     
     def __init__(self, *args, **kwargs):
@@ -1943,7 +1947,7 @@ class SampleClock(object):
         self._sample_clock_source = 'internal'
         self._sample_clock_output_enabled = ''
         
-        ivi.add_property(self, 'sample_clock.source',
+        self._add_property('sample_clock.source',
                         self._get_sample_clock_source,
                         self._set_sample_clock_source,
                         None,
@@ -1952,7 +1956,7 @@ class SampleClock(object):
                         an external sample clock, the Arbitrary Sample Rate attribute must be set
                         to the corresponding frequency of the external sample clock.
                         """)
-        ivi.add_property(self, 'sample_clock.output_enabled',
+        self._add_property('sample_clock.output_enabled',
                         self._get_sample_clock_output_enabled,
                         self._set_sample_clock_output_enabled,
                         None,
@@ -1977,7 +1981,7 @@ class SampleClock(object):
         self._sample_clock_output_enabled = value
     
     
-class TerminalConfiguration(object):
+class TerminalConfiguration(ivi.IviContainer):
     "Extension IVI methods for function generators that support single ended or differential output selection"
     
     def __init__(self, *args, **kwargs):
@@ -1989,7 +1993,7 @@ class TerminalConfiguration(object):
         
         self._output_terminal_configuration = list()
         
-        ivi.add_property(self, 'outputs[].terminal_configuration',
+        self._add_property('outputs[].terminal_configuration',
                         self._get_output_terminal_configuration,
                         self._set_output_terminal_configuration,
                         None,
@@ -2028,7 +2032,7 @@ class TerminalConfiguration(object):
         self._output_terminal_configuration[index] = value
     
     
-class ArbChannelWfm(object):
+class ArbChannelWfm(ivi.IviContainer):
     "Extension IVI methods for function generators that support user-defined arbitrary waveform generation"
     
     def __init__(self, *args, **kwargs):
@@ -2038,7 +2042,7 @@ class ArbChannelWfm(object):
         grp = 'ArbChannelWfm'
         ivi.add_group_capability(self, cls+grp)
         
-        ivi.add_method(self, 'outputs[].arbitrary.create_waveform',
+        self._add_method('outputs[].arbitrary.create_waveform',
                         self._arbitrary_waveform_create_channel_waveform,
                         """
                         Creates a channel-specific arbitrary waveform and returns a handle that
@@ -2057,7 +2061,7 @@ class ArbChannelWfm(object):
                         If the function generator cannot store any more arbitrary waveforms, this
                         function returns the error No Waveforms Available.
                         """)
-        ivi.add_method(self, 'arbitrary.waveform.create_channel_waveform',
+        self._add_method('arbitrary.waveform.create_channel_waveform',
                         self._arbitrary_waveform_create_channel_waveform,
                         """
                         Creates a channel-specific arbitrary waveform and returns a handle that
@@ -2083,7 +2087,7 @@ class ArbChannelWfm(object):
         return handle
     
     
-class ArbWfmBinary(object):
+class ArbWfmBinary(ivi.IviContainer):
     "Extension IVI methods for function generators that support user-defined arbitrary binary waveform generation"
     
     def __init__(self, *args, **kwargs):
@@ -2096,7 +2100,7 @@ class ArbWfmBinary(object):
         self._arbitrary_binary_alignment = 'right'
         self._arbitrary_sample_bit_resolution = 16
         
-        ivi.add_method(self, 'outputs[].arbitrary.waveform.create_channel_waveform_int16',
+        self._add_method('outputs[].arbitrary.waveform.create_channel_waveform_int16',
                         self._arbitrary_waveform_create_channel_waveform_int16,
                         """
                         Creates a channel-specific arbitrary waveform and returns a handle that
@@ -2118,7 +2122,7 @@ class ArbWfmBinary(object):
                         If the function generator cannot store any more arbitrary waveforms, this
                         function returns the error No Waveforms Available.
                         """)
-        ivi.add_method(self, 'outputs[].arbitrary.waveform.create_channel_waveform_int32',
+        self._add_method('outputs[].arbitrary.waveform.create_channel_waveform_int32',
                         self._arbitrary_waveform_create_channel_waveform_int32,
                         """
                         Creates a channel-specific arbitrary waveform and returns a handle that
@@ -2140,7 +2144,7 @@ class ArbWfmBinary(object):
                         If the function generator cannot store any more arbitrary waveforms, this
                         function returns the error No Waveforms Available.
                         """)
-        ivi.add_property(self, 'arbitrary.binary_alignment',
+        self._add_property('arbitrary.binary_alignment',
                         self._get_arbitrary_binary_alignment,
                         None,
                         None,
@@ -2153,7 +2157,7 @@ class ArbWfmBinary(object):
                         being used. For a 16-bit or a 32-bit generator, this function can return
                         either value.
                         """)
-        ivi.add_property(self, 'arbitrary.sample_bit_resolution',
+        self._add_property('arbitrary.sample_bit_resolution',
                         self._get_arbitrary_sample_bit_resolution,
                         None,
                         None,
@@ -2162,7 +2166,7 @@ class ArbWfmBinary(object):
                         arbitrary waveform. Together with the binary alignment, this allows the
                         user to know the range and resolution of the integers in the waveform.
                         """)
-        ivi.add_method(self, 'arbitrary.waveform.create_channel_waveform_int16',
+        self._add_method('arbitrary.waveform.create_channel_waveform_int16',
                         self._arbitrary_waveform_create_channel_waveform_int16,
                         """
                         Creates a channel-specific arbitrary waveform and returns a handle that
@@ -2184,7 +2188,7 @@ class ArbWfmBinary(object):
                         If the function generator cannot store any more arbitrary waveforms, this
                         function returns the error No Waveforms Available.
                         """)
-        ivi.add_method(self, 'arbitrary.waveform.create_channel_waveform_int32',
+        self._add_method('arbitrary.waveform.create_channel_waveform_int32',
                         self._arbitrary_waveform_create_channel_waveform_int32,
                         """
                         Creates a channel-specific arbitrary waveform and returns a handle that
@@ -2222,7 +2226,7 @@ class ArbWfmBinary(object):
         return 'handle'
     
     
-class DataMarker(object):
+class DataMarker(ivi.IviContainer):
     "Extension IVI methods for function generators that support output of particular waveform data bits as markers"
     
     def __init__(self, *args, **kwargs):
@@ -2241,7 +2245,7 @@ class DataMarker(object):
         self._data_marker_polarity = list()
         self._data_marker_source_channel = list()
         
-        ivi.add_property(self, 'data_markers[].name',
+        self._add_property('data_markers[].name',
                         self._get_data_marker_name,
                         None,
                         None,
@@ -2255,14 +2259,14 @@ class DataMarker(object):
                         zero or greater than the value of the Data Marker Count, the attribute
                         returns an empty string for the value and returns an error.
                         """)
-        ivi.add_property(self, 'data_markers[].amplitude',
+        self._add_property('data_markers[].amplitude',
                         self._get_data_marker_amplitude,
                         self._set_data_marker_amplitude,
                         None,
                         """
                         Specifies the amplitude of the data marker output. The units are volts.
                         """)
-        ivi.add_property(self, 'data_markers[].bit_position',
+        self._add_property('data_markers[].bit_position',
                         self._get_data_marker_bit_position,
                         self._set_data_marker_bit_position,
                         None,
@@ -2271,7 +2275,7 @@ class DataMarker(object):
                         data that will be output as a data marker. A value of 0 indicates the
                         least significant bit.
                         """)
-        ivi.add_property(self, 'data_markers[].delay',
+        self._add_property('data_markers[].delay',
                         self._get_data_marker_delay,
                         self._set_data_marker_delay,
                         None,
@@ -2280,14 +2284,14 @@ class DataMarker(object):
                         respect to the analog data output. A value of zero indicates the marker is
                         aligned with the analog data output.  The units are seconds.
                         """)
-        ivi.add_property(self, 'data_markers[].destination',
+        self._add_property('data_markers[].destination',
                         self._get_data_marker_destination,
                         self._set_data_marker_destination,
                         None,
                         """
                         Specifies the destination terminal for the data marker output.
                         """)
-        ivi.add_property(self, 'data_markers[].polarity',
+        self._add_property('data_markers[].polarity',
                         self._get_data_marker_polarity,
                         self._set_data_marker_polarity,
                         None,
@@ -2299,19 +2303,19 @@ class DataMarker(object):
                         * 'active_high'
                         * 'active_low'
                         """)
-        ivi.add_property(self, 'data_markers[].source_channel',
+        self._add_property('data_markers[].source_channel',
                         self._get_data_marker_source_channel,
                         self._set_data_marker_source_channel,
                         None,
                         """
                         Specifies the channel whose data bit will be output as a marker.
                         """)
-        ivi.add_method(self, 'data_markers[].configure',
+        self._add_method('data_markers[].configure',
                         self._data_marker_configure,
                         """
                         Configures some of the common data marker attributes.
                         """)
-        ivi.add_method(self, 'data_markers[].clear',
+        self._add_method('data_markers[].clear',
                         self._data_marker_clear,
                         """
                         Disables all of the data markers by setting their Data Marker Destination
@@ -2414,7 +2418,7 @@ class DataMarker(object):
             self._set_data_marker_destination(i, '')
     
     
-class ArbDataMask(object):
+class ArbDataMask(ivi.IviContainer):
     "Extension IVI methods for function generators that support masking of waveform data bits"
     
     def __init__(self, *args, **kwargs):
@@ -2426,7 +2430,7 @@ class ArbDataMask(object):
         
         self._arbitrary_data_mask = 0xffffffff
         
-        ivi.add_property(self, 'arbitrary.data_mask',
+        self._add_property('arbitrary.data_mask',
                         self._get_arbitrary_data_mask,
                         self._set_arbitrary_data_mask,
                         None,
@@ -2450,7 +2454,7 @@ class ArbDataMask(object):
         self._arbitrary_data_mask = value
     
     
-class SparseMarker(object):
+class SparseMarker(ivi.IviContainer):
     "Extension IVI methods for function generators that support output of markers associated with output data samples"
     
     def __init__(self, *args, **kwargs):
@@ -2468,7 +2472,7 @@ class SparseMarker(object):
         self._sparse_marker_polarity = list()
         self._sparse_marker_waveform_handle = list()
         
-        ivi.add_property(self, 'sparse_markers[].name',
+        self._add_property('sparse_markers[].name',
                         self._get_sparse_marker_name,
                         None,
                         None,
@@ -2482,14 +2486,14 @@ class SparseMarker(object):
                         or greater than the value of the Sparse Marker Count, the attribute
                         returns an empty string for the value and returns an error.
                         """)
-        ivi.add_property(self, 'sparse_markers[].amplitude',
+        self._add_property('sparse_markers[].amplitude',
                         self._get_sparse_marker_amplitude,
                         self._set_sparse_marker_amplitude,
                         None,
                         """
                         Specifies the amplitude of the sparse marker output. The units are volts.
                         """)
-        ivi.add_property(self, 'sparse_markers[].delay',
+        self._add_property('sparse_markers[].delay',
                         self._get_sparse_marker_delay,
                         self._set_sparse_marker_delay,
                         None,
@@ -2498,14 +2502,14 @@ class SparseMarker(object):
                         respect to the analog data output. A value of zero indicates the marker is
                         aligned with the analog data output. The units are seconds.
                         """)
-        ivi.add_property(self, 'sparse_markers[].destination',
+        self._add_property('sparse_markers[].destination',
                         self._get_sparse_marker_destination,
                         self._set_sparse_marker_destination,
                         None,
                         """
                         Specifies the destination terminal for the sparse marker output.
                         """)
-        ivi.add_property(self, 'sparse_markers[].polarity',
+        self._add_property('sparse_markers[].polarity',
                         self._get_sparse_marker_polarity,
                         self._set_sparse_marker_polarity,
                         None,
@@ -2517,33 +2521,33 @@ class SparseMarker(object):
                         * 'active_high'
                         * 'active_low'
                         """)
-        ivi.add_property(self, 'sparse_markers[].waveform_handle',
+        self._add_property('sparse_markers[].waveform_handle',
                         self._get_sparse_marker_waveform_handle,
                         self._set_sparse_marker_waveform_handle,
                         None,
                         """
                         Specifies the waveform whose indexes the sparse marker refers to.
                         """)
-        ivi.add_method(self, 'sparse_markers[].configure',
+        self._add_method('sparse_markers[].configure',
                         self._sparse_marker_configure,
                         """
                         Configures some of the common sparse marker attributes.
                         """)
-        ivi.add_method(self, 'sparse_markers[].get_indexes',
+        self._add_method('sparse_markers[].get_indexes',
                         self._sparse_marker_get_indexes,
                         """
                         Gets the coerced indexes associated with the sparse marker. These indexes
                         are specified by either the Configure SparseMarker function or the Set
                         Sparse Marker Indexes function.
                         """)
-        ivi.add_method(self, 'sparse_markers[].set_indexes',
+        self._add_method('sparse_markers[].set_indexes',
                         self._sparse_marker_set_indexes,
                         """
                         Sets the indexes associated with the sparse marker. These indexes may be
                         coerced by the driver. Use the Get Sparse Marker Indexes function to find
                         the coerced values.
                         """)
-        ivi.add_method(self, 'sparse_markers[].clear',
+        self._add_method('sparse_markers[].clear',
                         self._sparse_marker_clear,
                         """
                         Disables all of the sparse markers by setting their Sparse Marker
@@ -2642,7 +2646,7 @@ class SparseMarker(object):
             self._set_sparse_marker_destination(i, '')
     
     
-class ArbSeqDepth(object):
+class ArbSeqDepth(ivi.IviContainer):
     "Extension IVI methods for function generators that support producing sequences of sequences of waveforms"
     
     def __init__(self, *args, **kwargs):
@@ -2654,7 +2658,7 @@ class ArbSeqDepth(object):
         
         self._arbitrary_sequence_depth_max = 1
         
-        ivi.add_property(self, 'arbitrary.sequence.depth_max',
+        self._add_property('arbitrary.sequence.depth_max',
                         self._get_arbitrary_sequence_depth_max,
                         None,
                         None,

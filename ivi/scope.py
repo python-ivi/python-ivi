@@ -54,7 +54,7 @@ MeasurementFunction = set(['rise_time', 'fall_time', 'frequency', 'period',
         'overshoot', 'preshoot'])
 AcquisitionStatus = set(['complete', 'in_progress', 'unknown'])
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for all oscilloscopes"
     
     def __init__(self, *args, **kwargs):
@@ -89,7 +89,7 @@ class Base(object):
         self._trigger_source = ""
         self._trigger_type = 'edge'
         
-        ivi.add_property(self, 'acquisition.start_time',
+        self._add_property('acquisition.start_time',
                         self._get_acquisition_start_time,
                         self._set_acquisition_start_time,
                         None,
@@ -100,7 +100,7 @@ class Base(object):
                         the first point in the waveform record occurs before the trigger event.
                         The units are seconds.
                         """, cls, grp, '4.2.1'))
-        ivi.add_property(self, 'acquisition.type',
+        self._add_property('acquisition.type',
                         self._get_acquisition_type,
                         self._set_acquisition_type,
                         None,
@@ -115,7 +115,7 @@ class Base(object):
                         * 'peak_detect'
                         * 'envelope'
                         """, cls, grp, '4.2.3'))
-        ivi.add_property(self, 'acquisition.number_of_points_minimum',
+        self._add_property('acquisition.number_of_points_minimum',
                         self._get_acquisition_number_of_points_minimum,
                         self._set_acquisition_number_of_points_minimum,
                         None,
@@ -128,7 +128,7 @@ class Base(object):
                         closest bigger record length. The Horizontal Record Length attribute
                         returns the actual record length.
                         """, cls, grp, '4.2.8'))
-        ivi.add_property(self, 'acquisition.record_length',
+        self._add_property('acquisition.record_length',
                         self._get_acquisition_record_length,
                         None,
                         None,
@@ -141,7 +141,7 @@ class Base(object):
                         Note: Oscilloscopes may use different size records depending on the value
                         the user specifies for the Acquisition Type attribute.
                         """, cls, grp, '4.2.9'))
-        ivi.add_property(self, 'acquisition.sample_rate',
+        self._add_property('acquisition.sample_rate',
                         self._get_acquisition_sample_rate,
                         None,
                         None,
@@ -149,7 +149,7 @@ class Base(object):
                         Returns the effective sample rate of the acquired waveform using the
                         current configuration. The units are samples per second.
                         """, cls, grp, '4.2.10'))
-        ivi.add_property(self, 'acquisition.time_per_record',
+        self._add_property('acquisition.time_per_record',
                         self._get_acquisition_time_per_record,
                         self._set_acquisition_time_per_record,
                         None,
@@ -157,14 +157,14 @@ class Base(object):
                         Specifies the length of time that corresponds to the record length. The
                         units are seconds.
                         """, cls, grp, '4.2.11'))
-        ivi.add_method(self, 'acquisition.configure_record',
+        self._add_method('acquisition.configure_record',
                         self._acquisition_configure_record,
                         ivi.Doc("""
                         This function configures the most commonly configured attributes of the
                         oscilloscope acquisition sub-system. These attributes are the time per
                         record, minimum record length, and the acquisition start time.
                         """, cls, grp, '4.3.4'))
-        ivi.add_property(self, 'channels[].name',
+        self._add_property('channels[].name',
                         self._get_channel_name,
                         None,
                         None,
@@ -178,7 +178,7 @@ class Base(object):
                         zero or greater than the value of the channel count, the attribute raises
                         a SelectorRangeException.
                         """, cls, grp, '4.2.7'))
-        ivi.add_property(self, 'channels[].enabled',
+        self._add_property('channels[].enabled',
                         self._get_channel_enabled,
                         self._set_channel_enabled,
                         None,
@@ -187,7 +187,7 @@ class Base(object):
                         set to False, the oscilloscope does not acquire a waveform for the
                         channel.
                         """, cls, grp, '4.2.5'))
-        ivi.add_property(self, 'channels[].input_impedance',
+        self._add_property('channels[].input_impedance',
                         self._get_channel_input_impedance,
                         self._set_channel_input_impedance,
                         None,
@@ -196,7 +196,7 @@ class Base(object):
                         
                         Common values are 50.0, 75.0, and 1,000,000.0.
                         """, cls, grp, '4.2.12'))
-        ivi.add_property(self, 'channels[].input_frequency_max',
+        self._add_property('channels[].input_frequency_max',
                         self._get_channel_input_frequency_max,
                         self._set_channel_input_frequency_max,
                         None,
@@ -208,7 +208,7 @@ class Base(object):
                         input signal by at least 3dB at frequencies greater than the bandwidth
                         limit.
                         """, cls, grp, '4.2.13'))
-        ivi.add_property(self, 'channels[].probe_attenuation',
+        self._add_property('channels[].probe_attenuation',
                         self._get_channel_probe_attenuation,
                         self._set_channel_probe_attenuation,
                         None,
@@ -224,7 +224,7 @@ class Base(object):
                         instrument's actual probe attenuation. Setting this property sets Probe
                         Attenuation Auto to False Negative values are not valid.
                         """, cls, grp, '4.2.16'))
-        ivi.add_property(self, 'channels[].coupling',
+        self._add_property('channels[].coupling',
                         self._get_channel_coupling,
                         self._set_channel_coupling,
                         None,
@@ -237,7 +237,7 @@ class Base(object):
                         * 'dc'
                         * 'gnd'
                         """, cls, grp, '4.2.23'))
-        ivi.add_property(self, 'channels[].offset',
+        self._add_property('channels[].offset',
                         self._get_channel_offset,
                         self._set_channel_offset,
                         None,
@@ -248,7 +248,7 @@ class Base(object):
                         For example, to acquire a sine wave that spans between on 0.0 and 10.0
                         volts, set this attribute to 5.0 volts.
                         """, cls, grp, '4.2.24'))
-        ivi.add_property(self, 'channels[].range',
+        self._add_property('channels[].range',
                         self._get_channel_range,
                         self._set_channel_range,
                         None,
@@ -259,21 +259,21 @@ class Base(object):
                         For example, to acquire a sine wave that spans between -5.0 and 5.0 volts,
                         set the Vertical Range attribute to 10.0 volts.
                         """, cls, grp, '4.2.25'))
-        ivi.add_method(self, 'channels[].configure',
+        self._add_method('channels[].configure',
                         self._channel_configure,
                         ivi.Doc("""
                         This function configures the most commonly configured attributes of the
                         oscilloscope channel sub-system. These attributes are the range, offset,
                         coupling, probe attenuation, and whether the channel is enabled.
                         """, cls, grp, '4.3.6'))
-        ivi.add_method(self, 'channels[].configure_characteristics',
+        self._add_method('channels[].configure_characteristics',
                         self._channel_configure_characteristics,
                         ivi.Doc("""
                         This function configures the attributes that control the electrical
                         characteristics of the channel. These attributes are the input impedance
                         and the maximum frequency of the input signal.
                         """, cls, grp, '4.3.8'))
-        ivi.add_method(self, 'channels[].measurement.fetch_waveform',
+        self._add_method('channels[].measurement.fetch_waveform',
                         self._measurement_fetch_waveform,
                         ivi.Doc("""
                         This function returns the waveform the oscilloscope acquires for the
@@ -319,7 +319,7 @@ class Base(object):
                         interaction with the instrument. Call the Error Query function at the
                         conclusion of the sequence to check the instrument status.
                         """, cls, grp, '4.3.13'))
-        ivi.add_method(self, 'channels[].measurement.read_waveform',
+        self._add_method('channels[].measurement.read_waveform',
                         self._measurement_read_waveform,
                         ivi.Doc("""
                         This function initiates an acquisition on the channels that the end-user
@@ -352,7 +352,7 @@ class Base(object):
                         
                         any(any(math.isnan(b) for b in a) for a in waveform)
                         """, cls, grp, '4.3.16'))
-        ivi.add_property(self, 'measurement.status',
+        self._add_property('measurement.status',
                         self._get_measurement_status,
                         None,
                         None,
@@ -375,7 +375,7 @@ class Base(object):
                         * 'in_progress'
                         * 'unknown'
                         """, cls, grp, '4.2.2'))
-        ivi.add_method(self, 'measurement.abort',
+        self._add_method('measurement.abort',
                         self._measurement_abort,
                         ivi.Doc("""
                         This function aborts an acquisition and returns the oscilloscope to the
@@ -390,7 +390,7 @@ class Base(object):
                         If the instrument cannot abort an initiated acquisition, the driver shall
                         return the Function Not Supported error.
                         """, cls, grp, '4.3.1'))
-        ivi.add_method(self, 'measurement.initiate',
+        self._add_method('measurement.initiate',
                         self._measurement_initiate,
                         ivi.Doc("""
                         This function initiates a waveform acquisition. After calling this
@@ -405,7 +405,7 @@ class Base(object):
                         interaction with the instrument. Call the Error Query function at the
                         conclusion of the sequence to check the instrument status.
                         """, cls, grp, '4.3.14'))
-        ivi.add_property(self, 'trigger.coupling',
+        self._add_property('trigger.coupling',
                         self._get_trigger_coupling,
                         self._set_trigger_coupling,
                         None,
@@ -420,7 +420,7 @@ class Base(object):
                         * 'hf_reject'
                         * 'noise_reject'
                         """, cls, grp, '4.2.17'))
-        ivi.add_property(self, 'trigger.holdoff',
+        self._add_property('trigger.holdoff',
                         self._get_trigger_holdoff,
                         self._set_trigger_holdoff,
                         None,
@@ -441,7 +441,7 @@ class Base(object):
                         between zero and the minimum value to the minimum value. No other coercion
                         is allowed on this attribute.
                         """, cls, grp, '4.2.18'))
-        ivi.add_property(self, 'trigger.level',
+        self._add_property('trigger.level',
                         self._get_trigger_level,
                         self._set_trigger_level,
                         None,
@@ -455,7 +455,7 @@ class Base(object):
                         Coupling attributes, defines the trigger event when the Trigger Type is
                         set to Edge Trigger.
                         """, cls, grp, '4.2.19'))
-        ivi.add_property(self, 'trigger.edge.slope',
+        self._add_property('trigger.edge.slope',
                         self._get_trigger_edge_slope,
                         self._set_trigger_edge_slope,
                         None,
@@ -469,7 +469,7 @@ class Base(object):
                          * 'positive'
                          * 'negative'
                         """, cls, grp, '4.2.20'))
-        ivi.add_method(self, 'trigger.edge.configure',
+        self._add_method('trigger.edge.configure',
                         self._trigger_edge_configure,
                         ivi.Doc("""
                         This function sets the edge triggering attributes. An edge trigger occurs
@@ -487,7 +487,7 @@ class Base(object):
                         coupling, probe attenuation, and the maximum input frequency before
                         calling this function.
                         """, cls, grp, '4.3.9'))
-        ivi.add_property(self, 'trigger.source',
+        self._add_property('trigger.source',
                         self._get_trigger_source,
                         self._set_trigger_source,
                         None,
@@ -500,7 +500,7 @@ class Base(object):
                         is set to one of the following values: Edge Trigger, TV Trigger, Runt
                         Trigger, Glitch Trigger, or Width Trigger.
                         """, cls, grp, '4.2.21'))
-        ivi.add_property(self, 'trigger.type',
+        self._add_property('trigger.type',
                         self._get_trigger_type,
                         self._set_trigger_type,
                         None,
@@ -517,7 +517,7 @@ class Base(object):
                         * 'immediate'
                         * 'ac_line'
                         """, cls, grp, '4.2.22'))
-        ivi.add_method(self, 'trigger.configure',
+        self._add_method('trigger.configure',
                         self._trigger_configure,
                         ivi.Doc("""
                         This function configures the common attributes of the trigger subsystem.
@@ -758,7 +758,7 @@ class Base(object):
         pass
 
 
-class Interpolation(object):
+class Interpolation(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting interpolation"
     
     def __init__(self, *args, **kwargs):
@@ -770,7 +770,7 @@ class Interpolation(object):
         
         self._acquisition_interpolation = 'none'
         
-        ivi.add_property(self, 'acquisition.interpolation',
+        self._add_property('acquisition.interpolation',
                         self._get_acquisition_interpolation,
                         self._set_acquisition_interpolation,
                         None,
@@ -791,7 +791,7 @@ class Interpolation(object):
         self._acquisition_interpolation = value
 
 
-class TVTrigger(object):
+class TVTrigger(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting TV triggering"
     
     def __init__(self, *args, **kwargs):
@@ -806,7 +806,7 @@ class TVTrigger(object):
         self._trigger_tv_polarity = 'positive'
         self._trigger_tv_signal_format = 'ntsc'
         
-        ivi.add_property(self, 'trigger.tv.trigger_event',
+        self._add_property('trigger.tv.trigger_event',
                         self._get_trigger_tv_trigger_event,
                         self._set_trigger_tv_trigger_event,
                         None,
@@ -820,7 +820,7 @@ class TVTrigger(object):
                         * 'any_line'
                         * 'line_number'
                         """, cls, grp, '6.2.1'))
-        ivi.add_property(self, 'trigger.tv.line_number',
+        self._add_property('trigger.tv.line_number',
                         self._get_trigger_tv_line_number,
                         self._set_trigger_tv_line_number,
                         None,
@@ -832,7 +832,7 @@ class TVTrigger(object):
                         the line number to the value of 263 (if we presume that field one had 262
                         lines).
                         """, cls, grp, '6.2.2'))
-        ivi.add_property(self, 'trigger.tv.polarity',
+        self._add_property('trigger.tv.polarity',
                         self._get_trigger_tv_polarity,
                         self._set_trigger_tv_polarity,
                         None,
@@ -843,7 +843,7 @@ class TVTrigger(object):
                         * 'positive'
                         * 'negative'
                         """, cls, grp, '6.2.3'))
-        ivi.add_property(self, 'trigger.tv.signal_format',
+        self._add_property('trigger.tv.signal_format',
                         self._get_trigger_tv_signal_format,
                         self._set_trigger_tv_signal_format,
                         None,
@@ -855,7 +855,7 @@ class TVTrigger(object):
                         * 'pal'
                         * 'secam'
                         """, cls, grp, '6.2.4'))
-        ivi.add_method(self, 'trigger.tv.configure',
+        self._add_method('trigger.tv.configure',
                         self._trigger_tv_configure,
                         ivi.Doc("""
                         This function configures the oscilloscope for TV triggering. It configures
@@ -903,7 +903,7 @@ class TVTrigger(object):
         self._set_trigger_tv_polarity(polarity)
 
 
-class RuntTrigger(object):
+class RuntTrigger(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting runt triggering"
     
     def __init__(self, *args, **kwargs):
@@ -917,7 +917,7 @@ class RuntTrigger(object):
         self._trigger_runt_threshold_low = 0
         self._trigger_runt_polarity = 'positive'
         
-        ivi.add_property(self, 'trigger.runt.threshold_high',
+        self._add_property('trigger.runt.threshold_high',
                         self._get_trigger_runt_threshold_high,
                         self._set_trigger_runt_threshold_high,
                         None,
@@ -925,7 +925,7 @@ class RuntTrigger(object):
                         Specifies the high threshold the oscilloscope uses for runt triggering.
                         The units are volts.
                         """, cls, grp, '7.2.1'))
-        ivi.add_property(self, 'trigger.runt.threshold_low',
+        self._add_property('trigger.runt.threshold_low',
                         self._get_trigger_runt_threshold_low,
                         self._set_trigger_runt_threshold_low,
                         None,
@@ -933,7 +933,7 @@ class RuntTrigger(object):
                         Specifies the low threshold the oscilloscope uses for runt triggering.
                         The units are volts.
                         """, cls, grp, '7.2.2'))
-        ivi.add_property(self, 'trigger.runt.polarity',
+        self._add_property('trigger.runt.polarity',
                         self._get_trigger_runt_polarity,
                         self._set_trigger_runt_polarity,
                         None,
@@ -945,7 +945,7 @@ class RuntTrigger(object):
                         * 'negative'
                         * 'either'
                         """, cls, grp, '7.2.3'))
-        ivi.add_method(self, 'trigger.runt.configure',
+        self._add_method('trigger.runt.configure',
                         self._trigger_runt_configure,
                         ivi.Doc("""
                         This function configures the runt trigger. A runt trigger occurs when the
@@ -988,7 +988,7 @@ class RuntTrigger(object):
         self._set_trigger_runt_polarity(polarity)
 
 
-class GlitchTrigger(object):
+class GlitchTrigger(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting glitch triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1002,7 +1002,7 @@ class GlitchTrigger(object):
         self._trigger_glitch_polarity = 'positive'
         self._trigger_glitch_width = 0
         
-        ivi.add_property(self, 'trigger.glitch.condition',
+        self._add_property('trigger.glitch.condition',
                         self._get_trigger_glitch_condition,
                         self._set_trigger_glitch_condition,
                         None,
@@ -1015,7 +1015,7 @@ class GlitchTrigger(object):
                         * 'greater_than'
                         * 'less_than'
                         """, cls, grp, '8.2.1'))
-        ivi.add_property(self, 'trigger.glitch.polarity',
+        self._add_property('trigger.glitch.polarity',
                         self._get_trigger_glitch_polarity,
                         self._set_trigger_glitch_polarity,
                         None,
@@ -1027,7 +1027,7 @@ class GlitchTrigger(object):
                         * 'negative'
                         * 'either'
                         """, cls, grp, '8.2.2'))
-        ivi.add_property(self, 'trigger.glitch.width',
+        self._add_property('trigger.glitch.width',
                         self._get_trigger_glitch_width,
                         self._set_trigger_glitch_width,
                         None,
@@ -1036,7 +1036,7 @@ class GlitchTrigger(object):
                         triggers when it detects a pulse with a width less than or greater than
                         this value, depending on the Glitch Condition attribute.
                         """, cls, grp, '8.2.3'))
-        ivi.add_method(self, 'trigger.glitch.configure',
+        self._add_method('trigger.glitch.configure',
                         self._trigger_glitch_configure,
                         ivi.Doc("""
                         This function configures the glitch trigger. A glitch trigger occurs when
@@ -1085,7 +1085,7 @@ class GlitchTrigger(object):
         self._set_trigger_glitch_condition(condition)
 
 
-class WidthTrigger(object):
+class WidthTrigger(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting width triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1100,7 +1100,7 @@ class WidthTrigger(object):
         self._trigger_width_threshold_low = 0
         self._trigger_width_polarity = 'positive'
         
-        ivi.add_property(self, 'trigger.width.condition',
+        self._add_property('trigger.width.condition',
                         self._get_trigger_width_condition,
                         self._set_trigger_width_condition,
                         None,
@@ -1114,21 +1114,21 @@ class WidthTrigger(object):
                         * 'within'
                         * 'outside'
                         """, cls, grp, '9.2.1'))
-        ivi.add_property(self, 'trigger.width.threshold_high',
+        self._add_property('trigger.width.threshold_high',
                         self._get_trigger_width_threshold_high,
                         self._set_trigger_width_threshold_high,
                         None,
                         ivi.Doc("""
                         Specifies the high width threshold time. Units are seconds.
                         """, cls, grp, '9.2.2'))
-        ivi.add_property(self, 'trigger.width.threshold_low',
+        self._add_property('trigger.width.threshold_low',
                         self._get_trigger_width_threshold_low,
                         self._set_trigger_width_threshold_low,
                         None,
                         ivi.Doc("""
                         Specifies the low width threshold time. Units are seconds.
                         """, cls, grp, '9.2.3'))
-        ivi.add_property(self, 'trigger.width.polarity',
+        self._add_property('trigger.width.polarity',
                         self._get_trigger_width_polarity,
                         self._set_trigger_width_polarity,
                         None,
@@ -1140,7 +1140,7 @@ class WidthTrigger(object):
                         * 'negative'
                         * 'either'
                         """, cls, grp, '9.2.4'))
-        ivi.add_method(self, 'trigger.width.configure',
+        self._add_method('trigger.width.configure',
                         self._trigger_width_configure,
                         ivi.Doc("""
                         This function configures the width trigger. A width trigger occurs when
@@ -1200,7 +1200,7 @@ class WidthTrigger(object):
         self._set_trigger_width_condition(condition)
 
 
-class AcLineTrigger(object):
+class AcLineTrigger(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting AC line triggering"
     
     def __init__(self, *args, **kwargs):
@@ -1212,7 +1212,7 @@ class AcLineTrigger(object):
         
         self._trigger_ac_line_slope = 'positive'
         
-        ivi.add_property(self, 'trigger.ac_line.slope',
+        self._add_property('trigger.ac_line.slope',
                         self._get_trigger_ac_line_slope,
                         self._set_trigger_ac_line_slope,
                         None,
@@ -1234,7 +1234,7 @@ class AcLineTrigger(object):
         self._trigger_ac_line_slope = value
     
 
-class WaveformMeasurement(object):
+class WaveformMeasurement(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting waveform measurements"
     
     def __init__(self, *args, **kwargs):
@@ -1248,7 +1248,7 @@ class WaveformMeasurement(object):
         self._reference_level_low = 10
         self._reference_level_middle = 50
         
-        ivi.add_property(self, 'reference_level.high',
+        self._add_property('reference_level.high',
                         self._get_reference_level_high,
                         self._set_reference_level_high,
                         None,
@@ -1257,7 +1257,7 @@ class WaveformMeasurement(object):
                         measurements. The value is a percentage of the difference between the
                         Voltage High and Voltage Low.
                         """, cls, grp, '11.2.1'))
-        ivi.add_property(self, 'reference_level.middle',
+        self._add_property('reference_level.middle',
                         self._get_reference_level_middle,
                         self._set_reference_level_middle,
                         None,
@@ -1266,7 +1266,7 @@ class WaveformMeasurement(object):
                         measurements. The value is a percentage of the difference between the
                         Voltage High and Voltage Low.
                         """, cls, grp, '11.2.3'))
-        ivi.add_property(self, 'reference_level.low',
+        self._add_property('reference_level.low',
                         self._get_reference_level_low,
                         self._set_reference_level_low,
                         None,
@@ -1275,14 +1275,14 @@ class WaveformMeasurement(object):
                         measurements. The value is a percentage of the difference between the
                         Voltage High and Voltage Low.
                         """, cls, grp, '11.2.2'))
-        ivi.add_method(self, 'reference_level.configure',
+        self._add_method('reference_level.configure',
                         self._reference_level_configure,
                         ivi.Doc("""
                         This function configures the reference levels for waveform measurements.
                         Call this function before calling the Read Waveform Measurement or Fetch
                         Waveform Measurement to take waveform measurements.
                         """, cls, grp, '11.3.1'))
-        ivi.add_method(self, 'channels[].measurement.fetch_waveform_measurement',
+        self._add_method('channels[].measurement.fetch_waveform_measurement',
                         self._measurement_fetch_waveform_measurement,
                         ivi.Doc("""
                         This function fetches a specified waveform measurement from a specific
@@ -1351,7 +1351,7 @@ class WaveformMeasurement(object):
                         * 'overshoot'
                         * 'preshoot'
                         """, cls, grp, '11.3.2'))
-        ivi.add_method(self, 'channels[].measurement.read_waveform_measurement',
+        self._add_method('channels[].measurement.read_waveform_measurement',
                         self._measurement_read_waveform_measurement,
                         ivi.Doc("""
                         This function initiates a new waveform acquisition and returns a specified
@@ -1420,7 +1420,7 @@ class WaveformMeasurement(object):
         return self._measurement_fetch_waveform_measurement(index, measurement_function)
 
 
-class MinMaxWaveform(object):
+class MinMaxWaveform(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting minimum and maximum waveform acquisition"
     
     def __init__(self, *args, **kwargs):
@@ -1432,7 +1432,7 @@ class MinMaxWaveform(object):
         
         self._acquisition_number_of_envelopes = 0
         
-        ivi.add_property(self, 'acquisition.number_of_envelopes',
+        self._add_property('acquisition.number_of_envelopes',
                         self._get_acquisition_number_of_envelopes,
                         self._set_acquisition_number_of_envelopes,
                         None,
@@ -1447,7 +1447,7 @@ class MinMaxWaveform(object):
                         affects instrument operation only when the Acquisition Type attribute is
                         set to Envelope.
                         """, cls, grp, '12.2.1'))
-        ivi.add_method(self, 'channels[].measurement.fetch_waveform_min_max',
+        self._add_method('channels[].measurement.fetch_waveform_min_max',
                         self._measurement_fetch_waveform_min_max,
                         ivi.Doc("""
                         This function returns the minimum and maximum waveforms that the
@@ -1499,7 +1499,7 @@ class MinMaxWaveform(object):
                         interaction with the instrument. Call the Error Query function at the
                         conclusion of the sequence to check the instrument status.
                         """, cls, grp, '12.3.2'))
-        ivi.add_method(self, 'channels[].measurement.read_waveform_min_max',
+        self._add_method('channels[].measurement.read_waveform_min_max',
                         self._measurement_read_waveform_min_max,
                         ivi.Doc("""
                         This function initiates new waveform acquisition and returns minimum and
@@ -1555,7 +1555,7 @@ class MinMaxWaveform(object):
         return _measurement_fetch_waveform_min_max(index)
 
 
-class ProbeAutoSense(object):
+class ProbeAutoSense(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting probe attenuation sensing"
     def __init__(self, *args, **kwargs):
         super(ProbeAutoSense, self).__init__( *args, **kwargs)
@@ -1566,7 +1566,7 @@ class ProbeAutoSense(object):
         
         self._channel_probe_attenuation_auto = list()
         
-        ivi.add_property(self, 'channels[].probe_attenuation_auto',
+        self._add_property('channels[].probe_attenuation_auto',
                         self._get_channel_probe_attenuation_auto,
                         self._set_channel_probe_attenuation_auto,
                         None,
@@ -1605,7 +1605,7 @@ class ProbeAutoSense(object):
         self._channel_probe_attenuation_auto[index] = value
 
 
-class ContinuousAcquisition(object):
+class ContinuousAcquisition(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting continuous acquisition"
     
     def __init__(self, *args, **kwargs):
@@ -1617,7 +1617,7 @@ class ContinuousAcquisition(object):
         
         self._trigger_continuous = False
         
-        ivi.add_property(self, 'trigger.continuous',
+        self._add_property('trigger.continuous',
                         self._get_trigger_continuous,
                         self._set_trigger_continuous,
                         None,
@@ -1639,7 +1639,7 @@ class ContinuousAcquisition(object):
         self._trigger_continuous = value
 
 
-class AverageAcquisition(object):
+class AverageAcquisition(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting average acquisition"
     
     def __init__(self, *args, **kwargs):
@@ -1651,7 +1651,7 @@ class AverageAcquisition(object):
         
         self._acquisition_number_of_averages = 1
         
-        ivi.add_property(self, 'acquisition.number_of_averages',
+        self._add_property('acquisition.number_of_averages',
                         self._get_acquisition_number_of_averages,
                         self._set_acquisition_number_of_averages,
                         None,
@@ -1669,7 +1669,7 @@ class AverageAcquisition(object):
         self._acquisition_number_of_averages = value
 
 
-class SampleMode(object):
+class SampleMode(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting equivalent and real time acquisition"
     
     def __init__(self, *args, **kwargs):
@@ -1681,7 +1681,7 @@ class SampleMode(object):
         
         self._acquisition_sample_mode = 'real_time'
         
-        ivi.add_property(self, 'acquisition.sample_mode',
+        self._add_property('acquisition.sample_mode',
                         self._get_acquisition_sample_mode,
                         self._set_acquisition_sample_mode,
                         None,
@@ -1702,7 +1702,7 @@ class SampleMode(object):
         self._acquisition_sample_mode = value
 
 
-class TriggerModifier(object):
+class TriggerModifier(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting specific triggering subsystem behavior in the absence of a trigger"
     
     def __init__(self, *args, **kwargs):
@@ -1714,7 +1714,7 @@ class TriggerModifier(object):
         
         self._trigger_modifier = 'none'
         
-        ivi.add_property(self, 'trigger.modifier',
+        self._add_property('trigger.modifier',
                         self._get_trigger_modifier,
                         self._set_trigger_modifier,
                         None,
@@ -1737,7 +1737,7 @@ class TriggerModifier(object):
         self._trigger_modifier = value
 
 
-class AutoSetup(object):
+class AutoSetup(ivi.IviContainer):
     "Extension IVI methods for oscilloscopes supporting automatic setup"
     
     def __init__(self, *args, **kwargs):
@@ -1747,7 +1747,7 @@ class AutoSetup(object):
         grp = 'AutoSetup'
         ivi.add_group_capability(self, cls+grp)
         
-        ivi.add_method(self, 'measurement.auto_setup',
+        self._add_method('measurement.auto_setup',
                         self._measurement_auto_setup,
                         ivi.Doc("""
                         This function performs an auto-setup on the instrument.

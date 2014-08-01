@@ -37,7 +37,7 @@ RangeType = set(['in_range', 'under_range', 'over_range'])
 OperationState = set(['complete', 'in_progress', 'unknown'])
 
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for all RF power meters"
     
     def __init__(self, *args, **kwargs):
@@ -59,32 +59,32 @@ class Base(object):
         
         self._measurement_measurement_state = 'unknown'
         
-        ivi.add_property(self, 'channels[].averaging.count_auto',
+        self._add_property('channels[].averaging.count_auto',
                         self._get_channel_averaging_count_auto,
                         self._set_channel_averaging_count_auto)
-        ivi.add_property(self, 'channels[].correction_frequency',
+        self._add_property('channels[].correction_frequency',
                         self._get_channel_correction_frequency,
                         self._set_channel_correction_frequency)
-        ivi.add_property(self, 'channels[].offset',
+        self._add_property('channels[].offset',
                         self._get_channel_offset,
                         self._set_channel_offset)
-        ivi.add_property(self, 'channels[].range_auto',
+        self._add_property('channels[].range_auto',
                         self._get_channel_range_auto,
                         self._set_channel_range_auto)
-        ivi.add_property(self, 'channels[].units',
+        self._add_property('channels[].units',
                         self._get_channel_units,
                         self._set_channel_units)
-        ivi.add_property(self, 'measurement.measurement_state',
+        self._add_property('measurement.measurement_state',
                         self._get_measurement_measurement_state)
-        ivi.add_method(self, 'measurement.abort',
+        self._add_method('measurement.abort',
                         self._measurement_abort)
-        ivi.add_method(self, 'measurement.configure',
+        self._add_method('measurement.configure',
                         self._measurement_configure)
-        ivi.add_method(self, 'measurement.fetch',
+        self._add_method('measurement.fetch',
                         self._measurement_fetch)
-        ivi.add_method(self, 'measurement.initiate',
+        self._add_method('measurement.initiate',
                         self._measurement_initiate)
-        ivi.add_method(self, 'measurement.read',
+        self._add_method('measurement.read',
                         self._measurement_read)
         
         self._init_channels()
@@ -179,7 +179,7 @@ class Base(object):
         return self._measurement_fetch()
     
     
-class ChannelAcquisition(object):
+class ChannelAcquisition(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting simultaneous measurements on two or more channels"
     
     def __init__(self, *args, **kwargs):
@@ -194,16 +194,16 @@ class ChannelAcquisition(object):
         
         self._channel_enabled = list()
         
-        ivi.add_property(self, 'channels[].enabled',
+        self._add_property('channels[].enabled',
                         self._get_channel_enabled,
                         self._set_channel_enabled)
-        ivi.add_method(self, 'channels[].fetch',
+        self._add_method('channels[].fetch',
                         self._measurement_fetch_channel)
-        ivi.add_method(self, 'channels[].read',
+        self._add_method('channels[].read',
                         self._measurement_read_channel)
-        ivi.add_method(self, 'measurement.fetch_channel',
+        self._add_method('measurement.fetch_channel',
                         self._measurement_fetch_channel)
-        ivi.add_method(self, 'measurement.read_channel',
+        self._add_method('measurement.read_channel',
                         self._measurement_read_channel)
         
         self._init_channels()
@@ -238,7 +238,7 @@ class ChannelAcquisition(object):
         pass
     
     
-class ManualRange(object):
+class ManualRange(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting manual range selection"
     
     def __init__(self, *args, **kwargs):
@@ -254,13 +254,13 @@ class ManualRange(object):
         self._channel_range_lower = list()
         self._channel_range_upper = list()
         
-        ivi.add_property(self, 'channels[].range.lower',
+        self._add_property('channels[].range.lower',
                         self._get_channel_range_lower,
                         self._set_channel_range_lower)
-        ivi.add_property(self, 'channels[].range.upper',
+        self._add_property('channels[].range.upper',
                         self._get_channel_range_upper,
                         self._set_channel_range_upper)
-        ivi.add_method(self, 'channels[].range.configure',
+        self._add_method('channels[].range.configure',
                         self._channel_range_configure)
         
         self._init_channels()
@@ -302,7 +302,7 @@ class ManualRange(object):
         self._set_channel_range_lower(index, upper)
     
     
-class TriggerSource(object):
+class TriggerSource(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting triggering"
     
     def __init__(self, *args, **kwargs):
@@ -317,8 +317,7 @@ class TriggerSource(object):
         
         self._trigger_source = ''
         
-        self.__dict__.setdefault('trigger', ivi.PropertyCollection())
-        ivi.add_property(self, 'trigger.source',
+        self._add_property('trigger.source',
                         self._get_trigger_source,
                         self._set_trigger_source)
     
@@ -330,7 +329,7 @@ class TriggerSource(object):
         self._trigger_source = value
     
     
-class InternalTrigger(object):
+class InternalTrigger(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting internal triggering"
     
     def __init__(self, *args, **kwargs):
@@ -347,16 +346,16 @@ class InternalTrigger(object):
         self._trigger_internal_level = 0.0
         self._trigger_internal_slope = 'positive'
         
-        ivi.add_property(self, 'trigger.internal.event_source',
+        self._add_property('trigger.internal.event_source',
                         self._get_trigger_internal_event_source,
                         self._set_trigger_internal_event_source)
-        ivi.add_property(self, 'trigger.internal.level',
+        self._add_property('trigger.internal.level',
                         self._get_trigger_internal_level,
                         self._set_trigger_internal_level)
-        ivi.add_property(self, 'trigger.internal.slope',
+        self._add_property('trigger.internal.slope',
                         self._get_trigger_internal_slope,
                         self._set_trigger_internal_slope)
-        ivi.add_method(self, 'trigger.internal.configure',
+        self._add_method('trigger.internal.configure',
                         self._trigger_internal_configure)
     
     def _get_trigger_internal_event_source(self):
@@ -386,7 +385,7 @@ class InternalTrigger(object):
         self._set_trigger_internal_event_source(slope)
     
     
-class SoftwareTrigger(object):
+class SoftwareTrigger(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting software triggering"
     
     def __init__(self, *args, **kwargs):
@@ -400,7 +399,7 @@ class SoftwareTrigger(object):
         pass
     
     
-class DutyCycleCorrection(object):
+class DutyCycleCorrection(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting duty cycle correction of pulse modulated signals"
     
     def __init__(self, *args, **kwargs):
@@ -416,13 +415,13 @@ class DutyCycleCorrection(object):
         self._channel_duty_cycle_enabled = list()
         self._channel_duty_cycle_value = list()
         
-        ivi.add_property(self, 'channels[].duty_cycle.enabled',
+        self._add_property('channels[].duty_cycle.enabled',
                         self._get_channel_duty_cycle_enabled,
                         self._set_channel_duty_cycle_enabled)
-        ivi.add_property(self, 'channels[].duty_cycle.value',
+        self._add_property('channels[].duty_cycle.value',
                         self._get_channel_duty_cycle_value,
                         self._set_channel_duty_cycle_value)
-        ivi.add_method(self, 'channels[].duty_cycle.configure',
+        self._add_method('channels[].duty_cycle.configure',
                         self._channel_duty_cycle_configure)
         
         self._init_channels()
@@ -464,7 +463,7 @@ class DutyCycleCorrection(object):
         self._set_channel_duty_cycle_value(correction)
     
     
-class AveragingCount(object):
+class AveragingCount(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting averaging"
     
     def __init__(self, *args, **kwargs):
@@ -479,7 +478,7 @@ class AveragingCount(object):
         
         self._channel_averaging_count = list()
         
-        ivi.add_property(self, 'channels[].averaging.count',
+        self._add_property('channels[].averaging.count',
                         self._get_channel_averaging_count,
                         self._set_channel_averaging_count)
         
@@ -507,7 +506,7 @@ class AveragingCount(object):
         self._channel_averaging_count[index] = value
     
     
-class ZeroCorrection(object):
+class ZeroCorrection(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting zero correction"
     
     def __init__(self, *args, **kwargs):
@@ -522,9 +521,9 @@ class ZeroCorrection(object):
         
         self._channel_zero_state = list()
         
-        ivi.add_property(self, 'channels[].zero_state',
+        self._add_property('channels[].zero_state',
                         self._get_channel_zero_state)
-        ivi.add_method(self, 'channels[].zero',
+        self._add_method('channels[].zero',
                         self._channel_zero)
         
         self._init_channels()
@@ -554,7 +553,7 @@ class ZeroCorrection(object):
             self._channel_zero(i)
     
     
-class Calibration(object):
+class Calibration(ivi.IviContainer):
     "Extension IVI methods for RF power meters supporting calibration"
     
     def __init__(self, *args, **kwargs):
@@ -569,9 +568,9 @@ class Calibration(object):
         
         self._channel_calibration_state = list()
         
-        ivi.add_property(self, 'channels[].calibration_state',
+        self._add_property('channels[].calibration_state',
                         self._get_channel_calibration_state)
-        ivi.add_method(self, 'channels[].calibrate',
+        self._add_method('channels[].calibrate',
                         self._channel_calibrate)
         
         self._init_channels()
@@ -597,7 +596,7 @@ class Calibration(object):
         pass
     
     
-class ReferenceOscillator(object):
+class ReferenceOscillator(ivi.IviContainer):
     "Extension IVI methods for RF power meters with built-in reference oscillators"
     
     def __init__(self, *args, **kwargs):
@@ -614,17 +613,16 @@ class ReferenceOscillator(object):
         self._reference_oscillator_frequency = 10e6
         self._reference_oscillator_level = 0.0
         
-        self.__dict__.setdefault('reference_oscillator', ivi.PropertyCollection())
-        ivi.add_property(self, 'reference_oscillator.enabled',
+        self._add_property('reference_oscillator.enabled',
                         self._get_reference_oscillator_enabled,
                         self._set_reference_oscillator_enabled)
-        ivi.add_property(self, 'reference_oscillator.frequency',
+        self._add_property('reference_oscillator.frequency',
                         self._get_reference_oscillator_frequency,
                         self._set_reference_oscillator_frequency)
-        ivi.add_property(self, 'reference_oscillator.level',
+        self._add_property('reference_oscillator.level',
                         self._get_reference_oscillator_level,
                         self._set_reference_oscillator_level)
-        ivi.add_method(self, 'reference_oscillator.configure',
+        self._add_method('reference_oscillator.configure',
                         self._reference_oscillator_configure)
     
     def _get_reference_oscillator_enabled(self):

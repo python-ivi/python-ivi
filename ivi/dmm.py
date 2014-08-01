@@ -39,7 +39,7 @@ ThermocoupleType = set(['b', 'c', 'd', 'e', 'g', 'j', 'k', 'n', 'r', 's', 't', '
 TemperatureTransducerType = set(['thermocouple', 'thermistor', 'two_wire_rtd', 'four_wire_rtd'])
 Slope = set(['positive', 'negative'])
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for DMMs that take a single measurement at a time"
     
     def __init__(self, *args, **kwargs):
@@ -58,30 +58,44 @@ class Base(object):
         self._trigger_delay_auto = False
         self._trigger_source = ''
         
-        ivi.add_property(self, 'trigger.delay',
+        self._add_property('measurement_function',
+                        self._get_measurement_function,
+                        self._set_measurement_function)
+        self._add_property('range',
+                        self._get_range,
+                        self._set_range)
+        self._add_property('auto_range',
+                        self._get_auto_range,
+                        self._set_auto_range)
+        self._add_property('resolution',
+                        self._get_resolution,
+                        self._set_resolution)
+        self._add_property('trigger.delay',
                         self._get_trigger_delay,
                         self._set_trigger_delay)
-        ivi.add_property(self, 'trigger.delay_auto',
+        self._add_property('trigger.delay_auto',
                         self._get_trigger_delay_auto,
                         self._set_trigger_delay_auto)
-        ivi.add_property(self, 'trigger.source',
+        self._add_property('trigger.source',
                         self._get_trigger_source,
                         self._set_trigger_source)
-        ivi.add_method(self, 'trigger.configure',
+        self._add_method('configure',
+                        self._configure)
+        self._add_method('trigger.configure',
                         self._trigger_configure)
-        ivi.add_method(self, 'measurement.abort',
+        self._add_method('measurement.abort',
                         self._measurement_abort)
-        ivi.add_method(self, 'measurement.fetch',
+        self._add_method('measurement.fetch',
                         self._measurement_fetch)
-        ivi.add_method(self, 'measurement.initiate',
+        self._add_method('measurement.initiate',
                         self._measurement_initiate)
-        ivi.add_method(self, 'measurement.is_out_of_range',
+        self._add_method('measurement.is_out_of_range',
                         self._measurement_is_out_of_range)
-        ivi.add_method(self, 'measurement.is_over_range',
+        self._add_method('measurement.is_over_range',
                         self._measurement_is_over_range)
-        ivi.add_method(self, 'measurement.is_under_range',
+        self._add_method('measurement.is_under_range',
                         self._measurement_is_under_range)
-        ivi.add_method(self, 'measurement.read',
+        self._add_method('measurement.read',
                         self._measurement_read)
     
     def _get_measurement_function(self):
@@ -92,18 +106,12 @@ class Base(object):
             raise ivi.ValueNotSupportedException()
         self._measurement_function = value
     
-    measurement_function = property(lambda self: self._get_measurement_function(),
-                                    lambda self, value: self._set_measurement_function(value))
-    
     def _get_range(self):
         return self._range
     
     def _set_range(self, value):
         value = float(value)
         self._range = value
-    
-    range = property(lambda self: self._get_range(),
-                     lambda self, value: self._set_range(value))
     
     def _get_auto_range(self):
         return self._auto_range
@@ -113,18 +121,12 @@ class Base(object):
             raise ivi.ValueNotSupportedException()
         self._auto_range = value
     
-    auto_range = property(lambda self: self._get_auto_range(),
-                          lambda self, value: self._set_auto_range(value))
-    
     def _get_resolution(self):
         return self._resolution
     
     def _set_resolution(self, value):
         value = float(value)
         self._resolution = value
-    
-    resolution = property(lambda self: self._get_resolution(),
-                          lambda self, value: self._set_resolution(value))
     
     def _get_trigger_delay(self):
         return self._trigger_delay
@@ -150,7 +152,7 @@ class Base(object):
     def _measurement_abort(self):
         pass
     
-    def configure(self, function, range, resolution):
+    def _configure(self, function, range, resolution):
         self._set_measurement_function(self, function)
         if range in Auto:
             self._set_auto_range(range)
@@ -184,7 +186,7 @@ class Base(object):
         return 0.0
     
     
-class ACMeasurement(object):
+class ACMeasurement(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take AC voltage or AC current measurements"
     
     def __init__(self, *args, **kwargs):
@@ -197,13 +199,13 @@ class ACMeasurement(object):
         self._ac_frequency_max = 100
         self._ac_frequency_min = 10
         
-        ivi.add_property(self, 'ac.frequency_max',
+        self._add_property('ac.frequency_max',
                         self._get_ac_frequency_max,
                         self._set_ac_frequency_max)
-        ivi.add_property(self, 'ac.frequency_min',
+        self._add_property('ac.frequency_min',
                         self._get_ac_frequency_min,
                         self._set_ac_frequency_min)
-        ivi.add_method(self, 'ac.configure_bandwidth',
+        self._add_method('ac.configure_bandwidth',
                         self._ac_configure_bandwidth)
         
     
@@ -226,7 +228,7 @@ class ACMeasurement(object):
         self._set_ac_frequency_max(max_f)
     
     
-class FrequencyMeasurement(object):
+class FrequencyMeasurement(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take frequency measurements"
     
     def __init__(self, *args, **kwargs):
@@ -239,10 +241,10 @@ class FrequencyMeasurement(object):
         self._frequency_voltage_range = 1
         self._frequency_voltage_range_auto = False
         
-        ivi.add_property(self, 'frequency.voltage_range',
+        self._add_property('frequency.voltage_range',
                         self._get_frequency_voltage_range,
                         self._set_frequency_voltage_range)
-        ivi.add_property(self, 'frequency.voltage_range_auto',
+        self._add_property('frequency.voltage_range_auto',
                         self._get_frequency_voltage_range_auto,
                         self._set_frequency_voltage_range_auto)
         
@@ -262,7 +264,7 @@ class FrequencyMeasurement(object):
         self._frequency_range_auto = value
     
     
-class TemperatureMeasurement(object):
+class TemperatureMeasurement(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take temperature measurements"
     
     def __init__(self, *args, **kwargs):
@@ -274,7 +276,7 @@ class TemperatureMeasurement(object):
         
         self._temperature_transducer_type = ''
         
-        ivi.add_property(self, 'temperature.transducer_type',
+        self._add_property('temperature.transducer_type',
                         self._get_temperature_transducer_type,
                         self._set_temperature_transducer_type)
         
@@ -288,7 +290,7 @@ class TemperatureMeasurement(object):
         self._temperature_transducer_type = value
     
     
-class Thermocouple(object):
+class Thermocouple(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take temperature measurements using a thermocouple"
     
     def __init__(self, *args, **kwargs):
@@ -302,16 +304,16 @@ class Thermocouple(object):
         self._thermocouple_reference_junction_type = ''
         self._thermocouple_type = ''
         
-        ivi.add_property(self, 'thermocouple.fixed_reference_junction',
+        self._add_property('thermocouple.fixed_reference_junction',
                         self._get_thermocouple_fixed_reference_junction,
                         self._set_thermocouple_fixed_reference_junction)
-        ivi.add_property(self, 'thermocouple.reference_junction_type',
+        self._add_property('thermocouple.reference_junction_type',
                         self._get_thermocouple_reference_junction_type,
                         self._set_thermocouple_reference_junction_type)
-        ivi.add_property(self, 'thermocouple.type',
+        self._add_property('thermocouple.type',
                         self._get_thermocouple_type,
                         self._set_thermocouple_type)
-        ivi.add_method(self, 'thermocouple.configure',
+        self._add_method('thermocouple.configure',
                         self._thermocouple_configure)
         
     
@@ -343,7 +345,7 @@ class Thermocouple(object):
         self._set_thermocouple_reference_junction_type(reference_junction_type)
     
     
-class ResistanceTemperatureDevice(object):
+class ResistanceTemperatureDevice(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take temperature measurements using a resistance temperature device (RTD)"
     
     def __init__(self, *args, **kwargs):
@@ -356,13 +358,13 @@ class ResistanceTemperatureDevice(object):
         self._rtd_alpha = 0.00385
         self._rtd_resistance = 100
         
-        ivi.add_property(self, 'rtd.alpha',
+        self._add_property('rtd.alpha',
                         self._get_rtd_alpha,
                         self._set_rtd_alpha)
-        ivi.add_property(self, 'rtd.resistance',
+        self._add_property('rtd.resistance',
                         self._get_rtd_resistance,
                         self._set_rtd_resistance)
-        ivi.add_method(self, 'rtd.configure',
+        self._add_method('rtd.configure',
                         self._rtd_configure)
         
     
@@ -385,7 +387,7 @@ class ResistanceTemperatureDevice(object):
         self._set_rtd_resistance(resistance)
     
     
-class Thermistor(object):
+class Thermistor(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take temperature measurements using a thermistor"
     
     def __init__(self, *args, **kwargs):
@@ -397,7 +399,7 @@ class Thermistor(object):
         
         self._thermistor_resistance = 10000
         
-        ivi.add_property(self, 'thermistor.resistance',
+        self._add_property('thermistor.resistance',
                         self._get_thermistor_resistance,
                         self._set_thermistor_resistance)
         
@@ -410,7 +412,7 @@ class Thermistor(object):
         self._thermistor_resistance = value
     
     
-class MultiPoint(object):
+class MultiPoint(ivi.IviContainer):
     "Extension IVI methods for DMMs capable of acquiring measurements based on multiple triggers"
     
     def __init__(self, *args, **kwargs):
@@ -426,26 +428,26 @@ class MultiPoint(object):
         self._trigger_multi_point_sample_trigger = ""
         self._trigger_multi_point_count = 1
         
-        ivi.add_property(self, 'trigger.measurement_complete_destination',
+        self._add_property('trigger.measurement_complete_destination',
                         self._get_trigger_measurement_complete_destination,
                         self._set_trigger_measurement_complete_destination)
-        ivi.add_property(self, 'trigger.multi_point.sample_count',
+        self._add_property('trigger.multi_point.sample_count',
                         self._get_trigger_multi_point_sample_count,
                         self._set_trigger_multi_point_sample_count)
-        ivi.add_property(self, 'trigger.multi_point.sample_interval',
+        self._add_property('trigger.multi_point.sample_interval',
                         self._get_trigger_multi_point_sample_interval,
                         self._set_trigger_multi_point_sample_interval)
-        ivi.add_property(self, 'trigger.multi_point.sample_trigger',
+        self._add_property('trigger.multi_point.sample_trigger',
                         self._get_trigger_multi_point_sample_trigger,
                         self._set_trigger_multi_point_sample_trigger)
-        ivi.add_property(self, 'trigger.multi_point.count',
+        self._add_property('trigger.multi_point.count',
                         self._get_trigger_multi_point_count,
                         self._set_trigger_multi_point_count)
-        ivi.add_method(self, 'trigger.multi_point.configure',
+        self._add_method('trigger.multi_point.configure',
                         self._trigger_multi_point_configure)
-        ivi.add_method(self, 'measurement.fetch_multi_point',
+        self._add_method('measurement.fetch_multi_point',
                         self._measurement_fetch_multi_point)
-        ivi.add_method(self, 'measurement.read_multi_point',
+        self._add_method('measurement.read_multi_point',
                         self._measurement_read_multi_point)
         
     
@@ -497,7 +499,7 @@ class MultiPoint(object):
         pass
     
     
-class TriggerSlope(object):
+class TriggerSlope(ivi.IviContainer):
     "Extension IVI methods for DMMs that can specify the polarity of the external trigger signal"
     
     def __init__(self, *args, **kwargs):
@@ -509,7 +511,7 @@ class TriggerSlope(object):
         
         self._trigger_slope = 'positive'
         
-        ivi.add_property(self, 'trigger.slope',
+        self._add_property('trigger.slope',
                         self._get_trigger_slope,
                         self._set_trigger_slope)
         
@@ -523,7 +525,7 @@ class TriggerSlope(object):
         self._trigger_slope = value
     
     
-class SoftwareTrigger(object):
+class SoftwareTrigger(ivi.IviContainer):
     "Extension IVI methods for DMMs that can initiate a measurement based on a software trigger signal"
     
     def __init__(self, *args, **kwargs):
@@ -533,8 +535,9 @@ class SoftwareTrigger(object):
         grp = 'SoftwareTrigger'
         ivi.add_group_capability(self, cls+grp)
         
-        self.__dict__.setdefault('_docs', dict())
-        self._docs['send_software_trigger'] = ivi.Doc("""
+        self._add_method('send_software_trigger',
+                        self._send_software_trigger,
+                        ivi.Doc("""
                         This function sends a software-generated trigger to the instrument. It is
                         only applicable for instruments using interfaces or protocols which
                         support an explicit trigger function. For example, with GPIB this function
@@ -560,13 +563,13 @@ class SoftwareTrigger(object):
                         setting for this function to work. If the trigger source is not set to
                         Software Trigger, this function does nothing and returns the error Trigger
                         Not Software.
-                        """, cls, grp, '13.2.1', 'send_software_trigger')
+                        """, cls, grp, '13.2.1', 'send_software_trigger'))
     
-    def send_software_trigger(self):
+    def _send_software_trigger(self):
         pass
     
     
-class DeviceInfo(object):
+class DeviceInfo(ivi.IviContainer):
     "A set of read-only attributes for DMMs that can be queried to determine how they are presently configured"
     
     def __init__(self, *args, **kwargs):
@@ -579,9 +582,9 @@ class DeviceInfo(object):
         self._advanced_aperture_time = 1.0
         self._advanced_aperture_time_units = 'seconds'
         
-        ivi.add_property(self, 'advanced.aperture_time',
+        self._add_property('advanced.aperture_time',
                         self._get_advanced_aperture_time)
-        ivi.add_property(self, 'advanced.aperture_time_units',
+        self._add_property('advanced.aperture_time_units',
                         self._get_advanced_aperture_time_units)
         
     
@@ -592,7 +595,7 @@ class DeviceInfo(object):
         return self._advanced_aperture_time_units
     
     
-class AutoRangeValue(object):
+class AutoRangeValue(ivi.IviContainer):
     "Extension IVI methods for DMMs that can return the actual range value when auto ranging"
     
     def __init__(self, *args, **kwargs):
@@ -604,7 +607,7 @@ class AutoRangeValue(object):
         
         self._advanced_actual_range = 1.0
         
-        ivi.add_property(self, 'advanced.actual_range',
+        self._add_property('advanced.actual_range',
                         self._get_advanced_actual_range)
         
     
@@ -612,7 +615,7 @@ class AutoRangeValue(object):
         return self._advanced_actual_range
     
     
-class AutoZero(object):
+class AutoZero(ivi.IviContainer):
     "Extension IVI methods for DMMs that can take an auto zero reading"
     
     def __init__(self, *args, **kwargs):
@@ -624,7 +627,7 @@ class AutoZero(object):
         
         self._advanced_auto_zero = 'off'
         
-        ivi.add_property(self, 'advanced.auto_zero',
+        self._add_property('advanced.auto_zero',
                         self._get_advanced_auto_zero,
                         self._set_advanced_auto_zero)
         
@@ -638,7 +641,7 @@ class AutoZero(object):
         self._advanced_auto_zero = value
     
     
-class PowerLineFrequency(object):
+class PowerLineFrequency(ivi.IviContainer):
     "Extension IVI methods for DMMs that can specify the power line frequency"
     
     def __init__(self, *args, **kwargs):
@@ -650,7 +653,7 @@ class PowerLineFrequency(object):
         
         self._advanced_power_line_frequency = 60.0
         
-        ivi.add_property(self, 'advanced.power_line_frequency',
+        self._add_property('advanced.power_line_frequency',
                         self._get_advanced_power_line_frequency,
                         self._set_advanced_power_line_frequency)
         

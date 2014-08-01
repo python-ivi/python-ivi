@@ -54,7 +54,7 @@ ScanActionType = set(['connect_path', 'disconnect_path', 'wait_for_trigger'])
 Path = set(['available', 'exists', 'unsupported', 'resource_in_use',
             'source_conflict', 'channel_not_available'])
 
-class Base(object):
+class Base(ivi.IviContainer):
     "Base IVI methods for all switch modules"
     
     def __init__(self, *args, **kwargs):
@@ -86,7 +86,7 @@ class Base(object):
         self._channel_characteristics_wire_mode = list()
         self._path_is_debounced = False
         
-        ivi.add_property(self, 'channels[].characteristics.ac_current_carry_max',
+        self._add_property('channels[].characteristics.ac_current_carry_max',
                         self._get_channel_characteristics_ac_current_carry_max,
                         None,
                         None,
@@ -97,7 +97,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.1'))
-        ivi.add_property(self, 'channels[].characteristics.ac_current_switching_max',
+        self._add_property('channels[].characteristics.ac_current_switching_max',
                         self._get_channel_characteristics_ac_current_switching_max,
                         None,
                         None,
@@ -108,7 +108,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.2'))
-        ivi.add_property(self, 'channels[].characteristics.ac_power_carry_max',
+        self._add_property('channels[].characteristics.ac_power_carry_max',
                         self._get_channel_characteristics_ac_power_carry_max,
                         None,
                         None,
@@ -119,7 +119,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.3'))
-        ivi.add_property(self, 'channels[].characteristics.ac_power_switching_max',
+        self._add_property('channels[].characteristics.ac_power_switching_max',
                         self._get_channel_characteristics_ac_power_switching_max,
                         None,
                         None,
@@ -130,7 +130,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.4'))
-        ivi.add_property(self, 'channels[].characteristics.ac_voltage_max',
+        self._add_property('channels[].characteristics.ac_voltage_max',
                         self._get_channel_characteristics_ac_voltage_max,
                         None,
                         None,
@@ -141,7 +141,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.5'))
-        ivi.add_property(self, 'channels[].characteristics.bandwidth',
+        self._add_property('channels[].characteristics.bandwidth',
                         self._get_channel_characteristics_bandwidth,
                         None,
                         None,
@@ -153,7 +153,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.6'))
-        ivi.add_property(self, 'channels[].name',
+        self._add_property('channels[].name',
                         self._get_channel_name,
                         None,
                         None,
@@ -166,7 +166,7 @@ class Base(object):
                         of the Channel Count, the attribute returns an empty string for the value
                         and returns an error.
                         """, cls, grp, '4.2.9'))
-        ivi.add_property(self, 'channels[].characteristics.impedance',
+        self._add_property('channels[].characteristics.impedance',
                         self._get_channel_characteristics_impedance,
                         None,
                         None,
@@ -177,7 +177,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.10'))
-        ivi.add_property(self, 'channels[].characteristics.dc_current_carry_max',
+        self._add_property('channels[].characteristics.dc_current_carry_max',
                         self._get_channel_characteristics_dc_current_carry_max,
                         None,
                         None,
@@ -188,7 +188,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.11'))
-        ivi.add_property(self, 'channels[].characteristics.dc_current_switching_max',
+        self._add_property('channels[].characteristics.dc_current_switching_max',
                         self._get_channel_characteristics_dc_current_switching_max,
                         None,
                         None,
@@ -199,7 +199,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.12'))
-        ivi.add_property(self, 'channels[].characteristics.dc_power_carry_max',
+        self._add_property('channels[].characteristics.dc_power_carry_max',
                         self._get_channel_characteristics_dc_power_carry_max,
                         None,
                         None,
@@ -210,7 +210,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.13'))
-        ivi.add_property(self, 'channels[].characteristics.dc_power_switching_max',
+        self._add_property('channels[].characteristics.dc_power_switching_max',
                         self._get_channel_characteristics_dc_power_switching_max,
                         None,
                         None,
@@ -221,7 +221,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.14'))
-        ivi.add_property(self, 'channels[].characteristics.dc_voltage_max',
+        self._add_property('channels[].characteristics.dc_voltage_max',
                         self._get_channel_characteristics_dc_voltage_max,
                         None,
                         None,
@@ -232,7 +232,7 @@ class Base(object):
                         take into account the other switches that make up a path to or from this
                         channel.
                         """, cls, grp, '4.2.15'))
-        ivi.add_property(self, 'channels[].is_configuration_channel',
+        self._add_property('channels[].is_configuration_channel',
                         self._get_channel_is_configuration_channel,
                         self._set_channel_is_configuration_channel,
                         None,
@@ -252,7 +252,7 @@ class Base(object):
                         then no operation can be performed on that channel, except for reading and
                         writing the Is Configuration Channel attribute.
                         """, cls, grp, '4.2.16'))
-        ivi.add_property(self, 'path.is_debounced',
+        self._add_property('path.is_debounced',
                         self._get_path_is_debounced,
                         None,
                         None,
@@ -264,7 +264,7 @@ class Base(object):
                         assuming that the switches in the path have the correct characteristics.
                         If False, the switch module has not settled.
                         """, cls, grp, '4.2.17'))
-        ivi.add_property(self, 'channels[].is_source_channel',
+        self._add_property('channels[].is_source_channel',
                         self._get_channel_is_source_channel,
                         self._set_channel_is_source_channel,
                         None,
@@ -284,7 +284,7 @@ class Base(object):
                         connected that may cause damage to the channels, devices, or system.
                         Notice that GROUND can be considered a source in some circumstances.
                         """, cls, grp, '4.2.18'))
-        ivi.add_property(self, 'channels[].characteristics.settling_time',
+        self._add_property('channels[].characteristics.settling_time',
                         self._get_channel_characteristics_settling_time,
                         None,
                         None,
@@ -299,7 +299,7 @@ class Base(object):
                         
                         The units are seconds.
                         """, cls, grp, '4.2.19'))
-        ivi.add_property(self, 'channels[].characteristics.wire_mode',
+        self._add_property('channels[].characteristics.wire_mode',
                         self._get_channel_characteristics_wire_mode,
                         None,
                         None,
@@ -312,7 +312,7 @@ class Base(object):
                         
                         For example, this attribute returns 2 if the channel has two conductors.
                         """, cls, grp, '4.2.20'))
-        ivi.add_method(self, 'path.can_connect',
+        self._add_method('path.can_connect',
                         self._path_can_connect,
                         ivi.Doc("""
                         The purpose of this function is to allow the user to verify whether the
@@ -328,7 +328,7 @@ class Base(object):
                         If the implicit connection exists between the two specified channels, this
                         functions returns the warning Implicit Connection Exists.
                         """, cls, grp, '4.3.1'))
-        ivi.add_method(self, 'path.connect',
+        self._add_method('path.connect',
                         self._path_connect,
                         ivi.Doc("""
                         This function takes two channel names and, if possible, creates a path
@@ -369,7 +369,7 @@ class Base(object):
                         function returns the error Path Not Found without performing any
                         connection operation.
                         """, cls, grp, '4.3.2'))
-        ivi.add_method(self, 'path.disconnect',
+        self._add_method('path.disconnect',
                         self._path_disconnect,
                         ivi.Doc("""
                         This function takes two channel names and, if possible, destroys the path
@@ -393,7 +393,7 @@ class Base(object):
                         function returns the error No Such Path without performing any
                         disconnection operation.
                         """, cls, grp, '4.3.3'))
-        ivi.add_method(self, 'path.disconnect_all',
+        self._add_method('path.disconnect_all',
                         self._path_disconnect_all,
                         ivi.Doc("""
                         The purpose of this function is to allow the user to disconnect all paths
@@ -405,7 +405,7 @@ class Base(object):
                         (such as a scanner that must keep at least one path). In these cases, this
                         function returns the warning Path Remains.
                         """, cls, grp, '4.3.4'))
-        ivi.add_method(self, 'path.get_path',
+        self._add_method('path.get_path',
                         self._path_get_path,
                         ivi.Doc("""
                         This function returns a list of channels (see the Set Path function for a
@@ -427,7 +427,7 @@ class Base(object):
                         If no explicit path exists between the two specified channels, this
                         function returns the error No Such Path.
                         """, cls, grp, '4.3.6'))
-        ivi.add_method(self, 'path.set_path',
+        self._add_method('path.set_path',
                         self._path_set_path,
                         ivi.Doc("""
                         The IVI Switch is designed to provide automatic routing from channel to
@@ -499,7 +499,7 @@ class Base(object):
                         error Channels Already Connected without performing any connection
                         operation.
                         """, cls, grp, '4.3.8'))
-        ivi.add_method(self, 'path.wait_for_debounce',
+        self._add_method('path.wait_for_debounce',
                         self._path_wait_for_debounce,
                         ivi.Doc("""
                         The purpose of this function is to wait until the path through the switch
