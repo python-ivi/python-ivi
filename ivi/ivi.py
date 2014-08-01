@@ -1061,9 +1061,9 @@ class DriverIdentity(IviContainer):
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
-        self._identity_instrument_manufacturer = ""
-        self._identity_instrument_model = ""
-        self._identity_instrument_firmware_revision = ""
+        self._identity_instrument_manufacturer = "Cannot query from instrument"
+        self._identity_instrument_model = "Cannot query from instrument"
+        self._identity_instrument_firmware_revision = "Cannot query from instrument"
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = list()
@@ -1118,15 +1118,14 @@ class DriverIdentity(IviContainer):
                         identity.
                         
                         In some cases, it is not possible for the specific driver to query the
-                        firmware revision of the instrument. This can occur when the Simulate
-                        attribute is set to True or if the instrument is not capable of returning
-                        the firmware revision. For these cases, the specific driver returns
-                        defined strings for this attribute. If the Simulate attribute is set to
-                        True, the specific driver returns "Not available while simulating" as the
-                        value of this attribute. If the instrument is not capable of returning the
-                        firmware version and the Simulate attribute is set to False, the specific
-                        driver returns "Cannot query from instrument" as the value of this
-                        attribute.
+                        manufacturer of the instrument. This can occur when the Simulate attribute
+                        is set to True or if the instrument is not capable of returning the
+                        manufacturer. For these cases, the specific driver returns defined strings
+                        for this attribute. If the Simulate attribute is set to True, the specific
+                        driver returns "Not available while simulating" as the value of this
+                        attribute. If the instrument is not capable of returning the manufacturer
+                        and the Simulate attribute is set to False, the specific driver returns
+                        "Cannot query from instrument" as the value of this attribute.
                         
                         The string that this attribute returns does not have a predefined maximum
                         length.
@@ -1141,15 +1140,14 @@ class DriverIdentity(IviContainer):
                         string indicating that it cannot query the instrument identity.
                         
                         In some cases, it is not possible for the specific driver to query the
-                        firmware revision of the instrument. This can occur when the Simulate
-                        attribute is set to True or if the instrument is not capable of returning
-                        the firmware revision. For these cases, the specific driver returns
-                        defined strings for this attribute. If the Simulate attribute is set to
-                        True, the specific driver returns "Not available while simulating" as the
-                        value of this attribute. If the instrument is not capable of returning the
-                        firmware version and the Simulate attribute is set to False, the specific
-                        driver returns "Cannot query from instrument" as the value of this
-                        attribute.
+                        model of the instrument. This can occur when the Simulate attribute is
+                        set to True or if the instrument is not capable of returning the model.
+                        For these cases, the specific driver returns defined strings for this
+                        attribute. If the Simulate attribute is set to True, the specific driver
+                        returns "Not available while simulating" as the value of this attribute.
+                        If the instrument is not capable of returning the model and the Simulate
+                        attribute is set to False, the specific driver returns "Cannot query
+                        from instrument" as the value of this attribute.
                         
                         The string that this attribute returns does not have a predefined maximum
                         length.
