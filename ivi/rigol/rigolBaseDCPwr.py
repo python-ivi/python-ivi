@@ -109,6 +109,26 @@ class rigolBaseDCPwr(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTri
         if not self._driver_operation_simulate:
             self._write("*rcl %d" % index)
     
+    def _get_output_enabled(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            if self._output_count > 1:
+                self._write("instrument:nselect %d" % (index+1))
+            self._output_enabled[index] = self._ask("output?").lower() == 'on'
+            self._set_cache_valid(index=index)
+        return self._output_enabled[index]
+    
+    def _set_output_enabled(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            if self._output_count > 1:
+                self._write("instrument:nselect %d" % (index+1))
+            self._write("output %s" % ('on' if value else 'off'))
+        self._output_enabled[index] = value
+        for k in range(self._output_count):
+            self._set_cache_valid(valid=False,index=k)
+        self._set_cache_valid(index=index)
     
     
 
