@@ -462,7 +462,7 @@ class Trigger(dcpwr.Trigger):
             self._write("initiate")
     
 class SoftwareTrigger(dcpwr.SoftwareTrigger):
-    def send_software_trigger(self):
+    def _send_software_trigger(self):
         if not self._driver_operation_simulate:
             self._write("*trg")
 
