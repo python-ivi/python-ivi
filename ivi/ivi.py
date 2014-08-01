@@ -122,64 +122,80 @@ def get_index(l, i):
 class PropertyCollection(object):
     "A building block to create hierarchical trees of methods and properties"
     def __init__(self):
-        object.__setattr__(self, '_props', dict())
-        object.__setattr__(self, '_docs', dict())
-        object.__setattr__(self, '_locked', False)
+        d = object.__getattribute__(self, '__dict__')
+        d.setdefault('_props', dict())
+        d.setdefault('_docs', dict())
+        d.setdefault('_locked', False)
     
     def _add_property(self, name, fget=None, fset=None, fdel=None, doc=None):
         "Add a managed property"
-        object.__getattribute__(self, '_props')[name] = (fget, fset, fdel)
-        object.__getattribute__(self, '_docs')[name] = doc
-        object.__setattr__(self, name, None)
+        d = object.__getattribute__(self, '__dict__')
+        d['_props'][name] = (fget, fset, fdel)
+        d['_docs'][name] = doc
+        d[name] = None
     
     def _add_method(self, name, f=None, doc=None):
         "Add a managed method"
-        object.__getattribute__(self, '_docs')[name] = doc
-        object.__setattr__(self, name, f)
+        d = object.__getattribute__(self, '__dict__')
+        d['_docs'][name] = doc
+        d[name] = f
     
     def _del_property(self, name):
         "Remove managed property or method"
-        del object.__getattribute__(self, '_props')[name]
-        del object.__getattribute__(self, '_docs')[name]
-        del object.__dict__[name]
+        d = object.__getattribute__(self, '__dict__')
+        del d['_props'][name]
+        del d['_docs'][name]
+        del d[name]
     
     def _lock(self, lock=True):
         "Set lock state to prevent creation or deletion of unmanaged members"
-        object.__setattr__(self, '_locked', lock)
+        d = object.__getattribute__(self, '__dict__')
+        d['_locked'] = lock
     
     def _unlock(self):
         "Unlock object to allow creation or deletion of unmanaged members, equivalent to _lock(False)"
         self._lock(False)
         
     def __getattribute__(self, name):
-        if name in object.__getattribute__(self, '_props'):
-            f = object.__getattribute__(self, '_props')[name][0]
+        if name == '__dict__':
+            return object.__getattribute__(self, name)
+        d = object.__getattribute__(self, '__dict__')
+        d.setdefault('_props', dict())
+        d.setdefault('_locked', False)
+        if name in d['_props']:
+            f = d['_props'][name][0]
             if f is None:
                 raise AttributeError("unreadable attribute")
             return f()
         return object.__getattribute__(self, name)
         
     def __setattr__(self, name, value):
-        if name in object.__getattribute__(self, '_props'):
-            f = object.__getattribute__(self, '_props')[name][1]
+        d = object.__getattribute__(self, '__dict__')
+        d.setdefault('_props', dict())
+        d.setdefault('_locked', False)
+        if name in d['_props']:
+            f = d['_props'][name][1]
             if f is None:
                 raise AttributeError("can't set attribute")
             f(value)
             return
-        if name not in object.__dict__ and self._locked:
+        if name not in d and self._locked:
             raise AttributeError("locked")
         object.__setattr__(self, name, value)
         
     def __delattr__(self, name):
-        if name in object.__getattribute__(self, '_props'):
-            f = object.__getattribute__(self, '_props')[name][2]
+        d = object.__getattribute__(self, '__dict__')
+        d.setdefault('_props', dict())
+        d.setdefault('_locked', False)
+        if name in d['_props']:
+            f = d['_props'][name][2]
             if f is None:
                 raise AttributeError("can't delete attribute")
             f()
             return
-        if name not in object.__dict__ and self._locked:
+        if name not in d and self._locked:
             raise AttributeError("locked")
-        del object.__dict__[name]
+        object.__delattr__(self, name)
         
 
 class IndexedPropertyCollection(object):
