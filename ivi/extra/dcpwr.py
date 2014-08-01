@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 from .. import ivi
 
-class OCP(object):
+class OCP(ivi.IviContainer):
     "Extension IVI methods for power supplies supporting overcurrent protection"
     
     def __init__(self, *args, **kwargs):
@@ -52,7 +52,7 @@ class OCP(object):
             }
         ]
         
-        ivi.add_property(self, 'outputs[].ocp_enabled',
+        self._add_property('outputs[].ocp_enabled',
                         self._get_output_ocp_enabled,
                         self._set_output_ocp_enabled,
                         None,
@@ -62,7 +62,7 @@ class OCP(object):
                         the output current is greater than or equal to the value of the OCP
                         Limit attribute.
                         """))
-        ivi.add_property(self, 'outputs[].ocp_limit',
+        self._add_property('outputs[].ocp_limit',
                         self._get_output_ocp_limit,
                         self._set_output_ocp_limit,
                         None,
