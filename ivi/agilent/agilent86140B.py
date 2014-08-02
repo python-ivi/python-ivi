@@ -359,10 +359,10 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
         
         self._init_traces()
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilent86140B, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilent86140B, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

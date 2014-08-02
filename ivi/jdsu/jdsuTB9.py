@@ -57,10 +57,10 @@ class jdsuTB9(ivi.Driver):
                         Control relay driver.  Set to True to enable 5v output, False to disable.
                         """)
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(jdsuTB9, self).initialize(resource, id_query, reset, **keywargs)
+        super(jdsuTB9, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

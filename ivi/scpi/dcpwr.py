@@ -76,10 +76,10 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
 
         self._init_outputs()
 
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        super(Base, self).initialize(resource, id_query, reset, **keywargs)
+        super(Base, self)._initialize(resource, id_query, reset, **keywargs)
 
         if not self._do_scpi_init:
             return

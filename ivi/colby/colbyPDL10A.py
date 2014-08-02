@@ -63,10 +63,10 @@ class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
                         the mode should be set to '312.5ps'.  
                         """)
 
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        super(colbyPDL10A, self).initialize(resource, id_query, reset, **keywargs)
+        super(colbyPDL10A, self)._initialize(resource, id_query, reset, **keywargs)
 
         # interface clear
         if not self._driver_operation_simulate:

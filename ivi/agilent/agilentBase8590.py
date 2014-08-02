@@ -135,10 +135,10 @@ class agilentBase8590(ivi.Driver, specan.Base,
 
         self._init_traces()
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilentBase8590, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilentBase8590, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

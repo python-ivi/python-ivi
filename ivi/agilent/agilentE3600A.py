@@ -118,10 +118,10 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
         
         self._init_outputs()
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilentE3600A, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilentE3600A, self)._initialize(resource, id_query, reset, **keywargs)
         
         # configure interface
         if self._interface is not None:

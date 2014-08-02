@@ -455,12 +455,12 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         
         self._init_channels()
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         
-        super(agilentBaseScope, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilentBaseScope, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

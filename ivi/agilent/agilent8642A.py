@@ -175,10 +175,10 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         self._frequency_low = 10e3
         self._frequency_high = 1050e6
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilent8642A, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilent8642A, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

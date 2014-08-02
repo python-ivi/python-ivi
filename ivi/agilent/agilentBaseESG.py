@@ -105,10 +105,10 @@ class agilentBaseESG(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
                         self._set_sweep_power_step_points)
 
 
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        super(agilentBaseESG, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilentBaseESG, self)._initialize(resource, id_query, reset, **keywargs)
 
         # interface clear
         if not self._driver_operation_simulate:

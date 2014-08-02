@@ -88,10 +88,10 @@ class agilent34401A(scpi.dmm.Base, scpi.dmm.MultiPoint, scpi.dmm.SoftwareTrigger
         self._identity_specification_minor_version = 1
         self._identity_supported_instrument_models = ['34401A']
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilent34401A, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilent34401A, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

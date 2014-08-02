@@ -66,10 +66,10 @@ class agilent603xA(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         
         self._init_outputs()
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilent603xA, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilent603xA, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

@@ -103,10 +103,10 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         self._identity_specification_minor_version = 1
         self._identity_supported_instrument_models = ['DMM']
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(Base, self).initialize(resource, id_query, reset, **keywargs)
+        super(Base, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

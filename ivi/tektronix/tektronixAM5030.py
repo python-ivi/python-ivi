@@ -109,10 +109,10 @@ class tektronixAM5030(ivi.Driver):
                         """)
         
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(tektronixAM5030, self).initialize(resource, id_query, reset, **keywargs)
+        super(tektronixAM5030, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:

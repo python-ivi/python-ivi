@@ -140,10 +140,10 @@ class agilent85644A(ivi.Driver, scpi.common.Memory):
                         self._get_reference_oscillator_source)
 
 
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        super(agilent85644A, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilent85644A, self)._initialize(resource, id_query, reset, **keywargs)
 
         # interface clear
         #if not self._driver_operation_simulate:

@@ -61,10 +61,10 @@ class agilent34410A(scpi.dmm.Base):
         ivi.add_method(self, 'memory.get_name',
                         self._get_memory_name)
     
-    def initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
         
-        super(agilent34410A, self).initialize(resource, id_query, reset, **keywargs)
+        super(agilent34410A, self)._initialize(resource, id_query, reset, **keywargs)
         
         # interface clear
         if not self._driver_operation_simulate:
