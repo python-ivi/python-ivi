@@ -88,7 +88,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
                         '8592L', '8593E', '8593EM', '8594E', '8594EM', '8594L', '8594Q', '8595E',
                         '8595EM', '8596E', '8596EM']
         
-        ivi.add_method(self, 'display.clear',
+        self._add_method('display.clear',
                         self._display_clear,
                         ivi.Doc("""
                         Clears the display and resets all associated measurements. If the
@@ -96,40 +96,40 @@ class agilentBase8590(ivi.Driver, specan.Base,
                         oscilloscope is running, all the data in active channels and functions is
                         erased; however, new data is displayed on the next acquisition.
                         """))
-        ivi.add_method(self, 'system.display_string',
+        self._add_method('system.display_string',
                         self._system_display_string,
                         ivi.Doc("""
                         Writes a string to the advisory line on the instrument display.  Send None
                         or an empty string to clear the advisory line.  
                         """))
 
-        ivi.add_property(self, 'rf.level',
+        self._add_property('rf.level',
                         self._get_rf_level,
                         self._set_rf_level)
-        ivi.add_property(self, 'rf.attenuation',
+        self._add_property('rf.attenuation',
                         self._get_rf_attenuation,
                         self._set_rf_attenuation)
-        ivi.add_property(self, 'rf.attenuation_auto',
+        self._add_property('rf.attenuation_auto',
                         self._get_rf_attenuation_auto,
                         self._set_rf_attenuation_auto)
-        ivi.add_property(self, 'rf.output_enabled',
+        self._add_property('rf.output_enabled',
                         self._get_rf_output_enabled,
                         self._set_rf_output_enabled)
-        ivi.add_property(self, 'rf.power_mode',
+        self._add_property('rf.power_mode',
                         self._get_rf_power_mode,
                         self._set_rf_power_mode)
-        ivi.add_property(self, 'rf.power_offset',
+        self._add_property('rf.power_offset',
                         self._get_rf_power_offset,
                         self._set_rf_power_offset)
-        ivi.add_property(self, 'rf.power_span',
+        self._add_property('rf.power_span',
                         self._get_rf_power_span,
                         self._set_rf_power_span)
-        ivi.add_property(self, 'rf.tracking_adjust',
+        self._add_property('rf.tracking_adjust',
                         self._get_rf_tracking_adjust,
                         self._set_rf_tracking_adjust)
-        ivi.add_method(self, 'rf.tracking_peak',
+        self._add_method('rf.tracking_peak',
                         self._rf_tracking_peak)
-        ivi.add_property(self, 'alc.source',
+        self._add_property('alc.source',
                         self._get_alc_source,
                         self._set_alc_source)
 

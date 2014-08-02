@@ -85,22 +85,22 @@ class agilentBaseESG(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
                 'E4423B', 'E4424B', 'E4425B', 'E4426B', 'E4430B', 'E4431B', 'E4432B', 'E4433B',
                 'E4434B', 'E4435B', 'E4436B', 'E4437B'])
 
-        ivi.add_property(self, 'rf.frequency_multiplier',
+        self._add_property('rf.frequency_multiplier',
                         self._get_rf_frequency_multiplier,
                         self._set_rf_frequency_multiplier)
-        ivi.add_property(self, 'rf.frequency_offset',
+        self._add_property('rf.frequency_offset',
                         self._get_rf_frequency_offset,
                         self._set_rf_frequency_offset)
-        ivi.add_property(self, 'rf.frequency_reference',
+        self._add_property('rf.frequency_reference',
                         self._get_rf_frequency_reference,
                         self._set_rf_frequency_reference)
-        ivi.add_property(self, 'rf.frequency_reference_enabled',
+        self._add_property('rf.frequency_reference_enabled',
                         self._get_rf_frequency_reference_enabled,
                         self._set_rf_frequency_reference_enabled)
-        ivi.add_property(self, 'sweep.frequency_step.points',
+        self._add_property('sweep.frequency_step.points',
                         self._get_sweep_frequency_step_points,
                         self._set_sweep_frequency_step_points)
-        ivi.add_property(self, 'sweep.power_step.points',
+        self._add_property('sweep.power_step.points',
                         self._get_sweep_power_step_points,
                         self._set_sweep_power_step_points)
 

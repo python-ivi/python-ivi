@@ -87,9 +87,9 @@ class rigolBaseDCPwr(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTri
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['DP831A', 'DP832', 'DP832A']
         
-        ivi.add_method(self, 'memory.save',
+        self._add_method('memory.save',
                         self._memory_save)
-        ivi.add_method(self, 'memory.recall',
+        self._add_method('memory.recall',
                         self._memory_recall)
         
         self._init_outputs()

@@ -90,7 +90,7 @@ class agilentBaseInfiniium(agilentBaseScope):
                 'DSAX92504A','DSAX92804A','DSAX93204A','MSOX91304A','MSOX91604A','MSOX92004A',
                 'MSOX92504A','MSOX92804A','MSOX93204A']
         
-        ivi.add_property(self, 'display.color_grade',
+        self._add_property('display.color_grade',
                         self._get_display_color_grade,
                         self._set_display_color_grade,
                         None,
@@ -102,7 +102,7 @@ class agilentBaseInfiniium(agilentBaseScope):
                         hits in a pixel.  Vector display mode is disabled when color grade is
                         enabled.
                         """))
-        ivi.add_method(self, 'display.fetch_color_grade_levels',
+        self._add_method('display.fetch_color_grade_levels',
                         self._fetch_display_color_grade_levels,
                         ivi.Doc("""
                         Returns the range of hits represented by each color.  Fourteen values are

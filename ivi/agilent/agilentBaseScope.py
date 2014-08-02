@@ -226,7 +226,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                 'DSO7034B','DSO7052B','DSO7054B','DSO7104B','MSO7012B','MSO7014B','MSO7032B',
                 'MSO7034B','MSO7052B','MSO7054B','MSO7104B']
         
-        ivi.add_method(self, 'acquisition.segmented.analyze',
+        self._add_method('acquisition.segmented.analyze',
                         self._acquisition_segmented_analyze,
                         ivi.Doc("""
                         Calculates measurement statistics and/or infinite persistence over all
@@ -236,7 +236,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         must be stopped and in segmented acquisition mode, with either quick
                         measurements or infinite persistence on.
                         """))
-        ivi.add_property(self, 'acquisition.segmented.count',
+        self._add_property('acquisition.segmented.count',
                         self._get_acquisition_segmented_count,
                         self._set_acquisition_segmented_count,
                         None,
@@ -252,7 +252,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         oscilloscope. For example, an oscilloscope with 1M memory allows a maximum
                         of 250 segments.
                         """))
-        ivi.add_property(self, 'acquisition.segmented.index',
+        self._add_property('acquisition.segmented.index',
                         self._get_acquisition_segmented_index,
                         self._set_acquisition_segmented_index,
                         None,
@@ -272,7 +272,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         oscilloscope. For example, an oscilloscope with 1M memory allows a maximum
                         of 250 segments.
                         """))
-        ivi.add_property(self, 'acquisition.segmented.acquired_count',
+        self._add_property('acquisition.segmented.acquired_count',
                         self._get_acquisition_segmented_acquired_count,
                         None,
                         None,
@@ -287,7 +287,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         using the acquisition.segmented.count property, and data is acquired using
                         the :DIGitize, :SINGle, or :RUN commands.
                         """))
-        ivi.add_property(self, 'acquisition.segmented.time_tag',
+        self._add_property('acquisition.segmented.time_tag',
                         self._get_acquisition_segmented_time_tag,
                         None,
                         None,
@@ -295,7 +295,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         Returns the time tag of the currently selected segmented memory index. The
                         index is selected using the acquisition.segmented.index property.
                         """))
-        ivi.add_property(self, 'channels[].bw_limit',
+        self._add_property('channels[].bw_limit',
                         self._get_channel_bw_limit,
                         self._set_channel_bw_limit,
                         None,
@@ -303,14 +303,14 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         Commands an internal low-pass filter.  When the filter is on, the
                         bandwidth of the channel is limited to approximately 25 MHz.
                         """))
-        ivi.add_property(self, 'channels[].invert',
+        self._add_property('channels[].invert',
                         self._get_channel_invert,
                         self._set_channel_invert,
                         None,
                         ivi.Doc("""
                         Selects whether or not to invert the channel.
                         """))
-        ivi.add_property(self, 'channels[].label',
+        self._add_property('channels[].label',
                         self._get_channel_label,
                         self._set_channel_label,
                         None,
@@ -318,14 +318,14 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         Sets the channel label.  Setting a channel label also adds the label to
                         the nonvolatile label list.
                         """))
-        ivi.add_property(self, 'channels[].probe_id',
+        self._add_property('channels[].probe_id',
                         self._get_channel_probe_id,
                         None,
                         None,
                         ivi.Doc("""
                         Returns the type of probe attached to the channel.
                         """))
-        ivi.add_property(self, 'channels[].probe_skew',
+        self._add_property('channels[].probe_skew',
                         self._get_channel_probe_skew,
                         self._set_channel_probe_skew,
                         None,
@@ -335,7 +335,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         between channels.  This can be used to compensate for differences in cable
                         delay.  Units are seconds.
                         """))
-        ivi.add_property(self, 'channels[].scale',
+        self._add_property('channels[].scale',
                         self._get_channel_scale,
                         self._set_channel_scale,
                         None,
@@ -343,7 +343,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         Specifies the vertical scale, or units per division, of the channel.  Units
                         are volts.
                         """))
-        ivi.add_property(self, 'timebase.mode',
+        self._add_property('timebase.mode',
                         self._get_timebase_mode,
                         self._set_timebase_mode,
                         None,
@@ -355,7 +355,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         * 'xy': channels are plotted against each other, no timebase
                         * 'roll': data moves continuously from left to right
                         """))
-        ivi.add_property(self, 'timebase.reference',
+        self._add_property('timebase.reference',
                         self._get_timebase_reference,
                         self._set_timebase_reference,
                         None,
@@ -370,7 +370,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         * 'center'
                         * 'right'
                         """))
-        ivi.add_property(self, 'timebase.position',
+        self._add_property('timebase.position',
                         self._get_timebase_position,
                         self._set_timebase_position,
                         None,
@@ -380,7 +380,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         center and is set with the timebase.reference property. The maximum
                         position value depends on the time/division settings.
                         """))
-        ivi.add_property(self, 'timebase.range',
+        self._add_property('timebase.range',
                         self._get_timebase_range,
                         self._set_timebase_range,
                         None,
@@ -388,14 +388,14 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         Sets the full-scale horizontal time in seconds for the main window. The
                         range is 10 times the current time-per-division setting.
                         """))
-        ivi.add_property(self, 'timebase.scale',
+        self._add_property('timebase.scale',
                         self._get_timebase_scale,
                         self._set_timebase_scale,
                         None,
                         ivi.Doc("""
                         Sets the horizontal scale or units per division for the main window.
                         """))
-        ivi.add_property(self, 'timebase.window.position',
+        self._add_property('timebase.window.position',
                         self._get_timebase_window_position,
                         self._set_timebase_window_position,
                         None,
@@ -405,7 +405,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         determine the range for this command. The value for this command must
                         keep the zoomed view window within the main sweep range.
                         """))
-        ivi.add_property(self, 'timebase.window.range',
+        self._add_property('timebase.window.range',
                         self._get_timebase_window_range,
                         self._set_timebase_window_range,
                         None,
@@ -415,7 +415,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         division setting. The main sweep range determines the range for this
                         command. The maximum value is one half of the timebase.range value.
                         """))
-        ivi.add_property(self, 'timebase.window.scale',
+        self._add_property('timebase.window.scale',
                         self._get_timebase_window_scale,
                         self._set_timebase_window_scale,
                         None,
@@ -424,21 +424,21 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         main sweep scale determines the range for this command. The maximum value
                         is one half of the timebase.scale value.
                         """))
-        ivi.add_property(self, 'display.vectors',
+        self._add_property('display.vectors',
                         self._get_display_vectors,
                         self._set_display_vectors,
                         None,
                         ivi.Doc("""
                         When enabled, draws a line between consecutive waveform data points.
                         """))
-        ivi.add_property(self, 'display.labels',
+        self._add_property('display.labels',
                         self._get_display_labels,
                         self._set_display_labels,
                         None,
                         ivi.Doc("""
                         Turns the analog and digital channel labels on and off.
                         """))
-        ivi.add_method(self, 'display.clear',
+        self._add_method('display.clear',
                         self._display_clear,
                         ivi.Doc("""
                         Clears the display and resets all associated measurements. If the
@@ -446,7 +446,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         oscilloscope is running, all the data in active channels and functions is
                         erased; however, new data is displayed on the next acquisition.
                         """))
-        ivi.add_method(self, 'system.display_string',
+        self._add_method('system.display_string',
                         self._system_display_string,
                         ivi.Doc("""
                         Writes a string to the advisory line on the instrument display.  Send None

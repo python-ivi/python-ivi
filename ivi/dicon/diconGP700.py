@@ -73,94 +73,94 @@ class diconGP700(ivi.Driver):
         self._switch_output_count = list()
         self._switch_input_count = list()
         
-        ivi.add_property(self, 'attenuators[].level',
+        self._add_property('attenuators[].level',
                         self._get_attenuator_level,
                         self._set_attenuator_level,
                         None,
                         ivi.Doc("""
                         Specifies the level of the attenuator module.  The units are dB.  
                         """))
-        ivi.add_property(self, 'attenuators[].level_max',
+        self._add_property('attenuators[].level_max',
                         self._get_attenuator_level_max,
                         None,
                         None,
                         ivi.Doc("""
                         Returns the maximum attenuation level supported.  The units are dB. 
                         """))
-        ivi.add_property(self, 'attenuators[].name',
+        self._add_property('attenuators[].name',
                         self._get_attenuator_name,
                         None,
                         None,
                         ivi.Doc("""
                         Returns the name of the attenuator module.
                         """))
-        ivi.add_property(self, 'filters[].wavelength',
+        self._add_property('filters[].wavelength',
                         self._get_filter_wavelength,
                         self._set_filter_wavelength,
                         None,
                         ivi.Doc("""
                         Specifies the center wavelength of the filter module.  The units are nm.
                         """))
-        ivi.add_property(self, 'filters[].wavelength_max',
+        self._add_property('filters[].wavelength_max',
                         self._get_filter_wavelength_max,
                         None,
                         None,
                         ivi.Doc("""
                         Returns the maximum center wavelength of the filter.  The units are nm.
                         """))
-        ivi.add_property(self, 'filters[].wavelength_min',
+        self._add_property('filters[].wavelength_min',
                         self._get_filter_wavelength_min,
                         None,
                         None,
                         ivi.Doc("""
                         Returns the minimum center wavelength of the filter.  The units are nm.
                         """))
-        ivi.add_property(self, 'filters[].name',
+        self._add_property('filters[].name',
                         self._get_filter_name,
                         None,
                         None,
                         ivi.Doc("""
                         Returns the name of the filter module.
                         """))
-        ivi.add_property(self, 'switches[].output',
+        self._add_property('switches[].output',
                         self._get_switch_output,
                         self._set_switch_output,
                         None,
                         ivi.Doc("""
                         Specify switch output connection.
                         """))
-        ivi.add_property(self, 'switches[].output_count',
+        self._add_property('switches[].output_count',
                         self._get_switch_output_count,
                         None,
                         None,
                         ivi.Doc("""
                         Query number of outputs supported by switch.
                         """))
-        ivi.add_property(self, 'switches[].input',
+        self._add_property('switches[].input',
                         self._get_switch_input,
                         self._set_switch_input,
                         None,
                         ivi.Doc("""
                         Specify switch input connection.
                         """))
-        ivi.add_property(self, 'switches[].input_count',
+        self._add_property('switches[].input_count',
                         self._get_switch_input_count,
                         None,
                         None,
                         ivi.Doc("""
                         Query number of inputs supported by switch.
                         """))
-        ivi.add_method(self, 'switches[].get',
+        self._add_method('switches[].get',
                         self._switch_get,
                         ivi.Doc("""
                         Get current switch input and output configuration.
                         """))
-        ivi.add_method(self, 'switches[].set',
+        self._add_method('switches[].set',
                         self._switch_set,
                         ivi.Doc("""
                         Set switch input and output configuration.
                         """))
-        ivi.add_property(self, 'switches[].name',
+        self._add_property('switches[].name',
                         self._get_switch_name,
                         None,
                         None,
@@ -168,12 +168,12 @@ class diconGP700(ivi.Driver):
                         Returns the name of the switch module.
                         """))
         
-        ivi.add_method(self, 'memory.save',
+        self._add_method('memory.save',
                         self._memory_save,
                         ivi.Doc("""
                         Save device configuration to the specified memory slot.
                         """))
-        ivi.add_method(self, 'memory.recall',
+        self._add_method('memory.recall',
                         self._memory_recall,
                         ivi.Doc("""
                         Recall device configuration from the specified memory slot.

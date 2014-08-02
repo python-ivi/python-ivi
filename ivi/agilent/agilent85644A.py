@@ -84,59 +84,59 @@ class agilent85644A(ivi.Driver, scpi.common.Memory):
         self._frequency_low = 300e3
         self._frequency_high = 6.5e9
 
-        ivi.add_property(self, 'rf.frequency',
+        self._add_property('rf.frequency',
                         self._get_rf_frequency,
                         self._set_rf_frequency)
-        ivi.add_property(self, 'rf.frequency_offset',
+        self._add_property('rf.frequency_offset',
                         self._get_rf_frequency_offset,
                         self._set_rf_frequency_offset)
-        ivi.add_property(self, 'rf.frequency_mode',
+        self._add_property('rf.frequency_mode',
                         self._get_rf_frequency_mode,
                         self._set_rf_frequency_mode)
-        ivi.add_property(self, 'rf.level',
+        self._add_property('rf.level',
                         self._get_rf_level,
                         self._set_rf_level)
-        ivi.add_property(self, 'rf.attenuation',
+        self._add_property('rf.attenuation',
                         self._get_rf_attenuation,
                         self._set_rf_attenuation)
-        ivi.add_property(self, 'rf.attenuation_auto',
+        self._add_property('rf.attenuation_auto',
                         self._get_rf_attenuation_auto,
                         self._set_rf_attenuation_auto)
-        ivi.add_property(self, 'rf.output_enabled',
+        self._add_property('rf.output_enabled',
                         self._get_rf_output_enabled,
                         self._set_rf_output_enabled)
-        ivi.add_property(self, 'rf.power_mode',
+        self._add_property('rf.power_mode',
                         self._get_rf_power_mode,
                         self._set_rf_power_mode)
-        ivi.add_property(self, 'rf.power_slope',
+        self._add_property('rf.power_slope',
                         self._get_rf_power_slope,
                         self._set_rf_power_slope)
-        ivi.add_property(self, 'rf.power_center',
+        self._add_property('rf.power_center',
                         self._get_rf_power_center,
                         self._set_rf_power_center)
-        ivi.add_property(self, 'rf.power_span',
+        self._add_property('rf.power_span',
                         self._get_rf_power_span,
                         self._set_rf_power_span)
-        ivi.add_property(self, 'rf.tracking_adjust',
+        self._add_property('rf.tracking_adjust',
                         self._get_rf_tracking_adjust,
                         self._set_rf_tracking_adjust)
-        ivi.add_property(self, 'rf.tracking_host',
+        self._add_property('rf.tracking_host',
                         self._get_rf_tracking_host,
                         self._set_rf_tracking_host)
-        ivi.add_property(self, 'rf.tracking_sweeptune',
+        self._add_property('rf.tracking_sweeptune',
                         self._get_rf_tracking_sweeptune,
                         self._set_rf_tracking_sweeptune)
-        ivi.add_method(self, 'rf.configure',
+        self._add_method('rf.configure',
                         self._rf_configure)
-        ivi.add_method(self, 'rf.is_unleveled',
+        self._add_method('rf.is_unleveled',
                         self._rf_is_unleveled)
-        ivi.add_property(self, 'alc.enabled',
+        self._add_property('alc.enabled',
                         self._get_alc_enabled,
                         self._set_alc_enabled)
-        ivi.add_property(self, 'alc.source',
+        self._add_property('alc.source',
                         self._get_alc_source,
                         self._set_alc_source)
-        ivi.add_property(self, 'reference_oscillator.source',
+        self._add_property('reference_oscillator.source',
                         self._get_reference_oscillator_source)
 
 

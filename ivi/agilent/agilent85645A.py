@@ -43,10 +43,10 @@ class agilent85645A(agilent85644A):
         self._frequency_low = 300e3
         self._frequency_high = 26.5e9
 
-        ivi.add_property(self, 'rf.output_coupling',
+        self._add_property('rf.output_coupling',
                         self._get_rf_output_coupling,
                         self._set_rf_output_coupling)
-        ivi.add_method(self, 'rf.ytm_peak',
+        self._add_method('rf.ytm_peak',
                         self._rf_ytm_peak)
 
 

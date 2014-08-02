@@ -97,23 +97,23 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
                         'E3640A','E3641A','E3642A','E3643A','E3644A','E3645A','E3646A',
                         'E3647A','E3648A','E3649A']
         
-        ivi.add_property(self, 'outputs.trigger_delay',
+        self._add_property('outputs.trigger_delay',
                         self._get_output_trigger_delay,
                         self._set_output_trigger_delay)
         
-        ivi.add_property(self, 'couple.trigger',
+        self._add_property('couple.trigger',
                         self._get_couple_trigger,
                         self._set_couple_trigger)
-        ivi.add_property(self, 'couple.tracking.enabled',
+        self._add_property('couple.tracking.enabled',
                         self._get_couple_tracking_enabled,
                         self._set_couple_tracking_enabled)
-        ivi.add_property(self, 'couple.tracking.type',
+        self._add_property('couple.tracking.type',
                         self._get_couple_tracking_type,
                         self._set_couple_tracking_type)
         
-        ivi.add_method(self, 'memory.set_name',
+        self._add_method('memory.set_name',
                         self._set_memory_name)
-        ivi.add_method(self, 'memory.get_name',
+        self._add_method('memory.get_name',
                         self._get_memory_name)
         
         self._init_outputs()

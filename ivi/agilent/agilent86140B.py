@@ -84,14 +84,14 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
         self._identity_supported_instrument_models = ['86140B', '86141B', '86142B', '86143B',
                                                       '86144B', '86145B', '86146B']
         
-        ivi.add_property(self, 'level.amplitude_units',
+        self._add_property('level.amplitude_units',
                         self._get_level_amplitude_units,
                         self._set_level_amplitude_units,
                         None,
                         """
                         Specifies the amplitude units for input, output and display amplitude.
                         """)
-        ivi.add_property(self, 'acquisition.detector_type',
+        self._add_property('acquisition.detector_type',
                         self._get_acquisition_detector_type,
                         self._set_acquisition_detector_type,
                         None,
@@ -100,7 +100,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         This governs the data acquisition for a particular sweep, but does not
                         have any control over how multiple sweeps are processed.
                         """)
-        ivi.add_property(self, 'acquisition.detector_type_auto',
+        self._add_property('acquisition.detector_type_auto',
                         self._get_acquisition_detector_type_auto,
                         self._set_acquisition_detector_type_auto,
                         None,
@@ -110,7 +110,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         specification when the Detector Type Auto is set to True. If set to False,
                         the detector type is manually selected.
                         """)
-        ivi.add_property(self, 'wavelength.start',
+        self._add_property('wavelength.start',
                         self._get_wavelength_start,
                         self._set_wavelength_start,
                         None,
@@ -121,7 +121,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         Stop attribute value then the spectrum analyzer's horizontal attributes
                         are in time-domain.
                         """)
-        ivi.add_property(self, 'wavelength.stop',
+        self._add_property('wavelength.stop',
                         self._get_wavelength_stop,
                         self._set_wavelength_stop,
                         None,
@@ -132,7 +132,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         Stop attribute value then the spectrum analyzer's horizontal attributes are
                         in time-domain.
                         """)
-        ivi.add_property(self, 'wavelength.offset',
+        self._add_property('wavelength.offset',
                         self._get_wavelength_offset,
                         self._set_wavelength_offset,
                         None,
@@ -147,7 +147,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                           Wavelength Stop = Actual Stop Wavelength + Wavelength Offset
                           Marker Position = Actual Marker Wavelength + Wavelength Offset
                         """)
-        ivi.add_property(self, 'acquisition.number_of_sweeps',
+        self._add_property('acquisition.number_of_sweeps',
                         self._get_acquisition_number_of_sweeps,
                         self._set_acquisition_number_of_sweeps,
                         None,
@@ -155,7 +155,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         This attribute defines the number of sweeps. This attribute value has no
                         effect if the Trace Type attribute is set to the value Clear Write.
                         """)
-        ivi.add_property(self, 'level.reference',
+        self._add_property('level.reference',
                         self._get_level_reference,
                         self._set_level_reference,
                         None,
@@ -165,7 +165,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         higher than the highest expected signal level. The units are determined by
                         the Amplitude Units attribute.
                         """)
-        ivi.add_property(self, 'level.reference_offset',
+        self._add_property('level.reference_offset',
                         self._get_level_reference_offset,
                         self._set_level_reference_offset,
                         None,
@@ -175,7 +175,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         positive value corresponds to a gain while a negative number corresponds
                         to a loss. The value is in dB.
                         """)
-        ivi.add_property(self, 'sweep_coupling.resolution_bandwidth',
+        self._add_property('sweep_coupling.resolution_bandwidth',
                         self._get_sweep_coupling_resolution_bandwidth,
                         self._set_sweep_coupling_resolution_bandwidth,
                         None,
@@ -183,7 +183,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         Specifies the width of the IF filter in Hertz. For more information see
                         Section 4.1.1, Sweep Coupling Overview.
                         """)
-        ivi.add_property(self, 'sweep_coupling.resolution_bandwidth_auto',
+        self._add_property('sweep_coupling.resolution_bandwidth_auto',
                         self._get_sweep_coupling_resolution_bandwidth_auto,
                         self._set_sweep_coupling_resolution_bandwidth_auto,
                         None,
@@ -191,7 +191,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         If set to True, the resolution bandwidth is automatically selected. If set
                         to False, the resolution bandwidth is manually selected.
                         """)
-        ivi.add_property(self, 'acquisition.sweep_mode_continuous',
+        self._add_property('acquisition.sweep_mode_continuous',
                         self._get_acquisition_sweep_mode_continuous,
                         self._set_acquisition_sweep_mode_continuous,
                         None,
@@ -199,7 +199,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         If set to True, the sweep mode is continuous If set to False, the sweep
                         mode is not continuous.
                         """)
-        ivi.add_property(self, 'sweep_coupling.sweep_time',
+        self._add_property('sweep_coupling.sweep_time',
                         self._get_sweep_coupling_sweep_time,
                         self._set_sweep_coupling_sweep_time,
                         None,
@@ -207,7 +207,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         Specifies the length of time to sweep from the left edge to the right edge
                         of the current domain. The units are seconds.
                         """)
-        ivi.add_property(self, 'sweep_coupling.sweep_time_auto',
+        self._add_property('sweep_coupling.sweep_time_auto',
                         self._get_sweep_coupling_sweep_time_auto,
                         self._set_sweep_coupling_sweep_time_auto,
                         None,
@@ -215,7 +215,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         If set to True, the sweep time is automatically selected If set to False,
                         the sweep time is manually selected.
                         """)
-        ivi.add_property(self, 'traces[].name',
+        self._add_property('traces[].name',
                         self._get_trace_name,
                         None,
                         None,
@@ -225,14 +225,14 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         specifies. If the driver defines a qualified trace name, this property
                         returns the qualified name.
                         """)
-        ivi.add_property(self, 'traces[].type',
+        self._add_property('traces[].type',
                         self._get_trace_type,
                         self._set_trace_type,
                         None,
                         """
                         Specifies the representation of the acquired data.
                         """)
-        ivi.add_property(self, 'acquisition.vertical_scale',
+        self._add_property('acquisition.vertical_scale',
                         self._get_acquisition_vertical_scale,
                         self._set_acquisition_vertical_scale,
                         None,
@@ -240,14 +240,14 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         Specifies the vertical scale of the measurement hardware (use of log
                         amplifiers versus linear amplifiers).
                         """)
-        ivi.add_property(self, 'sweep_coupling.video_bandwidth',
+        self._add_property('sweep_coupling.video_bandwidth',
                         self._get_sweep_coupling_video_bandwidth,
                         self._set_sweep_coupling_video_bandwidth,
                         None,
                         """
                         Specifies the video bandwidth of the post-detection filter in Hertz.
                         """)
-        ivi.add_property(self, 'sweep_coupling.video_bandwidth_auto',
+        self._add_property('sweep_coupling.video_bandwidth_auto',
                         self._get_sweep_coupling_video_bandwidth_auto,
                         self._set_sweep_coupling_video_bandwidth_auto,
                         None,
@@ -255,25 +255,25 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                         If set to True, the video bandwidth is automatically selected. If set to
                         False, the video bandwidth is manually selected.
                         """)
-        ivi.add_method(self, 'acquisition.abort',
+        self._add_method('acquisition.abort',
                        self._acquisition_abort,
                        """
                        This function aborts a previously initiated measurement and returns the
                        spectrum analyzer to the idle state. This function does not check
                        instrument status.
                        """)
-        ivi.add_method(self, 'acquisition.status',
+        self._add_method('acquisition.status',
                        self._acquisition_status,
                        """
                        This function determines and returns the status of an acquisition.
                        """)
-        ivi.add_method(self, 'acquisition.configure',
+        self._add_method('acquisition.configure',
                        self._acquisition_configure,
                        """
                        This function configures the acquisition attributes of the spectrum
                        analyzer.
                        """)
-        ivi.add_method(self, 'wavelength.configure_center_span',
+        self._add_method('wavelength.configure_center_span',
                        self._wavelength_configure_center_span,
                        """
                        This function configures the wavelength range defining the center wavelength
@@ -287,7 +287,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                          Wavelength Start = CenterWavelength - Span / 2
                          Wavelength Stop = CenterWavelength + Span / 2
                        """)
-        ivi.add_method(self, 'wavelength.configure_start_stop',
+        self._add_method('wavelength.configure_start_stop',
                        self._wavelength_configure_start_stop,
                        """
                        This function configures the wavelength range defining its start wavelength
@@ -295,21 +295,21 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                        wavelength, then the spectrum analyzer operates in time-domain mode.
                        Otherwise, the spectrum analyzer operates in wavelength-domain mode.
                        """)
-        ivi.add_method(self, 'level.configure',
+        self._add_method('level.configure',
                        self._level_configure,
                        """
                        This function configures the vertical attributes of the spectrum analyzer.
                        This corresponds to the Amplitude Units, Input Attenuation, Input
                        Impedance, Reference Level, and Reference Level Offset attributes.
                        """)
-        ivi.add_method(self, 'sweep_coupling.configure',
+        self._add_method('sweep_coupling.configure',
                        self._sweep_coupling_configure,
                        """
                        This function configures the coupling and sweeping attributes. For
                        additional sweep coupling information refer to Section 4.1.1, Sweep
                        Coupling Overview.
                        """)
-        ivi.add_method(self, 'traces[].fetch_y',
+        self._add_method('traces[].fetch_y',
                        self._trace_fetch_y,
                        """
                        This function returns the trace the spectrum analyzer acquires. The trace
@@ -331,7 +331,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                        Error Query function at the conclusion of the sequence to check the
                        instrument status.
                        """)
-        ivi.add_method(self, 'acquisition.initiate',
+        self._add_method('acquisition.initiate',
                        self._acquisition_initiate,
                        """
                        This function initiates an acquisition. After calling this function, the
@@ -340,7 +340,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
                        This function does not check the instrument status. The user calls the
                        Acquisition Status function to determine when the acquisition is complete.
                        """)
-        ivi.add_method(self, 'traces[].read_y',
+        self._add_method('traces[].read_y',
                        self._trace_read_y,
                        """
                        This function initiates a signal acquisition based on the present

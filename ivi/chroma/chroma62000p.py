@@ -65,7 +65,7 @@ class chroma62000p(chromaBaseDCPwr):
                                                       '62006P-30-80', '62006P-300-8', '62012P-40-120', '62024P-40-120',
                                                       '62024P-80-60', '62024P-100-50', '62024P-600-8', '62050P-100-100']
 
-        ivi.add_property(self, 'outputs.slew_rate',
+        self._add_property('outputs.slew_rate',
                          self._get_output_slew_rate,
                          self._set_output_slew_rate)
         self._init_outputs()

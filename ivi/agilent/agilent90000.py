@@ -89,7 +89,7 @@ class agilent90000(agilentBaseInfiniium):
                 'DSAX92504A','DSAX92804A','DSAX93204A','MSOX91304A','MSOX91604A','MSOX92004A',
                 'MSOX92504A','MSOX92804A','MSOX93204A']
         
-        ivi.add_property(self, 'channels[].common_mode',
+        self._add_property('channels[].common_mode',
                         self._get_channel_common_mode,
                         self._set_channel_common_mode,
                         None,
@@ -97,7 +97,7 @@ class agilent90000(agilentBaseInfiniium):
                         Turns on/off common mode for the channel.  Channels 2 and 4 may form a
                         common mode channel and channels 1 and 3 may form a common mode channel.
                         """))
-        ivi.add_property(self, 'channels[].differential',
+        self._add_property('channels[].differential',
                         self._get_channel_differential,
                         self._set_channel_differential,
                         None,
@@ -106,7 +106,7 @@ class agilent90000(agilentBaseInfiniium):
                         a differential channel and channels 1 and 3 may form a differential
                         channel.
                         """))
-        ivi.add_property(self, 'channels[].differential_skew',
+        self._add_property('channels[].differential_skew',
                         self._get_channel_differential_skew,
                         self._set_channel_differential_skew,
                         None,
@@ -114,7 +114,7 @@ class agilent90000(agilentBaseInfiniium):
                         Specifies the skew that is applied to the differential or common mode pair
                         of channels.  Units are seconds.
                         """))
-        ivi.add_property(self, 'channels[].display_auto',
+        self._add_property('channels[].display_auto',
                         self._get_channel_display_auto,
                         self._set_channel_display_auto,
                         None,
@@ -122,7 +122,7 @@ class agilent90000(agilentBaseInfiniium):
                         Sets the differential and common mode display scale and offset to track
                         the acquisition scale and offset.  
                         """))
-        ivi.add_property(self, 'channels[].display_offset',
+        self._add_property('channels[].display_offset',
                         self._get_channel_display_offset,
                         self._set_channel_display_offset,
                         None,
@@ -130,7 +130,7 @@ class agilent90000(agilentBaseInfiniium):
                         Sets the displayed offset of the selected channel.  Setting this parameter
                         disables display_auto.  Units are volts.  
                         """))
-        ivi.add_property(self, 'channels[].display_range',
+        self._add_property('channels[].display_range',
                         self._get_channel_display_range,
                         self._set_channel_display_range,
                         None,
@@ -138,7 +138,7 @@ class agilent90000(agilentBaseInfiniium):
                         Sets the full scale vertical range of the selected channel.  Setting this
                         parameter disables display_auto.  Units are volts.  
                         """))
-        ivi.add_property(self, 'channels[].display_scale',
+        self._add_property('channels[].display_scale',
                         self._get_channel_display_scale,
                         self._set_channel_display_scale,
                         None,

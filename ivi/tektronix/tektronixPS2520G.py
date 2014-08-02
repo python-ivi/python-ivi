@@ -81,10 +81,10 @@ class tektronixPS2520G(scpi.dcpwr.Base, scpi.dcpwr.Measurement):
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['PS2520G','PS2521G']
         
-        ivi.add_property(self, 'couple.tracking.enabled',
+        self._add_property('couple.tracking.enabled',
                         self._get_couple_tracking_enabled,
                         self._set_couple_tracking_enabled)
-        ivi.add_property(self, 'couple.tracking.type',
+        self._add_property('couple.tracking.type',
                         self._get_couple_tracking_type,
                         self._set_couple_tracking_type)
         
