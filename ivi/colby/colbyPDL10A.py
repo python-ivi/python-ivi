@@ -53,15 +53,22 @@ class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
         self._delay = 0
         self._mode = ''
 
-        self.__dict__.setdefault('_docs', dict())
-        self._docs['delay'] = ivi.Doc("""
+        self._add_property('delay',
+                        self._get_delay,
+                        self._set_delay,
+                        None,
+                        ivi.Doc("""
                         Specifies the delay of the delay line.  The units are seconds.  
-                        """)
-        self._docs['mode'] = ivi.Doc("""
+                        """))
+        self._add_property('mode',
+                        self._get_mode,
+                        self._set_mode,
+                        None,
+                        ivi.Doc("""
                         Specifies the mode of the delay line.  If the segments are cascaded, then
                         the mode should be set to '625ps'.  If the segments are not cascaded, then
                         the mode should be set to '312.5ps'.  
-                        """)
+                        """))
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
@@ -104,9 +111,6 @@ class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
     def _utility_unlock_object(self):
         pass
 
-    delay = property(lambda self: self._get_delay(),
-                     lambda self, value: self._set_delay(value))
-
     def _get_delay(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             resp = self._ask("del?")
@@ -120,9 +124,6 @@ class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
             self._write("del %e" % (value))
         self._delay = value
         self._set_cache_valid()
-
-    mode = property(lambda self: self._get_mode(),
-                    lambda self, value: self._set_mode(value))
 
     def _get_mode(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
