@@ -195,7 +195,7 @@ class PropertyCollection(object):
             f = d['_props'][name][1]
             if f is None:
                 raise AttributeError("can't set attribute")
-            f(value)
+            f(value=value)
             return
         if name not in d and self._locked:
             raise AttributeError("locked")
