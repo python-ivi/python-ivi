@@ -115,6 +115,8 @@ def get_index(l, i):
         try:
             return l[i]
         except KeyError:
+            if type(i) is int:
+                raise SelectorRangeException()
             raise SelectorNameException()
 
     if i in l:
