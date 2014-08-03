@@ -151,7 +151,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:current:level %e" % value)
+            self._write("source:current:level %.6f" % value)
         self._output_current_limit[index] = value
         self._set_cache_valid(index=index)
     
@@ -238,7 +238,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:voltage:protection:level %e" % value)
+            self._write("source:voltage:protection:level %.6f" % value)
         self._output_ovp_limit[index] = value
         self._set_cache_valid(index=index)
     
@@ -259,7 +259,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:voltage:level %e" % value)
+            self._write("source:voltage:level %.6f" % value)
         self._output_voltage_level[index] = value
         self._set_cache_valid(index=index)
     
@@ -358,7 +358,7 @@ class OCP(extra.dcpwr.OCP):
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:current:protection:level %e" % value)
+            self._write("source:current:protection:level %.6f" % value)
         self._output_ocp_limit[index] = value
         self._set_cache_valid(index=index)
     
@@ -408,7 +408,7 @@ class Trigger(dcpwr.Trigger):
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:current:level:triggered %e" % value)
+            self._write("source:current:level:triggered %.6f" % value)
         self._output_triggered_current_limit[index] = value
         self._set_cache_valid(index=index)
     
@@ -429,7 +429,7 @@ class Trigger(dcpwr.Trigger):
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:voltage:level:triggered %e" % value)
+            self._write("source:voltage:level:triggered %.6f" % value)
         self._output_triggered_voltage_level[index] = value
         self._set_cache_valid(index=index)
     
@@ -450,7 +450,7 @@ class Trigger(dcpwr.Trigger):
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("trigger:delay %e" % value)
+            self._write("trigger:delay %.6f" % value)
         self._output_trigger_delay[index] = value
         self._set_cache_valid(index=index)
     
