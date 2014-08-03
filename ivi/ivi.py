@@ -110,6 +110,13 @@ class ValueNotSupportedException(IviDriverException): pass
 
 
 def get_index(l, i):
+    """Validate index from list or dict of possible values"""
+    if type(l) is dict:
+        try:
+            return l[i]
+        except KeyError:
+            raise SelectorNameException()
+
     if i in l:
         return l.index(i)
     if type(i) == int:
@@ -117,6 +124,15 @@ def get_index(l, i):
             raise SelectorRangeException()
         return i
     raise SelectorNameException()
+
+
+def get_index_dict(l):
+    """Construct a dict object for faster index lookups"""
+    d = {}
+    for i in range(len(l)):
+        d[l[i]] = i
+        d[i] = i
+    return d
 
 
 class PropertyCollection(object):
@@ -204,6 +220,7 @@ class IndexedPropertyCollection(object):
         self._props = dict()
         self._docs = dict()
         self._indicies = list()
+        self._indicies_dict = dict()
         self._objs = list()
     
     def _add_property(self, name, fget=None, fset=None, fdel=None, doc=None, props = None, docs = None):
@@ -292,12 +309,13 @@ class IndexedPropertyCollection(object):
     def _set_list(self, l):
         "Set a list of allowable indicies as an associative array"
         self._indicies = list(l)
+        self._indicies_dict = get_index_dict(self._indicies)
         self._objs = list()
         for i in range(len(self._indicies)):
             self._objs.append(self._build_obj(self._props, self._docs, i))
     
     def __getitem__(self, key):
-        i = get_index(self._indicies, key)
+        i = get_index(self._indicies_dict, key)
         return self._objs[i]
     
     def __len__(self):
