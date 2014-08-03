@@ -296,15 +296,15 @@ class IndexedPropertyCollection(object):
             if type(itm) == tuple:
                 fget, fset, fdel = itm
                 fgeti = fseti = fdeli = None
-                if fget is not None: fgeti = partial(fget, i)
-                if fset is not None: fseti = partial(fset, i)
-                if fdel is not None: fdeli = partial(fdel, i)
+                if fget is not None: fgeti = partial(fget, index=i)
+                if fset is not None: fseti = partial(fset, index=i)
+                if fdel is not None: fdeli = partial(fdel, index=i)
                 obj._add_property(n, fgeti, fseti, fdeli, doc)
             elif type(itm) == dict:
                 o2 = self._build_obj(itm, doc, i)
                 obj.__dict__[n] = o2
             elif hasattr(itm, "__call__"):
-                obj._add_method(n, partial(itm, i), doc)
+                obj._add_method(n, partial(itm, index=i), doc)
         obj._lock()
         return obj
     
