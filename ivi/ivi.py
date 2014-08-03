@@ -319,6 +319,9 @@ class IndexedPropertyCollection(object):
     def __getitem__(self, key):
         i = get_index(self._indicies_dict, key)
         return self._objs[i]
+
+    def __iter__(self):
+        return self._objs.__iter__()
     
     def __len__(self):
         return len(self._indicies)
