@@ -180,10 +180,10 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
             func = self._get_measurement_function()
             if func in MeasurementAutoRangeMapping:
                 cmd = MeasurementAutoRangeMapping[func]
-                value = self._ask("%s?" % (cmd))
-                if value == '0':
+                value = int(self._ask("%s?" % (cmd)))
+                if value == 0:
                     value = 'off'
-                elif value == '1':
+                elif value == 1:
                     value = 'on'
                 self._auto_range = value
                 self._set_cache_valid()
@@ -239,7 +239,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
     def _get_trigger_delay_auto(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = bool(int(self._ask("trigger:delay:auto?")))
-            self._trigger_delay = value
+            self._trigger_delay_auto = value
             self._set_cache_valid()
         return self._trigger_delay_auto
     
