@@ -120,53 +120,36 @@ class TestColbyPDL10A(unittest.TestCase):
         self.vpdl.vals['err'] = '1;DE?;Parsed command unknown;Command Error;'
         self.assertEqual(self.pdl.utility.error_query(), (1, '1;DE?;Parsed command unknown;Command Error;'))
 
-    def test_set_mode_cached(self):
-        self.pdl.driver_operation.cache = True
-        self.pdl.mode = '625ps'
-        self.assertEqual(self.vpdl.vals['mode'], '625ps')
-        self.assertEqual(self.pdl.mode, '625ps')
-        self.pdl.mode = '312.5ps'
-        self.assertEqual(self.vpdl.vals['mode'], '312.5ps')
-        self.assertEqual(self.pdl.mode, '312.5ps')
-        self.vpdl.vals['mode'] = '625ps'
-        self.assertEqual(self.vpdl.vals['mode'], '625ps')
-        self.assertEqual(self.pdl.mode, '312.5ps')
+    def test_set_mode(self):
+        for cache in (True, False):
+            self.pdl.driver_operation.cache = cache
+            self.pdl.mode = '625ps'
+            self.assertEqual(self.vpdl.vals['mode'], '625ps')
+            self.assertEqual(self.pdl.mode, '625ps')
+            self.pdl.mode = '312.5ps'
+            self.assertEqual(self.vpdl.vals['mode'], '312.5ps')
+            self.assertEqual(self.pdl.mode, '312.5ps')
+            self.vpdl.vals['mode'] = '625ps'
+            self.assertEqual(self.vpdl.vals['mode'], '625ps')
+            if cache:
+                self.assertEqual(self.pdl.mode, '312.5ps')
+            else:
+                self.assertEqual(self.pdl.mode, '625ps')
 
-    def test_set_mode_uncached(self):
-        self.pdl.driver_operation.cache = False
-        self.pdl.mode = '625ps'
-        self.assertEqual(self.vpdl.vals['mode'], '625ps')
-        self.assertEqual(self.pdl.mode, '625ps')
-        self.pdl.mode = '312.5ps'
-        self.assertEqual(self.vpdl.vals['mode'], '312.5ps')
-        self.assertEqual(self.pdl.mode, '312.5ps')
-        self.vpdl.vals['mode'] = '625ps'
-        self.assertEqual(self.vpdl.vals['mode'], '625ps')
-        self.assertEqual(self.pdl.mode, '625ps')
-
-    def test_set_delay_cached(self):
-        self.pdl.driver_operation.cache = True
-        self.pdl.mode = '625ps'
-        self.pdl.delay = 100.0e-12
-        self.assertEqual(self.vpdl.vals['del'], 100.0e-12)
-        self.assertEqual(self.pdl.delay, 100.0e-12)
-        self.pdl.delay = 200.0e-12
-        self.assertEqual(self.vpdl.vals['del'], 200.0e-12)
-        self.assertEqual(self.pdl.delay, 200.0e-12)
-        self.vpdl.vals['del'] = 100.0e-12
-        self.assertEqual(self.vpdl.vals['del'], 100.0e-12)
-        self.assertEqual(self.pdl.delay, 200.0e-12)
-
-    def test_set_delay_uncached(self):
-        self.pdl.driver_operation.cache = False
-        self.pdl.mode = '625ps'
-        self.pdl.delay = 100.0e-12
-        self.assertEqual(self.vpdl.vals['del'], 100.0e-12)
-        self.assertEqual(self.pdl.delay, 100.0e-12)
-        self.pdl.delay = 200.0e-12
-        self.assertEqual(self.vpdl.vals['del'], 200.0e-12)
-        self.assertEqual(self.pdl.delay, 200.0e-12)
-        self.vpdl.vals['del'] = 100.0e-12
-        self.assertEqual(self.vpdl.vals['del'], 100.0e-12)
-        self.assertEqual(self.pdl.delay, 100.0e-12)
+    def test_set_delay(self):
+        for cache in (True, False):
+            self.pdl.driver_operation.cache = cache
+            self.pdl.mode = '625ps'
+            self.pdl.delay = 100.0e-12
+            self.assertEqual(self.vpdl.vals['del'], 100.0e-12)
+            self.assertEqual(self.pdl.delay, 100.0e-12)
+            self.pdl.delay = 200.0e-12
+            self.assertEqual(self.vpdl.vals['del'], 200.0e-12)
+            self.assertEqual(self.pdl.delay, 200.0e-12)
+            self.vpdl.vals['del'] = 100.0e-12
+            self.assertEqual(self.vpdl.vals['del'], 100.0e-12)
+            if cache:
+                self.assertEqual(self.pdl.delay, 200.0e-12)
+            else:
+                self.assertEqual(self.pdl.delay, 100.0e-12)
 
