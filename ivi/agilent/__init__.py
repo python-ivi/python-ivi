@@ -237,6 +237,12 @@ from .agilentE4435B import agilentE4435B
 from .agilentE4436B import agilentE4436B
 from .agilentE4437B import agilentE4437B
 
+# RF Sweep Generators
+from .agilent8340A import agilent8340A
+from .agilent8340B import agilent8340B
+from .agilent8341A import agilent8341A
+from .agilent8341B import agilent8341B
+
 # Tracking sources
 from .agilent85644A import agilent85644A
 from .agilent85645A import agilent85645A

@@ -45,6 +45,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 859xA/B series
     * Agilent 859xE/EM/C/L series
   * RF Signal Generators (rfsiggen):
+    * Agilent 8340/1 A/B
     * Agilent 8642 A/B
     * Agilent ESG E4400B series
   * Other
