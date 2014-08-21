@@ -647,14 +647,23 @@ class agilentBase8590(ivi.Driver, specan.Base,
         if not self._driver_operation_simulate:
             self._write("rb %e" % value)
         self._sweep_coupling_resolution_bandwidth = value
+        self._sweep_coupling_resolution_bandwidth_auto = False
         self._set_cache_valid()
+        self._set_cache_valid(True, 'sweep_coupling_resolution_bandwidth_auto')
     
     def _get_sweep_coupling_resolution_bandwidth_auto(self):
+        # TODO is it possible to read this?
         return self._sweep_coupling_resolution_bandwidth_auto
     
     def _set_sweep_coupling_resolution_bandwidth_auto(self, value):
         value = bool(value)
+        if not self._driver_operation_simulate:
+            if value:
+                self._write("rb auto")
+            else:
+                self._set_sweep_coupling_resolution_bandwidth(self._get_sweep_coupling_resolution_bandwidth())
         self._sweep_coupling_resolution_bandwidth_auto = value
+        self._set_cache_valid()
     
     def _get_acquisition_sweep_mode_continuous(self):
         return self._acquisition_sweep_mode_continuous
@@ -668,20 +677,29 @@ class agilentBase8590(ivi.Driver, specan.Base,
             self._sweep_coupling_sweep_time = float(self._ask("st?"))
             self._set_cache_valid()
         return self._sweep_coupling_sweep_time
-        self._set_cache_valid()
     
     def _set_sweep_coupling_sweep_time(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
             self._write("st %e" % value)
         self._sweep_coupling_sweep_time = value
+        self._sweep_coupling_sweep_time_auto = False
+        self._set_cache_valid()
+        self._set_cache_valid(True, 'sweep_coupling_sweep_time_auto')
     
     def _get_sweep_coupling_sweep_time_auto(self):
+        # TODO is it possible to read this?
         return self._sweep_coupling_sweep_time_auto
     
     def _set_sweep_coupling_sweep_time_auto(self, value):
         value = bool(value)
+        if not self._driver_operation_simulate:
+            if value:
+                self._write("st auto")
+            else:
+                self._set_sweep_coupling_sweep_time(self._get_sweep_coupling_sweep_time())
         self._sweep_coupling_sweep_time_auto = value
+        self._set_cache_valid()
     
     def _get_trace_type(self, index):
         index = ivi.get_index(self._trace_name, index)
@@ -710,15 +728,24 @@ class agilentBase8590(ivi.Driver, specan.Base,
         value = float(value)
         if not self._driver_operation_simulate:
             self._write("vb %e" % value)
-            self._set_cache_valid()
         self._sweep_coupling_video_bandwidth = value
+        self._sweep_coupling_video_bandwidth_auto = False
+        self._set_cache_valid()
+        self._set_cache_valid(True, 'sweep_coupling_video_bandwidth_auto')
     
     def _get_sweep_coupling_video_bandwidth_auto(self):
+        # TODO is it possible to read this?
         return self._sweep_coupling_video_bandwidth_auto
     
     def _set_sweep_coupling_video_bandwidth_auto(self, value):
         value = bool(value)
+        if not self._driver_operation_simulate:
+            if value:
+                self._write("vb auto")
+            else:
+                self._set_sweep_coupling_video_bandwidth(self._get_sweep_coupling_video_bandwidth())
         self._sweep_coupling_video_bandwidth_auto = value
+        self._set_cache_valid()
     
     def _acquisition_abort(self):
         pass
