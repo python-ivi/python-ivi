@@ -103,6 +103,13 @@ class agilentBase8590(ivi.Driver, specan.Base,
                         or an empty string to clear the advisory line.  
                         """))
 
+        self._add_property('frequency.center',
+                        self._get_frequency_center,
+                        self._set_frequency_center)
+        self._add_property('frequency.span',
+                        self._get_frequency_span,
+                        self._set_frequency_span)
+
         self._add_property('rf.level',
                         self._get_rf_level,
                         self._set_rf_level)
@@ -513,9 +520,11 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_start(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("fa %e" % value)
+            self._write("fa %f" % value)
         self._frequency_start = value
         self._set_cache_valid()
+        self._set_cache_valid(False, 'frequency_center')
+        self._set_cache_valid(False, 'frequency_span')
         self._set_cache_valid(False, 'sweep_coupling_resolution_bandwidth')
         self._set_cache_valid(False, 'sweep_coupling_sweep_time')
         self._set_cache_valid(False, 'sweep_coupling_video_bandwidth')
@@ -529,9 +538,47 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_stop(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("fb %e" % value)
+            self._write("fb %f" % value)
         self._frequency_stop = value
         self._set_cache_valid()
+        self._set_cache_valid(False, 'frequency_center')
+        self._set_cache_valid(False, 'frequency_span')
+        self._set_cache_valid(False, 'sweep_coupling_resolution_bandwidth')
+        self._set_cache_valid(False, 'sweep_coupling_sweep_time')
+        self._set_cache_valid(False, 'sweep_coupling_video_bandwidth')
+
+    def _get_frequency_center(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._frequency_center = float(self._ask("cf?"))
+            self._set_cache_valid()
+        return self._frequency_center
+
+    def _set_frequency_center(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("cf %f" % value)
+        self._frequency_center = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'frequency_start')
+        self._set_cache_valid(False, 'frequency_stop')
+        self._set_cache_valid(False, 'sweep_coupling_resolution_bandwidth')
+        self._set_cache_valid(False, 'sweep_coupling_sweep_time')
+        self._set_cache_valid(False, 'sweep_coupling_video_bandwidth')
+
+    def _get_frequency_span(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._frequency_span = float(self._ask("sp?"))
+            self._set_cache_valid()
+        return self._frequency_span
+
+    def _set_frequency_span(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("sp %f" % value)
+        self._frequency_span = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'frequency_start')
+        self._set_cache_valid(False, 'frequency_stop')
         self._set_cache_valid(False, 'sweep_coupling_resolution_bandwidth')
         self._set_cache_valid(False, 'sweep_coupling_sweep_time')
         self._set_cache_valid(False, 'sweep_coupling_video_bandwidth')
