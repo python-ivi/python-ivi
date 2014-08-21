@@ -213,7 +213,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     
     def _utility_reset(self):
         if not self._driver_operation_simulate:
-            self._write("*RST")
+            self._write("IP")
             self.driver_operation.invalidate_all_attributes()
     
     def _utility_reset_with_defaults(self):
