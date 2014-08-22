@@ -36,8 +36,8 @@ class testequityf4(ivi.IviContainer)::
 
         super(testequityf4, self).__init__(*args, **kwargs)
 
-        self._add_property('chambertemp', self._get_chambertemp, self_set_chambertemp)
-        self._add_property('chambertemp', self._get_chambertemp, self_set_chambertemp)
+        self._add_property('chamber_temperature', self._get_temperature)
+       
         self._temperature_decimal_config = 1
         self._humidity_decimal_config = 1
         self._part_temperature_decimal_config = 1 
@@ -110,5 +110,7 @@ class testequityf4(ivi.IviContainer)::
                 part_temperature=float(resp)
             return part_temperature
         return 0
+        
+
 
 
