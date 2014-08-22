@@ -365,7 +365,7 @@ class MultiPoint(dmm.MultiPoint):
 class SoftwareTrigger(dmm.SoftwareTrigger):
     "Extension IVI methods for DMMs that can initiate a measurement based on a software trigger signal"
     
-    def send_software_trigger(self):
+    def _send_software_trigger(self):
         if not self._driver_operation_simulate:
             self._write("*trg")
 
