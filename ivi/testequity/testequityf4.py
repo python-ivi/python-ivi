@@ -38,7 +38,9 @@ class testequityf4(ivi.IviContainer)::
 
         self._add_property('chambertemp', self._get_chambertemp, self_set_chambertemp)
         self._add_property('chambertemp', self._get_chambertemp, self_set_chambertemp)
-    
+        self._temperature_decimal_config = 1
+        self._humidity_decimal_config = 1
+        self._part_temperature_decimal_config = 1 
     
     
     def _get_temperature_decimal_config(self):
@@ -80,8 +82,33 @@ class testequityf4(ivi.IviContainer)::
     
     
     def _get_temperature():
-        return self._read_register(100)
+        if not self._driver_operation_simulate: 
+            resp=int(self._read_register(100))
+            if self._temperature_decimal_config==1:
+                temperature=float(resp)/10
+            else:
+                temperature=float(resp)
+            return temperature
+        return 0
+    
+    def _get_humidity():
+        if not self._driver_operation_simulate: 
+            resp=int(self._read_register(104))
+            if self._humidity_decimal_config==1:
+                humidity=float(resp)/10
+            else:
+                humidity=float(resp)
+            return humidity
+        return 0
         
-
+    def _get_part_temperature():
+        if not self._driver_operation_simulate: 
+            resp=int(self._read_register(108))
+            if self._part_temperature_decimal_config==1:
+                part_temperature=float(resp)/10
+            else:
+                part_temperature=float(resp)
+            return part_temperature
+        return 0
 
 
