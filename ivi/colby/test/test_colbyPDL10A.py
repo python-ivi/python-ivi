@@ -71,11 +71,11 @@ class VirtualPDL10A(object):
             cmd = cmd.strip('?')
 
             if t is int:
-                d = '{:d}'.format(self.vals[cmd]).encode()
+                d = '{0:d}'.format(self.vals[cmd]).encode()
                 self.tx_log.append(d)
                 self.read_buffer = io.BytesIO(d)
             elif t is float:
-                d = '{:+E}'.format(self.vals[cmd]).encode()
+                d = '{0:+E}'.format(self.vals[cmd]).encode()
                 self.tx_log.append(d)
                 self.read_buffer = io.BytesIO(d)
             elif t is str:
