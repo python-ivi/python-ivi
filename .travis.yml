@@ -7,4 +7,5 @@ python:
 install:
   - pip install numpy
   - python setup.py install
-
+script:
+  - py.test
