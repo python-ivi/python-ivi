@@ -3,7 +3,7 @@
 Python Interchangeable Virtual Instrument Library
 Driver for ICS Electronics Model 8099
 
-Copyright (c) 2012-2014 Python-IVI Development Team
+Copyright (c) 2014 Jeff Wurzbach
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,26 +30,26 @@ from .. import scpi
 
 Mode = set(['312.5ps', '625ps'])
 
-class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
+class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
                   scpi.common.SelfTest,
                   ivi.Driver):
-    "Colby Instruments PDL10A Programmable Delay Line driver"
+    "ICS Electronics 8099 Ethernet to Modbus Bridge"
 
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', 'PDL 10A')
 
-        super(colbyPDL10A, self).__init__(*args, **kwargs)
+        super(ics8099, self).__init__(*args, **kwargs)
 
-        self._identity_description = "Colby Instruments PDL10A Programmable Delay Line driver"
+        self._identity_description = "ICS Electronics 8099 Ethernet to Modbus Bridge driver"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
-        self._identity_instrument_manufacturer = "Colby Instruments"
+        self._identity_instrument_manufacturer = "ICS Electronics"
         self._identity_instrument_model = ""
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
-        self._identity_supported_instrument_models = ['PDL10A']
+        self._identity_supported_instrument_models = ['8099']
 
         self._delay = 0
         self._mode = ''
@@ -74,7 +74,7 @@ class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        super(colbyPDL10A, self)._initialize(resource, id_query, reset, **keywargs)
+        super(ics8099, self)._initialize(resource, id_query, reset, **keywargs)
 
         # interface clear
         if not self._driver_operation_simulate:
