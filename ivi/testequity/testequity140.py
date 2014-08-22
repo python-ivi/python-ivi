@@ -26,12 +26,10 @@ THE SOFTWARE.
 """
 
 from .. import ivi
-from .. import scpi
+
 from .. import ics
 
-class testequity140(scpi.common.IdnCommand, scpi.common.Reset,
-              scpi.common.SelfTest,  scpi.common.ErrorQuery,
-              ivi.Driver):
+class testequity140(ics.ics8099)::
     "TestEquity Model 140 Thermal Chamber via ICS Electronics 8099 Ethernet to Modbus Bridge"
 
     def __init__(self, *args, **kwargs):
@@ -59,46 +57,5 @@ class testequity140(scpi.common.IdnCommand, scpi.common.Reset,
                          "Write Modbus register")
 
         """
-    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
-        "Opens an I/O session to the instrument."
 
-        super(testequity140, self)._initialize(resource, id_query, reset, **keywargs)
-
-        # interface clear
-        if not self._driver_operation_simulate:
-            self._clear()
-
-        # check ID
-        if id_query and not self._driver_operation_simulate:
-            id = self.identity.instrument_model
-            id_check = self._instrument_id
-            id_short = id[:len(id_check)]
-            if id_short != id_check:
-                raise Exception("Instrument ID mismatch, expecting %s, got %s", id_check, id_short)
-
-        # reset
-        if reset:
-            self.utility_reset()
-
-
-    def _utility_disable(self):
-        pass
-
-    def _utility_lock_object(self):
-        pass
-
-    def _utility_unlock_object(self):
-        pass
-    
-    
-    def _read_register(self, register):
-        #read 16 bit registers
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            return int(self._ask("R? %d, %d" % (register, 1)).strip())
-        return 0
-
-    def _write_register(self, register, value):
-        #write 16 bit registers
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._write("W %d, %d" % (register, value))
 
