@@ -33,11 +33,11 @@ from .. import scpi
 class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
                   scpi.common.SelfTest,  scpi.common.ErrorQuery,
                   ivi.Driver):
-	"ICS Electronics 8099 Ethernet to Modbus Bridge"
-	
-	
-	
-	
+    "ICS Electronics 8099 Ethernet to Modbus Bridge"
+    
+    
+    
+    
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '8099')
         
@@ -53,13 +53,13 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['8099']
-		
+        
         self._delay = 0
         self._mode = ''
         
         self._add_method('read_register', self._read_register, "some-documentation")
 
-		
+        
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
@@ -94,16 +94,16 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
     def _utility_unlock_object(self):
         pass
 
-		
-	
-	
-	def _read_register(self, register, num_registers=1):
-		#read 16 bit registers
-		if not self._driver_operation_simulate and not self._get_cache_valid():
-			resp = int(self._ask("R? %d, %d" % (register, num_registers)).strip())
-			self._read_register = resp
-		return 0
-		
-	def _write_register(self, register, num_registers=1):
-		#write 16 bit registers
-		return 0
+        
+    
+    
+    def _read_register(self, register, num_registers=1):
+        #read 16 bit registers
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            resp = int(self._ask("R? %d, %d" % (register, num_registers)).strip())
+            self._read_register = resp
+        return 0
+        
+    def _write_register(self, register, num_registers=1):
+        #write 16 bit registers
+        return 0
