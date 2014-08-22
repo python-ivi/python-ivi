@@ -36,7 +36,7 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
     "ICS Electronics 8099 Ethernet to Modbus Bridge"
 
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', 'PDL 10A')
+        self.__dict__.setdefault('_instrument_id', '8099')
 
         super(ics8099, self).__init__(*args, **kwargs)
 
@@ -54,22 +54,7 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         self._delay = 0
         self._mode = ''
 
-        self._add_property('delay',
-                        self._get_delay,
-                        self._set_delay,
-                        None,
-                        ivi.Doc("""
-                        Specifies the delay of the delay line.  The units are seconds.  
-                        """))
-        self._add_property('mode',
-                        self._get_mode,
-                        self._set_mode,
-                        None,
-                        ivi.Doc("""
-                        Specifies the mode of the delay line.  If the segments are cascaded, then
-                        the mode should be set to '625ps'.  If the segments are not cascaded, then
-                        the mode should be set to '312.5ps'.  
-                        """))
+		
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
