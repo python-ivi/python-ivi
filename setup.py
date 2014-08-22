@@ -8,6 +8,18 @@ try:
 except:
     from distutils.core import setup
 
+from setuptools.command.test import test as TestCommand
+
+class PyTest(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+    def run_tests(self):
+        #import here, cause outside the eggs aren't loaded
+        import pytest
+        pytest.main(self.test_args)
+
 import os.path
 
 version_py = os.path.join(os.path.dirname(__file__), 'ivi', 'version.py')
@@ -50,6 +62,8 @@ electronic test equipment that is remotely controllable.''',
         'vxi11': ['python-vxi11'],
         'usbtmc': ['python-usbtmc'],
         'serial': ['pyserial']
-    }
+    },
+    tests_require = ['pytest'],
+    cmdclass = {'test': PyTest}
 )
 
