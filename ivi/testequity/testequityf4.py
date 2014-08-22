@@ -36,16 +36,33 @@ class testequityf4(ivi.IviContainer)::
 
         super(testequityf4, self).__init__(*args, **kwargs)
 
-       
+        self._add_property('chambertemp', self._get_chambertemp, self_set_chambertemp)
+        self._add_property('chambertemp', self._get_chambertemp, self_set_chambertemp)
+    
+    
+    
+     def _get_temperature_decimal_config(self):
+       if not self._driver_operation_simulate and not self._get_cache_valid():
+           self._temperature_decimal_config = self._read_register(606)
+           self._set_cache_valid()
+       return self._temperature_decimal_config
+    def _get_humidity_decimal_config(self):
+       if not self._driver_operation_simulate and not self._get_cache_valid():
+           self._humidity_decimal_config = self._read_register(616)
+           self._set_cache_valid()
+       return self._humidity_decimal_config
+    def _get_part_temperature_decimal_config(self):
+       if not self._driver_operation_simulate and not self._get_cache_valid():
+           self._part_temperature_decimal_config = self._read_register(626)
+           self._set_cache_valid()
+       return self._part_temperature_decimal_config       
+    
+    def _get_decimal_config(register):
+        return self._read_register(register)
+    
+    def _get_temperature():
+        return self._read_register(100)
         
-        """
-        self._add_method('read_register',
-                         self._read_register,
-                         "Read Modbus register")
-        self._add_method('write_register',
-                         self._write_register,
-                         "Write Modbus register")
 
-        """
 
 
