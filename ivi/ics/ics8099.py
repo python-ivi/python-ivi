@@ -28,21 +28,16 @@ THE SOFTWARE.
 from .. import ivi
 from .. import scpi
 
-#Mode = set(['312.5ps', '625ps'])
-
 class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
-                  scpi.common.SelfTest,  scpi.common.ErrorQuery,
-                  ivi.Driver):
+              scpi.common.SelfTest,  scpi.common.ErrorQuery,
+              ivi.Driver):
     "ICS Electronics 8099 Ethernet to Modbus Bridge"
-    
-    
-    
-    
+
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '8099')
-        
+
         super(ics8099, self).__init__(*args, **kwargs)
-        
+
         self._identity_description = "ICS Electronics 8099 Ethernet to Modbus Bridge driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -53,13 +48,13 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['8099']
-        
-        self._delay = 0
-        self._mode = ''
-        
-        self._add_method('read_register', self._read_register, "some-documentation")
-        self._add_method('write_register', self._write_register, "some-documentation")
-        
+
+        self._add_method('read_register',
+                         self._read_register,
+                         "Read Modbus register")
+        self._add_method('write_register',
+                         self._write_register,
+                         "Write Modbus register")
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
@@ -86,26 +81,21 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
     def _utility_disable(self):
         pass
 
-    
-
     def _utility_lock_object(self):
         pass
 
     def _utility_unlock_object(self):
         pass
-
-        
     
     
     def _read_register(self, register):
         #read 16 bit registers
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            resp = int(self._ask("R? %d, %d" % (register, 1)).strip())
-            return resp
+            return int(self._ask("R? %d, %d" % (register, 1)).strip())
         return 0
-        
+
     def _write_register(self, register, value):
         #write 16 bit registers
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._write("W %d, %d" % (register, value))
-        
+
