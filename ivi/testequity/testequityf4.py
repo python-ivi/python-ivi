@@ -34,18 +34,9 @@ class testequityf4(ivi.IviContainer)::
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
 
-        super(ics8099, self).__init__(*args, **kwargs)
+        super(testequityf4, self).__init__(*args, **kwargs)
 
-        self._identity_description = "Watlow F4 controller used in TestEquity Enviromental Chambers"
-        self._identity_identifier = ""
-        self._identity_revision = ""
-        self._identity_vendor = ""
-        self._identity_instrument_manufacturer = "TestEquity"
-        self._identity_instrument_model = "F4"
-        self._identity_instrument_firmware_revision = ""
-        self._identity_specification_major_version = 0
-        self._identity_specification_minor_version = 0
-        self._identity_supported_instrument_models = ['F4']
+       
         
         """
         self._add_method('read_register',
