@@ -101,7 +101,7 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         #read 16 bit registers
         if not self._driver_operation_simulate and not self._get_cache_valid():
             resp = int(self._ask("R? %d, %d" % (register, num_registers)).strip())
-            self._read_register = resp
+            return resp
         return 0
         
     def _write_register(self, register, num_registers=1):
