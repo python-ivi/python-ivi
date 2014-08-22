@@ -58,7 +58,7 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         self._mode = ''
         
         self._add_method('read_register', self._read_register, "some-documentation")
-
+        self._add_method('write_register', self._write_register, "some-documentation")
         
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
@@ -97,13 +97,15 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         
     
     
-    def _read_register(self, register, num_registers=1):
+    def _read_register(self, register):
         #read 16 bit registers
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            resp = int(self._ask("R? %d, %d" % (register, num_registers)).strip())
+            resp = int(self._ask("R? %d, %d" % (register, 1)).strip())
             return resp
         return 0
         
-    def _write_register(self, register, num_registers=1):
+    def _write_register(self, register, value):
         #write 16 bit registers
-        return 0
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._write("W %d, %d" % (register, value))
+        
