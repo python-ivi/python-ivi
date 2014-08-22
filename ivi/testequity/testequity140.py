@@ -29,27 +29,28 @@ from .. import ivi
 from .. import scpi
 from .. import ics
 
-class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
+class testequity140(scpi.common.IdnCommand, scpi.common.Reset,
               scpi.common.SelfTest,  scpi.common.ErrorQuery,
               ivi.Driver):
-    "ICS Electronics 8099 Ethernet to Modbus Bridge"
+    "TestEquity Model 140 Thermal Chamber via ICS Electronics 8099 Ethernet to Modbus Bridge"
 
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '8099')
 
         super(ics8099, self).__init__(*args, **kwargs)
 
-        self._identity_description = "ICS Electronics 8099 Ethernet to Modbus Bridge driver"
+        self._identity_description = "TestEquity Model 140 Thermal Chamber via ICS Electronics 8099 Ethernet to Modbus Bridge"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
-        self._identity_instrument_manufacturer = "ICS Electronics"
+        self._identity_instrument_manufacturer = "TestEquity"
         self._identity_instrument_model = ""
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
-        self._identity_supported_instrument_models = ['8099']
-
+        self._identity_supported_instrument_models = ['140']
+        
+        """
         self._add_method('read_register',
                          self._read_register,
                          "Read Modbus register")
@@ -57,10 +58,11 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
                          self._write_register,
                          "Write Modbus register")
 
+        """
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        super(ics8099, self)._initialize(resource, id_query, reset, **keywargs)
+        super(testequity140, self)._initialize(resource, id_query, reset, **keywargs)
 
         # interface clear
         if not self._driver_operation_simulate:
