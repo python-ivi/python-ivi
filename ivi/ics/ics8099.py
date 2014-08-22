@@ -28,18 +28,21 @@ THE SOFTWARE.
 from .. import ivi
 from .. import scpi
 
-Mode = set(['312.5ps', '625ps'])
+#Mode = set(['312.5ps', '625ps'])
 
 class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
                   scpi.common.SelfTest,  scpi.common.ErrorQuery,
                   ivi.Driver):
-    "ICS Electronics 8099 Ethernet to Modbus Bridge"
-
+	"ICS Electronics 8099 Ethernet to Modbus Bridge"
+	
+	
+	
+	
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '8099')
-
+        
         super(ics8099, self).__init__(*args, **kwargs)
-
+        
         self._identity_description = "ICS Electronics 8099 Ethernet to Modbus Bridge driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -50,9 +53,11 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['8099']
-
+		
         self._delay = 0
         self._mode = ''
+        
+        self._add_method('read_register', self._read_register, "some-documentation")
 
 		
 
@@ -90,34 +95,15 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         pass
 
 		
-	"""
-    def _get_delay(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            resp = self._ask("del?")
-            self._delay = float(resp)
-            self._set_cache_valid()
-        return self._delay
-
-    def _set_delay(self, value):
-        value = float(value)
-        if not self._driver_operation_simulate:
-            self._write("del %e" % (value))
-        self._delay = value
-        self._set_cache_valid()
-
-    def _get_mode(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            resp = self._ask("mode?")
-            self._mode = resp.strip('"')
-            self._set_cache_valid()
-        return self._mode
-
-    def _set_mode(self, value):
-        if value not in Mode:
-            raise ivi.ValueNotSupportedException()
-        if not self._driver_operation_simulate:
-            self._write("mode %s" % (value))
-        self._mode = value
-        self._set_cache_valid()
-        self._set_cache_valid(False, 'delay')
-	"""
+	
+	
+	def _read_register(self, register, num_registers=1):
+		#read 16 bit registers
+		if not self._driver_operation_simulate and not self._get_cache_valid():
+			resp = int(self._ask("R? %d, %d" % (register, num_registers)).strip())
+			self._read_register = resp
+		return 0
+		
+	def _write_register(self, register, num_registers=1):
+		#write 16 bit registers
+		return 0
