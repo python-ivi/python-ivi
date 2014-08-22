@@ -31,7 +31,7 @@ from .. import scpi
 Mode = set(['312.5ps', '625ps'])
 
 class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
-                  scpi.common.SelfTest,
+                  scpi.common.SelfTest,  scpi.common.ErrorQuery,
                   ivi.Driver):
     "ICS Electronics 8099 Ethernet to Modbus Bridge"
 
@@ -81,15 +81,7 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
     def _utility_disable(self):
         pass
 
-    def _utility_error_query(self):
-        error_code = 0
-        error_message = "No error"
-        if not self._driver_operation_simulate:
-            error_message = self._ask("err?").strip('"')
-            error_code = 1
-            if error_message == '0':
-                error_code = 0
-        return (error_code, error_message)
+    
 
     def _utility_lock_object(self):
         pass
@@ -97,6 +89,8 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
     def _utility_unlock_object(self):
         pass
 
+		
+	"""
     def _get_delay(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             resp = self._ask("del?")
@@ -126,4 +120,4 @@ class ics8099(scpi.common.IdnCommand, scpi.common.Reset,
         self._mode = value
         self._set_cache_valid()
         self._set_cache_valid(False, 'delay')
-
+	"""
