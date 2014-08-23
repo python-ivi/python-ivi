@@ -37,12 +37,16 @@ class testequityf4(ivi.IviContainer)::
         super(testequityf4, self).__init__(*args, **kwargs)
 
         self._add_property('chamber_temperature', self._get_temperature)
-       
-        self._temperature_decimal_config = 1
-        self._humidity_decimal_config = 1
-        self._part_temperature_decimal_config = 1 
+        self._add_property('chamber_temperature_setpoint', self._get_temperature)
+        
+        
+        self._temperature_decimal_config = 1 #default to 500 means 50.0degC
+        self._humidity_decimal_config = 1 #default to 500 means 50.0%RH
+        self._part_temperature_decimal_config = 1 #default to 500 means 50.0degC
+        self._temperature_unit = 1 #default to degC
     
     
+    #grab the decimal configrutions for the controller and chache them.  provide a method to change them if allowed (i.e. if someone changes the defualt config from TestEquity).
     def _get_temperature_decimal_config(self):
        if not self._driver_operation_simulate and not self._get_cache_valid():
            self._temperature_decimal_config = self._read_register(606)
@@ -79,8 +83,28 @@ class testequityf4(ivi.IviContainer)::
            self._write_register(626,value)
        self._part_temperature_decimal_config= value
     
+    #Provide ability to read and write the config on the UOM for temperature.  Cache results to make sure things work nicely
+     def _get_temperature_unit_config(self):
+       if not self._driver_operation_simulate and not self._get_cache_valid():
+           self._temperature_unit = self._read_register(901)
+           self._set_cache_valid()
+       return self._temperature_unit
+       
+     def _set_temperature_decimal_config(self, unit_of_measure="c"):
+        self.driver_operation.invalidate_all_attributes()
+        if unit_of_measure=="f":
+            value = 0
+            
+            else:
+                value = 1
+        value = int(value)
+        if not self._driver_operation_simulate:
+            self._write_register(901,value)
+        self._temperature_unit= value
     
     
+    
+    #_get_temperature(), _get_humidity(), and _get_part_temperature() are not cached so that the reads are accruate.    
     def _get_temperature():
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(100))
