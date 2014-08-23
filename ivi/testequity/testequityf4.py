@@ -37,8 +37,9 @@ class testequityf4(ivi.IviContainer)::
         super(testequityf4, self).__init__(*args, **kwargs)
 
         self._add_property('chamber_temperature', self._get_temperature)
-        self._add_property('chamber_temperature_setpoint', self._get_temperature)
-        
+        self._add_property('chamber_temperature_setpoint', self._get_temperature_setpoint, self._set_temperature_setpoint )
+        self._add_property('chamber_humidity', self._get_humidity)
+        self._add_property('chamber_humidity_setpoint', self._get_humidity_setpoint, self._set_humidity_setpoint)
         
         self._temperature_decimal_config = 1 #default to 500 means 50.0degC
         self._humidity_decimal_config = 1 #default to 500 means 50.0%RH
@@ -241,3 +242,42 @@ class testequityf4(ivi.IviContainer)::
          value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2060, value)
+            
+    def _get_temperature_setpoint():
+         resp=int(self._read_register(300))
+            if self._temperature_decimal_config==1:
+                temperature=float(resp)/10
+            else:
+                temperature=float(resp)
+            return temperature
+        return 0
+    def _get_humidity_setpoint():
+         resp=int(self._read_register(319))
+            if self._humidity_decimal_config==1:
+                humidity=float(resp)/10
+            else:
+                humidity=float(resp)
+            return humidity
+        return 0        
+
+        
+    def _set_temperature_setpoint(value):
+        if self._temperature_decimal_config==1:
+            temperature=int(float(value)*10)
+            else:
+                temperature=int(value)        
+          
+        if not self._driver_operation_simulate: 
+            self._write_register(300, temperature)
+
+            
+            
+            
+    def _set_humidity_setpoint(value):
+        if self._humidity_decimal_config==1:
+            humidity=int(float(value)*10)
+            else:
+                humidity=int(value)        
+          
+        if not self._driver_operation_simulate: 
+            self._write_register(319, humidity)
