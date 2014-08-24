@@ -35,7 +35,7 @@ class testequity140(ics.ics8099)::
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '8099')
 
-        super(ics8099, self).__init__(*args, **kwargs)
+        super(testequity140, self).__init__(*args, **kwargs)
 
         self._identity_description = "TestEquity Model 140 Thermal Chamber via ICS Electronics 8099 Ethernet to Modbus Bridge"
         self._identity_identifier = ""
