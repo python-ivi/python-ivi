@@ -212,7 +212,7 @@ class testequityf4(ivi.IviContainer):
     
     #set the event 3 register state
     def _set_event_three_state(state):
-            value=int(bool(state))
+        value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2020, value)
  
@@ -234,19 +234,19 @@ class testequityf4(ivi.IviContainer):
         
     #set the event 6 register state
     def _set_event_six_state(state):
-         value=int(bool(state))
+        value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2050, value)
 
     
     #set the event 7 register state
     def _set_event_six_state(state):
-         value=int(bool(state))
+        value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2060, value)
             
     def _get_temperature_setpoint():
-         resp=int(self._read_register(300))
+        resp=int(self._read_register(300))
             if self._temperature_decimal_config==1:
                 temperature=float(resp)/10
             else:
@@ -254,7 +254,7 @@ class testequityf4(ivi.IviContainer):
             return temperature
         return 0
     def _get_humidity_setpoint():
-         resp=int(self._read_register(319))
+        resp=int(self._read_register(319))
             if self._humidity_decimal_config==1:
                 humidity=float(resp)/10
             else:
