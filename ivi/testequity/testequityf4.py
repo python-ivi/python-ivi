@@ -98,8 +98,8 @@ class testequityf4(ivi.IviContainer):
         self.driver_operation.invalidate_all_attributes()
         if unit_of_measure=="f":
             value = 0
-            else:
-                value = 1
+        else:
+            value = 1
         value = int(value)
         if not self._driver_operation_simulate:
             self._write_register(901,value)
@@ -113,8 +113,8 @@ class testequityf4(ivi.IviContainer):
             resp=int(self._read_register(100))
             if self._temperature_decimal_config==1:
                 temperature=float(resp)/10
-                else:
-                    temperature=float(resp)
+            else:
+                temperature=float(resp)
             return temperature
         return 0
     
@@ -123,8 +123,8 @@ class testequityf4(ivi.IviContainer):
             resp=int(self._read_register(104))
             if self._humidity_decimal_config==1:
                 humidity=float(resp)/10
-                else:
-                    humidity=float(resp)
+            else:
+                humidity=float(resp)
             return humidity
         return 0
         
@@ -133,8 +133,8 @@ class testequityf4(ivi.IviContainer):
             resp=int(self._read_register(108))
             if self._part_temperature_decimal_config==1:
                 part_temperature=float(resp)/10
-                else:
-                    part_temperature=float(resp)
+            else:
+                part_temperature=float(resp)
             return part_temperature
         return 0
      
@@ -266,8 +266,8 @@ class testequityf4(ivi.IviContainer):
     def _set_temperature_setpoint(value):
         if self._temperature_decimal_config==1:
             temperature=int(float(value)*10)
-            else:
-                temperature=int(value)        
+        else:
+            temperature=int(value)        
           
         if not self._driver_operation_simulate: 
             self._write_register(300, temperature)
@@ -278,8 +278,8 @@ class testequityf4(ivi.IviContainer):
     def _set_humidity_setpoint(value):
         if self._humidity_decimal_config==1:
             humidity=int(float(value)*10)
-            else:
-                humidity=int(value)        
+        else:
+            humidity=int(value)        
           
         if not self._driver_operation_simulate: 
             self._write_register(319, humidity)
