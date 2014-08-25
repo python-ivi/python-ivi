@@ -247,20 +247,22 @@ class testequityf4(ivi.IviContainer):
             
     def _get_temperature_setpoint(self):
         resp=int(self._read_register(300))
+        #print(resp)
+        #print(self._temperature_decimal_config)
         if self._temperature_decimal_config==1:
             temperature=float(resp)/10
         else:
             temperature=float(resp)
-            return temperature
-        return 0
+        return temperature
+        
     def _get_humidity_setpoint(self):
         resp=int(self._read_register(319))
         if self._humidity_decimal_config==1:
             humidity=float(resp)/10
         else:
             humidity=float(resp)
-            return humidity
-        return 0        
+        return humidity
+                
 
         
     def _set_temperature_setpoint(self, value):

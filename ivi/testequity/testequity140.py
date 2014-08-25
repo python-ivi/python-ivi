@@ -42,7 +42,7 @@ class testequity140(testequityf4, ics.ics8099):
         self._identity_description = "TestEquity Model 140 Thermal Chamber"
         self._identity_identifier = ""
         self._identity_revision = ""
-        self._identity_vendor = ""
+        self._identity_vendor = "TestEquity"
         self._identity_instrument_manufacturer = "TestEquity"
         self._identity_instrument_model = "140"
         self._identity_instrument_firmware_revision = ""
