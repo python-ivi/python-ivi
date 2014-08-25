@@ -24,7 +24,8 @@ THE SOFTWARE.
 
 """
 
-# Ethernet to Modbus bridge
+# Enviromental Chambers
+from .testequityf4 import testequityf4
 from .testequity140 import testequity140
 
 
