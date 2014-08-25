@@ -31,7 +31,7 @@ from .testequityf4 import *
 
 
 
-class testequity140(testequityf4, ics.ics8099)::
+class testequity140(testequityf4, ics.ics8099):
     "TestEquity Model 140 Thermal Chamber"
 
     def __init__(self, *args, **kwargs):
