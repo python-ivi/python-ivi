@@ -26,23 +26,25 @@ THE SOFTWARE.
 """
 
 from .. import ivi
-
 from .. import ics
+from .testequityf4 import *
 
-class testequity140(ics.ics8099)::
-    "TestEquity Model 140 Thermal Chamber via ICS Electronics 8099 Ethernet to Modbus Bridge"
+
+
+class testequity140(testequityf4, ics.ics8099)::
+    "TestEquity Model 140 Thermal Chamber"
 
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', '8099')
+        #self.__dict__.setdefault('_instrument_id', '8099')
 
         super(testequity140, self).__init__(*args, **kwargs)
 
-        self._identity_description = "TestEquity Model 140 Thermal Chamber via ICS Electronics 8099 Ethernet to Modbus Bridge"
+        self._identity_description = "TestEquity Model 140 Thermal Chamber"
         self._identity_identifier = ""
         self._identity_revision = ""
         self._identity_vendor = ""
         self._identity_instrument_manufacturer = "TestEquity"
-        self._identity_instrument_model = ""
+        self._identity_instrument_model = "140"
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 0
         self._identity_specification_minor_version = 0

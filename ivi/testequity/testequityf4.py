@@ -40,7 +40,10 @@ class testequityf4(ivi.IviContainer)::
         self._add_property('chamber_temperature_setpoint', self._get_temperature_setpoint, self._set_temperature_setpoint )
         self._add_property('chamber_humidity', self._get_humidity)
         self._add_property('chamber_humidity_setpoint', self._get_humidity_setpoint, self._set_humidity_setpoint)
-        
+        self._add_property('temperature_decimal_config', self._get_temperature_decimal_config)
+        self._add_property('humidity_decimal_config', self._get_humidity_decimal_config)
+        self._add_property('part_temperature_decimal_config', self._get_part_temperature_decimal_config)
+        self._add_property('temperature_unit', self._get_temperature_unit_config)
         self._temperature_decimal_config = 1 #default to 500 means 50.0degC
         self._humidity_decimal_config = 1 #default to 500 means 50.0%RH
         self._part_temperature_decimal_config = 1 #default to 500 means 50.0degC
