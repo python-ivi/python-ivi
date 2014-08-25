@@ -108,7 +108,7 @@ class testequityf4(ivi.IviContainer):
     
     
     #_get_temperature(), _get_humidity(), and _get_part_temperature() are not cached so that the reads are accruate.    
-    def _get_temperature():
+    def _get_temperature(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(100))
             if self._temperature_decimal_config==1:
@@ -118,7 +118,7 @@ class testequityf4(ivi.IviContainer):
             return temperature
         return 0
     
-    def _get_humidity():
+    def _get_humidity(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(104))
             if self._humidity_decimal_config==1:
@@ -128,7 +128,7 @@ class testequityf4(ivi.IviContainer):
             return humidity
         return 0
         
-    def _get_part_temperature():
+    def _get_part_temperature(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(108))
             if self._part_temperature_decimal_config==1:
@@ -139,42 +139,42 @@ class testequityf4(ivi.IviContainer):
         return 0
      
     #get the compressor state
-    def _get_compressor_state():
+    def _get_compressor_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2070))
             return resp
         return 0
     
     #get the event 1 register state
-    def _get_event_one_state():
+    def _get_event_one_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2000))
             return resp
         return 0        
    
    #get the event 2 register state
-    def _get_event_two_state():
+    def _get_event_two_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2010))
             return resp
         return 0
     
     #get the event 3 register state
-    def _get_event_three_state():
+    def _get_event_three_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2020))
             return resp
         return 0  
         
     #get the event 4 register state
-    def _get_event_four_state():
+    def _get_event_four_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2030))
             return resp
         return 0 
 
     #get the event 5 register state
-    def _get_event_five_state():
+    def _get_event_five_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2040))
             return resp
@@ -182,21 +182,21 @@ class testequityf4(ivi.IviContainer):
 
         
     #get the event 6 register state
-    def _get_event_six_state():
+    def _get_event_six_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2050))
             return resp
         return 0 
     
     #get the event 7 register state
-    def _get_event_seven_state():
+    def _get_event_seven_state(self):
         if not self._driver_operation_simulate: 
             resp=int(self._read_register(2060))
             return resp
         return 0
         
     #set the event 1 register state
-    def _set_event_one_state(state):
+    def _set_event_one_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2000, value)
@@ -204,28 +204,28 @@ class testequityf4(ivi.IviContainer):
                 
    
    #set the event 2 register state
-    def _set_event_two_state(state):
+    def _set_event_two_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2010, value)
            
     
     #set the event 3 register state
-    def _set_event_three_state(state):
+    def _set_event_three_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2020, value)
  
         
     #set the event 4 register state
-    def _set_event_four_state(state):
+    def _set_event_four_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2030, value)
 
 
     #set the event 5 register state
-    def _set_event_five_state(state):
+    def _set_event_five_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2040, value)
@@ -233,19 +233,19 @@ class testequityf4(ivi.IviContainer):
 
         
     #set the event 6 register state
-    def _set_event_six_state(state):
+    def _set_event_six_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2050, value)
 
     
     #set the event 7 register state
-    def _set_event_six_state(state):
+    def _set_event_six_state(self, state):
         value=int(bool(state))
         if not self._driver_operation_simulate: 
             self._write_register(2060, value)
             
-    def _get_temperature_setpoint():
+    def _get_temperature_setpoint(self):
         resp=int(self._read_register(300))
         if self._temperature_decimal_config==1:
             temperature=float(resp)/10
@@ -253,7 +253,7 @@ class testequityf4(ivi.IviContainer):
             temperature=float(resp)
             return temperature
         return 0
-    def _get_humidity_setpoint():
+    def _get_humidity_setpoint(self):
         resp=int(self._read_register(319))
         if self._humidity_decimal_config==1:
             humidity=float(resp)/10
@@ -263,7 +263,7 @@ class testequityf4(ivi.IviContainer):
         return 0        
 
         
-    def _set_temperature_setpoint(value):
+    def _set_temperature_setpoint(self, value):
         if self._temperature_decimal_config==1:
             temperature=int(float(value)*10)
         else:
@@ -275,7 +275,7 @@ class testequityf4(ivi.IviContainer):
             
             
             
-    def _set_humidity_setpoint(value):
+    def _set_humidity_setpoint(self, value):
         if self._humidity_decimal_config==1:
             humidity=int(float(value)*10)
         else:
