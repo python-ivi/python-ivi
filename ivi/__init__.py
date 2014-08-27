@@ -30,14 +30,30 @@ __all__ = [
         # Base IVI class
         "ivi",
         # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "swtch", "pwrmeter", "specan",
-        "rfsiggen", "counter",
+        "scope",
+        "dmm",
+        "fgen",
+        "dcpwr",
+        "swtch",
+        "pwrmeter",
+        "specan",
+        "rfsiggen",
+        "counter",
         # Extra IVI base classes
         "extra",
         # Generic IVI drivers
         "scpi",
         # IVI drivers
-        "agilent", "dicon", "chroma", "colby", "ics", "jdsu", "lecroy", "rigol", "tektronix", "testequity"]
+        "agilent",
+        "dicon",
+        "chroma",
+        "colby",
+        "ics",
+        "jdsu",
+        "lecroy",
+        "rigol",
+        "tektronix",
+        "testequity"]
 
 from .ivi import *
 from . import *
