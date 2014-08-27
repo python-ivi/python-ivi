@@ -2,9 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2014 Alex Forencich
-
-Modified by Jeff Wurzbach 2014
+Copyright (c) 2012 Alex Forencich
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,19 +24,14 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope", "dmm", "fgen", "dcpwr", "swtch", "pwrmeter", "specan",
-        "rfsiggen", "counter",
-        # Extra IVI base classes
-        "extra",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent", "dicon", "chroma", "colby", "ics", "jdsu", "lecroy", "rigol", "tektronix", "testequity"]
-
-from .ivi import *
-from . import *
-
+# Oscilloscopes
+# WaveRunner Xi-A / MXi-A Oscilloscopes
+from .lecroyWR204MXIA import lecroyWR204MXIA
+from .lecroyWR204XIA import lecroyWR204XIA
+from .lecroyWR104MXIA import lecroyWR104MXIA
+from .lecroyWR104XIA import lecroyWR104XIA
+from .lecroyWR64MXIA import lecroyWR64MXIA
+from .lecroyWR64XIA import lecroyWR64XIA
+from .lecroyWR62XIA import lecroyWR62XIA
+from .lecroyWR44MXIA import lecroyWR44MXIA
+from .lecroyWR44XIA import lecroyWR44XIA
