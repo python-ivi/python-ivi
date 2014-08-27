@@ -37,7 +37,7 @@ __all__ = [
         # Generic IVI drivers
         "scpi",
         # IVI drivers
-        "agilent", "dicon", "chroma", "colby", "ics", "jdsu", "rigol", "tektronix"]
+        "agilent", "dicon", "chroma", "colby", "ics", "jdsu", "lecroy", "rigol", "tektronix"]
 
 from .ivi import *
 from . import *

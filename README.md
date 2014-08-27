@@ -23,6 +23,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent InfiniiVision 6000A series
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
+    * LeCroy WaveRunner Xi-A series
   * Digital Multimeters (dmm):
     * Agilent 34401A
     * Agilent 34410A
