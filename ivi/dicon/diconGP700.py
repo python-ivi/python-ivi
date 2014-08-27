@@ -24,10 +24,14 @@ THE SOFTWARE.
 
 """
 
-from .. import ivi
 import time
 
-class diconGP700(ivi.Driver):
+from .. import ivi
+from .. import scpi
+
+class diconGP700(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
+                 scpi.common.SelfTest, scpi.common.Memory,
+                 ivi.Driver):
     "DiCon Fiberoptics GP700 Programmable Fiberoptic Instrument"
     
     def __init__(self, *args, **kwargs):
@@ -46,7 +50,10 @@ class diconGP700(ivi.Driver):
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['GP700']
         
-        self._memory_size = 9
+        self._self_test_delay = 5
+
+        self._memory_size = 8
+        self._memory_offset = 1
         
         self._config = ""
         
@@ -207,50 +214,8 @@ class diconGP700(ivi.Driver):
         if not self._initialized_from_constructor:
             self._init_channels()
     
-    def _load_id_string(self):
-        if self._driver_operation_simulate:
-            self._identity_instrument_manufacturer = "Not available while simulating"
-            self._identity_instrument_model = "Not available while simulating"
-            self._identity_instrument_firmware_revision = "Not available while simulating"
-        else:
-            lst = self._ask("*IDN?").split(",")
-            self._identity_instrument_manufacturer = lst[0].strip()
-            self._identity_instrument_model = lst[1].strip()
-            self._identity_instrument_firmware_revision = lst[3].strip()
-            self._set_cache_valid(True, 'identity_instrument_manufacturer')
-            self._set_cache_valid(True, 'identity_instrument_model')
-            self._set_cache_valid(True, 'identity_instrument_firmware_revision')
-    
-    def _get_identity_instrument_manufacturer(self):
-        if self._get_cache_valid():
-            return self._identity_instrument_manufacturer
-        self._load_id_string()
-        return self._identity_instrument_manufacturer
-    
-    def _get_identity_instrument_model(self):
-        if self._get_cache_valid():
-            return self._identity_instrument_model
-        self._load_id_string()
-        return self._identity_instrument_model
-    
-    def _get_identity_instrument_firmware_revision(self):
-        if self._get_cache_valid():
-            return self._identity_instrument_firmware_revision
-        self._load_id_string()
-        return self._identity_instrument_firmware_revision
-    
     def _utility_disable(self):
         pass
-    
-    def _utility_error_query(self):
-        error_code = 0
-        error_message = "No error"
-        if not self._driver_operation_simulate:
-            error_message = self._ask("err?").strip('"')
-            error_code = 1
-            if error_message == '0':
-                error_code = 0
-        return (error_code, error_message)
     
     def _utility_lock_object(self):
         pass
@@ -261,18 +226,6 @@ class diconGP700(ivi.Driver):
             time.sleep(0.1)
             self._clear()
             self.driver_operation.invalidate_all_attributes()
-    
-    def _utility_reset_with_defaults(self):
-        self._utility_reset()
-    
-    def _utility_self_test(self):
-        code = 0
-        message = "Self test passed"
-        if not self._driver_operation_simulate:
-            code = int(self._ask("*TST?"))
-            if code != 0:
-                message = "Self test failed"
-        return (code, message)
     
     def _utility_unlock_object(self):
         pass
@@ -554,19 +507,5 @@ class diconGP700(ivi.Driver):
     def _get_switch_name(self, index):
         index = ivi.get_index(self._switch_name, index)
         return self._switch_name[index]
-    
-    def _memory_save(self, index):
-        index = int(index)
-        if index < 1 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*sav %d" % index)
-    
-    def _memory_recall(self, index):
-        index = int(index)
-        if index < 1 or index > self._memory_size:
-            raise OutOfRangeException()
-        if not self._driver_operation_simulate:
-            self._write("*rcl %d" % index)
     
     
