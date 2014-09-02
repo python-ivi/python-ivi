@@ -43,7 +43,7 @@ DetectorTypeMapping = {'maximum_peak' : 'pos',
                        'minimum_peak' : 'neg',
                        'sample' : 'smp'}
 #TraceType = set(['clear_write', 'maximum_hold', 'minimum_hold', 'video_average', 'view', 'store'])
-#VerticalScale = set(['linear', 'logarithmic'])
+VerticalScale = set(['linear', 'logarithmic'])
 #AcquisitionStatus = set(['complete', 'in_progress', 'unknown'])
 ALCSourceMapping = {'internal': 'int',
                     'external': 'ext'}
@@ -729,11 +729,22 @@ class agilentBase8590(ivi.Driver, specan.Base,
         self._trace_type[index] = value
     
     def _get_acquisition_vertical_scale(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_vertical_scale = 'logarithmic' if (self._ask("lg?") != '0') else 'linear'
+            self._set_cache_valid()
         return self._acquisition_vertical_scale
-    
+
     def _set_acquisition_vertical_scale(self, value):
-        value = float(value)
+        if value not in VerticalScale:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            if value == 'logarithmic':
+                self._write('lg')
+            elif value == 'linear':
+                self._write('ln')
         self._acquisition_vertical_scale = value
+        self._set_cache_valid()
+        self._set_cache_valid(False, 'level_reference')
     
     def _get_sweep_coupling_video_bandwidth(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
