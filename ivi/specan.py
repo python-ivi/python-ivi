@@ -524,7 +524,8 @@ class Base(ivi.IviContainer):
         return self._acquisition_vertical_scale
     
     def _set_acquisition_vertical_scale(self, value):
-        value = float(value)
+        if value not in VerticalScale:
+            raise ivi.ValueNotSupportedException()
         self._acquisition_vertical_scale = value
     
     def _get_sweep_coupling_video_bandwidth(self):
