@@ -58,6 +58,8 @@ class agilentBase8590(ivi.Driver, specan.Base,
         
         super(agilentBase8590, self).__init__(*args, **kwargs)
         
+        self._trace_count = 3
+
         self._memory_size = 9
         
         self._input_impedance = 50
@@ -242,6 +244,21 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _utility_unlock_object(self):
         pass
 
+
+
+    def _init_traces(self):
+        try:
+            super(agilentBase8590, self)._init_traces()
+        except AttributeError:
+            pass
+
+        self._trace_name = list()
+        self._trace_type = list()
+        for i in range(self._trace_count):
+            self._trace_name.append("trace%d" % (i+1))
+            self._trace_type.append('')
+
+        self.traces._set_list(self._trace_name)
 
     def _system_fetch_setup(self):
         if self._driver_operation_simulate:
