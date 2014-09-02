@@ -807,7 +807,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
         if buf[0:2] != b'#A':
             return list()
 
-        cnt = buf[2] * 256 + buf[3]
+        cnt = struct.unpack(">H", buf[2:4])[0]
         buf = self._read_raw(cnt)
 
         data = list()
@@ -820,7 +820,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
             scale = self._get_level_reference()
 
         for i in range(int(cnt/2)):
-                p = buf[i*2] * 256 + buf[i*2+1]
+                p = struct.unpack(">h", buf[i*2:i*2+2])[0]
                 data.append((p*scale)/8000+offset)
 
         return data
