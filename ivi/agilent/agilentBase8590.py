@@ -783,12 +783,12 @@ class agilentBase8590(ivi.Driver, specan.Base,
     
     def _trace_fetch_y(self, index):
         index = ivi.get_index(self._trace_name, index)
-        
+
         if self._driver_operation_simulate:
             return list()
-        
+
         cmd = ''
-        
+
         if index == 0:
             cmd = 'tra?'
         elif index == 1:
@@ -797,17 +797,34 @@ class agilentBase8590(ivi.Driver, specan.Base,
             cmd = 'trc?'
         else:
             return list()
-        
-        self._write('tdf p')
-        l = self._ask(cmd)
-        
+
+        self._write('tdf a')
+        self._write('mds w')
+        self._write(cmd)
+
+
+        buf = self._read_raw(4)
+        if buf[0:2] != b'#A':
+            return list()
+
+        cnt = buf[2] * 256 + buf[3]
+        buf = self._read_raw(cnt)
+
         data = list()
-        
-        for p in l.split(','):
-            data.append(float(p))
-        
+
+        if self._get_acquisition_vertical_scale() == 'logarithmic':
+            offset = self._get_level_reference()-80
+            scale = 80
+        else:
+            offset = 0
+            scale = self._get_level_reference()
+
+        for i in range(int(cnt/2)):
+                p = buf[i*2] * 256 + buf[i*2+1]
+                data.append((p*scale)/8000+offset)
+
         return data
-    
+
     def _acquisition_initiate(self):
         pass
     
