@@ -39,30 +39,30 @@ class rigolDP832(rigolDP800):
         self._output_spec = [
             {
                 'range': {
-                    'P30V': (30.0, 3.0)
+                    'P30V': (32.0, 3.2)
                 },
                 'ovp_max': 33.0,
                 'ocp_max': 3.3,
-                'voltage_max': 30.0,
-                'current_max': 3.0
+                'voltage_max': 32.0,
+                'current_max': 3.2
             },
             {
                 'range': {
-                    'P30V': (30.0, 3.0)
+                    'P30V': (32.0, 3.2)
                 },
                 'ovp_max': 33.0,
                 'ocp_max': 3.3,
-                'voltage_max': 30.0,
-                'current_max': 3.0
+                'voltage_max': 32.0,
+                'current_max': 3.2
             },
             {
                 'range': {
-                    'P5V': (5.0, 3.0)
+                    'P5V': (5.3, 3.2)
                 },
                 'ovp_max': 5.5,
                 'ocp_max': 3.3,
-                'voltage_max': 5.0,
-                'current_max': 3.0
+                'voltage_max': 5.3,
+                'current_max': 3.2
             }
         ]
         
