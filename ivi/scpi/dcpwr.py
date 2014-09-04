@@ -100,6 +100,14 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if reset:
             self.utility_reset()
 
+    def _get_bool_str(self, value):
+        """
+        Provides string to use in reading and writing boolean values.
+        """
+        # TODO - Move to location where it isn't defined in multiple places.
+        if bool(value):
+            return '1'
+        return '0'
 
     def _utility_disable(self):
         pass
@@ -160,7 +168,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            value = bool(int(self._ask("source:current:protection:state?")))
+            value = self._ask("source:current:protection:state?") == self._get_bool_str(True)
             if value:
                 self._output_current_limit_behavior[index] = 'trip'
             else:
@@ -175,7 +183,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:current:protection:state %d" % int(value == 'trip'))
+            self._write("source:current:protection:state %s" % self._get_bool_str(value == 'trip'))
         self._output_current_limit_behavior[index] = value
         for k in range(self._output_count):
             self._set_cache_valid(valid=False,index=k)
@@ -186,7 +194,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._output_enabled[index] = bool(int(self._ask("output?")))
+            self._output_enabled[index] = self._ask("output?") == self._get_bool_str(True)
             self._set_cache_valid(index=index)
         return self._output_enabled[index]
     
@@ -196,7 +204,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("output %d" % int(value))
+            self._write("output %s" % self._get_bool_str(value))
         self._output_enabled[index] = value
         for k in range(self._output_count):
             self._set_cache_valid(valid=False,index=k)
@@ -207,7 +215,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._output_ovp_enabled[index] = bool(int(self._ask("source:voltage:protection:state?")))
+            self._output_ovp_enabled[index] = self._ask("source:voltage:protection:state?") == self._get_bool_str(True)
             self._set_cache_valid(index=index)
         return self._output_ovp_enabled[index]
     
@@ -217,7 +225,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:voltage:protection:state %d" % int(value))
+            self._write("source:voltage:protection:state %s" % self._get_bool_str(value))
         self._output_ovp_enabled[index] = value
         self._set_cache_valid(index=index)
     
@@ -322,12 +330,22 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
             self._write("source:voltage:protection:clear")
 
 class OCP(extra.dcpwr.OCP):
+
+    def _get_bool_str(self, value):
+        """
+        return string based bool for write and read operations
+        """
+        # TODO - Move to location where it isn't defined in multiple places.
+        if bool(value):
+            return '1'
+        return '0'
+
     def _get_output_ocp_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._output_ocp_enabled[index] = bool(int(self._ask("source:current:protection:state?")))
+            self._output_ocp_enabled[index] = self._ask("source:current:protection:state?") == self._get_bool_str(True)
             self._set_cache_valid(index=index)
         return self._output_ocp_enabled[index]
     
@@ -337,7 +355,7 @@ class OCP(extra.dcpwr.OCP):
         if not self._driver_operation_simulate:
             if self._output_count > 1:
                 self._write("instrument:nselect %d" % (index+1))
-            self._write("source:current:protection:state %d" % int(value))
+            self._write("source:current:protection:state %s" % self._get_bool_str(value))
         self._output_ocp_enabled[index] = value
         self._set_cache_valid(index=index)
     

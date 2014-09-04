@@ -93,7 +93,14 @@ class rigolBaseDCPwr(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTri
                         self._memory_recall)
         
         self._init_outputs()
-        
+
+    def _get_bool_str(self, value):
+        """
+        redefining to change behavior from '0'/'1' to 'off'/'on'
+        """
+        if bool(value):
+            return 'on'
+        return 'off'
     
     def _memory_save(self, index):
         index = int(index)
@@ -108,27 +115,14 @@ class rigolBaseDCPwr(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTri
             raise OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("*rcl %d" % index)
-    
-    def _get_output_enabled(self, index):
-        index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            if self._output_count > 1:
-                self._write("instrument:nselect %d" % (index+1))
-            self._output_enabled[index] = self._ask("output?").lower() == 'on'
-            self._set_cache_valid(index=index)
-        return self._output_enabled[index]
-    
-    def _set_output_enabled(self, index, value):
-        index = ivi.get_index(self._output_name, index)
-        value = bool(value)
-        if not self._driver_operation_simulate:
-            if self._output_count > 1:
-                self._write("instrument:nselect %d" % (index+1))
-            self._write("output %s" % ('on' if value else 'off'))
-        self._output_enabled[index] = value
-        for k in range(self._output_count):
-            self._set_cache_valid(valid=False,index=k)
-        self._set_cache_valid(index=index)
-    
-    
 
+    def _utility_self_test(self):
+        code = 0
+        message = "No Response"
+        if not self._driver_operation_simulate:
+            self._write("*TST?")
+            # wait for test to complete
+            message = self._read()
+            if 'FAIL' in message:
+                code = -1
+        return (code, message)
