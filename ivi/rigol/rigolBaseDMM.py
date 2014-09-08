@@ -38,7 +38,6 @@ class rigolBaseDMM(scpi.dmm.Base):
 
         self._memory_size = 5  #?
 
-        self._identity_supported_instrument_models = ['34410A', '34411A']
         self._identity_description = "Rigol generic IVI DMM driver"
         self._identity_identifier = ""
         self._identity_revision = ""
