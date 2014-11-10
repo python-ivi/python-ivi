@@ -26,6 +26,12 @@ THE SOFTWARE.
 
 from .agilent2000A import *
 
+import numpy as np
+import struct
+
+from .. import ivi
+from .. import fgen
+
 OutputMode = set(['function', 'arbitrary'])
 StandardWaveformMapping = {
         'sine': 'sin',
@@ -44,7 +50,8 @@ StandardWaveformMapping = {
         'gaussian': 'gaus'
         }
 
-class agilent3000A(agilent2000A):
+class agilent3000A(agilent2000A, fgen.ArbWfm, fgen.ArbFrequency,
+                fgen.ArbChannelWfm):
     "Agilent InfiniiVision 3000A series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
@@ -65,6 +72,12 @@ class agilent3000A(agilent2000A):
         # wavegen option
         self._output_count = 1
         self._output_standard_waveform_mapping = StandardWaveformMapping
+        self._output_mode_list = OutputMode
+        self._arbitrary_sample_rate = 0
+        self._arbitrary_waveform_number_waveforms_max = 0
+        self._arbitrary_waveform_size_max = 8192
+        self._arbitrary_waveform_size_min = 2
+        self._arbitrary_waveform_quantum = 1
         
         self._identity_description = "Agilent InfiniiVision 3000A X-series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DSOX3012A','DSOX3014A','DSOX3024A',
@@ -74,4 +87,105 @@ class agilent3000A(agilent2000A):
         self._init_outputs()
         
     
+    def _get_output_arbitrary_gain(self, index):
+        index = ivi.get_index(self._output_name, index)
+        return self._output_arbitrary_gain[index]
+
+    def _set_output_arbitrary_gain(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        self._output_arbitrary_gain[index] = value
+
+    def _get_output_arbitrary_offset(self, index):
+        index = ivi.get_index(self._output_name, index)
+        return self._output_arbitrary_offset[index]
+
+    def _set_output_arbitrary_offset(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        self._output_arbitrary_offset[index] = value
+
+    def _get_output_arbitrary_waveform(self, index):
+        index = ivi.get_index(self._output_name, index)
+        return self._output_arbitrary_waveform[index]
+
+    def _set_output_arbitrary_waveform(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = str(value)
+        self._output_arbitrary_waveform[index] = value
+
+    def _get_arbitrary_sample_rate(self):
+        return self._arbitrary_sample_rate
+
+    def _set_arbitrary_sample_rate(self, value):
+        value = float(value)
+        self._arbitrary_sample_rate = value
+
+    def _get_arbitrary_waveform_number_waveforms_max(self):
+        return self._arbitrary_waveform_number_waveforms_max
+
+    def _get_arbitrary_waveform_size_max(self):
+        return self._arbitrary_waveform_size_max
+
+    def _get_arbitrary_waveform_size_min(self):
+        return self._arbitrary_waveform_size_min
+
+    def _get_arbitrary_waveform_quantum(self):
+        return self._arbitrary_waveform_quantum
+
+    def _arbitrary_waveform_clear(self, handle):
+        pass
+
+    def _arbitrary_waveform_configure(self, index, handle, gain, offset):
+        self._set_output_arbitrary_waveform(index, handle)
+        self._set_output_arbitrary_gain(index, gain)
+        self._set_output_arbitrary_offset(index, offset)
+
+    def _arbitrary_waveform_create(self, data):
+        return "handle"
+
+    def _get_output_arbitrary_frequency(self, index):
+        index = ivi.get_index(self._output_name, index)
+        return self._output_arbitrary_frequency[index]
+
+    def _set_output_arbitrary_frequency(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        self._output_arbitrary_frequency[index] = value
+
+    def _arbitrary_waveform_create_channel_waveform(self, index, data):
+        y = None
+        x = None
+        if type(data) == list and type(data[0]) == float:
+            # list
+            y = array(data)
+        elif type(data) == np.ndarray and len(data.shape) == 1:
+            # 1D array
+            y = data
+        elif type(data) == np.ndarray and len(data.shape) == 2 and data.shape[0] == 1:
+            # 2D array, hieght 1
+            y = data[0]
+        elif type(data) == np.ndarray and len(data.shape) == 2 and data.shape[1] == 1:
+            # 2D array, width 1
+            y = data[:,0]
+        else:
+            x, y = ivi.get_sig(data)
+
+        if len(y) % self._arbitrary_waveform_quantum != 0:
+            raise ivi.ValueNotSupportedException()
+
+        raw_data = b''
+
+        for f in y:
+            # clip at -1 and 1
+            if f > 1.0: f = 1.0
+            if f < -1.0: f = -1.0
+
+            raw_data = raw_data + struct.pack('<f', f)
+
+        self._write_ieee_block(raw_data, ':%s:arbitrary:data ' % self._output_name[index])
+
+        return self._output_name[index]
+
+
     
