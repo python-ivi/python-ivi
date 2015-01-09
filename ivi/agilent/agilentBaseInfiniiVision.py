@@ -50,6 +50,7 @@ class agilentBaseInfiniiVision(agilentBaseScope):
                 'MSO7034A','MSO7052A','MSO7054A','MSO7104A','DSO7012B','DSO7014B','DSO7032B',
                 'DSO7034B','DSO7052B','DSO7054B','DSO7104B','MSO7012B','MSO7014B','MSO7032B',
                 'MSO7034B','MSO7052B','MSO7054B','MSO7104B']
-        
+
+        self._init_channels()
     
     

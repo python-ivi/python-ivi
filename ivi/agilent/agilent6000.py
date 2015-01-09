@@ -45,6 +45,7 @@ class agilent6000(agilentBaseInfiniiVision):
         self._identity_supported_instrument_models = ['DSO6012A','DSO6014A','DSO6032A',
                 'DSO6034A','DSO6052A','DSO6054A','DSO6102A','DSO6104A','MSO6012A','MSO6014A',
                 'MSO6032A','MSO6034A','MSO6052A','MSO6054A','MSO6102A','MSO6104A']
-        
+
+        self._init_channels()
     
     

@@ -82,6 +82,7 @@ class agilent2000A(agilentBaseInfiniiVision, fgen.Base, fgen.StdFunc, fgen.Modul
                 'MSOX2022A','MSOX2024A']
 
         self._init_outputs()
+        self._init_channels()
         
     def _init_outputs(self):
         try:

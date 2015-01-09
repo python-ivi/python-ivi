@@ -53,6 +53,7 @@ class agilent4000A(agilent3000A):
                 'MSOX4032A','MSOX4034A','MSOX4052A','MSOX4054A','MSOX4104A','MSOX4154A']
 
         self._init_outputs()
+        self._init_channels()
         
     
     

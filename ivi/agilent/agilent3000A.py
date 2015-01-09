@@ -85,6 +85,7 @@ class agilent3000A(agilent2000A, fgen.ArbWfm, fgen.ArbFrequency,
                 'MSOX3024A','MSOX3032A','MSOX3034A','MSOX3052A','MSOX3054A','MSOX3104A']
 
         self._init_outputs()
+        self._init_channels()
         
     
     def _get_output_arbitrary_gain(self, index):
