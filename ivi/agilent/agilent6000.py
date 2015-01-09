@@ -24,9 +24,9 @@ THE SOFTWARE.
 
 """
 
-from .agilentBaseScope import *
+from .agilentBaseInfiniiVision import *
 
-class agilent6000(agilentBaseScope):
+class agilent6000(agilentBaseInfiniiVision):
     "Agilent InfiniiVision 6000 series IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
