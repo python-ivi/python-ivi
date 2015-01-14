@@ -582,7 +582,10 @@ def doc(obj=None, itm=None, docs=None, prefix=None):
             
             elif hasattr(obj, '_docs') and n in obj._docs:
                 d = obj._docs[n]
-            
+
+            elif hasattr(obj, n) and hasattr(getattr(obj, n), '_docs'):
+                return doc(getattr(obj, n))
+
             if type(d) == Doc:
                 return d
             elif type(d) == str:
@@ -631,7 +634,10 @@ def help(obj=None, itm=None, complete=False, indent=0):
                 print(d)
                 print('\n')
     elif obj is not None:
-        print(doc(obj, itm))
+        if itm is not None and type(itm) is not str:
+            print(doc(itm))
+        else:
+            print(doc(obj, itm))
     else:
         print(trim_doc("""
             Using Python IVI help
