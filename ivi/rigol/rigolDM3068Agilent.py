@@ -72,7 +72,7 @@ MeasurementResolutionMapping = {
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
 
-class rigolDM3068Agilent(scpi.dmm.Base):
+class rigolDM3068Agilent(scpi.dmm.Base, dmm.ACMeasurement):
     "Rigol DM3068 in Agilent mode IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
@@ -81,6 +81,8 @@ class rigolDM3068Agilent(scpi.dmm.Base):
         super(rigolDM3068Agilent, self).__init__(*args, **kwargs)
         
         self._memory_size = 5
+        
+        self._ac_frequency_max = 300000 #can't be changed
         
         self._identity_description = "Rigol DM3068 in Agilent mode IVI DMM driver"
         self._identity_identifier = ""
@@ -172,4 +174,29 @@ class rigolDM3068Agilent(scpi.dmm.Base):
                 cmd = MeasurementResolutionMapping[func]
                 self._write("%s %g" % (cmd, value))
         self._resolution = value
+        self._set_cache_valid()
+        
+    def _get_ac_frequency_max(self):
+        return self._ac_frequency_max
+    
+    def _set_ac_frequency_max(self, value):
+        pass #can't be changed, do nothing
+    
+    def _get_ac_frequency_min(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = float(self._ask(":detector:bandwidth?"))
+            self._ac_frequency_min = value
+            self._set_cache_valid()
+        return self._ac_frequency_min
+    
+    def _set_ac_frequency_min(self, value):
+        if (value >= 200): value = 200
+        elif (value < 20): value = 3
+        else: value = 20
+        
+        if not self._driver_operation_simulate:
+        	self._write(":detector:bandwidth %i" % value)
+        
+        value = float(value)
+        self._ac_frequency_min = value
         self._set_cache_valid()
