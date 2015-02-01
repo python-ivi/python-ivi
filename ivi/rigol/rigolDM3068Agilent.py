@@ -44,8 +44,7 @@ MeasurementFunctionMapping = {
         'continuity': 'cont',
         'diode': 'diod',
         'capacitance': 'cap',
-        'temperature': 'temp',
-        }
+        'temperature': 'temp'}
 
 MeasurementRangeMapping = {
         'dc_volts': 'volt:dc:range',
@@ -53,7 +52,8 @@ MeasurementRangeMapping = {
         'dc_current': 'curr:dc:range',
         'ac_current': 'curr:ac:range',
         'two_wire_resistance': 'res:range',
-        'four_wire_resistance': 'fres:range'}
+        'four_wire_resistance': 'fres:range',
+        'frequency': 'freq:volt:range'}
 
 MeasurementAutoRangeMapping = {
         'dc_volts': 'volt:dc:range:auto',
@@ -61,7 +61,8 @@ MeasurementAutoRangeMapping = {
         'dc_current': 'curr:dc:range:auto',
         'ac_current': 'curr:ac:range:auto',
         'two_wire_resistance': 'res:range:auto',
-        'four_wire_resistance': 'fres:range:auto'}
+        'four_wire_resistance': 'fres:range:auto',
+        'frequency': 'freq:volt:range:auto'}
 
 MeasurementResolutionMapping = {
         'dc_volts': 'volt:dc:resolution',
@@ -71,7 +72,7 @@ MeasurementResolutionMapping = {
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
 
-class rigolDM3068Agilent(scpi.dmm.Base, scpi.dmm.MultiPoint, scpi.dmm.SoftwareTrigger):
+class rigolDM3068Agilent(scpi.dmm.Base):
     "Rigol DM3068 in Agilent mode IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
@@ -137,3 +138,38 @@ class rigolDM3068Agilent(scpi.dmm.Base, scpi.dmm.MultiPoint, scpi.dmm.SoftwareTr
         self._set_cache_valid(False, 'range')
         self._set_cache_valid(False, 'auto_range')
         self._set_cache_valid(False, 'resolution')
+    
+    def _get_range(self):
+        if not self._driver_operation_simulate:
+            func = self._get_measurement_function()
+            if func in MeasurementRangeMapping:
+                cmd = MeasurementRangeMapping[func]
+                value = float(self._ask("%s?" % (cmd)))
+                self._range = value
+                self._set_cache_valid()
+        return self._range
+    
+    def _set_range(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            func = self._get_measurement_function()
+            if func in MeasurementRangeMapping:
+                cmd = MeasurementRangeMapping[func]
+                self._write("%s %g" % (cmd, value))
+        self._range = value
+        self._set_cache_valid()
+        
+    def _set_resolution(self, value):
+        value = float(value)
+        minVal = (0.03 / 1000000) * self._get_range()
+        maxVal = (6.0 / 1000000) * self._get_range()
+        value = min(maxVal, value)
+        value = max(minVal, value)
+        
+        if not self._driver_operation_simulate:
+            func = self._get_measurement_function()
+            if func in MeasurementResolutionMapping:
+                cmd = MeasurementResolutionMapping[func]
+                self._write("%s %g" % (cmd, value))
+        self._resolution = value
+        self._set_cache_valid()
