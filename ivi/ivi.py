@@ -1973,6 +1973,29 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             self._write(data, encoding)
             return self._read(num, encoding)
     
+    def _ask_for_values(self, msg, delim=',', converter=float, array=True):
+        '''
+        write then read a list or array of data
+        
+        Parameters
+        --------------
+        msg : str
+            message to write to instrument
+        delim : str
+            delimeter
+        converter : type
+            a datatype used to typecase the elements in the returned list
+        array: bool
+            convert the output to a numpy array 
+        
+        '''
+        s = self._ask(msg)
+        s_split = s.split(delim)
+        out = map(converter, s_split)
+        if array:
+            out = np.array(out)
+        return out
+    
     def _read_stb(self):
         "Read status byte"
         if self._driver_operation_simulate:
