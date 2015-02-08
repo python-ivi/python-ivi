@@ -279,11 +279,9 @@ class rigolDM3068Agilent(
     def _set_rtd_alpha(self, value):
     	if int(value) not in ValidRtdAlpha:
             raise ivi.ValueNotSupportedException()
-    	if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
-    	else: command = "rtd"
     	
     	if not self._driver_operation_simulate:
-        	self._write("temp:tran:%s:type %g" % (command, value))
+        	self._write("temp:tran:rtd:type %g" % value)
         
         value = float(value)
         self._rtd_alpha = value
@@ -300,11 +298,9 @@ class rigolDM3068Agilent(
     def _set_rtd_resistance(self, value):
     	if int(value) not in range(49, 2100):
             raise ivi.ValueNotSupportedException()
-    	if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
-    	else: command = "rtd"
     	
     	if not self._driver_operation_simulate:
-        	self._write("temp:tran:%s:res %g" % (command, value))
+        	self._write("temp:tran:rtd:res %g" % value)
         
         value = float(value)
         self._rtd_resistance = value
