@@ -76,21 +76,21 @@ ValidRtdAlpha = set([85, 89, 91, 92])
 ValidThermistor = set([2252, 3000, 5000, 10000, 30000])
 ThermocoupleType = set(['b', 'e', 'j', 'k', 'n', 'r', 's', 't'])
 TemperatureTransducerType = {
-		'thermocouple': 'tc', 
-		'thermistor': 'thermistor',
-		'two_wire_thermistor': 'thermistor',
-		'four_wire_thermistor': 'fthermistor',
-		'two_wire_rtd': 'rtd', 
-		'four_wire_rtd': 'frtd'}
+        'thermocouple': 'tc', 
+        'thermistor': 'thermistor',
+        'two_wire_thermistor': 'thermistor',
+        'four_wire_thermistor': 'fthermistor',
+        'two_wire_rtd': 'rtd', 
+        'four_wire_rtd': 'frtd'}
 
 class rigolDM3068Agilent(
-		scpi.dmm.Base,
-		dmm.ACMeasurement,
-		dmm.TemperatureMeasurement,
-		dmm.Thermocouple,
-		dmm.ResistanceTemperatureDevice,
-		dmm.Thermistor
-	):
+        scpi.dmm.Base,
+        dmm.ACMeasurement,
+        dmm.TemperatureMeasurement,
+        dmm.Thermocouple,
+        dmm.ResistanceTemperatureDevice,
+        dmm.Thermistor
+    ):
     "Rigol DM3068 in Agilent mode IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
@@ -215,7 +215,7 @@ class rigolDM3068Agilent(
         else: value = 20
         
         if not self._driver_operation_simulate:
-        	self._write(":detector:bandwidth %i" % value)
+            self._write(":detector:bandwidth %i" % value)
         
         value = float(value)
         self._ac_frequency_min = value
@@ -224,7 +224,7 @@ class rigolDM3068Agilent(
     "Temperature functions"
     
     def _get_temperature_transducer_type(self):
-    	if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":temperature:transducer:type?").lower()
             value = [k for k,v in TemperatureTransducerType.items() if v==value][0]
             self._temperature_transducer_type = value
@@ -235,7 +235,7 @@ class rigolDM3068Agilent(
         if value not in TemperatureTransducerType:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-        	self._write("temperature:transducer:type %s" % TemperatureTransducerType[value])
+            self._write("temperature:transducer:type %s" % TemperatureTransducerType[value])
         self._temperature_transducer_type = value
         self._set_cache_valid()
     
@@ -254,7 +254,7 @@ class rigolDM3068Agilent(
         pass #No command
     
     def _get_thermocouple_type(self):
-    	if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate and not self._get_cache_valid():
             self._thermocouple_type = self._ask("conf?").split(",")[1].lower()
             self._set_cache_valid()
         return self._thermocouple_type
@@ -263,40 +263,40 @@ class rigolDM3068Agilent(
         if value not in ThermocoupleType:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-        	self._write("conf:temp tc, %s" % value)
+            self._write("conf:temp tc, %s" % value)
         self._thermocouple_type = value
         self._set_cache_valid()
     
     "RTD functions"
     
     def _get_rtd_alpha(self):
-    	if not self._driver_operation_simulate and not self._get_cache_valid():
-        	self._rtd_alpha = float(self._ask("temp:tran:rtd:type?"))
-        	self._set_cache_valid()
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rtd_alpha = float(self._ask("temp:tran:rtd:type?"))
+            self._set_cache_valid()
         return self._rtd_alpha
     
     def _set_rtd_alpha(self, value):
-    	if int(value) not in ValidRtdAlpha:
+        if int(value) not in ValidRtdAlpha:
             raise ivi.ValueNotSupportedException()
-    	
-    	if not self._driver_operation_simulate:
-        	self._write("temp:tran:rtd:type %g" % value)
+        
+        if not self._driver_operation_simulate:
+            self._write("temp:tran:rtd:type %g" % value)
         
         value = float(value)
         self._rtd_alpha = value
     
     def _get_rtd_resistance(self):
-    	if not self._driver_operation_simulate and not self._get_cache_valid():
-        	self._rtd_resistance = float(self._ask("temp:tran:rtd:res?"))
-        	self._set_cache_valid()
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._rtd_resistance = float(self._ask("temp:tran:rtd:res?"))
+            self._set_cache_valid()
         return self._rtd_resistance
     
     def _set_rtd_resistance(self, value):
-    	if int(value) not in range(49, 2100):
+        if int(value) not in range(49, 2100):
             raise ivi.ValueNotSupportedException()
-    	
-    	if not self._driver_operation_simulate:
-        	self._write("temp:tran:rtd:res %g" % value)
+        
+        if not self._driver_operation_simulate:
+            self._write("temp:tran:rtd:res %g" % value)
         
         value = float(value)
         self._rtd_resistance = value
@@ -305,17 +305,17 @@ class rigolDM3068Agilent(
     
     def _get_thermistor_resistance(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-    		
-        	self._thermistor_resistance = float(self._ask("temp:tran:ther:type?"))
-        	self._set_cache_valid()
+            
+            self._thermistor_resistance = float(self._ask("temp:tran:ther:type?"))
+            self._set_cache_valid()
         return self._thermistor_resistance
         
     def _set_thermistor_resistance(self, value):
         if int(value) not in ValidThermistor:
             raise ivi.ValueNotSupportedException()
-    	
+        
         if not self._driver_operation_simulate:
-        	self._write("temp:tran:ther:type %g" % value)
+            self._write("temp:tran:ther:type %g" % value)
         
         value = float(value)
         self._thermistor_resistance = value
