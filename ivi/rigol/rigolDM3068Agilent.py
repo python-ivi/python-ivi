@@ -71,8 +71,24 @@ MeasurementResolutionMapping = {
         'ac_current': 'curr:ac:resolution',
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
+        
+ThermocoupleReferenceJunctionType = set(['internal', 'fixed'])
+ThermocoupleType = set(['b', 'c', 'd', 'e', 'g', 'j', 'k', 'n', 'r', 's', 't', 'u', 'v'])
+TemperatureTransducerType = {
+		'thermocouple': 'tc', 
+		'thermistor': 'thermistor',
+		'four_wire_thermistor': 'fthermistor',
+		'two_wire_rtd': 'rtd', 
+		'four_wire_rtd': 'frtd'}
 
-class rigolDM3068Agilent(scpi.dmm.Base, dmm.ACMeasurement):
+class rigolDM3068Agilent(
+		scpi.dmm.Base,
+		dmm.ACMeasurement,
+		dmm.TemperatureMeasurement,
+		dmm.Thermocouple,
+		dmm.ResistanceTemperatureDevice,
+		dmm.Thermistor
+	):
     "Rigol DM3068 in Agilent mode IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
@@ -199,4 +215,18 @@ class rigolDM3068Agilent(scpi.dmm.Base, dmm.ACMeasurement):
         
         value = float(value)
         self._ac_frequency_min = value
+        self._set_cache_valid()
+    
+    def _get_temperature_transducer_type(self):
+    	if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._temperature_transducer_type = self._ask(":temperature:transducer:type?")
+            self._set_cache_valid()
+        return self._temperature_transducer_type
+    
+    def _set_temperature_transducer_type(self, value):
+        if value not in TemperatureTransducerType:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+        	self._write("temperature:transducer:type %s" % TemperatureTransducerType[value])
+        self._temperature_transducer_type = value
         self._set_cache_valid()
