@@ -72,6 +72,7 @@ MeasurementResolutionMapping = {
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
         
+ValidRtdAlpha = set([85, 89, 91, 92])
 ThermocoupleType = set(['b', 'e', 'j', 'k', 'n', 'r', 's', 't'])
 TemperatureTransducerType = {
 		'thermocouple': 'tc', 
@@ -263,4 +264,49 @@ class rigolDM3068Agilent(
         	self._write("conf:temp tc, %s" % value)
         self._thermocouple_type = value
         self._set_cache_valid()
+    
+    "RTD functions"
+    
+    def _get_rtd_alpha(self):
+    	if not self._driver_operation_simulate and not self._get_cache_valid():
+    		if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
+    		else: command = "rtd"
+    		
+        	self._rtd_alpha = float(self._ask("temp:tran:%s:type?" % command))
+        	self._set_cache_valid()
+        return self._rtd_alpha
+    
+    def _set_rtd_alpha(self, value):
+    	if int(value) not in ValidRtdAlpha:
+            raise ivi.ValueNotSupportedException()
+    	if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
+    	else: command = "rtd"
+    	
+    	if not self._driver_operation_simulate:
+        	self._write("temp:tran:%s:type %g" % (command, value))
+        
+        value = float(value)
+        self._rtd_alpha = value
+    
+    def _get_rtd_resistance(self):
+    	if not self._driver_operation_simulate and not self._get_cache_valid():
+    		if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
+    		else: command = "rtd"
+    		
+        	self._rtd_resistance = float(self._ask("temp:tran:%s:res?" % command))
+        	self._set_cache_valid()
+        return self._rtd_resistance
+    
+    def _set_rtd_resistance(self, value):
+    	if int(value) not in range(49, 2100):
+            raise ivi.ValueNotSupportedException()
+    	if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
+    	else: command = "rtd"
+    	
+    	if not self._driver_operation_simulate:
+        	self._write("temp:tran:%s:res %g" % (command, value))
+        
+        value = float(value)
+        self._rtd_resistance = value
+    
     
