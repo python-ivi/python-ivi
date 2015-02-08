@@ -271,10 +271,7 @@ class rigolDM3068Agilent(
     
     def _get_rtd_alpha(self):
     	if not self._driver_operation_simulate and not self._get_cache_valid():
-    		if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
-    		else: command = "rtd"
-    		
-        	self._rtd_alpha = float(self._ask("temp:tran:%s:type?" % command))
+        	self._rtd_alpha = float(self._ask("temp:tran:rtd:type?"))
         	self._set_cache_valid()
         return self._rtd_alpha
     
@@ -290,10 +287,7 @@ class rigolDM3068Agilent(
     
     def _get_rtd_resistance(self):
     	if not self._driver_operation_simulate and not self._get_cache_valid():
-    		if self.temperature.transducer_type == 'four_wire_rtd': command = "frtd"
-    		else: command = "rtd"
-    		
-        	self._rtd_resistance = float(self._ask("temp:tran:%s:res?" % command))
+        	self._rtd_resistance = float(self._ask("temp:tran:rtd:res?"))
         	self._set_cache_valid()
         return self._rtd_resistance
     
