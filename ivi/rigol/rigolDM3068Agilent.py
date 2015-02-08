@@ -73,10 +73,12 @@ MeasurementResolutionMapping = {
         'four_wire_resistance': 'fres:resolution'}
         
 ValidRtdAlpha = set([85, 89, 91, 92])
+ValidThermistor = set([2252, 3000, 5000, 10000, 30000])
 ThermocoupleType = set(['b', 'e', 'j', 'k', 'n', 'r', 's', 't'])
 TemperatureTransducerType = {
 		'thermocouple': 'tc', 
 		'thermistor': 'thermistor',
+		'two_wire_thermistor': 'thermistor',
 		'four_wire_thermistor': 'fthermistor',
 		'two_wire_rtd': 'rtd', 
 		'four_wire_rtd': 'frtd'}
@@ -305,4 +307,21 @@ class rigolDM3068Agilent(
         value = float(value)
         self._rtd_resistance = value
     
+    "Thermister functions"
     
+    def _get_thermistor_resistance(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+    		
+        	self._thermistor_resistance = float(self._ask("temp:tran:ther:type?"))
+        	self._set_cache_valid()
+        return self._thermistor_resistance
+        
+    def _set_thermistor_resistance(self, value):
+        if int(value) not in ValidThermistor:
+            raise ivi.ValueNotSupportedException()
+    	
+        if not self._driver_operation_simulate:
+        	self._write("temp:tran:ther:type %g" % value)
+        
+        value = float(value)
+        self._thermistor_resistance = value
