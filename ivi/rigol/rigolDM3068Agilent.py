@@ -72,8 +72,7 @@ MeasurementResolutionMapping = {
         'two_wire_resistance': 'res:resolution',
         'four_wire_resistance': 'fres:resolution'}
         
-ThermocoupleReferenceJunctionType = set(['internal', 'fixed'])
-ThermocoupleType = set(['b', 'c', 'd', 'e', 'g', 'j', 'k', 'n', 'r', 's', 't', 'u', 'v'])
+ThermocoupleType = set(['b', 'e', 'j', 'k', 'n', 'r', 's', 't'])
 TemperatureTransducerType = {
 		'thermocouple': 'tc', 
 		'thermistor': 'thermistor',
@@ -192,6 +191,8 @@ class rigolDM3068Agilent(
         self._resolution = value
         self._set_cache_valid()
         
+    "AC functions"
+        
     def _get_ac_frequency_max(self):
         return self._ac_frequency_max
     
@@ -217,9 +218,13 @@ class rigolDM3068Agilent(
         self._ac_frequency_min = value
         self._set_cache_valid()
     
+    "Temperature functions"
+    
     def _get_temperature_transducer_type(self):
     	if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._temperature_transducer_type = self._ask(":temperature:transducer:type?")
+            value = self._ask(":temperature:transducer:type?").lower()
+            value = [k for k,v in TemperatureTransducerType.items() if v==value][0]
+            self._temperature_transducer_type = value
             self._set_cache_valid()
         return self._temperature_transducer_type
     
@@ -230,3 +235,32 @@ class rigolDM3068Agilent(
         	self._write("temperature:transducer:type %s" % TemperatureTransducerType[value])
         self._temperature_transducer_type = value
         self._set_cache_valid()
+    
+    "Thermocouple functions"
+    
+    def _get_thermocouple_fixed_reference_junction(self):
+        return self._thermocouple_fixed_reference_junction #No command
+    
+    def _set_thermocouple_fixed_reference_junction(self, value):
+        pass #No command
+    
+    def _get_thermocouple_reference_junction_type(self):
+        return self._thermocouple_reference_junction_type #No command
+    
+    def _set_thermocouple_reference_junction_type(self, value):
+        pass #No command
+    
+    def _get_thermocouple_type(self):
+    	if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._thermocouple_type = self._ask("conf?").split(",")[1].lower()
+            self._set_cache_valid()
+        return self._thermocouple_type
+    
+    def _set_thermocouple_type(self, value):
+        if value not in ThermocoupleType:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+        	self._write("conf:temp tc, %s" % value)
+        self._thermocouple_type = value
+        self._set_cache_valid()
+    
