@@ -26,10 +26,10 @@ THE SOFTWARE.
 import time
 from .agilentBaseInfiniiVision import *
 
-CaptureModes={
-    'maximum':'maximum',
-    'normal':'normal',
-    'raw':'raw'}
+CaptureModes = {
+    'maximum': 'maximum',
+    'normal': 'normal',
+    'raw': 'raw'}
 
 
 class agilent6000(agilentBaseInfiniiVision):
@@ -48,9 +48,9 @@ class agilent6000(agilentBaseInfiniiVision):
         self._bandwidth = 1e9
         
         self._identity_description = "Agilent InfiniiVision 6000 series IVI oscilloscope driver"
-        self._identity_supported_instrument_models = ['DSO6012A','DSO6014A','DSO6032A',
-                'DSO6034A','DSO6052A','DSO6054A','DSO6102A','DSO6104A','MSO6012A','MSO6014A',
-                'MSO6032A','MSO6034A','MSO6052A','MSO6054A','MSO6102A','MSO6104A']
+        self._identity_supported_instrument_models = ['DSO6012A', 'DSO6014A', 'DSO6032A',
+                'DSO6034A', 'DSO6052A', 'DSO6054A', 'DSO6102A', 'DSO6104A', 'MSO6012A', 'MSO6014A',
+                'MSO6032A', 'MSO6034A', 'MSO6052A', 'MSO6054A', 'MSO6102A', 'MSO6104A']
 
         self._init_channels()
 
@@ -64,9 +64,11 @@ class agilent6000(agilentBaseInfiniiVision):
                 """))
         self._add_method('channels[].measurement.fetch_waveform_single',
                         self._measurement_fetch_waveform_single,
-                        ivi.Doc(""" someing
+                        ivi.Doc(""" TODO:add doc
                         """))
-
+        self._add_method('measurement.initiate_single()', self._measurement_single_shot_initiate,
+                         ivi.Doc(""" TODO: Add doc
+                        """))
 
     def _set_acquisition_number_of_points_minimum(self, value):
         value = int(value)
