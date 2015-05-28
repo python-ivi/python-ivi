@@ -26,7 +26,7 @@ THE SOFTWARE.
 import time
 from .agilentBaseInfiniiVision import *
 
-CaptureModes = {
+CaptureMode = {
     'maximum': 'maximum',
     'normal': 'normal',
     'raw': 'raw'}
@@ -79,7 +79,7 @@ class agilent6000(agilentBaseInfiniiVision):
         self._set_cache_valid(False, 'acquisition_record_length')
 
     def _set_acquisition_capture_mode(self,value):
-        if value not in CaptureModes:
+        if value not in CaptureMode:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":stop")
