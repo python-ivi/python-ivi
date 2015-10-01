@@ -43,7 +43,9 @@ class PyVisaInstrument:
     "PyVisa wrapper instrument interface client"
     def __init__(self, resource, *args, **kwargs):
         if type(resource) is str:
-            self.instrument = visa.instrument(resource, *args, **kwargs)
+            rm=visa.ResourceManager()
+            l=rm.list_resources()
+            self.instrument = rm.open_resource(l[0])
         else:
             self.instrument = resource
         
