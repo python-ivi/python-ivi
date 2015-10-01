@@ -361,4 +361,20 @@ class agilents(agilentBaseInfiniium):
             self._write(":acquire:complete 100")
             self._write(":digitize")
             self._set_cache_valid(False, 'trigger_continuous')
+    
+    def _set_working_directory(self,value):
+        if not self._driver_operation_simulate:
+            self._write(":DISK:CDIRECTORY %s" % '""'+value+'""')
+    
+    def _get_pwd(self):
+        if not self._driver_operation_simulate:
+             return self._ask(":DISK:PWD?")
+    
+    def _save_waveform(self,filename,source,filtype='BIN',header="ON"):
+        if not self._driver_operation_simulate:
+            self._write(":DISK:SAVE:WAVEFORM %s" % 'CHANnel'+str(source)+',""'+filename+'"",'+filtype+','+header)
+    
+    def _set_save_waveform_all(self):
+        if not self._driver_operation_simulate:
+            self._write(":DISK:SEGMented ALL")
 
