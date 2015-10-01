@@ -364,7 +364,7 @@ class agilents(agilentBaseInfiniium):
     
     def _set_working_directory(self,value):
         if not self._driver_operation_simulate:
-            self._write(":DISK:CDIRECTORY %s" % '""'+value+'""')
+            self._write(":DISK:CDIRECTORY %s" % '\"'+value+'\"')
     
     def _get_pwd(self):
         if not self._driver_operation_simulate:
@@ -372,7 +372,7 @@ class agilents(agilentBaseInfiniium):
     
     def _save_waveform(self,filename,source,filtype='BIN',header="ON"):
         if not self._driver_operation_simulate:
-            self._write(":DISK:SAVE:WAVEFORM %s" % 'CHANnel'+str(source)+',""'+filename+'"",'+filtype+','+header)
+            self._write(":DISK:SAVE:WAVEFORM %s" % 'CHANnel'+str(source)+',\"'+filename+'\",'+filtype+','+header)
     
     def _set_save_waveform_all(self):
         if not self._driver_operation_simulate:
