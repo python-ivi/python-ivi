@@ -1739,13 +1739,14 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # USB::1234::5678::SERIAL::INSTR
             # USB0::0x1234::0x5678::INSTR
             # USB0::0x1234::0x5678::SERIAL::INSTR
+            # USB0::0x1234::0x5678::SERIAL::0::INSTR
             # GPIB::10::INSTR
             # GPIB0::10::INSTR
             # ASRL1::INSTR
             # ASRL::COM1,9600,8n1::INSTR
             # ASRL::/dev/ttyUSB0,9600::INSTR
             # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
-            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<suffix>INSTR))$', resource, re.I)
+            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<arg4>[^\s:]+))?(::(?P<suffix>INSTR))$', resource, re.I)
             if m is None:
                 if 'pyvisa' in globals():
                     # connect with PyVISA
