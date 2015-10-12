@@ -337,7 +337,7 @@ class MultiPoint(dmm.MultiPoint):
             if float(value) >= 9.9e37:
                 value = float('inf')
             else:
-                value = int(value)
+                value = int(float(value))
             self._trigger_multi_point_count = value
             self._set_cache_valid()
         return self._trigger_multi_point_count
