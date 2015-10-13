@@ -356,10 +356,14 @@ class MultiPoint(dmm.MultiPoint):
         self._set_cache_valid()
     
     def _measurement_fetch_multi_point(self, max_time, num_of_measurements = 0):
-        pass
+        if not self._driver_operation_simulate:
+            return self._ask_for_values(":fetch?", array=False)
+        return [0.0 for i in range(self._trigger_multi_point_count*self._trigger_multi_point_sample_count)]
     
     def _measurement_read_multi_point(self, max_time, num_of_measurements = 0):
-        pass
+        if not self._driver_operation_simulate:
+            return self._ask_for_values(":read?", array=False)
+        return [0.0 for i in range(self._trigger_multi_point_count*self._trigger_multi_point_sample_count)]
     
     
 class SoftwareTrigger(dmm.SoftwareTrigger):
