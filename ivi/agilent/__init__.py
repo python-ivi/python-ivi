@@ -215,6 +215,16 @@ from .agilentE3649A import agilentE3649A
 # RF Power Meters
 from .agilent436A import agilent436A
 from .agilent437B import agilent437B
+# U2000 series
+from .agilentU2000A import agilentU2000A
+from .agilentU2000B import agilentU2000B
+from .agilentU2000H import agilentU2000H
+from .agilentU2001A import agilentU2001A
+from .agilentU2001B import agilentU2001B
+from .agilentU2001H import agilentU2001H
+from .agilentU2002A import agilentU2002A
+from .agilentU2002H import agilentU2002H
+from .agilentU2004A import agilentU2004A
 
 # RF Signal Generators
 # 8642A/B
