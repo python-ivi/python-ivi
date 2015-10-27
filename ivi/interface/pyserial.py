@@ -48,7 +48,7 @@ def parse_visa_resource_string(resource_string):
                 suffix = m.group('suffix'),
         )
 
-class SerialInstrument:
+class SerialInstrument(object):
     "Serial instrument interface client"
     def __init__(self, port = None, baudrate=9600, bytesize=8, paritymode=0, stopbits=1, timeout=None,
                 xonxoff=False, rtscts=False, dsrdtr=False):
@@ -123,7 +123,7 @@ class SerialInstrument:
         else:
             self.serial.stopbits = serial.STOPBITS_ONE
         
-        self.serial.timeout = self.timeout
+        # timeout is handled in property setter
         self.serial.xonxoff = self.xonxoff
         self.serial.rtscts = self.rtscts
         self.serial.dsrdtr = self.dsrdtr
@@ -222,4 +222,13 @@ class SerialInstrument:
     def unlock(self):
         "Send unlock command"
         raise NotImplementedError()
+
+    @property
+    def timeout(self):
+        return self.serial.timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self.serial.timeout = value
+        self.serial.writeTimeout = value
 

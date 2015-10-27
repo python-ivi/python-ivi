@@ -47,7 +47,7 @@ except:
         (e.__class__.__name__, e.args[0]))
     raise ImportError
 
-class PyVisaInstrument:
+class PyVisaInstrument(object):
     "PyVisa wrapper instrument interface client"
     def __init__(self, resource, *args, **kwargs):
         if type(resource) is str:
@@ -129,3 +129,11 @@ class PyVisaInstrument:
     def unlock(self):
         "Send unlock command"
         raise NotImplementedError()
+
+    @property
+    def timeout(self):
+        return self.instrument.timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self.instrument.timeout = value

@@ -1502,6 +1502,7 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         self._initialized = False
         self.__dict__.setdefault('_instrument_id', '')
         self._cache_valid = dict()
+        self._timeout = 2000
         
         super(Driver, self).__init__(*args, **kwargs)
         
@@ -1632,6 +1633,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                         +-------------------------+----------------------+---------------------+
                         | Prefer PyVISA           | False                | prefer_pyvisa       |
                         +-------------------------+----------------------+---------------------+
+                        | Timeout                 | 2000                 | timeout             |
+                        +-------------------------+----------------------+---------------------+
                         
                         Each IVI specific driver defines it own meaning and valid values for the
                         Driver Setup attribute. Many specific drivers ignore the value of the
@@ -1686,6 +1689,18 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                           again.
                         * May deallocate internal resources used by the IVI session.
                         """)
+        self._add_property('timeout',
+                        self._get_timeout,
+                        self._set_timeout,
+                        self._del_timeout,
+                        """
+                        Set the device timeout. This value specifies how long the driver should
+                        wait for a response from the device before giving up. The value is
+                        specified in milliseconds.
+
+                        This property behaves the same way as pyvisa's timeout property.
+                        To set an infinite timeout, set it to None or use 'del timeout'.
+                        """)
 
         # inherit prefer_pyvisa from global setting
         self._prefer_pyvisa = _prefer_pyvisa
@@ -1718,6 +1733,8 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
                 self._driver_operation_driver_setup = val
             elif op == 'prefer_pyvisa':
                 self._prefer_pyvisa = bool(val)
+            elif op == 'timeout':
+                self._timeout = float(val)
             else:
                 raise UnknownOptionException('Invalid option')
 
@@ -1837,6 +1854,9 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
 
         self.driver_operation.invalidate_all_attributes()
 
+        if self._interface:
+            self._interface.timeout = self._timeout
+
         self._initialized = True
 
 
@@ -1890,6 +1910,18 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
 
     def _driver_operation_invalidate_all_attributes(self):
         self._cache_valid = dict()
+
+
+    def _get_timeout(self):
+        return self._timeout
+
+    def _set_timeout(self, value):
+        self._timeout = value
+        if self._initialized and self._interface:
+            self._interface.timeout = value
+
+    def _del_timeout(self):
+        self._set_timeout = None
 
     def _write_raw(self, data):
         "Write binary data to instrument"
