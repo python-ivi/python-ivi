@@ -29,6 +29,7 @@ import math
 from .. import ivi
 from .. import dmm
 from . import common
+from .. import extra
 
 MeasurementFunctionMapping = {
         'dc_volts': 'volt',
@@ -76,6 +77,27 @@ TriggerSourceMapping = {
         'bus': 'bus',
         'external': 'ext',
         'immediate': 'imm'}
+
+ApertureNPLCMapping = {
+        'voltage': 'volt:nplc',
+        'current': 'curr:nplc',
+        'resistance': 'res:nplc',
+        'temperature': 'temp:nplc'
+        }
+
+ApertureTimeMapping = {
+        'voltage': 'volt:aper',
+        'current': 'curr:aper',
+        'resistance': 'res:aper',
+        'temperature': 'temp:aper'
+        }
+
+ApertureTimeEnabledMapping = {
+        'voltage': 'volt:aper:enab',
+        'current': 'curr:aper:enab',
+        'resistance': 'res:aper:enab',
+        'temperature': 'temp:aper:enab'
+        }
 
 class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
            ivi.Driver,
@@ -373,3 +395,40 @@ class SoftwareTrigger(dmm.SoftwareTrigger):
         if not self._driver_operation_simulate:
             self._write("*trg")
 
+class ApertureNPLC(extra.dmm.ApertureNPLC):
+    def __init__(self, *args, **kwargs):
+        super(ApertureNPLC, self).__init__(*args, **kwargs)
+
+    def _set_aperture_nplc(self, mode, value):
+        if not self._driver_operation_simulate:
+            self._write("%s %f" % (ApertureNPLCMapping[mode], value))
+
+    def _get_aperture_nplc(self, mode):
+        if not self._driver_operation_simulate:
+            return float(self._ask("%s?" % ApertureNPLCMapping[mode]))
+        else:
+            return 1.
+
+class ApertureTime(extra.dmm.ApertureNPLC):
+    def __init__(self, *args, **kwargs):
+        super(ApertureTime, self).__init__(*args, **kwargs)
+
+    def _set_aperture_time(self, mode, value):
+        if not self._driver_operation_simulate:
+            self._write("%s %f" % (ApertureTimeMapping[mode], value))
+
+    def _get_aperture_time(self, mode):
+        if not self._driver_operation_simulate:
+            return float(self._ask("%s?" % ApertureTimeMapping[mode]))
+        else:
+            return 1.
+
+    def _set_aperture_time_enabled(self, mode, value):
+        if not self._driver_operation_simulate:
+            self._write("%s %d" % (ApertureTimeEnabledMapping[mode], value))
+
+    def _get_aperture_time_enabled(self, mode):
+        if not self._driver_operation_simulate:
+            return bool(self._ask("%s?" % ApertureTimeEnabledMapping[mode]))
+        else:
+            return False

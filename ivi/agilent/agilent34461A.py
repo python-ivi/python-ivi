@@ -27,8 +27,12 @@ THE SOFTWARE.
 from .agilent34401A import *
 from .. import ivi
 from .. import extra
+from .. import scpi
 
-class agilent34461A(agilent34401A, extra.common.Title, extra.common.Screenshot):
+class agilent34461A(agilent34401A, extra.common.Title, extra.common.Screenshot,
+                    scpi.dmm.ApertureNPLC, extra.dmm.VoltageApertureNPLC,
+                    extra.dmm.CurrentApertureNPLC, extra.dmm.TemperatureApertureNPLC,
+                    extra.dmm.ResistanceApertureNPLC):
     "Agilent 34461A IVI DMM driver"
     
     def __init__(self, *args, **kwargs):
