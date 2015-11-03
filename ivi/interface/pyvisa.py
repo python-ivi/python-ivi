@@ -30,11 +30,11 @@ from distutils.version import StrictVersion
 
 try:
     import visa
-    if StrictVersion(visa.__version__) >= StrictVersion('1.6'):
+    try:
         # New style PyVISA
         visa_rm = visa.ResourceManager()
         visa_instrument_opener = visa_rm.open_resource
-    else:
+    except AttributeError:
         # Old style PyVISA
         visa_instrument_opener = visa.instrument
 except ImportError:
