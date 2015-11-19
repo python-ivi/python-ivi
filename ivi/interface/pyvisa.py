@@ -30,7 +30,7 @@ from distutils.version import StrictVersion
 
 try:
     import visa
-    import pyvisa.constants
+    import pyvisa
     if StrictVersion(visa.__version__) >= StrictVersion('1.6'):
         # New style PyVISA
         visa_rm = visa.ResourceManager()
