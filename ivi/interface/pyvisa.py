@@ -30,6 +30,7 @@ from distutils.version import StrictVersion
 
 try:
     import visa
+    import pyvisa.constants
     if StrictVersion(visa.__version__) >= StrictVersion('1.6'):
         # New style PyVISA
         visa_rm = visa.ResourceManager()
@@ -104,7 +105,7 @@ class PyVisaInstrument:
 
     def read_stb(self):
         "Read status byte"
-        raise NotImplementedError()
+        return self.instrument.read_stb()
 
     def trigger(self):
         "Send trigger command"
@@ -112,20 +113,20 @@ class PyVisaInstrument:
 
     def clear(self):
         "Send clear command"
-        raise NotImplementedError()
+        self.instrument.clear()
 
     def remote(self):
         "Send remote command"
-        raise NotImplementedError()
+        self.instrument.gpib_control_ren(pyvisa.constants.VI_GPIB_REN_ASSERT_ADDRESS)
 
     def local(self):
         "Send local command"
-        raise NotImplementedError()
+        self.instrument.gpib_control_ren(pyvisa.constants.VI_GPIB_REN_DEASSERT_GTL)
 
     def lock(self):
         "Send lock command"
-        raise NotImplementedError()
+        self.instrument.lock()
 
     def unlock(self):
         "Send unlock command"
-        raise NotImplementedError()
+        self.instrument.unlock()
