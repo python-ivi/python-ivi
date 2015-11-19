@@ -314,16 +314,16 @@ class keithley236(dcpwr.Base, dcpwr.Measurement, ivi.Driver):
             raise ivi.ValueNotSupportedException()
         status = 0
         if not self._driver_operation_simulate:
-            status = 0 #TODO: Serial poll (bug #39)
-            compliance = status & 128
+            status = self._read_stb()
+        compliance = bool(status & 128)
         if state == 'constant_voltage':
             if self._get_output_mode(index) == 'voltage':
-                return not compilance
+                return not compliance
             else:
                 return compliance
         elif state == 'constant_current':
             if self._get_output_mode(index) == 'current':
-                return not compilance
+                return not compliance
             else:
                 return compliance
         return False
