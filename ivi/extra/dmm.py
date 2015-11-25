@@ -42,12 +42,6 @@ class ApertureTime(ivi.IviContainer):
     def _get_aperture_time(self, mode):
         raise NotImplementedError()
 
-    def _set_aperture_time(self, mode, value):
-        raise NotImplementedError()
-
-    def _get_aperture_time(self, mode):
-        raise NotImplementedError()
-
 
 class ApertureNPLC(ivi.IviContainer):
     """Extension IVI methods for instruments that support selecting the measurement aperture (integration time) in power line cycles
@@ -331,3 +325,25 @@ class TemperatureApertureNPLC(ApertureNPLC):
             self._temperature_aperture_nplc = self._get_aperture_nplc('temperature')
             self._set_cache_valid()
         return self._temperature_aperture_nplc
+
+
+class DisplayString(ivi.IviContainer):
+    """Extension IVI methods for instruments that support displaying an
+       user-defined string"""
+
+    def __init__(self, *args, **kwargs):
+        super(DisplayString, self).__init__(*args, **kwargs)
+        self._add_method('system.display_string',
+            self._system_display_string,
+            ivi.Doc("""
+            Writes a string to the instrument display.  Send None
+            or an empty string to return to normal operation. An optional
+            argument 'window' allows to select the display window for certain
+            devices. This index is zero based instead of one based as in the
+            SCPI spec.
+            """))
+        self._num_windows = 1 #Number of possible display windows
+        self._text_clear_supported = True
+
+    def _system_display_string(self, value=None, window=0):
+        raise NotImplementedError()
