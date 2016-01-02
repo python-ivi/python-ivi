@@ -178,6 +178,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._channel_label = list()
         self._channel_probe_skew = list()
         self._channel_scale = list()
+        self._channel_trigger_level = list()
         self._channel_invert = list()
         self._channel_probe_id = list()
         self._channel_bw_limit = list()
@@ -343,6 +344,13 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                         Specifies the vertical scale, or units per division, of the channel.  Units
                         are volts.
                         """))
+        self._add_property('channels[].trigger_level',
+                        self._get_channel_trigger_level,
+                        self._set_channel_trigger_level,
+                        None,
+                        ivi.Doc("""
+                        Specifies the trigger level of the channel.  Units are volts.
+                        """))
         self._add_property('timebase.mode',
                         self._get_timebase_mode,
                         self._set_timebase_mode,
@@ -500,6 +508,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._channel_invert = list()
         self._channel_probe_id = list()
         self._channel_scale = list()
+        self._channel_trigger_level = list()
         self._channel_bw_limit = list()
         
         self._analog_channel_name = list()
@@ -509,6 +518,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             self._analog_channel_name.append("channel%d" % (i+1))
             self._channel_probe_skew.append(0)
             self._channel_scale.append(1.0)
+            self._channel_trigger_level.append(0.0)
             self._channel_invert.append(False)
             self._channel_probe_id.append("NONE")
             self._channel_bw_limit.append(False)
@@ -1009,6 +1019,22 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._set_cache_valid(True, "channel_range", index)
         self._set_cache_valid(False, "channel_offset", index)
     
+    def _get_channel_trigger_level(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_trigger_level[index] = float(self._ask(":trigger:level? %s" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
+        return self._channel_trigger_level[index]
+
+    def _set_channel_trigger_level(self, index, value):
+        index = ivi.get_index(self._channel_name, index)
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":trigger:level %e, %s" % (value, self._channel_name[index]))
+        self._channel_trigger_level[index] = value
+        self._set_cache_valid(index=index)
+        self._set_cache_valid(False, "trigger_level")
+
     def _get_measurement_status(self):
         return self._measurement_status
     
@@ -1058,6 +1084,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             self._write(":trigger:level %e" % value)
         self._trigger_level = value
         self._set_cache_valid()
+        for i in range(self._analog_channel_count): self._set_cache_valid(False, 'channel_trigger_level', i)
     
     def _get_trigger_edge_slope(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
