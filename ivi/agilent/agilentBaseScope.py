@@ -1166,7 +1166,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         return self._trigger_tv_trigger_event
     
     def _set_trigger_tv_trigger_event(self, value):
-        if value not in TVTriggerEvent:
+        if value not in TVTriggerEventMapping:
             raise ivi.ValueNotSupportedException()
         # may need processing
         if not self._driver_operation_simulate:
@@ -1304,7 +1304,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         return self._trigger_width_polarity
     
     def _set_trigger_width_polarity(self, value):
-        if value not in Polarity:
+        if value not in PolarityMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write(":trigger:glitch:polarity %s" % PolarityMapping[value])
