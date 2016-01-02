@@ -764,18 +764,11 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             self._write(":cdisplay")
     
     def _get_acquisition_start_time(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._acquisition_start_time = float(self._ask(":waveform:xorigin?"))
-            self._set_cache_valid()
-        return self._acquisition_start_time
+        return self._get_timebase_position() - self._get_acquisition_time_per_record() / 2
     
     def _set_acquisition_start_time(self, value):
         value = float(value)
-        value = value + self._get_acquisition_time_per_record() * 5 / 10
-        if not self._driver_operation_simulate:
-            self._write(":timebase:position %e" % value)
-        self._acquisition_start_time = value
-        self._set_cache_valid()
+        self._set_timebase_position(value + self._get_acquisition_time_per_record() / 2)
     
     def _get_acquisition_type(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -806,18 +799,11 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         return self._acquisition_record_length
     
     def _get_acquisition_time_per_record(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._acquisition_time_per_record = float(self._ask(":timebase:range?"))
-            self._set_cache_valid()
-        return self._acquisition_time_per_record
+        return self._get_timebase_range()
     
     def _set_acquisition_time_per_record(self, value):
         value = float(value)
-        if not self._driver_operation_simulate:
-            self._write(":timebase:range %e" % value)
-        self._acquisition_time_per_record = value
-        self._set_cache_valid()
-        self._set_cache_valid(False, 'acquisition_start_time')
+        self._set_timebase_range(value)
     
     def _get_channel_label(self, index):
         index = ivi.get_index(self._channel_name, index)
