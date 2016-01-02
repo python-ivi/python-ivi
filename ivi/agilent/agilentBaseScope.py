@@ -1001,6 +1001,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._channel_scale[index] = value / self._vertical_divisions
         self._set_cache_valid(index=index)
         self._set_cache_valid(True, "channel_scale", index)
+        self._set_cache_valid(False, "channel_offset", index)
     
     def _get_channel_scale(self, index):
         index = ivi.get_index(self._channel_name, index)
@@ -1020,6 +1021,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._channel_range[index] = value * self._vertical_divisions
         self._set_cache_valid(index=index)
         self._set_cache_valid(True, "channel_range", index)
+        self._set_cache_valid(False, "channel_offset", index)
     
     def _get_measurement_status(self):
         return self._measurement_status
