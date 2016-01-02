@@ -895,6 +895,11 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             self._write(":%s:probe %e" % (self._channel_name[index], value))
         self._channel_probe_attenuation[index] = value
         self._set_cache_valid(index=index)
+        self._set_cache_valid(False, 'channel_offset', index)
+        self._set_cache_valid(False, 'channel_scale', index)
+        self._set_cache_valid(False, 'channel_range', index)
+        self._set_cache_valid(False, 'channel_trigger_level', index)
+        self._set_cache_valid(False, 'trigger_level')
     
     def _get_channel_probe_skew(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
