@@ -2056,6 +2056,11 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         
         return decode_ieee_block(self._read_raw())
     
+    def _ask_for_ieee_block(self, data, encoding = 'utf-8'):
+        "Write string then read IEEE block"
+        self._write(data, encoding)
+        return self._read_ieee_block()
+
     def _write_ieee_block(self, data, prefix = None, encoding = 'utf-8'):
         "Write IEEE block"
         # IEEE block binary data is prefixed with #lnnnnnnnn
