@@ -156,6 +156,7 @@ TimebaseReferenceMapping = {
         'left': 'left',
         'center': 'cent',
         'right': 'righ'}
+TriggerModifierMapping = {'none': 'normal', 'auto': 'auto'}
 
 class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
                        scpi.common.SelfTest, scpi.common.Memory,
@@ -163,7 +164,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                        scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
                        scope.WaveformMeasurement, scope.MinMaxWaveform,
                        scope.ContinuousAcquisition, scope.AverageAcquisition,
-                       scope.SampleMode, scope.AutoSetup,
+                       scope.SampleMode, scope.TriggerModifier, scope.AutoSetup,
                        extra.common.SystemSetup, extra.common.Screenshot,
                        ivi.Driver):
     "Agilent generic IVI oscilloscope driver"
@@ -1513,6 +1514,21 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._acquisition_sample_mode = value
         self._set_cache_valid()
     
+    def _get_trigger_modifier(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":trigger:sweep?").lower()
+            self._trigger_modifier = [k for k,v in TriggerModifierMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._trigger_modifier
+
+    def _set_trigger_modifier(self, value):
+        if value not in TriggerModifierMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":trigger:sweep %s" % TriggerModifierMapping[value])
+        self._trigger_modifier = value
+        self._set_cache_valid()
+
     def _measurement_auto_setup(self):
         if not self._driver_operation_simulate:
             self._write(":autoscale")
