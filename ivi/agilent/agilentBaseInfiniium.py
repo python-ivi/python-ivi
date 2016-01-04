@@ -213,7 +213,10 @@ class agilentBaseInfiniium(agilentBaseScope):
         if self._driver_operation_simulate:
             return list()
         
-        self._write(":waveform:byteorder msbfirst")
+        if sys.byteorder == 'little':
+            self._write(":waveform:byteorder lsbfirst")
+        else:
+            self._write(":waveform:byteorder msbfirst")
         self._write(":waveform:format word")
         self._write(":waveform:source %s" % self._channel_name[index])
         
@@ -238,26 +241,13 @@ class agilentBaseInfiniium(agilentBaseScope):
         if format != 2:
             raise UnexpectedResponseException()
         
-        self._write(":waveform:data?")
-        
         # Read waveform data
-        raw_data = self._read_ieee_block()
+        raw_data = self._ask_for_ieee_block(":waveform:data?")
         
         # Split out points and convert to time and voltage pairs
+        y_data = array.array('h', raw_data[0:points*2])
         
-        data = list()
-        for i in range(points):
-            x = ((i - xreference) * xincrement) + xorigin
-            
-            yval = struct.unpack(">h", raw_data[i*2:i*2+2])[0]
-            
-            if yval == 31232:
-                # hole value
-                y = float('nan')
-            else:
-                y = ((yval - yreference) * yincrement) + yorigin
-            
-            data.append((x, y))
+        data = [(((i - xreference) * xincrement) + xorigin, float('nan') if y == 31232 else ((y - yreference) * yincrement) + yorigin) for i, y in enumerate(y_data)]
         
         return data
     

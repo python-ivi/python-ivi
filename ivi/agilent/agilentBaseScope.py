@@ -1359,13 +1359,11 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         if format != 1:
             raise UnexpectedResponseException()
         
-        self._write(":waveform:data?")
-        
         # Read waveform data
-        raw_data = self._read_ieee_block()
+        raw_data = self._ask_for_ieee_block(":waveform:data?")
         
         # Split out points and convert to time and voltage pairs
-        y_data = array.array('H', raw_data)
+        y_data = array.array('h', raw_data[0:points*2])
         
         data = [(((i - xreference) * xincrement) + xorigin, float('nan') if y == 0 else ((y - yreference) * yincrement) + yorigin) for i, y in enumerate(y_data)]
         
