@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 """
 
+import array
+import sys
 import time
-import struct
 
 from .. import ivi
 from .. import scope
@@ -1328,7 +1329,10 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         if self._driver_operation_simulate:
             return list()
         
-        self._write(":waveform:byteorder msbfirst")
+        if sys.byteorder == 'little':
+            self._write(":waveform:byteorder lsbfirst")
+        else:
+            self._write(":waveform:byteorder msbfirst")
         self._write(":waveform:unsigned 1")
         self._write(":waveform:format word")
         self._write(":waveform:points normal")
@@ -1361,20 +1365,9 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         raw_data = self._read_ieee_block()
         
         # Split out points and convert to time and voltage pairs
+        y_data = array.array('H', raw_data)
         
-        data = list()
-        for i in range(points):
-            x = ((i - xreference) * xincrement) + xorigin
-            
-            yval = struct.unpack(">H", raw_data[i*2:i*2+2])[0]
-            
-            if yval == 0:
-                # hole value
-                y = float('nan')
-            else:
-                y = ((yval - yreference) * yincrement) + yorigin
-            
-            data.append((x, y))
+        data = [(((i - xreference) * xincrement) + xorigin, float('nan') if y == 0 else ((y - yreference) * yincrement) + yorigin) for i, y in enumerate(y_data)]
         
         return data
     
