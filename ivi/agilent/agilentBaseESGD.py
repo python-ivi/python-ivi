@@ -290,34 +290,16 @@ class agilentBaseESGD(agilentBaseESG, rfsiggen.ModulateIQ, rfsiggen.IQImpairment
         if len(yi) % self._digital_modulation_arb_waveform_quantum != 0:
             raise ivi.ValueNotSupportedException()
 
-        raw_i_data = b''
-        raw_q_data = b''
+        # clip on [-1,1] and rescale to [0,1]
+        yic = (yi.clip(-1, 1)+1)/2
+        yqc = (yq.clip(-1, 1)+1)/2
 
-        for f in yi:
-            # clip at -1 and 1
-            if f > 1.0: f = 1.0
-            if f < -1.0: f = -1.0
+        # scale to 14 bits
+        yib = np.rint(yic * ((1 << 14)-1)).astype(int) & 0x00003fff
+        yqb = np.rint(yqc * ((1 << 14)-1)).astype(int) & 0x00003fff
 
-            f = (f + 1) / 2
-
-            # scale to 14 bits
-            i = int(f * ((1 << 14) - 1) + 0.5) & 0x00003fff
-
-            # add to raw data, MSB first
-            raw_i_data = raw_i_data + struct.pack('>H', i)
-
-        for f in yq:
-            # clip at -1 and 1
-            if f > 1.0: f = 1.0
-            if f < -1.0: f = -1.0
-
-            f = (f + 1) / 2
-
-            # scale to 14 bits
-            i = int(f * ((1 << 14) - 1) + 0.5) & 0x000fffff
-
-            # add to raw data, MSB first
-            raw_q_data = raw_q_data + struct.pack('>H', i)
+        raw_i_data = yib.astype('>i2').tobytes()
+        raw_q_data = yqb.astype('>i2').tobytes()
 
         self._write_ieee_block(raw_i_data, 'mmemory:data "ARBI:%s", ' % name)
         self._write_ieee_block(raw_q_data, 'mmemory:data "ARBQ:%s", ' % name)
