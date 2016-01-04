@@ -1133,7 +1133,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
                     value = 'ac_line'
             elif value == 'glit':
                 qual = self._ask(":trigger:glitch:qualifier?").lower()
-                if qual == 'rang':
+                if qual in WidthConditionMapping.values():
                     value = 'width'
                 else:
                     value = 'glitch'
@@ -1151,10 +1151,9 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             if value == 'ac_line':
                 self._write(":trigger:source line")
             if value == 'glitch':
-                if self._trigger_glitch_condition == 'greater_than':
-                    self._write(":trigger:glitch:qualifier greaterthan")
-                else:
-                    self._write(":trigger:glitch:qualifier lessthan")
+                qual = self._ask(":trigger:glitch:qualifier?").lower()
+                if qual not in GlitchConditionMapping.values():
+                    self._write(":trigger:glitch:qualifier %s" % GlitchConditionMapping[self._trigger_glitch_condition])
             if value == 'width':
                 self._write(":trigger:glitch:qualifier range")
         self._trigger_type = value
