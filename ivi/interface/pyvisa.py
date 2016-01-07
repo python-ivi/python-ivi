@@ -30,7 +30,6 @@ from distutils.version import StrictVersion
 
 try:
     import visa
-    import pyvisa
     try:
         # New style PyVISA
         visa_rm = visa.ResourceManager()
@@ -117,11 +116,11 @@ class PyVisaInstrument:
 
     def remote(self):
         "Send remote command"
-        self.instrument.gpib_control_ren(pyvisa.constants.VI_GPIB_REN_ASSERT_ADDRESS)
+        self.instrument.gpib_control_ren(visa.constants.VI_GPIB_REN_ASSERT_ADDRESS)
 
     def local(self):
         "Send local command"
-        self.instrument.gpib_control_ren(pyvisa.constants.VI_GPIB_REN_DEASSERT_GTL)
+        self.instrument.gpib_control_ren(visa.constants.VI_GPIB_REN_DEASSERT_GTL)
 
     def lock(self):
         "Send lock command"
