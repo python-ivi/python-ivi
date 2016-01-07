@@ -39,13 +39,10 @@ try:
         visa_instrument_opener = visa.instrument
 except ImportError:
     # PyVISA not installed, pass it up
-    raise ImportError
-except:
+    raise
+except Exception as e:
     # any other error
-    e = sys.exc_info()[1]
-    sys.stderr.write("python-ivi: PyVISA is installed, but could not be loaded (%s: %s)\n" %
-        (e.__class__.__name__, e.args[0]))
-    raise ImportError
+    raise ImportError("python-ivi: PyVISA is installed, but could not be loaded (%s)\n" % repr(e))
 
 class PyVisaInstrument:
     "PyVisa wrapper instrument interface client"
