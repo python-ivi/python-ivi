@@ -153,7 +153,7 @@ class Base(ivi.IviContainer):
         pass
     
     def _configure(self, function, range, resolution):
-        self._set_measurement_function(self, function)
+        self._set_measurement_function(function)
         if range in Auto:
             self._set_auto_range(range)
         else:
