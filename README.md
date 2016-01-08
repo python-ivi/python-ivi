@@ -24,6 +24,10 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
     * LeCroy WaveRunner Xi-A series
+    * Tektronix MDO3000 series
+    * Tektronix DPO4000 series
+    * Tektronix MDO4000 series
+    * Tektronix MSO4000 series
   * Digital Multimeters (dmm):
     * Agilent 34401A
     * Agilent 34410A
@@ -42,6 +46,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
   * RF Power Meters (pwrmeter):
     * Agilent 436A
     * Agilent 437B
+    * Agilent U2000 series
   * Spectrum Analyzers (specan):
     * Agilent 859xA/B series
     * Agilent 859xE/EM/C/L series
@@ -51,8 +56,8 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent ESG E4400B series
   * Other
     * Agilent 8156A optical attenuator
-    * Agilent 86140B series optical spectrum analyzer
     * Agilent 85644/5A tracking source
+    * Agilent 86140B series optical spectrum analyzer
     * Colby Instruments PDL10A Programmable Delay Line
     * DiCon Fiberoptics GP700 Programmable Fiberoptic Instrument
     * JDS Uniphase TB9 Series Optical Grating Filter
