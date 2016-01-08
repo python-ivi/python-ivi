@@ -317,6 +317,8 @@ class IndexedPropertyCollection(object):
             self._objs.append(self._build_obj(self._props, self._docs, i))
     
     def __getitem__(self, key):
+        if type(key) is slice:
+            return self._objs[key]
         i = get_index(self._indicies_dict, key)
         return self._objs[i]
 
