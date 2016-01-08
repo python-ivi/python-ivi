@@ -227,49 +227,52 @@ This will result in the complete documentation:
 
 ## Usage examples
 
-This sample Python code will use Python IVI to connect to an Agilent MSO7104A
-over LXI (VXI-11), configure the timebase, trigger, and channel 1, capture a
-waveform, and read it out of the instrument.  
+This sample Python code will use Python IVI to connect to an oscilloscope
+(either an Agilent MSO7104A or a Tektronix MDO4104) over LXI (VXI-11) or
+USBTMC, configure the timebase, trigger, and channel 1, capture a waveform,
+and read it out of the instrument.
 
     # import Python IVI
     import ivi
-    # connect to MSO7104A via LXI
-    mso = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
-    # connect to MSO7104A via USBTMC
-    #mso = ivi.agilent.agilentMSO7104A("USB0::2391::5973::MY********::INSTR")
+    # connect to scope
+    scope = ivi.agilent.agilentMSO7104A("TCPIP0::192.168.1.104::INSTR")
+    #scope = ivi.tektronix.tektronixMDO4104("TCPIP0::192.168.1.108::INSTR")
+    #scope = ivi.agilent.agilentMSO7104A("USB0::2391::5973::MY********::INSTR")
+    #scope = ivi.tektronix.tektronixMDO4104("USB0::1689::1036::C******::INSTR")
     # configure timebase
-    mso.acquisition.time_per_record = 1e-3
+    scope.acquisition.time_per_record = 1e-3
     # configure triggering
-    mso.trigger.type = 'edge'
-    mso.trigger.source = 'channel1'
-    mso.trigger.coupling = 'dc'
-    mso.trigger.edge.slope = 'positive'
-    mso.trigger.level = 0
-    # configure channel
-    mso.channels['channel1'].enabled = True
-    mso.channels['channel1'].offset = 0
-    mso.channels['channel1'].range = 4
-    mso.channels['channel1'].coupling = 'dc'
+    scope.trigger.type = 'edge'
+    scope.trigger.source = scope.channels[0]
+    scope.trigger.coupling = 'dc'
+    scope.trigger.edge.slope = 'positive'
+    scope.trigger.level = 0
+    # configure channels
+    for ch in scope.channels[0:1]:
+        ch.enabled = True
+        ch.offset = 0
+        ch.range = 4
+        ch.coupling = 'dc'
     # initiate measurement
-    mso.measurement.initiate()
+    scope.measurement.initiate()
     # read out channel 1 waveform data
-    waveform = mso.channels[0].measurement.fetch_waveform()
+    waveform = scope.channels[0].measurement.fetch_waveform()
     # measure peak-to-peak voltage
-    vpp = mso.channels[0].measurement.fetch_waveform_measurement("voltage_peak_to_peak")
+    vpp = scope.channels[0].measurement.fetch_waveform_measurement("voltage_peak_to_peak")
     # measure phase
-    phase = mso.channels['channel1'].measurement.fetch_waveform_measurement("phase", "channel2")
+    phase = scope.channels[0].measurement.fetch_waveform_measurement("phase", scope.channels[1])
     # save screenshot to file
-    png = mso.display.fetch_screenshot()
+    png = scope.display.fetch_screenshot()
     with open('screenshot.png', 'wb') as f:
         f.write(png)
     # save setup to file
-    setup = mso.system.fetch_setup()
+    setup = scope.system.fetch_setup()
     with open('setup.dat', 'wb') as f:
         f.write(setup)
     # restore setup from file
     with open('setup.dat', 'rb') as f:
         setup = f.read()
-    mso.system.load_setup(setup)
+    scope.system.load_setup(setup)
 
 This sample Python code will use Python IVI to connect to a Tektronix AWG2021,
 generate a sinewave with numpy, and transfer it to channel 1.  
