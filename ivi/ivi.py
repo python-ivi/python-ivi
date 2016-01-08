@@ -2053,8 +2053,23 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
         # where l is length of n and n is the
         # length of the data
         # ex: #800002000 prefixes 2000 data bytes
-        
-        return decode_ieee_block(self._read_raw())
+
+        ch = self._read_raw(1)
+
+        if len(ch) == 0:
+            return b''
+
+        while ch != b'#':
+            ch = self._read_raw(1)
+
+        l = int(self._read_raw(1))
+        if l > 0:
+            num = int(self._read_raw(l))
+            raw_data = self._read_raw(num)
+        else:
+            raw_data = self._read_raw()
+
+        return raw_data
     
     def _ask_for_ieee_block(self, data, encoding = 'utf-8'):
         "Write string then read IEEE block"
