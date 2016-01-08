@@ -1122,6 +1122,8 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         return self._trigger_source
     
     def _set_trigger_source(self, value):
+        if hasattr(value, 'name'):
+            value = value.name
         value = str(value)
         if value not in self._channel_name:
             raise ivi.UnknownPhysicalNameException()
