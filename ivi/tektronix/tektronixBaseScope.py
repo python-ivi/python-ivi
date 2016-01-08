@@ -1304,6 +1304,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
 
         # Read waveform data
         raw_data = self._ask_for_ieee_block(":curve?")
+        self._read_raw() # flush buffer
 
         # Split out points and convert to time and voltage pairs
         y_data = array.array('H', raw_data)

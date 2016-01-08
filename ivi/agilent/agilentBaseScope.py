@@ -1368,6 +1368,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         
         # Read waveform data
         raw_data = self._ask_for_ieee_block(":waveform:data?")
+        self._read_raw() # flush buffer
         
         # Split out points and convert to time and voltage pairs
         y_data = array.array('h', raw_data[0:points*2])
