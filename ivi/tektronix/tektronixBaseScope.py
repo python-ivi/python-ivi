@@ -1384,6 +1384,8 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
             self._write(":measurement:immed:type %s" % func)
             self._write(":measurement:immed:source1 %s" % self._channel_name[index])
             if measurement_function in ['ratio', 'phase', 'delay']:
+                if hasattr(ref_channel, 'name'):
+                    ref_channel = ref_channel.name
                 ref_index = ivi.get_index(self._channel_name, ref_channel)
                 self._write(":measurement:immed:source2 %s" % self._channel_name[ref_index])
             return float(self._ask(":measurement:immed:value?"))
