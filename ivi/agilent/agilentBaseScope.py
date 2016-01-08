@@ -663,6 +663,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             self._write(":timebase:position %e" % value)
         self._timebase_position = value
         self._set_cache_valid()
+        self._set_cache_valid(False, 'timebase_window_position')
         
     def _get_timebase_range(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -680,6 +681,8 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._timebase_scale = value / self._horizontal_divisions
         self._set_cache_valid()
         self._set_cache_valid(True, 'timebase_scale')
+        self._set_cache_valid(False, 'timebase_window_scale')
+        self._set_cache_valid(False, 'timebase_window_range')
         
     def _get_timebase_scale(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -697,6 +700,8 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._timebase_range = value * self._horizontal_divisions
         self._set_cache_valid()
         self._set_cache_valid(True, 'timebase_range')
+        self._set_cache_valid(False, 'timebase_window_scale')
+        self._set_cache_valid(False, 'timebase_window_range')
         
     def _get_timebase_window_position(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
