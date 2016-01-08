@@ -24,6 +24,49 @@ THE SOFTWARE.
 
 """
 
+# Oscilloscopes
+# DPO4000
+from .tektronixDPO4032 import tektronixDPO4032
+from .tektronixDPO4034 import tektronixDPO4034
+from .tektronixDPO4054 import tektronixDPO4054
+from .tektronixDPO4104 import tektronixDPO4104
+# MSO4000
+from .tektronixMSO4032 import tektronixMSO4032
+from .tektronixMSO4034 import tektronixMSO4034
+from .tektronixMSO4054 import tektronixMSO4054
+from .tektronixMSO4104 import tektronixMSO4104
+# DPO4000B
+from .tektronixDPO4014B import tektronixDPO4014B
+from .tektronixDPO4034B import tektronixDPO4034B
+from .tektronixDPO4054B import tektronixDPO4054B
+from .tektronixDPO4102B import tektronixDPO4102B
+from .tektronixDPO4104B import tektronixDPO4104B
+# MSO4000B
+from .tektronixMSO4014B import tektronixMSO4014B
+from .tektronixMSO4034B import tektronixMSO4034B
+from .tektronixMSO4054B import tektronixMSO4054B
+from .tektronixMSO4102B import tektronixMSO4102B
+from .tektronixMSO4104B import tektronixMSO4104B
+# MDO4000
+from .tektronixMDO4054 import tektronixMDO4054
+from .tektronixMDO4104 import tektronixMDO4104
+# MDO4000B
+from .tektronixMDO4014B import tektronixMDO4014B
+from .tektronixMDO4034B import tektronixMDO4034B
+from .tektronixMDO4054B import tektronixMDO4054B
+from .tektronixMDO4104B import tektronixMDO4104B
+# MDO3000
+from .tektronixMDO3012 import tektronixMDO3012
+from .tektronixMDO3014 import tektronixMDO3014
+from .tektronixMDO3022 import tektronixMDO3022
+from .tektronixMDO3024 import tektronixMDO3024
+from .tektronixMDO3032 import tektronixMDO3032
+from .tektronixMDO3034 import tektronixMDO3034
+from .tektronixMDO3052 import tektronixMDO3052
+from .tektronixMDO3054 import tektronixMDO3054
+from .tektronixMDO3102 import tektronixMDO3102
+from .tektronixMDO3104 import tektronixMDO3104
+
 # Function Generators
 from .tektronixAWG2005 import tektronixAWG2005
 from .tektronixAWG2020 import tektronixAWG2020
