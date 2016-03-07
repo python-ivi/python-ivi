@@ -669,18 +669,10 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         return self._acquisition_record_length
 
     def _get_acquisition_time_per_record(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._acquisition_time_per_record = float(self._ask(":horizontal:scale?")) * self._horizontal_divisions
-            self._set_cache_valid()
-        return self._acquisition_time_per_record
+        return self._get_timebase_range()
 
     def _set_acquisition_time_per_record(self, value):
-        value = float(value)
-        if not self._driver_operation_simulate:
-            self._write(":timebase:range %e" % value)
-        self._acquisition_time_per_record = value
-        self._set_cache_valid()
-        self._set_cache_valid(False, 'acquisition_start_time')
+        self._set_timebase_range(value)
 
     def _get_channel_label(self, index):
         index = ivi.get_index(self._channel_name, index)
