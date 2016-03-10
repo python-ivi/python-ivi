@@ -107,6 +107,8 @@ class OCP(ivi.IviContainer):
     def _set_output_ocp_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
+        if value < 0 or value > self._output_spec[index]['ocp_max']:
+            raise ivi.OutOfRangeException()
         self._output_ocp_limit[index] = value
     
     def _output_reset_output_protection(self, index):
