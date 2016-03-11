@@ -1739,85 +1739,86 @@ class Driver(DriverOperation, DriverIdentity, DriverUtility):
             # USB::1234::5678::SERIAL::INSTR
             # USB0::0x1234::0x5678::INSTR
             # USB0::0x1234::0x5678::SERIAL::INSTR
+            # USB0::0x1234::0x5678::SERIAL::0::INSTR
             # GPIB::10::INSTR
             # GPIB0::10::INSTR
             # ASRL1::INSTR
             # ASRL::COM1,9600,8n1::INSTR
             # ASRL::/dev/ttyUSB0,9600::INSTR
             # ASRL::/dev/ttyUSB0,9600,8n1::INSTR
-            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<suffix>INSTR))$', resource, re.I)
+            m = re.match('^(?P<prefix>(?P<type>TCPIP|USB|GPIB|ASRL)\d*)(::(?P<arg1>[^\s:]+))?(::(?P<arg2>[^\s:]+(\[.+\])?))?(::(?P<arg3>[^\s:]+))?(::(?P<arg4>[^\s:]+))?(::(?P<suffix>INSTR))$', resource, re.I)
             if m is None:
                 if 'pyvisa' in globals():
                     # connect with PyVISA
                     self._interface = pyvisa.PyVisaInstrument(resource)
                 else:
                     raise IOException('Invalid resource string')
-
-            res_type = m.group('type').upper()
-            res_prefix = m.group('prefix')
-            res_arg1 = m.group('arg1')
-            res_arg2 = m.group('arg2')
-            res_arg3 = m.group('arg3')
-            res_suffix = m.group('suffix')
-
-            if res_type == 'TCPIP':
-                # TCP connection
-                if self._prefer_pyvisa and 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                elif 'vxi11' in globals():
-                    # connect with VXI-11
-                    self._interface = vxi11.Instrument(resource)
-                elif 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                else:
-                    raise IOException('Cannot use resource type %s' % res_type)
-            elif res_type == 'USB':
-                # USB connection
-                if self._prefer_pyvisa and 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                elif 'usbtmc' in globals():
-                    # connect with USBTMC
-                    self._interface = usbtmc.Instrument(resource)
-                elif 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                else:
-                    raise IOException('Cannot use resource type %s' % res_type)
-            elif res_type == 'GPIB':
-                # GPIB connection
-                if self._prefer_pyvisa and 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                elif 'linuxgpib' in globals():
-                    # connect with linux-gpib
-                    self._interface = linuxgpib.LinuxGpibInstrument(resource)
-                elif 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                else:
-                    raise IOException('Cannot use resource type %s' % res_type)
-            elif res_type == 'ASRL':
-                # Serial connection
-                if self._prefer_pyvisa and 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                elif 'pyserial' in globals():
-                    # connect with PySerial
-                    self._interface = pyserial.SerialInstrument(resource)
-                elif 'pyvisa' in globals():
-                    # connect with PyVISA
-                    self._interface = pyvisa.PyVisaInstrument(resource)
-                else:
-                    raise IOException('Cannot use resource type %s' % res_type)
-                
-            elif 'pyvisa' in globals():
-                # connect with PyVISA
-                self._interface = pyvisa.PyVisaInstrument(resource)
             else:
-                raise IOException('Unknown resource type %s' % res_type)
+                res_type = m.group('type').upper()
+                res_prefix = m.group('prefix')
+                res_arg1 = m.group('arg1')
+                res_arg2 = m.group('arg2')
+                res_arg3 = m.group('arg3')
+                res_suffix = m.group('suffix')
+
+                if res_type == 'TCPIP':
+                    # TCP connection
+                    if self._prefer_pyvisa and 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    elif 'vxi11' in globals():
+                        # connect with VXI-11
+                        self._interface = vxi11.Instrument(resource)
+                    elif 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    else:
+                        raise IOException('Cannot use resource type %s' % res_type)
+                elif res_type == 'USB':
+                    # USB connection
+                    if self._prefer_pyvisa and 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    elif 'usbtmc' in globals():
+                        # connect with USBTMC
+                        self._interface = usbtmc.Instrument(resource)
+                    elif 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    else:
+                        raise IOException('Cannot use resource type %s' % res_type)
+                elif res_type == 'GPIB':
+                    # GPIB connection
+                    if self._prefer_pyvisa and 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    elif 'linuxgpib' in globals():
+                        # connect with linux-gpib
+                        self._interface = linuxgpib.LinuxGpibInstrument(resource)
+                    elif 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    else:
+                        raise IOException('Cannot use resource type %s' % res_type)
+                elif res_type == 'ASRL':
+                    # Serial connection
+                    if self._prefer_pyvisa and 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    elif 'pyserial' in globals():
+                        # connect with PySerial
+                        self._interface = pyserial.SerialInstrument(resource)
+                    elif 'pyvisa' in globals():
+                        # connect with PyVISA
+                        self._interface = pyvisa.PyVisaInstrument(resource)
+                    else:
+                        raise IOException('Cannot use resource type %s' % res_type)
+
+                elif 'pyvisa' in globals():
+                    # connect with PyVISA
+                    self._interface = pyvisa.PyVisaInstrument(resource)
+                else:
+                    raise IOException('Unknown resource type %s' % res_type)
 
             self._driver_operation_io_resource_descriptor = resource
 

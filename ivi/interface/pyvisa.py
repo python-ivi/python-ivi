@@ -26,9 +26,17 @@ THE SOFTWARE.
 
 import io
 import sys
+from distutils.version import StrictVersion
 
 try:
     import visa
+    try:
+        # New style PyVISA
+        visa_rm = visa.ResourceManager()
+        visa_instrument_opener = visa_rm.open_resource
+    except AttributeError:
+        # Old style PyVISA
+        visa_instrument_opener = visa.instrument
 except ImportError:
     # PyVISA not installed, pass it up
     raise ImportError
@@ -43,38 +51,33 @@ class PyVisaInstrument:
     "PyVisa wrapper instrument interface client"
     def __init__(self, resource, *args, **kwargs):
         if type(resource) is str:
-            rm=visa.ResourceManager()
-            l=rm.list_resources()
-            self.instrument = rm.open_resource(l[0])
+            self.instrument = visa_instrument_opener(resource, *args, **kwargs)
+            # For compatibility with new style PyVISA
+            if not hasattr(self.instrument, 'trigger'):
+                self.instrument.trigger = self.instrument.assert_trigger
         else:
             self.instrument = resource
-        
         self.buffer = io.BytesIO()
 
     def write_raw(self, data):
         "Write binary data to instrument"
-        
         self.instrument.write_raw(data)
 
     def read_raw(self, num=-1):
         "Read binary data from instrument"
-        
         # PyVISA only supports reading entire buffer
         #return self.instrument.read_raw()
-        
         data = self.buffer.read(num)
-        
         if len(data) == 0:
             self.buffer = io.BytesIO(self.instrument.read_raw())
             data = self.buffer.read(num)
-        
         return data
-    
+
     def ask_raw(self, data, num=-1):
         "Write then read binary data"
         self.write_raw(data)
         return self.read_raw(num)
-    
+
     def write(self, message, encoding = 'utf-8'):
         "Write string to instrument"
         if type(message) is tuple or type(message) is list:
@@ -82,7 +85,6 @@ class PyVisaInstrument:
             for message_i in message:
                 self.write(message_i, encoding)
             return
-        
         self.write_raw(str(message).encode(encoding))
 
     def read(self, num=-1, encoding = 'utf-8'):
@@ -97,36 +99,33 @@ class PyVisaInstrument:
             for message_i in message:
                 val.append(self.ask(message_i, num, encoding))
             return val
-        
         self.write(message, encoding)
         return self.read(num, encoding)
-    
+
     def read_stb(self):
         "Read status byte"
         raise NotImplementedError()
-    
+
     def trigger(self):
         "Send trigger command"
-        
         self.instrument.trigger()
-    
+
     def clear(self):
         "Send clear command"
         raise NotImplementedError()
-    
+
     def remote(self):
         "Send remote command"
         raise NotImplementedError()
-    
+
     def local(self):
         "Send local command"
         raise NotImplementedError()
-    
+
     def lock(self):
         "Send lock command"
         raise NotImplementedError()
-    
+
     def unlock(self):
         "Send unlock command"
         raise NotImplementedError()
-
