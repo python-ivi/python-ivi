@@ -199,7 +199,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._bandwidth = 1e9
 
         self._horizontal_divisions = 10
-        self._vertical_divisions = 8
+        self._vertical_divisions = 10
 
         self._acquisition_segmented_count = 2
         self._acquisition_segmented_index = 1
