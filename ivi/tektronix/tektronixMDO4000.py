@@ -61,6 +61,8 @@ class tektronixMDO4000(tektronixMSO4000):
         self._write(":wfmoutpre:pt_fmt y")
         self._write(":wfmoutpre:domain time")
         self._write(":data:source %s" % self._channel_name[index])
+        self._write(":data:start 1")
+        self._write(":data:stop 1e10")
 
         # Read preamble
 

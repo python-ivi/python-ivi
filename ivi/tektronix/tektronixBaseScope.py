@@ -1275,6 +1275,8 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._write(":wfmoutpre:bn_fmt rp")
         self._write(":wfmoutpre:pt_fmt y")
         self._write(":data:source %s" % self._channel_name[index])
+        self._write(":data:start 1")
+        self._write(":data:stop 1e10")
 
         # Read preamble
 
