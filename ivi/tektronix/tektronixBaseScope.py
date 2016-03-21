@@ -825,6 +825,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         return self._get_channel_scale(index) * self._vertical_divisions
 
     def _set_channel_range(self, index, value):
+        value = float(value)
         self._set_channel_scale(index, value / self._vertical_divisions)
 
     def _get_channel_scale(self, index):
