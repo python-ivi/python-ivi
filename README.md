@@ -35,6 +35,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent InfiniiVision 2000A X-series (Wavegen option)
     * Agilent InfiniiVision 3000A X-series (Wavegen option)
     * Agilent InfiniiVision 4000A X-series (Wavegen option)
+    * Tektronix MDO3000 series (AFG option)
     * Tektronix AWG2000 series
   * DC Power Supplies (dcpwr):
     * Agilent E3600A series
