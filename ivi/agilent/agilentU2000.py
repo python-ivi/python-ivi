@@ -32,11 +32,12 @@ import time
 
 Units = set(['dBm', 'Watts'])
 
-class agilentU2000(ivi.Driver, pwrmeter.Base, pwrmeter.ManualRange,
+class agilentU2000(scpi.common.IdnCommand, scpi.common.ErrorQuery,
+                scpi.common.Reset, scpi.common.SelfTest,
+                pwrmeter.Base, pwrmeter.ManualRange,
                 pwrmeter.DutyCycleCorrection, pwrmeter.AveragingCount,
                 pwrmeter.ZeroCorrection,
-                scpi.common.IdnCommand, scpi.common.ErrorQuery,
-                scpi.common.Reset, scpi.common.SelfTest):
+                ivi.Driver):
     "Agilent U2000 series RF power sensor"
     
     def __init__(self, *args, **kwargs):
