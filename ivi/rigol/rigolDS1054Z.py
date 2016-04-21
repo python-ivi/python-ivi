@@ -42,15 +42,52 @@ class rigolDS1054Z(rigolBaseScope):
         
         self._init_channels()
 
-    def _generic_channel_setter(setString, setFormatter, cacheList, allowed = None):
-        "if allowed is None, then we actually allow anything..."
+    def _generic_channel_getset(varName, varSetFmtStr, cacheList,
+            setFormatter = lambda x : x, getFormatter = lambda x : x,
+            allowed = None):
+
+        setString = (":%%s:%s " % varName) + varSetFmtStr
+
+        def setter(self, index, value):
+            index = ivi.get_index(self._channel_name, index)
+
+            if not self._driver_operation_simulate:
+                if not allowed is None and not setFormatter(value) in allowed:
+                    raise ivi.ValueNotSupportedException()
+
+                self._write( setString % 
+                        (self._channel_name[index], setFormatter(value)) )
+
+            self.__dict__[cacheList][index] = setFormatter(value)
+            self._set_cache_valid(index=index)
+
+        def getter(self, index):
+            index = ivi.get_index(self._channel_name, index)
+
+            if ( not self._driver_operation_simulate and
+                 not self._get_cache_valid(index=index) ):
+                query = ":%s:%s ?" % (self._channel_name[index], varName)
+                res = self._ask( query )
+                                 
+                if allowed is None or res in allowed:
+                    self.__dict__[cacheList][index] = getFormatter(res)
+                    self._set_cache_valid(index=index)
+                else:
+                    raise Exception("Unexpected value from " + query)
+
+            return self.__dict__[cacheList][index]
+
+        return getter, setter
+
+    def _generic_channel_setter(setString, setFormatter, cacheList, setAllowed = None):
+        "if setAllowed is None, then we actually allow anything..."
 
         def ret(self, index, value):
             index = ivi.get_index(self._channel_name, index)
 
             if not self._driver_operation_simulate:
-                if not allowed is None and not setFormatter(value) in allowed:
-                    raise Exception("Value isn't allowed." + str(allowed))
+                if not setAllowed is None and not setFormatter(value) in setAllowed:
+                    raise ivi.ValueNotSupportedException()
 
                 self._write( (":%s:" + setString) %
                              (self._channel_name[index], setFormatter(value)) )
@@ -60,7 +97,7 @@ class rigolDS1054Z(rigolBaseScope):
 
         return ret
 
-    def _generic_channel_getter(getString, getFormatter, cacheList, filterValues = None):
+    def _generic_channel_getter(getString, getFormatter, cacheList, getFilter = None):
 
         def ret(self, index):
             index = ivi.get_index(self._channel_name, index)
@@ -70,7 +107,7 @@ class rigolDS1054Z(rigolBaseScope):
                 query = (":%s:" + getString + "?" ) % self._channel_name[index]
                 res = self._ask( query )
                                  
-                if filterValues is None or res in filterValues:
+                if getFilter is None or res in getFilter:
                     self.__dict__[cacheList][index] = getFormatter(res)
                     self._set_cache_valid(index=index)
                 else:
@@ -81,34 +118,28 @@ class rigolDS1054Z(rigolBaseScope):
         return ret
 
 
-    _get_channel_offset = _generic_channel_getter( "offs",
-                                                   lambda x : x,
-                                                   "_channel_offset" )
+    _get_channel_offset = _generic_channel_getter(
+            "offs", lambda x : x, "_channel_offset" )
 
-    _set_channel_offset = _generic_channel_setter( "offs %e",
-                                                   lambda x : float(x),
-                                                   "_channel_offset" )
+    _set_channel_offset = _generic_channel_setter(
+            "offs %e", lambda x : float(x), "_channel_offset" )
 
 
-    _get_channel_enabled = _generic_channel_getter( "disp",
-                                                    lambda x : x == "1",
-                                                    "_channel_enabled",
-                                                    ["0", "1"] )
+    _get_channel_enabled = _generic_channel_getter(
+            "disp", lambda x : x == "1", "_channel_enabled", ["0", "1"] )
 
-    _set_channel_enabled = _generic_channel_setter( "disp %d",
-                                                    lambda x : bool(x),
-                                                    "_channel_enabled" )
+    _set_channel_enabled = _generic_channel_setter(
+            "disp %d", lambda x : bool(x), "_channel_enabled" )
 
 
-    _get_channel_bw_limit = _generic_channel_getter( "bwl",
-                                                     lambda x : x,
-                                                     "_channel_bw_limit",
-                                                     ["OFF", "20M"] )
+    _get_channel_bw_limit, _set_channel_bw_limit = _generic_channel_getset(
+            "bwl", "%s", "_channel_bw_limit", lambda x : x.upper(),
+            allowed = ["OFF", "20M"] )
 
-    _set_channel_bw_limit = _generic_channel_setter( "bwl %s",
-                                                      lambda x : x,
-                                                      "_channel_bw_limit",
-                                                      ["OFF", "20M"] )
+    _get_channel_coupling, _set_channel_coupling = _generic_channel_getset(
+            "coup", "%s", "_channel_coupling", lambda x: x.upper(),
+            allowed = ["AC", "DC", "GND"])
+
 
     def _measurement_fetch_waveform(self, index):
         "Returns current waveform as a list of (time, voltage) tuples"
