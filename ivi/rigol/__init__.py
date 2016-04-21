@@ -36,3 +36,8 @@ from .rigolDP1308A import rigolDP1308A
 # Digital Multimeters
 #DM3068
 from .rigolDM3068Agilent import rigolDM3068Agilent
+
+# Oscilloscopes
+# DS1054Z
+from .rigolDS1054Z import rigolDS1054Z
+
