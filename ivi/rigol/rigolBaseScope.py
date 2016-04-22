@@ -59,8 +59,11 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         
+        self._timebase_scale = 1e-6
         self._horizontal_divisions = 12
         self._vertical_divisions = 8
+
+        self._trigger_sweep = "AUTO"
         
         self._identity_description = "Rigol generic IVI oscilloscope driver"
         self._identity_identifier = ""
@@ -74,7 +77,8 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         self._identity_supported_instrument_models = [ "DS1054Z" ]
        
 ########                 Nonstandard IVI properties                ######## 
-# note that cache lists are initialised in _init_channels() below
+# note that member variables are initialised in __init__ above, or 
+# _init_channels() below.
         self._add_property( "channels[].bw_limit",
                             self._get_channel_bw_limit,
                             self._set_channel_bw_limit,
@@ -103,15 +107,6 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
                            Delay time calibration of the channel.  Only relevant
                            if timebase is less than 10us.
                            """))
-        self._add_property("channels[].probe",
-                           self._get_channel_probe,
-                           self._set_channel_probe,
-                           None,
-                           ivi.Doc("""
-                           Probe ratio for the channel.  Allowed values are: 0.01,
-                           0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100,
-                           200, 500, 1000.
-                           """))
         self._add_property("channels[].units",
                            self._get_channel_units,
                            self._set_channel_units,
@@ -128,8 +123,19 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
                            Allows for Vernier (fine) adjustment of the vertical
                            scale of each channel.  True = Vernier adjustment ON
                            """))
-        
-        self._init_channels()
+        self._add_property("timebase.scale",
+                           self._get_timebase_scale,
+                           self._set_timebase_scale,
+                           None,
+                           ivi.Doc("""
+                           Sets the horizontal scale in seconds per division of 
+                           the main window.
+                           """))
+        self._add_property("trigger.sweep",
+                           self._get_trigger_sweep,
+                           self._set_trigger_sweep,
+                           None,
+                           ivi.Doc("Trigger sweep mode; one of AUTO NORMal SINGLe"))
 
     
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
@@ -170,14 +176,13 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
             super(rigolBaseScope, self)._init_channels()
         except AttributeError:
             pass
-        
+
         self._channel_name = list() # This seems important TODO: Figure out construction...
 
         self._channel_bw_limit = list()
         self._channel_invert = list()
         self._channel_scale = list()
         self._channel_tcal = list()
-        self._channel_probe = list()
         self._channel_units = list()
         self._channel_vernier = list()
         
@@ -190,7 +195,6 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
             self._channel_invert.append(False)
             self._channel_scale.append(1.0)
             self._channel_tcal.append(0.0)
-            self._channel_probe.append(10.0)
             self._channel_units.append("VOLT")
             self._channel_vernier.append(False)
         

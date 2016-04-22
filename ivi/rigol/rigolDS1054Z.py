@@ -42,6 +42,8 @@ class rigolDS1054Z(rigolBaseScope):
         
         self._init_channels()
 
+    # TODO: Change setFormat and getFormat to behave
+    # like the cast and strFormat in _gen_getset()
     def _gen_chan_getset( varName, cacheList, setFormat = lambda x : x,
                           getFormat = lambda x : x, allow = None ):
         """Produces methods for setting and getting channel parameters
@@ -125,8 +127,8 @@ class rigolDS1054Z(rigolBaseScope):
     _get_channel_scale, _set_channel_scale = _gen_chan_getset(
             "scal", "_channel_scale", setFormat = lambda x : "%e" % float(x) )
 
-    _get_channel_probe, _set_channel_probe = _gen_chan_getset(
-            "prob", "_channel_probe", setFormat = lambda x : "%e" % float(x) )
+    _get_channel_probe_attenuation, _set_channel_probe_attenuation = _gen_chan_getset(
+            "prob", "_channel_probe_attenuation", setFormat = lambda x : "%e" % float(x) )
 
     _get_channel_units, _set_channel_units = _gen_chan_getset(
             "unit", "_channel_units", setFormat = lambda x : x.upper(),
@@ -136,6 +138,58 @@ class rigolDS1054Z(rigolBaseScope):
     _get_channel_vernier, _set_channel_vernier = _gen_chan_getset(
             "vern", "_channel_vernier", setFormat = lambda x : "%d" % bool(x),
             allow = ["0", "1"] )
+
+    def _gen_getset(scopeVarName, selfVarName, cast = lambda x : x,
+            strFormatter = str, allow = None):
+
+        def getter(self):
+            if not self._driver_operation_simulate and not self._get_cache_valid():
+                resp = cast(self._ask(scopeVarName + '?'))
+
+                if not allow is None and not strFormatter(resp) in allow:
+                    raise Exception("Unexpected value from '" + scopeVarName +
+                                    "?', " + str(resp))
+
+                self.__dict__[selfVarName] = resp
+                self._set_cache_valid()
+            return self.__dict__[selfVarName]
+
+        def setter(self, value):
+            value = cast(value)
+            if not self._driver_operation_simulate:
+                if not allow is None and not strFormatter(value) in allow:
+                    raise ivi.ValueNotSupportedException()
+
+                self._write(scopeVarName+ " " + strFormatter(value))
+
+            self.__dict__selfVarName = value
+            self._set_cache_valid()
+
+        return getter, setter
+
+    _get_timebase_scale, _set_timebase_scale = _gen_getset(":tim:scal",
+            "_timebase_scale", cast = float, strFormatter = lambda x: "%e" % x)
+
+    _get_trigger_sweep, _set_trigger_sweep = _gen_getset(":trig:swe",
+            "_trigger_sweep", cast = lambda x : str(x).upper(), allow =
+            ["AUTO", "NORM", "NORMAL", "SINGL", "SINGLE"])
+
+    _get_trigger_type, _set_trigger_type = _gen_getset(":trig:mode",
+            "_trigger_type", cast = lambda x : str(x).upper(), allow = 
+            ["EDGE", "PULS", "PULSE", "RUNT", "WIND", "NEDG", "SLOP", "SLOPE",
+             "VID", "VIDEO", "PATT", "PATTERN", "DEL", "DELAY", "TIM",
+             "TIMEOUT", "DUR", "DURATION", "SHOL", "SHOLD",
+             "RS232", "IIC", "SPI"])
+
+    # IVI has some default trigger stuff that only applies to edge triggers:
+    _get_trigger_level, _set_trigger_level = _gen_getset(":trig:edg:lev",
+            "_trigger_level", cast = float, strFormatter = lambda x: "%e" % x)
+
+    # TODO: Figure out how to do the allow list based on scope params
+    _get_trigger_source, _set_trigger_source = _gen_getset(":trig:edg:sour",
+            "_trigger_source", cast = lambda x : str(x).upper(), allow =
+            ["D%d"%d for d in range(16)] + ["CHAN%d"%c for c in range(1, 5)] +
+            ["CHANNEL%d" % c for c in range(1, 5)])
 
     def _measurement_fetch_waveform(self, index):
         "Returns current waveform as a list of (time, voltage) tuples"
