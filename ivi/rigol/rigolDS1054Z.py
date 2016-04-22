@@ -42,104 +42,100 @@ class rigolDS1054Z(rigolBaseScope):
         
         self._init_channels()
 
-    def _generic_channel_getset(varName, varSetFmtStr, cacheList,
-            setFormatter = lambda x : x, getFormatter = lambda x : x,
-            allowed = None):
+    def _gen_chan_getset( varName, cacheList, setFormat = lambda x : x,
+                          getFormat = lambda x : x, allow = None ):
+        """Produces methods for setting and getting channel parameters
 
-        setString = (":%%s:%s " % varName) + varSetFmtStr
+        Methods are returned as getter, setter and have signatures:
 
-        def setter(self, index, value):
-            index = ivi.get_index(self._channel_name, index)
+        getter(self, index)
+        setter(self, index, value)
 
-            if not self._driver_operation_simulate:
-                if not allowed is None and not setFormatter(value) in allowed:
-                    raise ivi.ValueNotSupportedException()
+        The setter sets it's parameter to value, in both cases index is the
+        channel index.
 
-                self._write( setString % 
-                        (self._channel_name[index], setFormatter(value)) )
-
-            self.__dict__[cacheList][index] = setFormatter(value)
-            self._set_cache_valid(index=index)
+        varName - SCPI command, the "bwl" in ":channel2:bwl 20M"
+        cacheList - The PyIVI cache list associated with the parameter.  Actual
+                    passed-in (setter) or response (getter) value gets cached.
+        setFormat - Single-argument method producing a string eg '20M' above
+        getFormat - Single-argument method scope's reponse is passed through
+                    before comparing against allow list.  Ignored if allow is
+                    not set.
+        allow - List of valid values for the parameter, should be in string
+                format that matches the output of setFormat and getFormat.
+        """
 
         def getter(self, index):
             index = ivi.get_index(self._channel_name, index)
 
             if ( not self._driver_operation_simulate and
                  not self._get_cache_valid(index=index) ):
-                query = ":%s:%s ?" % (self._channel_name[index], varName)
+                query = ":%s:%s?" % (self._channel_name[index], varName)
                 res = self._ask( query )
-                                 
-                if allowed is None or res in allowed:
-                    self.__dict__[cacheList][index] = getFormatter(res)
+
+                if allow is None or getFormat(res) in allow:
+                    self.__dict__[cacheList][index] = res
                     self._set_cache_valid(index=index)
                 else:
                     raise Exception("Unexpected value from " + query)
 
             return self.__dict__[cacheList][index]
 
-        return getter, setter
-
-    def _generic_channel_setter(setString, setFormatter, cacheList, setAllowed = None):
-        "if setAllowed is None, then we actually allow anything..."
-
-        def ret(self, index, value):
+        def setter(self, index, value):
             index = ivi.get_index(self._channel_name, index)
 
             if not self._driver_operation_simulate:
-                if not setAllowed is None and not setFormatter(value) in setAllowed:
+                if not allow is None and not setFormat(value) in allow:
                     raise ivi.ValueNotSupportedException()
 
-                self._write( (":%s:" + setString) %
-                             (self._channel_name[index], setFormatter(value)) )
+                setString = ":%s:%s " % (self._channel_name[index], varName)
+                self._write( setString + setFormat(value) )
 
-            self.__dict__[cacheList][index] = setFormatter(value)
+            self.__dict__[cacheList][index] = value
             self._set_cache_valid(index=index)
 
-        return ret
+        return getter, setter
 
-    def _generic_channel_getter(getString, getFormatter, cacheList, getFilter = None):
+    _get_channel_bw_limit, _set_channel_bw_limit = _gen_chan_getset(
+            "bwl", "_channel_bw_limit", setFormat = lambda x : x.upper(),
+            allow = ["OFF", "20M"] )
 
-        def ret(self, index):
-            index = ivi.get_index(self._channel_name, index)
+    _get_channel_coupling, _set_channel_coupling = _gen_chan_getset(
+            "coup", "_channel_coupling", setFormat = lambda x : x.upper(),
+            allow = ["AC", "DC", "GND"])
 
-            if ( not self._driver_operation_simulate and
-                 not self._get_cache_valid(index=index) ):
-                query = (":%s:" + getString + "?" ) % self._channel_name[index]
-                res = self._ask( query )
-                                 
-                if getFilter is None or res in getFilter:
-                    self.__dict__[cacheList][index] = getFormatter(res)
-                    self._set_cache_valid(index=index)
-                else:
-                    raise Exception("Unexpected value from " + query)
+    _get_channel_enabled, _set_channel_enabled = _gen_chan_getset(
+            "disp", "_channel_enabled", setFormat = lambda x : "%d" % bool(x),
+            allow = ["0", "1"] )
 
-            return self.__dict__[cacheList][index]
+    _get_channel_invert, _set_channel_invert = _gen_chan_getset(
+            "inv", "_channel_invert", setFormat = lambda x : "%d" % bool(x),
+            allow = ["0", "1"] )
 
-        return ret
+    _get_channel_offset, _set_channel_offset = _gen_chan_getset(
+            "offs", "_channel_offset", setFormat = lambda x : "%e" % float(x) )
 
+    # From manual: vertical scale = vertical range/8
+    _get_channel_range, _set_channel_range = _gen_chan_getset(
+            "rang", "_channel_range", setFormat = lambda x : "%e" % float(x) )
 
-    _get_channel_offset = _generic_channel_getter(
-            "offs", lambda x : x, "_channel_offset" )
+    _get_channel_tcal, _set_channel_tcal = _gen_chan_getset(
+            "tcal", "_channel_tcal", setFormat = lambda x : "%e" % float(x) )
 
-    _set_channel_offset = _generic_channel_setter(
-            "offs %e", lambda x : float(x), "_channel_offset" )
+    _get_channel_scale, _set_channel_scale = _gen_chan_getset(
+            "scal", "_channel_scale", setFormat = lambda x : "%e" % float(x) )
 
+    _get_channel_probe, _set_channel_probe = _gen_chan_getset(
+            "prob", "_channel_probe", setFormat = lambda x : "%e" % float(x) )
 
-    _get_channel_enabled = _generic_channel_getter(
-            "disp", lambda x : x == "1", "_channel_enabled", ["0", "1"] )
+    _get_channel_units, _set_channel_units = _gen_chan_getset(
+            "unit", "_channel_units", setFormat = lambda x : x.upper(),
+            getFormat = lambda x : x.upper(), allow = ["VOLT", "VOLTAGE",
+            "WATT", "AMP", "AMPERE", "UNKN", "UNKNOWN"] )
 
-    _set_channel_enabled = _generic_channel_setter(
-            "disp %d", lambda x : bool(x), "_channel_enabled" )
-
-
-    _get_channel_bw_limit, _set_channel_bw_limit = _generic_channel_getset(
-            "bwl", "%s", "_channel_bw_limit", lambda x : x.upper(),
-            allowed = ["OFF", "20M"] )
-
-    _get_channel_coupling, _set_channel_coupling = _generic_channel_getset(
-            "coup", "%s", "_channel_coupling", lambda x: x.upper(),
-            allowed = ["AC", "DC", "GND"])
-
+    _get_channel_vernier, _set_channel_vernier = _gen_chan_getset(
+            "vern", "_channel_vernier", setFormat = lambda x : "%d" % bool(x),
+            allow = ["0", "1"] )
 
     def _measurement_fetch_waveform(self, index):
         "Returns current waveform as a list of (time, voltage) tuples"

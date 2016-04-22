@@ -72,27 +72,62 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         self._identity_specification_major_version = 4
         self._identity_specification_minor_version = 1
         self._identity_supported_instrument_models = [ "DS1054Z" ]
-        
+       
+########                 Nonstandard IVI properties                ######## 
+# note that cache lists are initialised in _init_channels() below
         self._add_property( "channels[].bw_limit",
                             self._get_channel_bw_limit,
                             self._set_channel_bw_limit,
                             None,
                             ivi.Doc("20Mhz low-pass filter.  True=enabled.") )
- #       self._add_property('channels[].invert',
- #                       self._get_channel_invert,
- #                       self._set_channel_invert,
- #                       None,
- #                       ivi.Doc("""
- #                       Selects whether or not to invert the channel.
- #                       """))
- #       self._add_property('channels[].scale',
- #                       self._get_channel_scale,
- #                       self._set_channel_scale,
- #                       None,
- #                       ivi.Doc("""
- #                       Specifies the vertical scale, or units per division, of the channel.  Units
- #                       are volts.
- #                       """))
+        self._add_property("channels[].invert",
+                           self._get_channel_invert,
+                           self._set_channel_invert,
+                           None,
+                           ivi.Doc("""
+                           Selects whether or not to invert the channel.
+                           """))
+        self._add_property("channels[].scale",
+                           self._get_channel_scale,
+                           self._set_channel_scale,
+                           None,
+                           ivi.Doc("""
+                           Specifies the vertical scale, or units per division,
+                           of the channel.  Units are volts.
+                           """))
+        self._add_property("channels[].tcal",
+                           self._get_channel_tcal,
+                           self._set_channel_tcal,
+                           None,
+                           ivi.Doc("""
+                           Delay time calibration of the channel.  Only relevant
+                           if timebase is less than 10us.
+                           """))
+        self._add_property("channels[].probe",
+                           self._get_channel_probe,
+                           self._set_channel_probe,
+                           None,
+                           ivi.Doc("""
+                           Probe ratio for the channel.  Allowed values are: 0.01,
+                           0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100,
+                           200, 500, 1000.
+                           """))
+        self._add_property("channels[].units",
+                           self._get_channel_units,
+                           self._set_channel_units,
+                           None,
+                           ivi.Doc("""
+                           Display units for the channel.  Allowed values are:
+                           VOLTage, WATT, AMPere, UNKNown
+                           """))
+        self._add_property("channels[].vernier",
+                           self._get_channel_vernier,
+                           self._set_channel_vernier,
+                           None,
+                           ivi.Doc("""
+                           Allows for Vernier (fine) adjustment of the vertical
+                           scale of each channel.  True = Vernier adjustment ON
+                           """))
         
         self._init_channels()
 
@@ -136,21 +171,28 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         except AttributeError:
             pass
         
-        self._channel_name = list()
-        self._channel_probe_skew = list()
-        self._channel_invert = list()
-        self._channel_probe_id = list()
-        self._channel_scale = list()
+        self._channel_name = list() # This seems important TODO: Figure out construction...
+
         self._channel_bw_limit = list()
+        self._channel_invert = list()
+        self._channel_scale = list()
+        self._channel_tcal = list()
+        self._channel_probe = list()
+        self._channel_units = list()
+        self._channel_vernier = list()
         
         self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
             self._channel_name.append("channel%d" % (i+1))
             self._analog_channel_name.append("channel%d" % (i+1))
-            self._channel_probe_skew.append(0)
-            self._channel_scale.append(1.0)
-            self._channel_invert.append(False)
+
             self._channel_bw_limit.append(False)
+            self._channel_invert.append(False)
+            self._channel_scale.append(1.0)
+            self._channel_tcal.append(0.0)
+            self._channel_probe.append(10.0)
+            self._channel_units.append("VOLT")
+            self._channel_vernier.append(False)
         
         # digital channels
         self._digital_channel_name = list()
