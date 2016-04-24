@@ -32,9 +32,7 @@ from .. import scope
 from .. import scpi
 
 class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
-                      scpi.common.SelfTest, scpi.common.Memory,
-                      scope.Base, 
-                      ivi.Driver ):
+                      scpi.common.SelfTest, scpi.common.Memory, scope.Base, ivi.Driver ):
     "Rigol generic IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
@@ -135,7 +133,16 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
                            self._get_trigger_sweep,
                            self._set_trigger_sweep,
                            None,
-                           ivi.Doc("Trigger sweep mode; one of AUTO NORMal SINGLe"))
+                           ivi.Doc("""
+                           Trigger sweep mode; one of AUTO NORMal SINGLe
+                           """))
+        self._add_property("trigger.status",
+                           self._get_trigger_status,
+                           None,
+                           None,
+                           ivi.Doc("""
+                           Trigger status; one of TD, WAIT, RUN, AUTO or STOP.
+                           """))
 
     
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
@@ -147,7 +154,7 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         
         # interface clear
         if not self._driver_operation_simulate:
-            self._clear()
+            self._clear() # Writes *CLS
         
         # check ID
         if id_query and not self._driver_operation_simulate:
@@ -363,6 +370,10 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
             "_trigger_source", cast = lambda x : str(x).upper(), allow =
             ["D%d"%d for d in range(16)] + ["CHAN%d"%c for c in range(1, 5)] +
             ["CHANNEL%d" % c for c in range(1, 5)])
+
+    def _get_trigger_status(self):
+        if not self._driver_operation_simulate:
+            return self._ask(":trig:stat?")
 
     def _measurement_fetch_waveform(self, index):
         "Returns current waveform as a list of (time, voltage) tuples"
