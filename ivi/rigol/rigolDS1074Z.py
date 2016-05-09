@@ -31,13 +31,11 @@ class rigolDS1074Z(rigolBaseScope):
     
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault("_instrument_id", "DS1074Z")
-        
-        super(rigolDS1074Z, self).__init__(*args, **kwargs)
-        
         self._analog_channel_count = 4
         self._digital_channel_count = 0
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 70e6
+
+        super(rigolDS1074Z, self).__init__(*args, **kwargs)
         
         self._init_channels()
 

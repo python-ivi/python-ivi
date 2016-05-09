@@ -36,26 +36,12 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
     "Rigol generic IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', '')
-        self._analog_channel_name = list()
-        self._analog_channel_count = 4
-        self._digital_channel_name = list()
-        self._digital_channel_count = 16
+        super(rigolBaseScope, self).__init__(*args, **kwargs)
         self._channel_count = self._analog_channel_count + self._digital_channel_count
+
         self._channel_scale = list()
         self._channel_invert = list()
         self._channel_bw_limit = list()
-        
-        super(rigolBaseScope, self).__init__(*args, **kwargs)
-        
-        self._self_test_delay = 40
-        self._memory_size = 10
-        
-        self._analog_channel_name = list()
-        self._analog_channel_count = 4
-        self._digital_channel_name = list()
-        self._digital_channel_count = 16
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
         
         self._timebase_scale = 1e-6
         self._horizontal_divisions = 12
@@ -72,7 +58,7 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 4
         self._identity_specification_minor_version = 1
-        self._identity_supported_instrument_models = [ "DS1054Z" ]
+        self._identity_supported_instrument_models = [ "DS1054Z", "DS1074Z", "DS1104Z" ]
        
 ########                 Nonstandard IVI properties                ######## 
 # note that member variables are initialised in __init__ above, or 
