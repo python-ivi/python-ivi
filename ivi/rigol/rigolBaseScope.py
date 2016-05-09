@@ -77,11 +77,13 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
 ########                 Nonstandard IVI properties                ######## 
 # note that member variables are initialised in __init__ above, or 
 # _init_channels() below.
-        self._add_property( "channels[].bw_limit",
-                            self._get_channel_bw_limit,
-                            self._set_channel_bw_limit,
-                            None,
-                            ivi.Doc("20Mhz low-pass filter.  True=enabled.") )
+        self._add_property("channels[].bw_limit",
+                           self._get_channel_bw_limit,
+                           self._set_channel_bw_limit,
+                           None,
+                           ivi.Doc("""
+                           20Mhz low-pass filter.  Either 'OFF' or '20M'.
+                           """))
         self._add_property("channels[].invert",
                            self._get_channel_invert,
                            self._set_channel_invert,
@@ -144,6 +146,27 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
                            Trigger status; one of TD, WAIT, RUN, AUTO or STOP.
                            """))
 
+########                 Nonstandard IVI methods                     ######## 
+        self._add_method("display.clear",
+                         self._display_clear,
+                         ivi.Doc("""
+                         Clears display on the scope, equivalent to pushing the
+                         CLEAR button on the scope.
+                         """))
+
+        self._add_method("trigger.run",
+                         self._trigger_run,
+                         ivi.Doc("""
+                         Equivalent to pushing the RUN button on the scope.
+                         """))
+
+        self._add_method("trigger.single",
+                         self._trigger_single,
+                         ivi.Doc("""
+                         Equivalent to pushing the SINGLE button on the scope -
+                         sets the trigger mode to 'single' and waits for the
+                         the trigger conditions to be met.
+                         """))
     
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
@@ -167,7 +190,6 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         # reset
         if reset:
             self.utility.reset()
-
     
     def _utility_disable(self):
         pass
@@ -184,7 +206,6 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         except AttributeError:
             pass
 
-        self._channel_name = list() # This seems important TODO: Figure out construction...
 
         self._channel_bw_limit = list()
         self._channel_invert = list()
@@ -193,6 +214,8 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         self._channel_units = list()
         self._channel_vernier = list()
         
+        self._channel_name = list()
+        # analog channels
         self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
             self._channel_name.append("channel%d" % (i+1))
@@ -222,11 +245,9 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
 
-    # TODO: Change setFormat and getFormat to behave
-    # like the cast and strFormat in _gen_getset()
-    def _gen_chan_getset( varName, cacheList, setFormat = lambda x : x,
-                          getFormat = lambda x : x, allow = None ):
-        """Produces methods for setting and getting channel parameters
+    def _gen_chan_getset( varName, cacheList, cast = lambda x : x,
+                          strFormatter = str, allow = None ):
+        """Produces methods for setting and getting channel parameters.
 
         Methods are returned as getter, setter and have signatures:
 
@@ -237,14 +258,12 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         channel index.
 
         varName - SCPI command, the "bwl" in ":channel2:bwl 20M"
-        cacheList - The PyIVI cache list associated with the parameter.  Actual
-                    passed-in (setter) or response (getter) value gets cached.
-        setFormat - Single-argument method producing a string eg '20M' above
-        getFormat - Single-argument method scope's reponse is passed through
-                    before comparing against allow list.  Ignored if allow is
-                    not set.
+        cacheList - The PyIVI cache list associated with the parameter.
+        strFormatter - Single-argument method that turns a value from cast() to
+                       a string suitable to be sent to the scope or compared
+                       against allow:
         allow - List of valid values for the parameter, should be in string
-                format that matches the output of setFormat and getFormat.
+                format that matches the output of strFormatter.
         """
 
         def getter(self, index):
@@ -253,10 +272,10 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
             if ( not self._driver_operation_simulate and
                  not self._get_cache_valid(index=index) ):
                 query = ":%s:%s?" % (self._channel_name[index], varName)
-                res = self._ask( query )
+                resp = cast(self._ask( query ))
 
-                if allow is None or getFormat(res) in allow:
-                    self.__dict__[cacheList][index] = res
+                if allow is None or strFormatter(resp) in allow:
+                    self.__dict__[cacheList][index] = resp
                     self._set_cache_valid(index=index)
                 else:
                     raise Exception("Unexpected value from " + query)
@@ -265,13 +284,15 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
 
         def setter(self, index, value):
             index = ivi.get_index(self._channel_name, index)
+            value = cast(value)
 
             if not self._driver_operation_simulate:
-                if not allow is None and not setFormat(value) in allow:
-                    raise ivi.ValueNotSupportedException()
+                if not allow is None and not strFormatter(value) in allow:
+                    raise ivi.ValueNotSupportedException(
+                            "value must be in: " + str(allow) )
 
                 setString = ":%s:%s " % (self._channel_name[index], varName)
-                self._write( setString + setFormat(value) )
+                self._write( setString + strFormatter(value) )
 
             self.__dict__[cacheList][index] = value
             self._set_cache_valid(index=index)
@@ -279,44 +300,50 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         return getter, setter
 
     _get_channel_bw_limit, _set_channel_bw_limit = _gen_chan_getset(
-            "bwl", "_channel_bw_limit", setFormat = lambda x : x.upper(),
+            "bwl", "_channel_bw_limit", strFormatter = lambda x : x.upper(),
             allow = ["OFF", "20M"] )
 
     _get_channel_coupling, _set_channel_coupling = _gen_chan_getset(
-            "coup", "_channel_coupling", setFormat = lambda x : x.upper(),
+            "coup", "_channel_coupling", strFormatter = lambda x : x.upper(),
             allow = ["AC", "DC", "GND"])
 
     _get_channel_enabled, _set_channel_enabled = _gen_chan_getset(
-            "disp", "_channel_enabled", setFormat = lambda x : "%d" % bool(x),
+            "disp", "_channel_enabled",
+            strFormatter = lambda x : "%d" % bool(x),
             allow = ["0", "1"] )
 
     _get_channel_invert, _set_channel_invert = _gen_chan_getset(
-            "inv", "_channel_invert", setFormat = lambda x : "%d" % bool(x),
+            "inv", "_channel_invert", strFormatter = lambda x : "%d" % bool(x),
             allow = ["0", "1"] )
 
     _get_channel_offset, _set_channel_offset = _gen_chan_getset(
-            "offs", "_channel_offset", setFormat = lambda x : "%e" % float(x) )
+            "offs", "_channel_offset",
+            strFormatter = lambda x : "%e" % float(x) )
 
     # From manual: vertical scale = vertical range/8
     _get_channel_range, _set_channel_range = _gen_chan_getset(
-            "rang", "_channel_range", setFormat = lambda x : "%e" % float(x) )
+            "rang", "_channel_range",
+            strFormatter = lambda x : "%e" % float(x) )
 
     _get_channel_tcal, _set_channel_tcal = _gen_chan_getset(
-            "tcal", "_channel_tcal", setFormat = lambda x : "%e" % float(x) )
+            "tcal", "_channel_tcal", strFormatter = lambda x : "%e" % float(x) )
 
     _get_channel_scale, _set_channel_scale = _gen_chan_getset(
-            "scal", "_channel_scale", setFormat = lambda x : "%e" % float(x) )
+            "scal", "_channel_scale",
+            strFormatter = lambda x : "%e" % float(x) )
 
     _get_channel_probe_attenuation, _set_channel_probe_attenuation = _gen_chan_getset(
-            "prob", "_channel_probe_attenuation", setFormat = lambda x : "%e" % float(x) )
+            "prob", "_channel_probe_attenuation",
+            strFormatter = lambda x : "%e" % float(x) )
 
     _get_channel_units, _set_channel_units = _gen_chan_getset(
-            "unit", "_channel_units", setFormat = lambda x : x.upper(),
-            getFormat = lambda x : x.upper(), allow = ["VOLT", "VOLTAGE",
-            "WATT", "AMP", "AMPERE", "UNKN", "UNKNOWN"] )
+            "unit", "_channel_units", strFormatter = lambda x : x.upper(),
+            allow = [ "VOLT", "VOLTAGE", "WATT", "AMP",
+                      "AMPERE", "UNKN", "UNKNOWN" ] )
 
     _get_channel_vernier, _set_channel_vernier = _gen_chan_getset(
-            "vern", "_channel_vernier", setFormat = lambda x : "%d" % bool(x),
+            "vern", "_channel_vernier",
+            strFormatter = lambda x : "%d" % bool(x),
             allow = ["0", "1"] )
 
     def _gen_getset(scopeVarName, selfVarName, cast = lambda x : x,
@@ -332,13 +359,15 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
 
                 self.__dict__[selfVarName] = resp
                 self._set_cache_valid()
+
             return self.__dict__[selfVarName]
 
         def setter(self, value):
             value = cast(value)
             if not self._driver_operation_simulate:
                 if not allow is None and not strFormatter(value) in allow:
-                    raise ivi.ValueNotSupportedException()
+                    raise ivi.ValueNotSupportedException(
+                            "value must be in: " + str(allow) )
 
                 self._write(scopeVarName+ " " + strFormatter(value))
 
@@ -371,9 +400,40 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
             ["D%d"%d for d in range(16)] + ["CHAN%d"%c for c in range(1, 5)] +
             ["CHANNEL%d" % c for c in range(1, 5)])
 
+    def _get_acquisition_time_per_record(self):
+        return self._get_timebase_scale() * self._horizontal_divisions
+
+    def _set_acquisition_time_per_record(self, val):
+        return self._set_timebase_scale(val / self._horizontal_divisions)
+
+    def _measurement_initiate(self):
+        if self._driver_operation_simulate:
+            return
+        if not self._get_trigger_status() in ["WAIT", "RUN", "AUTO"]:
+            self._set_trigger_sweep("AUTO")
+            self._trigger_run()
+
+    def _get_measurement_status(self):
+        print ("TODO: in _get_measurement_status")
+
     def _get_trigger_status(self):
         if not self._driver_operation_simulate:
             return self._ask(":trig:stat?")
+
+    def _display_clear(self):
+        if not self._driver_operation_simulate:
+            self._write(":cle")
+        self._set_cache_valid()
+
+    def _trigger_run(self):
+        if not self._driver_operation_simulate:
+            self._write(":RUN")
+
+    def _trigger_single(self):
+        if not self._driver_operation_simulate:
+            self._write(":SING")
+        self._trigger_sweep = "SINGLE"
+        self._set_cache_valid()
 
     def _measurement_fetch_waveform(self, index):
         "Returns current waveform as a list of (time, voltage) tuples"
