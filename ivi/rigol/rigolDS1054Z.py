@@ -1,8 +1,8 @@
 """
 
-Python Interchangeable Virtual Instrument Library
+Python Interchangeable Virtual Instrument Library - Rigol DS1054Z Driver
 
-Copyright (c) 2013-2014 Alex Forencich
+Copyright (c) 2016 Ian Rees
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,18 @@ THE SOFTWARE.
 
 """
 
-# DC Power Supplies
-# DP800
-from .rigolDP831A import rigolDP831A
-from .rigolDP832 import rigolDP832
-from .rigolDP832A import rigolDP832A
-# DP1000
-from .rigolDP1116A import rigolDP1116A
-from .rigolDP1308A import rigolDP1308A
+from .rigolBaseScope import *
 
-# Digital Multimeters
-#DM3068
-from .rigolDM3068Agilent import rigolDM3068Agilent
+class rigolDS1054Z(rigolBaseScope):
+    "Rigol DS1054Z IVI oscilloscope driver"
+    
+    def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault("_instrument_id", "DS1054Z")
+        self._analog_channel_count = 4
+        self._digital_channel_count = 0
+        self._bandwidth = 50e6
 
-# Oscilloscopes
-# DS1000Z series
-from .rigolDS1054Z import rigolDS1054Z
-from .rigolDS1074Z import rigolDS1074Z
-from .rigolDS1104Z import rigolDS1104Z
+        super(rigolDS1054Z, self).__init__(*args, **kwargs)
+        
+        self._init_channels()
 
