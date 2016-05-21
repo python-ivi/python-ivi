@@ -140,6 +140,17 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
                          CLEAR button on the scope.
                          """))
 
+        self._add_method("display.fetch_screenshot",
+                         self._display_fetch_screenshot,
+                         ivi.Doc("""
+                         Captures the image currently on the scope screen and
+                         returns an array of bytes.  Optional arguments:
+
+                         format: BMP24 (default), BMP8, PNG, JPEG, TIFF
+                         invert: False (default), True
+                         color: True (default), False
+                         """))
+
         self._add_method("trigger.run",
                          self._trigger_run,
                          ivi.Doc("""
@@ -410,6 +421,31 @@ class rigolBaseScope( scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.commo
         if not self._driver_operation_simulate:
             self._write(":cle")
         self._set_cache_valid()
+
+    def _display_fetch_screenshot(self, format="BMP24", invert=False, color=True):
+        if self._driver_operation_simulate:
+            return b""
+
+        acceptFormats = ["BMP24", "BMP8", "PNG", "JPEG", "TIFF"]
+
+        if format.upper() not in acceptFormats:
+            raise ivi.ValueNotSupportedException(
+                    "'%s' is not one of the acceptable formats: %s" %
+                    (format, ", ".join(acceptFormats)) )
+
+        queryString = ":DISP:DATA? "
+
+        for field in (color, invert):
+            if field:
+                queryString += "ON,"
+            else:
+                queryString += "FALSE,"
+
+        queryString += format.upper()
+
+        self._write(queryString)
+
+        return self._read_ieee_block()
 
     def _trigger_run(self):
         if not self._driver_operation_simulate:
