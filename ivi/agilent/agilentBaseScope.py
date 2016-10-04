@@ -578,8 +578,11 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         
         self._write(":hardcopy:inksaver %d" % int(bool(invert)))
         self._write(":display:data? %s" % format)
-        
-        return self._read_ieee_block()
+
+        scr = self._read_ieee_block()
+        self._read_raw() # flush buffer
+
+        return scr
     
     def _acquisition_segmented_analyze(self):
         if not self._driver_operation_simulate:
