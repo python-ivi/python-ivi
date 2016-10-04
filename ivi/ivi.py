@@ -448,6 +448,7 @@ class TraceY(object):
 class TraceYT(TraceY):
     "Y-T trace object"
     def __init__(self):
+        super(TraceYT, self).__init__()
         self.x_increment = 0
         self.x_origin = 0
         self.x_reference = 0
