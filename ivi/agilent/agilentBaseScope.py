@@ -1342,7 +1342,6 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
             self._write(":waveform:byteorder msbfirst")
         self._write(":waveform:unsigned 1")
         self._write(":waveform:format word")
-        self._write(":waveform:points normal")
         self._write(":waveform:source %s" % self._channel_name[index])
         
         # Read preamble
