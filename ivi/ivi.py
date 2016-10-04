@@ -411,6 +411,66 @@ class Doc(object):
         return self.doc
 
 
+class TraceY(object):
+    "Y trace object"
+    def __init__(self):
+        self.points = 0
+        self.average_count = 0
+        self.y_increment = 0
+        self.y_origin = 0
+        self.y_reference = 0
+        self.y_raw = None
+        self.y_hole = None
+
+    @property
+    def y(self):
+        y = np.array(self.y_raw)
+        yf = y.astype(float)
+        if self.y_hole is not None:
+            yf[y == self.y_hole] = float('nan')
+        return ((yf - self.y_reference) * self.y_increment) + self.y_origin
+
+    def __getitem__(self, index):
+        y = self.y_raw[index]
+        if y == self.y_hole:
+            y = float('nan')
+        return ((y - self.y_reference) * self.y_increment) + self.y_origin
+
+    def __iter__(self):
+        return (float('nan') if y == self.y_hole else ((y - self.y_reference) * self.y_increment + self.y_origin) for i, y in enumerate(self.y_raw))
+
+    def __len__(self):
+        return len(self.y_raw)
+
+    def count(self):
+        return len(self.y_raw)
+
+
+class TraceYT(TraceY):
+    "Y-T trace object"
+    def __init__(self):
+        self.x_increment = 0
+        self.x_origin = 0
+        self.x_reference = 0
+
+    @property
+    def x(self):
+        return ((np.arange(len(self.y_raw)) - self.x_reference) * self.x_increment) + self.x_origin
+
+    @property
+    def t(self):
+        return self.x
+
+    def __getitem__(self, index):
+        y = self.y_raw[index]
+        if y == self.y_hole:
+            y = float('nan')
+        return (((index - self.x_reference) * self.x_increment) + self.x_origin, ((y - self.y_reference) * self.y_increment) + self.y_origin)
+
+    def __iter__(self):
+        return ((((i - self.x_reference) * self.x_increment) + self.x_origin, float('nan') if y == self.y_hole else ((y - self.y_reference) * self.y_increment) + self.y_origin) for i, y in enumerate(self.y_raw))
+
+
 def add_attribute(obj, name, attr, doc = None):
     IviContainer._add_attribute(obj, name, attr, doc)
 
