@@ -1352,7 +1352,7 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         acq_format = int(pre[0])
         acq_type = int(pre[1])
         points = int(pre[2])
-        trace.count = int(pre[3])
+        trace.average_count = int(pre[3])
         trace.x_increment = float(pre[4])
         trace.x_origin = float(pre[5])
         trace.x_reference = int(float(pre[6]))

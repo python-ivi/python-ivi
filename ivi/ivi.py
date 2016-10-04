@@ -414,8 +414,7 @@ class Doc(object):
 class TraceY(object):
     "Y trace object"
     def __init__(self):
-        self.points = 0
-        self.average_count = 0
+        self.average_count = 1
         self.y_increment = 0
         self.y_origin = 0
         self.y_reference = 0
