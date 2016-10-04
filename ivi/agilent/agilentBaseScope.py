@@ -1332,10 +1332,10 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
     
     def _measurement_fetch_waveform(self, index):
         index = ivi.get_index(self._channel_name, index)
-        
+
         if self._driver_operation_simulate:
-            return list()
-        
+            return ivi.TraceYT()
+
         if sys.byteorder == 'little':
             self._write(":waveform:byteorder lsbfirst")
         else:
@@ -1343,38 +1343,38 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         self._write(":waveform:unsigned 1")
         self._write(":waveform:format word")
         self._write(":waveform:source %s" % self._channel_name[index])
-        
+
+        trace = ivi.TraceYT()
+
         # Read preamble
-        
         pre = self._ask(":waveform:preamble?").split(',')
-        
-        format = int(pre[0])
-        type = int(pre[1])
+
+        acq_format = int(pre[0])
+        acq_type = int(pre[1])
         points = int(pre[2])
-        count = int(pre[3])
-        xincrement = float(pre[4])
-        xorigin = float(pre[5])
-        xreference = int(float(pre[6]))
-        yincrement = float(pre[7])
-        yorigin = float(pre[8])
-        yreference = int(float(pre[9]))
-        
-        if type == 1:
+        trace.count = int(pre[3])
+        trace.x_increment = float(pre[4])
+        trace.x_origin = float(pre[5])
+        trace.x_reference = int(float(pre[6]))
+        trace.y_increment = float(pre[7])
+        trace.y_origin = float(pre[8])
+        trace.y_reference = int(float(pre[9]))
+        trace.y_hole = 0
+
+        if acq_type == 1:
             raise scope.InvalidAcquisitionTypeException()
-        
-        if format != 1:
+
+        if acq_format != 1:
             raise UnexpectedResponseException()
-        
+
         # Read waveform data
         raw_data = self._ask_for_ieee_block(":waveform:data?")
         self._read_raw() # flush buffer
-        
-        # Split out points and convert to time and voltage pairs
-        y_data = array.array('h', raw_data[0:points*2])
-        
-        data = [(((i - xreference) * xincrement) + xorigin, float('nan') if y == 0 else ((y - yreference) * yincrement) + yorigin) for i, y in enumerate(y_data)]
-        
-        return data
+
+        # Store in trace object
+        trace.y_raw = array.array('H', raw_data[0:points*2])
+
+        return trace
     
     def _measurement_read_waveform(self, index, maximum_time):
         return self._measurement_fetch_waveform(index)
