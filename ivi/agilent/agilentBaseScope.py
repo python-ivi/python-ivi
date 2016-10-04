@@ -1336,13 +1336,13 @@ class agilentBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.comm
         if self._driver_operation_simulate:
             return ivi.TraceYT()
 
+        self._write(":waveform:source %s" % self._channel_name[index])
         if sys.byteorder == 'little':
             self._write(":waveform:byteorder lsbfirst")
         else:
             self._write(":waveform:byteorder msbfirst")
         self._write(":waveform:unsigned 1")
         self._write(":waveform:format word")
-        self._write(":waveform:source %s" % self._channel_name[index])
 
         trace = ivi.TraceYT()
 
