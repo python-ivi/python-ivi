@@ -49,8 +49,9 @@ class tektronixMDO4000(tektronixMSO4000):
         index = ivi.get_index(self._channel_name, index)
 
         if self._driver_operation_simulate:
-            return list()
+            return ivi.TraceYT()
 
+        self._write(":data:source %s" % self._channel_name[index])
         self._write(":wfmoutpre:encdg binary")
         if sys.byteorder == 'little':
             self._write(":wfmoutpre:byt_or lsb")
@@ -60,34 +61,30 @@ class tektronixMDO4000(tektronixMSO4000):
         self._write(":wfmoutpre:bn_fmt rp")
         self._write(":wfmoutpre:pt_fmt y")
         self._write(":wfmoutpre:domain time")
-        self._write(":data:source %s" % self._channel_name[index])
         self._write(":data:start 1")
         self._write(":data:stop 1e10")
 
-        # Read preamble
+        trace = ivi.TraceYT()
 
+        # Read preamble
         pre = self._ask(":wfmoutpre?").split(';')
 
-        format = pre[7].strip()
+        acq_format = pre[7].strip()
         points = int(pre[6])
-        xincr = float(pre[10])
-        xzero = float(pre[11])
-        ymult = float(pre[14])
-        yoff = float(pre[15])
-        yzero = int(float(pre[16]))
+        trace.x_increment = float(pre[10])
+        trace.x_origin = float(pre[11])
+        trace.y_increment = float(pre[14])
+        trace.y_reference = float(pre[15])
+        trace.y_origin = int(float(pre[16]))
 
-        if type == 1:
-            raise scope.InvalidAcquisitionTypeException()
-
-        if format != 'Y':
+        if acq_format != 'Y':
             raise UnexpectedResponseException()
 
         # Read waveform data
         raw_data = self._ask_for_ieee_block(":curve?")
+        self._read_raw() # flush buffer
 
-        # Split out points and convert to time and voltage pairs
-        y_data = array.array('H', raw_data)
+        # Store in trace object
+        trace.y_raw = array.array('H', raw_data[0:points*2])
 
-        data = [((i * xincr) + xzero, ((y - yoff) * ymult) + yzero) for i, y in enumerate(y_data)]
-
-        return data
+        return trace
