@@ -55,7 +55,7 @@ PowerMode = set(['fixed', 'sweep'])
 
 class agilentBase8590(ivi.Driver, specan.Base,
                 extra.common.Memory, extra.common.Title, extra.common.SystemSetup, extra.common.Screenshot):
-    "Agilent Base8590 series IVI spectrum analyzer driver"
+    "Agilent 8590 series IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
@@ -495,7 +495,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_level_attenuation(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("at %e" % value)
+            self._write("at %e db" % value)
         self._level_attenuation = value
         self._set_cache_valid()
     
@@ -541,7 +541,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_start(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("fa %f" % value)
+            self._write("fa %f hz" % value)
         self._frequency_start = value
         self._set_cache_valid()
         self._set_cache_valid(False, 'frequency_center')
@@ -559,7 +559,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_stop(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("fb %f" % value)
+            self._write("fb %f hz" % value)
         self._frequency_stop = value
         self._set_cache_valid()
         self._set_cache_valid(False, 'frequency_center')
@@ -577,7 +577,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_center(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("cf %f" % value)
+            self._write("cf %f hz" % value)
         self._frequency_center = value
         self._set_cache_valid()
         self._set_cache_valid(False, 'frequency_start')
@@ -595,7 +595,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_span(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("sp %f" % value)
+            self._write("sp %f hz" % value)
         self._frequency_span = value
         self._set_cache_valid()
         self._set_cache_valid(False, 'frequency_start')
@@ -613,7 +613,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_frequency_offset(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("foffset %e" % value)
+            self._write("foffset %e hz" % value)
         self._frequency_offset = value
         self._set_cache_valid()
     
@@ -640,7 +640,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_level_reference(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("rl %e" % value)
+            self._write("rl %e db" % value)
         self._level_reference = value
         self._set_cache_valid()
     
@@ -653,7 +653,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_level_reference_offset(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("roffset %e" % value)
+            self._write("roffset %e db" % value)
         self._level_reference_offset = value
         self._set_cache_valid()
     
@@ -666,7 +666,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_sweep_coupling_resolution_bandwidth(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("rb %e" % value)
+            self._write("rb %e hz" % value)
         self._sweep_coupling_resolution_bandwidth = value
         self._sweep_coupling_resolution_bandwidth_auto = False
         self._set_cache_valid()
@@ -702,7 +702,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_sweep_coupling_sweep_time(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("st %e" % value)
+            self._write("st %e s" % value)
         self._sweep_coupling_sweep_time = value
         self._sweep_coupling_sweep_time_auto = False
         self._set_cache_valid()
@@ -759,7 +759,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
     def _set_sweep_coupling_video_bandwidth(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write("vb %e" % value)
+            self._write("vb %e hz" % value)
         self._sweep_coupling_video_bandwidth = value
         self._sweep_coupling_video_bandwidth_auto = False
         self._set_cache_valid()
