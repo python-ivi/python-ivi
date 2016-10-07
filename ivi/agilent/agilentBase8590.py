@@ -24,9 +24,11 @@ THE SOFTWARE.
 
 """
 
+import array
 import io
-import time
 import struct
+import sys
+import time
 
 import numpy as np
 
@@ -787,7 +789,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
         index = ivi.get_index(self._trace_name, index)
 
         if self._driver_operation_simulate:
-            return list()
+            return ivi.TraceY()
 
         cmd = ''
 
@@ -798,34 +800,40 @@ class agilentBase8590(ivi.Driver, specan.Base,
         elif index == 2:
             cmd = 'trc?'
         else:
-            return list()
+            return None
 
-        self._write('tdf a')
-        self._write('mds w')
+        log_scale = float(self._ask("lg?"))
+        ref_level = float(self._ask("rl?"))
+
+        self._write('tdf a; mds w;')
         self._write(cmd)
-
 
         buf = self._read_raw(4)
         if buf[0:2] != b'#A':
-            return list()
+            return None
 
         cnt = struct.unpack(">H", buf[2:4])[0]
         buf = self._read_raw(cnt)
 
-        data = list()
+        trace = ivi.TraceY()
 
-        if self._get_acquisition_vertical_scale() == 'logarithmic':
-            offset = self._get_level_reference()-80
-            scale = 80
+        if log_scale > 0:
+            # log scale
+            trace.y_increment = 0.01
+            trace.y_origin = ref_level
+            trace.y_reference = 8000
         else:
-            offset = 0
-            scale = self._get_level_reference()
+            # linear scale
+            trace.y_increment = ref_level/8000
+            trace.y_origin = 0
+            trace.y_reference = 0
 
-        for i in range(int(cnt/2)):
-                p = struct.unpack(">h", buf[i*2:i*2+2])[0]
-                data.append((p*scale)/8000+offset)
+        trace.y_raw = array.array('h', buf)
 
-        return data
+        if sys.byteorder == 'little':
+            trace.y_raw.byteswap()
+
+        return trace
 
     def _acquisition_initiate(self):
         pass
