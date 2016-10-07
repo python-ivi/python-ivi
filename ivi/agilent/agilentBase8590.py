@@ -263,7 +263,7 @@ class agilentBase8590(ivi.Driver, specan.Base,
         self._trace_name = list()
         self._trace_type = list()
         for i in range(self._trace_count):
-            self._trace_name.append("trace%d" % (i+1))
+            self._trace_name.append("tr%c" % (i+ord('a')))
             self._trace_type.append('')
 
         self.traces._set_list(self._trace_name)
