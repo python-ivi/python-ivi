@@ -58,8 +58,8 @@ class SerialNumber(ivi.IviContainer):
                         length.
                         """)
 
-    def _get_identity_instrument_serial(self):
-        return self._identity_instrument_serial
+    def _get_identity_instrument_serial_number(self):
+        return self._identity_instrument_serial_number
 
 
 class Memory(ivi.IviContainer):
