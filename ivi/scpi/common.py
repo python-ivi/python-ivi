@@ -37,7 +37,7 @@ class IdnCommand(extra.common.SerialNumber):
         if self._driver_operation_simulate:
             self._identity_instrument_manufacturer = "Not available while simulating"
             self._identity_instrument_model = "Not available while simulating"
-            self._identity_instrument_serial = "Not available while simulating"
+            self._identity_instrument_serial_number = "Not available while simulating"
             self._identity_instrument_firmware_revision = "Not available while simulating"
         else:
             lst = self._ask("*IDN?").split(",")
