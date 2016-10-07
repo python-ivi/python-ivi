@@ -78,7 +78,7 @@ class ErrorQuery(object):
         error_code = 0
         error_message = "No error"
         if not self._driver_operation_simulate:
-            error_code, error_message = self._ask(":system:error?").split(',')
+            error_code, error_message = self._ask("system:error?").split(',')
             error_code = int(error_code)
             error_message = error_message.strip(' "')
         return (error_code, error_message)
