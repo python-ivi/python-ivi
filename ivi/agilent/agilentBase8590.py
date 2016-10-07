@@ -28,6 +28,8 @@ import io
 import time
 import struct
 
+import numpy as np
+
 from . import hprtl
 
 from .. import ivi
@@ -318,9 +320,9 @@ class agilentBase8590(ivi.Driver, specan.Base,
 
         # rescale to get white background
         # presuming background of (90, 88, 85)
-        img[:,:,0] *= 255/90
-        img[:,:,1] *= 255/88
-        img[:,:,2] *= 255/85
+        np.multiply(img[:,:,0], 255/90, out=img[:,:,0], casting='unsafe')
+        np.multiply(img[:,:,1], 255/88, out=img[:,:,1], casting='unsafe')
+        np.multiply(img[:,:,2], 255/85, out=img[:,:,2], casting='unsafe')
 
         bmp = hprtl.generate_bmp(img)
 
