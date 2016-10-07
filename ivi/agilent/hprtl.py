@@ -44,7 +44,7 @@ def parse_hprtl(rtl_file):
 
     plane_data = None
 
-    in_raster = False
+    in_raster = True
 
     red = 0
     green = 0
@@ -117,7 +117,7 @@ def parse_hprtl(rtl_file):
                         (255,   0,   0), # red
                         (127,   0,   0), # red
                         ( 63,  63,  63), # black
-                        (  0,   0,   0) # black
+                        (  0,   0,   0)  # black
                     ]
                 elif color == -3:
                     # CMY
@@ -137,7 +137,7 @@ def parse_hprtl(rtl_file):
                     plane_cnt = 1
                     color_list = [
                         (255, 255, 255), # white
-                        (  0,   0,   0) # black
+                        (  0,   0,   0)  # black
                     ]
                 elif color == 3:
                     # RGB
@@ -170,19 +170,19 @@ def parse_hprtl(rtl_file):
                         (255,   0, 255), # magenta
                         (  0, 127, 127), # cyan
                         (  0, 255, 255), # cyan
-                        (127, 127, 127),  # white
+                        (127, 127, 127), # white
                         (255, 255, 255)  # white
                     ]
                 else:
                     raise Exception("Invalid color")
             elif ca == ord('r') and (cb == ord('a') or cb == ord('A')):
                 # start raster graphics
-                # if we missed the stop of one section, stop on the start of the next
-                if in_raster:
-                    in_raster = False
                 # only grab the first section
                 if height == 0:
                     in_raster = True
+                elif in_raster:
+                    # if we missed the stop of one section, stop on the start of the next
+                    in_raster = False
             elif ca == ord('r') and (cb == ord('c') or cb == ord('C')):
                 # end raster graphics
                 in_raster = False
@@ -216,72 +216,93 @@ def parse_hprtl(rtl_file):
                 # assign index
                 ind = int(cmd[1:-1])
                 color_list[ind] = (red, green, blue)
+            elif ca == ord('p') and (cb == ord('n') or cb == ord('N')):
+                # unknown
+                pass
+            elif ca == ord('v') and (cb == ord('o') or cb == ord('O')):
+                # pattern transparency mode
+                pass
+            elif ca == ord('v') and (cb == ord('n') or cb == ord('N')):
+                # source transparency mode
+                pass
+            elif ca == ord('p') and (cb == ord('x') or cb == ord('X')):
+                # move CAP horizontal
+                pass
+            elif ca == ord('p') and (cb == ord('y') or cb == ord('Y')):
+                # move CAP vertical
+                pass
             elif ca == ord('b') and (cb == ord('v') or cb == ord('V') or cb == ord('w') or cb == ord('W')):
                 # image row
                 l = int(cmd[1:-1])
 
-                # read row
-                d = rtlf.read(l)
+                if l > 0:
+                    # read row
+                    d = rtlf.read(l)
 
-                # skip if we are not in a raster section
-                if not in_raster:
-                    continue
+                    # skip if we are not in a raster section
+                    if not in_raster:
+                        continue
 
-                # set width if not yet set
-                # width must be set if compression enabled, otherwise
-                # all lines will be the same length
-                if width == 0:
-                    width = l * 8
+                    # set width if not yet set
+                    # width must be set if compression enabled, otherwise
+                    # all lines will be the same length
+                    if width == 0:
+                        width = l * 8
 
-                if byte_width == 0:
-                    byte_width = l
+                    if byte_width == 0:
+                        byte_width = l
 
-                # add row if on first plane
-                if current_plane == 0:
-                    if height == 0:
-                        plane_data = np.zeros((10, byte_width, plane_cnt), dtype=np.uint8)
+                    # add row if on first plane
+                    if current_plane == 0:
+                        if height == 0:
+                            plane_data = np.zeros((10, byte_width, plane_cnt), dtype=np.uint8)
 
-                    height += 1
+                        height += 1
 
-                    if height >= plane_data.shape[0]:
-                        # need to add more rows
-                        plane_data = np.append(plane_data, np.zeros((10, byte_width, plane_cnt), dtype=np.uint8), 0)
+                        if height >= plane_data.shape[0]:
+                            # need to add more rows
+                            plane_data = np.append(plane_data, np.zeros((10, byte_width, plane_cnt), dtype=np.uint8), 0)
 
-                if compression == 0 or compression == 1:
-                    x = 0
-                    for b in d:
-                        plane_data[height-1][x][current_plane] = b
-                        x += 1
-                elif compression == 2:
-                    k = 0
-                    x = 0
-                    while True:
-                        if len(d) <= k:
-                            break
-                        h = d[k]
-                        k += 1
-                        if h == 128:
-                            continue
-                        if h < 128:
-                            for j in range(h+1):
+                    if compression == 0 or compression == 1:
+                        x = 0
+                        for b in d:
+                            plane_data[height-1][x][current_plane] = b
+                            x += 1
+                    elif compression == 2:
+                        k = 0
+                        x = 0
+                        while True:
+                            if len(d) <= k:
+                                break
+                            h = d[k]
+                            k += 1
+                            if h == 128:
+                                continue
+                            if h < 128:
+                                for j in range(h+1):
+                                    b = d[k]
+                                    k += 1
+                                    plane_data[height-1][x][current_plane] = b
+                                    x += 1
+                            if h > 128:
                                 b = d[k]
                                 k += 1
-                                plane_data[height-1][x][current_plane] = b
-                                x += 1
-                        if h > 128:
-                            b = d[k]
-                            k += 1
-                            for j in range(257-h):
-                                plane_data[height-1][x][current_plane] = b
-                                x += 1
-                else:
-                    raise Exception("Invalid compression")
+                                for j in range(257-h):
+                                    plane_data[height-1][x][current_plane] = b
+                                    x += 1
+                    else:
+                        raise Exception("Invalid compression")
 
-                # go to next plane, if more than one plane
-                if plane_cnt > 0:
-                    current_plane += 1
-                    if current_plane == plane_cnt or cb == ord('w') or cb == ord('W'):
+                    # go to next plane, if more than one plane
+                    if plane_cnt > 0:
+                        current_plane += 1
+                        if current_plane == plane_cnt or cb == ord('w') or cb == ord('W'):
+                            current_plane = 0
+                else:
+                    if cb == ord('w') or cb == ord('W'):
                         current_plane = 0
+            else:
+                raise Exception("Invalid command (%s)" % (repr(cmd)))
 
     # convert to bits
     plane_data = np.unpackbits(plane_data, axis=1)
