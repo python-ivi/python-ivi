@@ -54,7 +54,7 @@ ALCSourceMapping = {'internal': 'int',
 PowerMode = set(['fixed', 'sweep'])
 
 class agilentBase8590(ivi.Driver, specan.Base,
-                extra.common.Memory, extra.common.Title, extra.common.SystemSetup, extra.common.Screenshot):
+                extra.common.SerialNumber, extra.common.Memory, extra.common.Title, extra.common.SystemSetup, extra.common.Screenshot):
     "Agilent 8590 series IVI spectrum analyzer driver"
     
     def __init__(self, *args, **kwargs):
@@ -176,18 +176,16 @@ class agilentBase8590(ivi.Driver, specan.Base,
         if self._driver_operation_simulate:
             self._identity_instrument_manufacturer = "Not available while simulating"
             self._identity_instrument_model = "Not available while simulating"
+            self._identity_instrument_serial_number = "Not available while simulating"
             self._identity_instrument_firmware_revision = "Not available while simulating"
         else:
-            #lst = self._ask("*IDN?").split(",")
-            #self._identity_instrument_manufacturer = lst[0]
-            #self._identity_instrument_model = lst[1]
-            #self._identity_instrument_firmware_revision = lst[3]
-            
             self._identity_instrument_manufacturer = "Agilent Technologies"
             self._identity_instrument_model = self._ask("ID?")
+            self._identity_instrument_serial_number = self._ask("SER?")
             self._identity_instrument_firmware_revision = self._ask("REV?")
             self._set_cache_valid(True, 'identity_instrument_manufacturer')
             self._set_cache_valid(True, 'identity_instrument_model')
+            self._set_cache_valid(True, 'identity_instrument_serial_number')
             self._set_cache_valid(True, 'identity_instrument_firmware_revision')
     
     def _get_identity_instrument_manufacturer(self):
@@ -201,6 +199,12 @@ class agilentBase8590(ivi.Driver, specan.Base,
             return self._identity_instrument_model
         self._load_id_string()
         return self._identity_instrument_model
+    
+    def _get_identity_instrument_serial_number(self):
+        if self._get_cache_valid():
+            return self._identity_instrument_serial_number
+        self._load_id_string()
+        return self._identity_instrument_serial_number
     
     def _get_identity_instrument_firmware_revision(self):
         if self._get_cache_valid():
