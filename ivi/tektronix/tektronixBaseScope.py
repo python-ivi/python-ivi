@@ -1268,14 +1268,8 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
             return ivi.TraceYT()
 
         self._write(":data:source %s" % self._channel_name[index])
-        self._write(":wfmoutpre:encdg binary")
-        if sys.byteorder == 'little':
-            self._write(":wfmoutpre:byt_or lsb")
-        else:
-            self._write(":wfmoutpre:byt_or msb")
-        self._write(":wfmoutpre:byt_nr 2")
-        self._write(":wfmoutpre:bn_fmt rp")
-        self._write(":wfmoutpre:pt_fmt y")
+        self._write(":data:encdg fastest")
+        self._write(":data:width 2")
         self._write(":data:start 1")
         self._write(":data:stop 1e10")
 
@@ -1286,6 +1280,9 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
 
         acq_format = pre[7].strip()
         points = int(pre[6])
+        point_size = int(pre[0])
+        point_enc = pre[2]
+        point_fmt = pre[3]
         trace.x_increment = float(pre[10])
         trace.x_origin = float(pre[11])
         trace.y_increment = float(pre[14])
@@ -1295,12 +1292,32 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         if acq_format != 'Y':
             raise UnexpectedResponseException()
 
+        if point_enc != 'BINARY':
+            raise UnexpectedResponseException()
+
         # Read waveform data
         raw_data = self._ask_for_ieee_block(":curve?")
         self._read_raw() # flush buffer
 
         # Store in trace object
-        trace.y_raw = array.array('H', raw_data[0:points*2])
+        if point_fmt == 'RP' and point_size == 1:
+            trace.y_raw = array.array('B', raw_data[0:points*2])
+        elif point_fmt == 'RP' and point_size == 2:
+            trace.y_raw = array.array('H', raw_data[0:points*2])
+        elif point_fmt == 'RI' and point_size == 1:
+            trace.y_raw = array.array('b', raw_data[0:points*2])
+        elif point_fmt == 'RI' and point_size == 2:
+            trace.y_raw = array.array('h', raw_data[0:points*2])
+        elif point_fmt == 'FP' and point_size == 4:
+            trace.y_increment = 1
+            trace.y_reference = 0
+            trace.y_origin = 0
+            trace.y_raw = array.array('f', raw_data[0:points*4])
+        else:
+            raise UnexpectedResponseException()
+
+        if sys.byteorder == 'little':
+            trace.y_raw.byteswap()
 
         return trace
 
