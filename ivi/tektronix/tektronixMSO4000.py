@@ -36,7 +36,6 @@ class tektronixMSO4000(tektronixDPO4000):
 
         self._analog_channel_count = 4
         self._digital_channel_count = 16
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
 
         self._identity_description = "Tektronix MSO4000 series IVI oscilloscope driver"

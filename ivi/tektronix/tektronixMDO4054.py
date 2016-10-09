@@ -36,7 +36,6 @@ class tektronixMDO4054(tektronixMDO4000):
 
         self._analog_channel_count = 4
         self._digital_channel_count = 16
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 500e6
 
         self._init_channels()
