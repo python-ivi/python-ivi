@@ -1285,9 +1285,10 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         point_fmt = pre[3]
         trace.x_increment = float(pre[10])
         trace.x_origin = float(pre[11])
+        trace.x_reference = int(float(pre[12]))
         trace.y_increment = float(pre[14])
-        trace.y_reference = float(pre[15])
-        trace.y_origin = int(float(pre[16]))
+        trace.y_reference = int(float(pre[15]))
+        trace.y_origin = float(pre[16])
 
         if acq_format != 'Y':
             raise UnexpectedResponseException()
