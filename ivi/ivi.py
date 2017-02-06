@@ -753,6 +753,40 @@ def help(obj=None, itm=None, complete=False, indent=0):
             """))
 
 
+def list_devices():
+    devs = []
+
+    if 'vxi11' in globals():
+        # search for VXI11 devices
+        try:
+            devs.extend(["TCPIP::%s::INSTR" % h for h in vxi11.list_devices()])
+        except:
+            pass
+
+    if 'usbtmc' in globals():
+        # search for USBTMC devices
+        try:
+            for dev in usbtmc.list_devices():
+                idVendor = dev.idVendor
+                idProduct = dev.idProduct
+                iSerial = None
+                # attempt to read serial number
+                try:
+                    iSerial = dev.serial_number
+                except:
+                    pass
+                # append formatted resource string to list
+                if iSerial is None:
+                    devs.append("USB::%d::%d::INSTR" % (idVendor, idProduct))
+                else:
+                    devs.append("USB::%d::%d::%s::INSTR" % (idVendor, idProduct, iSerial))
+            pass
+        except:
+            pass
+
+    return devs
+
+
 class DriverOperation(IviContainer):
     "Inherent IVI methods for driver operation"
     
