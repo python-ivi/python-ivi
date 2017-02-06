@@ -2,8 +2,8 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2016 Alex Forencich
-Copyright (c) 2015-2016 Rikard Lindstrom
+Copyright (c) 2012-2017 Alex Forencich
+Copyright (c) 2015-2017 Rikard Lindstrom
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

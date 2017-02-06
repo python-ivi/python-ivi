@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2016 Alex Forencich
+Copyright (c) 2012-2017 Alex Forencich
 
 Modified by Jeff Wurzbach 2014
 

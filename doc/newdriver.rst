@@ -36,7 +36,7 @@ This is a sample template driver that incorporates all of the major components. 
 
     Python Interchangeable Virtual Instrument Library
 
-    Copyright (c) 2012-2016 Alex Forencich
+    Copyright (c) 2012-2017 Alex Forencich
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
