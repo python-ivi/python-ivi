@@ -42,7 +42,11 @@ def parse_visa_resource_string(resource_string):
                 suffix = m.group('suffix'),
         )
 
-class LinuxGpibInstrument:
+# linux-gpib timeout constants, in milliseconds. See self.timeout.
+TIMETABLE = (0, 1e-2, 3e-2, 1e-1, 3e-1, 1e0, 3e0, 1e1, 3e1, 1e2, 3e2, 1e3, 3e3,
+             1e4, 3e4, 1e5, 3e5, 1e6)
+
+class LinuxGpibInstrument(object):
     "Linux GPIB wrapper instrument interface client"
     def __init__(self, name = 'gpib0', pad = None, sad = 0, timeout = 13, send_eoi = 1, eos_mode = 0):
 
@@ -139,3 +143,36 @@ class LinuxGpibInstrument:
         "Send unlock command"
         raise NotImplementedError()
 
+    @property
+    def timeout(self):
+        # 0x3 is the hexadecimal reference to the IbaTMO (timeout) configuration
+        # option in linux-gpib.
+        return TIMETABLE[self.gpib.ask(3)] * 1000.
+
+    @timeout.setter
+    def timeout(self, value):
+        """
+        linux-gpib only supports 18 discrete timeout values. If a timeout
+        value other than these is requested, it will be rounded up to the closest
+        available value. Values greater than the largest available timout value
+        will instead be rounded down. The available timeout values are:
+        0   Never timeout.
+        1   10 microseconds
+        2   30 microseconds
+        3   100 microseconds
+        4   300 microseconds
+        5   1 millisecond
+        6   3 milliseconds
+        7   10 milliseconds
+        8   30 milliseconds
+        9   100 milliseconds
+        10  300 milliseconds
+        11  1 second
+        12  3 seconds
+        13  10 seconds
+        14  30 seconds
+        15  100 seconds
+        16  300 seconds
+        17  1000 seconds
+        """
+        self.gpib.timeout(bisect(TIMETABLE, value/1000.))
