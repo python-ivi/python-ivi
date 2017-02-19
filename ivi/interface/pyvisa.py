@@ -39,13 +39,10 @@ try:
         visa_instrument_opener = visa.instrument
 except ImportError:
     # PyVISA not installed, pass it up
-    raise ImportError
-except:
+    raise
+except Exception as e:
     # any other error
-    e = sys.exc_info()[1]
-    sys.stderr.write("python-ivi: PyVISA is installed, but could not be loaded (%s: %s)\n" %
-        (e.__class__.__name__, e.args[0]))
-    raise ImportError
+    raise ImportError("python-ivi: PyVISA is installed, but could not be loaded (%s)\n" % repr(e))
 
 class PyVisaInstrument:
     "PyVisa wrapper instrument interface client"
@@ -104,7 +101,7 @@ class PyVisaInstrument:
 
     def read_stb(self):
         "Read status byte"
-        raise NotImplementedError()
+        return self.instrument.read_stb()
 
     def trigger(self):
         "Send trigger command"
@@ -112,20 +109,20 @@ class PyVisaInstrument:
 
     def clear(self):
         "Send clear command"
-        raise NotImplementedError()
+        self.instrument.clear()
 
     def remote(self):
         "Send remote command"
-        raise NotImplementedError()
+        self.instrument.gpib_control_ren(visa.constants.VI_GPIB_REN_ASSERT_ADDRESS)
 
     def local(self):
         "Send local command"
-        raise NotImplementedError()
+        self.instrument.gpib_control_ren(visa.constants.VI_GPIB_REN_DEASSERT_GTL)
 
     def lock(self):
         "Send lock command"
-        raise NotImplementedError()
+        self.instrument.lock()
 
     def unlock(self):
         "Send unlock command"
-        raise NotImplementedError()
+        self.instrument.unlock()
