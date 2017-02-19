@@ -24,16 +24,23 @@ THE SOFTWARE.
 
 """
 
-from .agilent34401A import *
+from .agilent34401A import agilent34401A
 from .. import ivi
 from .. import extra
+from .. import scpi
 
-class agilent34461A(agilent34401A, extra.common.Title):
+class agilent34461A(agilent34401A, extra.common.Title, extra.common.Screenshot,
+                    scpi.dmm.DisplayString,
+                    scpi.dmm.ApertureNPLC,
+                    extra.dmm.VoltageApertureNPLC,
+                    extra.dmm.CurrentApertureNPLC,
+                    extra.dmm.TemperatureApertureNPLC,
+                    extra.dmm.ResistanceApertureNPLC):
     "Agilent 34461A IVI DMM driver"
-    
+
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '34401A')
-        
+
         super(agilent34461A, self).__init__(*args, **kwargs)
 
         self._add_method('system.display_string',
@@ -43,16 +50,24 @@ class agilent34461A(agilent34401A, extra.common.Title):
             or an empty string to return to normal operation.
             """))
 
-    def _system_display_string(self, string=None):
-        if self._driver_operation_simulate:
-            return
-        if string:
-            self._write("DISP:TEXT \"%s\"" % string)
-        else:
-            self._write("DISP:TEXT:CLEAR")
-
     def _set_display_title(self, string):
         super(agilent34461A, self)._set_display_title(string)
         if not self._driver_operation_simulate:
             self._write("SYST:LABEL \"%s\"" % string)
 
+    def _display_fetch_screenshot(self, format='bmp', invert=False):
+        """ Fetch screenshot from device.
+            Screenshots in BMP format are very fast (about 50ms)
+            while screenshots in PNG format take much longer (about 2s).
+        """
+        if format.upper() not in ('PNG', 'BMP'):
+            raise ivi.ValueNotSupportedException("Format '%s' is not supported." % format)
+        self._write("HCOP:SDUM:DATA:FORM %s" % format)
+        self._write("HCOP:SDUM:DATA?")
+        tmp = self.timeout
+        self.timeout = 10000 # Make sure PNG screenshots don't timeout
+        try:
+            image = self._read_ieee_block()
+        finally:
+            self.timeout = tmp
+        return image

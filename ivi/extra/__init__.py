@@ -28,7 +28,8 @@ __all__ = [
         # Common functions
         "common",
         # Extra base classes
-        "dcpwr"]
+        "dcpwr",
+        "dmm"]
 
 from . import *
 
