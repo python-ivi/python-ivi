@@ -153,7 +153,8 @@ from .agilentMSOX92004A import agilentMSOX92004A
 from .agilentMSOX92504A import agilentMSOX92504A
 from .agilentMSOX92804A import agilentMSOX92804A
 from .agilentMSOX93204A import agilentMSOX93204A
-
+# Infinium S series
+from .agilentDSOS204A import agilentDSOS204A
 # Spectrum Analyzers
 # 859xA series
 from .agilent8590A import agilent8590A
