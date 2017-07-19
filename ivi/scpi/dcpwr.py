@@ -98,7 +98,7 @@ class Base(common.IdnCommand, common.ErrorQuery, common.Reset, common.SelfTest,
 
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
 
     def _get_bool_str(self, value):
         """

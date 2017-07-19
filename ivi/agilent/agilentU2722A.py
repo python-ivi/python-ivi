@@ -106,7 +106,7 @@ class agilentU2722A(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.
 
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
 
     def _utility_disable(self):
         pass

@@ -378,7 +378,7 @@ class agilent86140B(ivi.Driver, extra.common.Screenshot, scpi.common.Memory):
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _load_id_string(self):

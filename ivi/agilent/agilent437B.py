@@ -76,7 +76,7 @@ class agilent437B(ivi.Driver, pwrmeter.Base, pwrmeter.ManualRange,
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _load_id_string(self):

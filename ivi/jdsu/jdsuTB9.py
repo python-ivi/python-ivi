@@ -83,7 +83,7 @@ class jdsuTB9(ivi.Driver):
 
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
 
 
     def _load_id_string(self):

@@ -1558,7 +1558,7 @@ class DriverUtility(IviContainer):
         pass
     
     def _utility_reset_with_defaults(self):
-        self.utility_reset()
+        self.utility.reset()
     
     def _utility_self_test(self):
         code = 0
