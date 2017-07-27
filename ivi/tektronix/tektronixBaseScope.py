@@ -1276,20 +1276,36 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         trace = ivi.TraceYT()
 
         # Read preamble
-        pre = self._ask(":wfmoutpre?").split(';')
+        # The order and number of values returned by "WFMOutpre?" seem not to
+        # be consistent across different oscilloscopes (even not complying with
+        # the programmer's manual), so we explicitly give the order we want.
+        pre = self._ask(';'.join(
+                (':WFMOutpre:PT_Fmt?',
+                 ':WFMOutpre:NR_Pt?',
+                 ':WFMOutpre:BYT_Nr?',
+                 ':WFMOutpre:ENCdg?',
+                 ':WFMOutpre:BN_Fmt?',
+                 ':WFMOutpre:BYT_Or?',
+                 ':WFMOutpre:XINcr?',
+                 ':WFMOutpre:XZEro?',
+                 ':WFMOutpre:PT_OFF?',
+                 ':WFMOutpre:YMUlt?',
+                 ':WFMOutpre:YOFf?',
+                 ':WFMOutpre:YZEro?',
+                 ))).split(';')
 
-        acq_format = pre[7].strip().upper()
-        points = int(pre[6])
-        point_size = int(pre[0])
-        point_enc = pre[2].strip().upper()
-        point_fmt = pre[3].strip().upper()
-        byte_order = pre[4].strip().upper()
-        trace.x_increment = float(pre[10])
-        trace.x_origin = float(pre[11])
-        trace.x_reference = int(float(pre[12]))
-        trace.y_increment = float(pre[14])
-        trace.y_reference = int(float(pre[15]))
-        trace.y_origin = float(pre[16])
+        acq_format = pre[0].strip().upper()         # PT_Fmt
+        points = int(pre[1])                        # NR_Pt
+        point_size = int(pre[2])                    # BYT_Nr
+        point_enc = pre[3].strip().upper()          # ENCdg
+        point_fmt = pre[4].strip().upper()          # BN_Fmt
+        byte_order = pre[5].strip().upper()         # BYT_Or
+        trace.x_increment = float(pre[6])           # XINcr
+        trace.x_origin = float(pre[7])              # XZEro
+        trace.x_reference = int(float(pre[8]))      # PT_OFF
+        trace.y_increment = float(pre[9])           # YMUlt
+        trace.y_reference = int(float(pre[10]))     # YOFf
+        trace.y_origin = float(pre[11])             # YZEro
 
         if acq_format != 'Y':
             raise UnexpectedResponseException()
