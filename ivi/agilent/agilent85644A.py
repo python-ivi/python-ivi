@@ -159,7 +159,7 @@ class agilent85644A(ivi.Driver, scpi.common.Memory):
 
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
 
 
     def _load_id_string(self):

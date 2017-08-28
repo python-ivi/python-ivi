@@ -143,7 +143,7 @@ class agilentE3600A(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrig
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _get_couple_tracking_enabled(self):

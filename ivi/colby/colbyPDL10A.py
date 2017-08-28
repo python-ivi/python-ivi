@@ -89,7 +89,7 @@ class colbyPDL10A(scpi.common.IdnCommand, scpi.common.Reset,
 
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
 
 
     def _utility_disable(self):

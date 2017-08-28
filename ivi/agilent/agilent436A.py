@@ -73,7 +73,7 @@ class agilent436A(ivi.Driver, pwrmeter.Base, pwrmeter.ZeroCorrection, pwrmeter.M
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _load_id_string(self):

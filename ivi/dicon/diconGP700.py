@@ -209,7 +209,7 @@ class diconGP700(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Res
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
         if not self._initialized_from_constructor:
             self._init_channels()

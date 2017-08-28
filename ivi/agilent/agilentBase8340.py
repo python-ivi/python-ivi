@@ -82,7 +82,7 @@ class agilentBase8340(rfsiggen.Base, rfsiggen.ModulateAM, rfsiggen.ModulateFM,
 
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
 
 
     def _get_identity_instrument_manufacturer(self):

@@ -100,7 +100,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _load_id_string(self):
@@ -547,7 +547,7 @@ class tektronixAWG2000(ivi.Driver, fgen.Base, fgen.StdFunc, fgen.ArbWfm,
     def _arbitrary_sequence_create(self, handle_list, loop_count_list):
         return "handle"
     
-    def send_software_trigger(self):
+    def _send_software_trigger(self):
         if not self._driver_operation_simulate:
             self._write("*TRG")
     

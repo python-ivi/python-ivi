@@ -194,7 +194,7 @@ class agilent8642A(ivi.Driver, rfsiggen.Base, rfsiggen.ModulateAM,
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _get_identity_instrument_manufacturer(self):

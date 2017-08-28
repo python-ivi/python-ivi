@@ -85,7 +85,7 @@ class agilent603xA(ivi.Driver, dcpwr.Base, dcpwr.Measurement):
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _load_id_string(self):

@@ -86,7 +86,7 @@ class agilentU2000(scpi.common.IdnCommand, scpi.common.ErrorQuery,
         
         # reset
         if reset:
-            self.utility_reset()
+            self.utility.reset()
         
     
     def _utility_disable(self):

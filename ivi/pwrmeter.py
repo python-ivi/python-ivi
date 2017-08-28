@@ -395,7 +395,7 @@ class SoftwareTrigger(ivi.IviContainer):
         grp = 'SoftwareTrigger'
         ivi.add_group_capability(self, cls+grp)
     
-    def send_software_trigger(self):
+    def _send_software_trigger(self):
         pass
     
     
