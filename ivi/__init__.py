@@ -50,6 +50,7 @@ __all__ = [
         "colby",
         "ics",
         "jdsu",
+        "keithley",
         "lecroy",
         "rigol",
         "tektronix",
