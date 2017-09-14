@@ -33,14 +33,18 @@ TriggerSourceMapping = {
         'immediate': 'imm',
         'external': 'ext',
         'manual': 'man'}
-RangeType = set(['current'])
+RangeType = set(['voltage','current'])
 MeasurementType = set(['voltage', 'current', 'concurrent'])
-MeasurementFunctionMapping = {
-        'minimum': 'min',
-        'maximum': 'max',
-        'average': 'mean',
-        'peak_to_peak': 'pkpk',
-        'standard_deviation': 'sdev'}
+MeasurementTypeMapping = {
+        'voltage': "volt:dc",
+        'current': "curr:dc",
+        'concurrent': "conc:dc"}
+#MeasurementFunctionMapping = {
+#        'minimum': 'min',
+#        'maximum': 'max',
+#        'average': 'mean',
+#        'peak_to_peak': 'pkpk',
+#        'standard_deviation': 'sdev'}
 
 class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                     dcpwr.Measurement,
@@ -66,13 +70,10 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             }
         ]
 
-        self._output_auto_zero = True
         
         self._memory_size = 2500
         self._memory_offset = 0
 
-        self._power_line_frequency = 50
-        self._number_of_power_line_cycles = 1
 
         self._output_trigger_delay = list()
 
@@ -90,6 +91,14 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         self._add_property('outputs[].auto_zero',
                         self._get_output_auto_zero,
                         self._set_output_auto_zero)
+
+        self._add_property('outputs[].number_of_digits',
+                        self._get_output_number_of_digits,
+                        self._set_output_number_of_digits)
+
+        self._add_property('outputs[].number_of_power_line_cycles',
+                        self._get_output_number_of_power_line_cycles,
+                        self._set_output_number_of_power_line_cycles)
 
         self._add_property('outputs[].trigger_count',
                         self._get_output_trigger_count,
@@ -109,12 +118,20 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                         self._get_output_trigger_source,
                         self._set_output_trigger_source)
 
+        self._add_property('outputs[].measurement_type',
+                        self._get_output_measurement_type,
+                        self._set_output_measurement_type)
+
+        self._add_property('outputs[].measurement_range',
+                        self._get_output_measurement_range,
+                        self._set_output_measurement_range)
+
         self._add_method('outputs[].configure_measurement',
-                       self._output_configure_measurement)
+                         self._output_configure_measurement)
 
         self._init_outputs()
 
-    def _initialize(self, resource=None, id_query=False, reset=False, power_line_frequency=50, **keywargs):
+    def _initialize(self, resource=None, id_query=False, reset=False, **keywargs):
         "Opens an I/O session to the instrument."
 
         super(keithley2280S, self)._initialize(resource, id_query, reset, **keywargs)
@@ -135,10 +152,6 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if reset:
             self.utility_reset()
         
-        if power_line_frequency not in (50,60):
-            raise Exception("Incorrect power line frequency, expecting 50/60 Hz, got %s", power_line_frequency)
-        else:
-            self._power_line_frequency = power_line_frequency
 
     def _utility_disable(self):
         pass
@@ -163,6 +176,13 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         self._output_voltage_level = list()
         self._output_trigger_source = list()
         self._output_trigger_delay = list()
+        self._output_trigger_count = list()
+        self._output_trigger_sample_count = list()
+        self._output_number_of_power_line_cycles = list()
+        self._output_number_of_digits = list()
+        self._output_measurement_type = list()
+        self._output_measurement_range = list()
+        self._output_auto_zero = list()
         for i in range(self._output_count):
             self._output_current_limit.append(0)
             self._output_current_limit_behavior.append('regulate')
@@ -172,20 +192,62 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._output_voltage_level.append(0)
             self._output_trigger_source.append('bus')
             self._output_trigger_delay.append(0)
+            self._output_trigger_count.append(1)
+            self._output_trigger_sample_count.append(1)
+            self._output_number_of_power_line_cycles.append(1)
+            self._output_number_of_digits.append(6)
+            self._output_measurement_type.append('concurrent')
+            self._output_measurement_range.append(0.01)
+            self._output_auto_zero.append(True)
+
 
     def _get_output_auto_zero(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            self._output_auto_zero = (self._ask("system:azero:state?") == '1')
+            self._output_auto_zero = (self._ask("system:azero%d:state?" % (index+1)) == '1')
             self._set_cache_valid(index=index)
         return self._output_auto_zero
 
     def _set_output_auto_zero(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            self._write("system:azero:state %s" % ('off', 'on')[value])
+            self._write("system:azero%d:state %s" % (index+1,('off', 'on')[value]))
             self._set_cache_valid(index=index)
         self._output_auto_zero = value
+
+    def _get_output_number_of_power_line_cycles(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            # Need to write initialized measurement type for the operation to be processed
+            self._output_number_of_power_line_cycles = self._ask(":sense%d:%s:nplcycles?" % (index+1, self._output_measurement_type[index]))
+            self._set_cache_valid(index=index)
+        return self._output_number_of_power_line_cycles
+
+    def _set_output_number_of_power_line_cycles(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            # Need to write initialized measurement type for the operation to be processed
+            self._write(":sense%d:%s:nplcycles %f" % (index+1, self._output_measurement_type[index], float(value)))
+            self._set_cache_valid(index=index)
+        self._output_number_of_power_line_cycles = value
+
+    def _get_output_number_of_digits(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            # Need to write initialized measurement type for the operation to be processed
+            self._output_number_of_digits = self._ask(":sense%d:%s:digits?" % (index+1, self._output_measurement_type[index]))
+            self._set_cache_valid(index=index)
+        return self._output_number_of_digits
+
+    def _set_output_number_of_digits(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if (value < 4) or (value > 6):
+            raise ivi.OutOfRangeException('Number of measurement digits must be between 4 and 6')
+        if not self._driver_operation_simulate:
+            # Need to write initialized measurement type for the operation to be processed
+            self._write(":sense%d:%s:digits %d" % (index+1, self._output_measurement_type[index], value))
+            self._set_cache_valid(index=index)
+        self._output_number_of_power_line_cycles = value
 
     def _get_output_current_limit_behavior(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -208,7 +270,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
     def _get_output_ovp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._output_ovp_limit[index] = float(self._ask("source:voltage:protection:level?"))
+            self._output_ovp_limit[index] = float(self._ask("source%d:voltage:protection:level?" % (index+1)))
             self._set_cache_valid(index=index)
         return self._output_ovp_limit[index]
 
@@ -218,14 +280,14 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if abs(value) > self._output_spec[index]['ovp_max']:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write("source:voltage:protection:level %f" % float(value))
+            self._write("source%d:voltage:protection:level %f" % (index+1, float(value)))
         self._output_ovp_limit[index] = value
         self._set_cache_valid(index=index)
         
     def _get_output_ocp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._output_ocp_limit[index] = float(self._ask("source:current:protection:level?"))
+            self._output_ocp_limit[index] = float(self._ask("source%d:current:protection:level?" % (index+1)))
             self._set_cache_valid(index=index)
         return self._output_ocp_limit[index]
 
@@ -235,16 +297,9 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if abs(value) > self._output_spec[index]['ocp_max']:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write("source:current:protection:level %f" % float(value))
+            self._write("source%d:current:protection:level %f" % (index+1,float(value)))
         self._output_ocp_limit[index] = value
         self._set_cache_valid(index=index)
-
-    def _output_configure_range(self, index, range_type, range_value):
-        if range_type not in RangeType:
-            raise ivi.ValueNotSupportedException()
-        if not self._driver_operation_simulate:
-            self._write("sense:current:range %s" % range_value)
-        return
 
     def _output_reset_output_protection(self):
         if not self._driver_operation_simulate:
@@ -253,7 +308,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
     def _get_output_trigger_source(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            value = self._ask("trigger:source?").lower()
+            value = self._ask("trigger:sequence%d:source?" % (index+1)).lower()
             self._output_trigger_source[index] = [k for k,v in TriggerSourceMapping.items() if v==value][0]
         return self._output_trigger_source[index]
     
@@ -263,43 +318,79 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if value not in TriggerSourceMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write("trigger:source %s" % TriggerSourceMapping[value])
-        self._output_trigger_source[index] = value
-        self._set_cache_valid(index=index)
+            self._write("trigger:sequence%d:source %s" % (index+1, TriggerSourceMapping[value]))
+        self._output_trigger_source = value
+        self._set_cache_valid()
 
     def _get_output_trigger_count(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            int(self._ask("trigger:count?"))
+            self._output_trigger_count[index] = int(self._ask("trigger:sequence%d:count?" % (index+1)))
+        self._set_cache_valid()
+        return self._output_trigger_count[index]
+        
 
     def _set_output_trigger_count(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if (value < 0) or (value > 2500):
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write("trigger:count %d" % value)
+            self._write("trigger:sequence%d:count %d" % (index+1, value))
+        self._output_trigger_count[index] = value
+        self._set_cache_valid(index=index)
 
     def _get_output_trigger_sample_count(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            int(self._ask("trigger:sample:count?"))
+            self._output_trigger_sample_count[index] = int(self._ask("trigger:sequence%d:sample:count?" % (index+1)))
+            self._set_cache_valid(index=index)
+        return self._output_trigger_sample_count[index]
 
     def _set_output_trigger_sample_count(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if (value < 0) or (value > 2500):
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write("trigger:sample:count %d" % value)
+            self._write("trigger:sequence%d:sample:count %d" % (index+1, value))
+        self._output_trigger_sample_count[index] = value
+        self._set_cache_valid(index=index)
 
     def _trigger_abort(self):
         if not self._driver_operation_simulate:
-            self._write("abort")
+            self._write("abort") # TODO: output dependent trigger abort
     
     def _trigger_initiate(self):
         if not self._driver_operation_simulate:
-            self._write("initiate")
+            self._write("initiate") #TODO: Output dependent trigger initiate
 
+    def _get_output_measurement_type(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            value = self._ask("sense%d:function?" % (index+1)).lower()[1:-1]
+            self._output_measurement_type[index] = [k for k,v in MeasurementTypeMapping.items() if v==value][0]
+            self._set_cache_valid(index=index)
+        return self._output_measurement_type[index]
 
+    def _set_output_measurement_type(self, index, type):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense%d:function \"%s\"" % (index+1, type))
+        self._output_measurement_type[index] = type
+        self._set_cache_valid(index=index)
+
+    def _get_output_measurement_range(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_measurement_range[index] = float(self._ask("sense%d:%s:range?" % (index+1, self._output_measurement_type[index]))) #TODO: add auto range
+        self._set_cache_valid(index=index)
+        return self._output_measurement_range[index]
+
+    def _set_output_measurement_range(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense%d:%s:range %s" % (index+1, self._output_measurement_type[index], value)) #TODO: add auto range
+        self._output_measurement_range[index] = value
+        self._set_cache_valid(index=index)
 
     def _output_measure(self, index, type):
         index = ivi.get_index(self._output_name, index)
@@ -314,40 +405,24 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                 return float(self._ask("measure:current?"))
         return 0
     
-    def _output_configure_measurement(self, index, type, measurement_count=1, NPLC=1, measurement_digits=6, auto_zero=True):
+    def _output_configure_measurement(self, index, type, sample_count=1, NPLC=1, measurement_digits=6, measurement_range=0.01, auto_zero=True):
         index = ivi.get_index(self._output_name, index)
-        if (measurement_count > 2500) or (measurement_count < 0):
-            raise ivi.OutOfRangeException('Maximum buffer length is 2500')
-        if (self._power_line_frequency == 50) and ((NPLC < 0.002) or (NPLC > 12)):
-            raise ivi.OutOfRangeException('Number of power line cycles (NPLC) must be 0.002<NPLC<12 (15) for 50 Hz (60 Hz) power supply')
-        if (self._power_line_frequency == 60) and ((NPLC < 0.002) or (NPLC > 15)):
-            raise ivi.OutOfRangeException('Number of power line cycles (NPLC) must be 0.002<NPLC<12 (15) for 50 Hz (60 Hz) power supply')
-        if (measurement_digits < 4) or (measurement_digits > 6):
-            raise ivi.OutOfRangeException('Number of measurement digits must be between 4 and 6')
         if type not in MeasurementType:
             raise ivi.ValueNotSupportedException()
-        
-        self._set_output_trigger_sample_count = measurement_count
-        self._number_of_power_line_cycles = NPLC
-        self._output_auto_zero = auto_zero
-        if not self._driver_operation_simulate:
-            self._write(":sense:"+type+":NPLC %f" % NPLC)
-            self._write(":sense:"+type+":digits %d" % measurement_digits)
-            self._write(":system:azero:state %s" % ('off', 'on')[auto_zero])
-            self._set_cache_valid()
 
         if not self._driver_operation_simulate:
-            # extend buffer memory size if measurement_count exceeds buffer size
-            if int(self._ask(":trace:points?")) < measurement_count:
-                self._write(":trace:points %d" % measurement_count)
-            if type == 'voltage':
-                self._write("sense:function \"voltage\"")
-            if type == 'current':
-                    self._write("sense:function \"current\"")
-            elif type == 'concurrent': # Measure both current and voltage at the same time
-                    self._write("sense:function \"concurrent\"")
+            # extend buffer memory size if sample_count exceeds configured buffer size
+            if int(self._ask(":trace:points?")) < sample_count:
+                self._write(":trace:points %d" % sample_count)
 
-    
+        self._set_output_measurement_type(index, type)
+        self._set_output_measurement_range(index, measurement_range)
+        self._set_output_number_of_digits(index, measurement_digits)
+        self._set_output_trigger_sample_count(index, sample_count)
+        self._set_output_number_of_power_line_cycles(index, NPLC)
+        self._set_output_auto_zero(index, auto_zero)
+
+
 #    def _output_measure_statistics(self, index, type):
 #        index = ivi.get_index(self._output_name, index)
 #        if type not in MeasurementType:
