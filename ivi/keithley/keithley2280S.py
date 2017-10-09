@@ -38,15 +38,18 @@ MeasurementTypeMapping = {
         'voltage': "volt:dc",
         'current': "curr:dc",
         'concurrent': "conc:dc"}
-FetchBufferDataTypeMapping = {
-        'measurement_function': 'reading',
-        'voltage': 'source',
-        'unit': 'unit',
-        'date': 'dateä',
-        'time': 'tstamp',
-        'relative_time_seconds': 'relative',
-        'relative_time': 'rstamp',
-        'budder_index': 'rnumber'}
+BufferDataTypeMapping = {
+        'current': ['read', float],
+        'voltage': ['sour', float],
+        'unit': ['unit', str],
+        'mode': ['mode', str],
+        'date': ['date', str],
+        'time': ['time', str],
+        'time_stamp': ['tstamp', str],
+        'relative_time_seconds': ['rel', float],
+        'relative_time': ['rstamp', str],
+        'buffer_index': ['rnumber', int]}
+TriggerDirection = set(['rise', 'fall'])
 #MeasurementFunctionMapping = {
 #        'minimum': 'min',
 #        'maximum': 'max',
@@ -65,7 +68,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         super(keithley2280S, self).__init__(*args, **kwargs)
 
         self._output_count = 1
-        
+
         self._output_spec = [
             {
                 'range': {
@@ -78,10 +81,8 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             }
         ]
 
-        
         self._memory_size = 2500
         self._memory_offset = 0
-
 
         self._output_trigger_delay = list()
 
@@ -108,9 +109,37 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                         self._get_output_number_of_power_line_cycles,
                         self._set_output_number_of_power_line_cycles)
 
+        self._add_property('outputs[].trace_points',
+                        self._get_output_trace_points,
+                        self._set_output_trace_points)
+
         self._add_property('outputs[].trigger_count',
                         self._get_output_trigger_count,
                         self._set_output_trigger_count)
+
+        self._add_property('outputs[].trigger_current_level',
+                        self._get_output_trigger_current_level,
+                        self._set_output_trigger_current_level)
+
+        self._add_property('outputs[].trigger_voltage_level',
+                        self._get_output_trigger_voltage_level,
+                        self._set_output_trigger_voltage_level)
+
+        self._add_property('outputs[].trigger_current_direction',
+                        self._get_output_trigger_current_direction,
+                        self._set_output_trigger_current_direction)
+
+        self._add_property('outputs[].trigger_voltage_direction',
+                        self._get_output_trigger_voltage_direction,
+                        self._set_output_trigger_voltage_direction)
+
+        self._add_property('outputs[].trigger_current_state',
+                        self._get_output_trigger_current_state,
+                        self._set_output_trigger_current_state)
+
+        self._add_property('outputs[].trigger_voltage_state',
+                        self._get_output_trigger_voltage_state,
+                        self._set_output_trigger_voltage_state)
 
         self._add_property('outputs[].trigger_sample_count',
                         self._get_output_trigger_sample_count,
@@ -139,14 +168,22 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                         self._set_output_measurement_range)
 
         self._add_method('outputs[].configure_measurement',
-                         self._output_configure_measurement)
+                         self._output_configure_measurement,
+                        ivi.Doc("""
+                        Configure measurement parameters such as measurement type (e.g. source voltage, 
+                        current, time stamp, ...) number of samples, resolution, sampling interval in
+                        terms of number of power line cycles (NPLC), measurement range, trigger options.
+                        """))
 
         self._add_method('outputs[].fetch_measurement',
-                         self._output_fetch_measurement)
+                         self._output_fetch_measurement,
+                        ivi.Doc("""
+                        Fetch measurement data from buffer memory. Either fetch all measurement data or
+                        a specific interval.
+                        """))
 
         self._add_method('outputs[].clear_buffer',
                          self._output_clear_buffer)
-
 
         self._add_property('outputs[].auto_clear_buffer',
                         self._get_output_auto_clear_buffer,
@@ -177,12 +214,10 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             id_short = id[:len(id_check)]
             if id_short != id_check:
                 raise Exception("Instrument ID mismatch, expecting %s, got %s", id_check, id_short)
-            
 
         # reset
         if reset:
             self.utility_reset()
-        
 
     def _utility_disable(self):
         pass
@@ -205,10 +240,17 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         self._output_ovp_enabled = list()
         self._output_ovp_limit = list()
         self._output_voltage_level = list()
+        self._output_trace_points = list()
         self._output_trigger_source = list()
         self._output_trigger_delay = list()
         self._output_trigger_count = list()
         self._output_trigger_continuous = list()
+        self._output_trigger_current_level = list()
+        self._output_trigger_current_direction = list()
+        self._output_trigger_current_state = list()
+        self._output_trigger_voltage_level = list()
+        self._output_trigger_voltage_direction = list()
+        self._output_trigger_voltage_state = list()
         self._output_trigger_sample_count = list()
         self._output_number_of_power_line_cycles = list()
         self._output_number_of_digits = list()
@@ -222,11 +264,18 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._output_enabled.append(False)
             self._output_ovp_enabled.append(True)
             self._output_ovp_limit.append(0)
+            self._output_trace_points.append(100)
             self._output_voltage_level.append(0)
             self._output_trigger_source.append('bus')
             self._output_trigger_delay.append(0)
             self._output_trigger_count.append(1)
             self._output_trigger_continuous.append(True)
+            self._output_trigger_current_level.append(0.0)
+            self._output_trigger_current_direction.append('rise')
+            self._output_trigger_current_state.append(False)
+            self._output_trigger_voltage_level.append(0.0)
+            self._output_trigger_voltage_direction.append('rise')
+            self._output_trigger_voltage_state.append(False)
             self._output_trigger_sample_count.append(1)
             self._output_number_of_power_line_cycles.append(1)
             self._output_number_of_digits.append(6)
@@ -234,7 +283,6 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._output_measurement_range.append(0.01)
             self._output_adc_autozero.append(True)
             self._output_auto_clear_buffer.append(True)
-
 
     def _get_output_adc_autozero(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -303,7 +351,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
     def _get_output_ovp_enabled(self, index):
         # Alwayas enabled by default
         return True
-    
+
     def _set_output_ovp_enabled(self, index, value):
         # Alwayas enabled by default
         raise ivi.ValueNotSupportedException()
@@ -324,7 +372,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._write("source%d:voltage:protection:level %f" % (index+1, float(value)))
         self._output_ovp_limit[index] = value
         self._set_cache_valid(index=index)
-        
+
     def _get_output_ocp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -346,13 +394,115 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if not self._driver_operation_simulate:
             self._write("output:protection:clear")
 
+    def _get_output_trace_points(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trace_points[index] = int(self._ask("trace%d:points?" % (index+1)))
+        self._get_cache_valid()
+        return self._output_trace_points[index]
+
+    def _set_output_trace_points(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trace%d:points %d" % (index+1, int(value)))
+        self._output_trace_points[index] = int(value)
+        self._set_cache_valid()
+
+    def _get_output_trigger_current_direction(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_current_direction[index] = self._ask("trace%d:trigger:current:direction?" % (index+1))
+        self._get_cache_valid()
+        return self._output_trigger_current_direction[index]
+
+    def _set_output_trigger_current_direction(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if value not in TriggerDirection:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("trace%d:trigger:current:direction %s" % (index+1, value))
+        self._output_trigger_current_direction[index] = value.lower()
+        self._set_cache_valid()
+
+    def _get_output_trigger_current_level(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_current_state[index] = float(self._ask("trace%d:trigger:current:level?" % (index+1)))
+        self._get_cache_valid()
+        return self._output_trigger_current_level[index]
+
+    def _set_output_trigger_current_level(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trace%d:trigger:current:level %f" % (index+1, float(value)))
+        self._output_trigger_current_level[index] = float(value)
+        self._set_cache_valid()
+
+    def _get_output_trigger_current_state(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_current_state[index] = bool(int(self._ask("trace%d:trigger:current:state?" % (index+1))))
+        self._get_cache_valid()
+        return self._output_trigger_current_state[index]
+
+    def _set_output_trigger_current_state(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trace%d:trigger:current:state %d" % (index+1, (0, 1)[value]))
+        self._output_trigger_current_state[index] = value
+        self._set_cache_valid()
+
+    def _get_output_trigger_voltage_direction(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_voltage_direction[index] = self._ask("trace%d:trigger:voltage:direction?" % (index+1))
+        self._get_cache_valid()
+        return self._output_trigger_voltage_direction[index]
+
+    def _set_output_trigger_voltage_direction(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if value not in TriggerDirection:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("trace%d:trigger:voltage:direction %s" % (index+1, value))
+        self._output_trigger_voltage_level[index] = value.lower()
+        self._set_cache_valid()
+
+    def _get_output_trigger_voltage_state(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_voltage_state[index] = bool(int(self._ask("trace%d:trigger:voltage:state?" % (index+1))))
+        self._get_cache_valid()
+        return self._output_trigger_voltage_state[index]
+
+    def _set_output_trigger_voltage_state(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trace%d:trigger:voltage:state %d" % (index+1, (0, 1)[value]))
+        self._output_trigger_voltage_state[index] = value
+        self._set_cache_valid()
+
+    def _get_output_trigger_voltage_level(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_voltage_state[index] = float(self._ask("trace%d:trigger:voltage:level?" % (index+1)))
+        self._get_cache_valid()
+        return self._output_trigger_voltage_level[index]
+
+    def _set_output_trigger_voltage_level(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trace%d:trigger:voltage:level %f" % (index+1, float(value)))
+        self._output_trigger_voltage_level[index] = float(value)
+        self._set_cache_valid()
+
     def _get_output_trigger_source(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask("trigger:sequence%d:source?" % (index+1)).lower()
             self._output_trigger_source[index] = [k for k,v in TriggerSourceMapping.items() if v==value][0]
         return self._output_trigger_source[index]
-    
+
     def _set_output_trigger_source(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = str(value)
@@ -369,7 +519,6 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._output_trigger_count[index] = int(self._ask("trigger:sequence%d:count?" % (index+1)))
         self._set_cache_valid()
         return self._output_trigger_count[index]
-        
 
     def _set_output_trigger_count(self, index, value):
         index = ivi.get_index(self._output_name, index)
@@ -413,7 +562,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
     def _trigger_abort(self):
         if not self._driver_operation_simulate:
             self._write("abort") # TODO: output dependent trigger abort
-    
+
     def _trigger_initiate(self):
         if not self._driver_operation_simulate:
             self._write("initiate") #TODO: Output dependent trigger initiate
@@ -460,7 +609,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._write("trace%d:clear:auto %s" % (index+1, ('off', 'on')[value]))
         self._output_auto_clear_buffer[index] = value
         self._set_cache_valid(index=index)
-        
+
     def _output_clear_buffer(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
@@ -471,7 +620,7 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if type not in set(['voltage', 'current']):
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write("FORM:ELEM \"READ\"")
+            self._write("form:elem \"read\"")
         if type == 'voltage':
             if not self._driver_operation_simulate:
                 return float(self._ask("measure:voltage?"))
@@ -479,7 +628,8 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                 return float(self._ask("measure:current?"))
         return 0
     
-    def _output_configure_measurement(self, index, type, sample_count=None, trigger_continuous=None, NPLC=None, measurement_digits=None, measurement_range=None, adc_autozero=None, auto_clear_buffer=None):
+    def _output_configure_measurement(self, index, type, sample_count=None, trigger_continuous=None, NPLC=None,
+                                      measurement_digits=None, measurement_range=None, adc_autozero=None, auto_clear_buffer=None):
         index = ivi.get_index(self._output_name, index)
         if type not in MeasurementTypeMapping.keys():
             raise ivi.ValueNotSupportedException()
@@ -504,34 +654,53 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             # extend buffer memory size if sample_count exceeds configured buffer size
             if sample_count is not None:
                 if int(self._ask(":trace:points?")) < sample_count:
-                    self._write(":trace:points %d" % sample_count)
+                    self._set_output_trace_points(index, sample_count)
 
-
-    def _output_fetch_measurement(self, index, type, sample_count=None):
+    def _output_fetch_measurement(self, index, measurement_type, buffer_range=None):
         index = ivi.get_index(self._output_name, index)
-        # type can be multiple elements so need to check that all are valid and construct a composite SCPI string
-        if type not in FetchBufferDataTypeMapping.keys():
+        # type can be multiple elements so need to check that all are valid
+        if type(measurement_type) in (tuple, list):
+            for t in measurement_type:
+                if t not in BufferDataTypeMapping:
+                    raise ivi.ValueNotSupportedException()
+        elif type(measurement_type) is str:
+            if measurement_type not in BufferDataTypeMapping:
                 raise ivi.ValueNotSupportedException()
-        
-        type_string = FetchBufferDataTypeMapping[type]
+            # make measurement_type a list so that we do not loop through the characters
+            measurement_type = [measurement_type]
+        else:
+            raise ivi.InvalidOptionValueException()
 
-        if not self._driver_operation_simulate:
-            if sample_count is None:
-                sample_count = self._get_output_trigger_sample_count(index)
+        # Check that buffer_range is a valid tuple or list
+        if buffer_range is not None:
+            if type(buffer_range) not in (tuple, list):
+                raise ivi.ValueNotSupportedException("buffer_range must be tuple or list of length 2")
+            if buffer_range[0] > self._memory_size[index]:
+                raise ivi.ValueNotSupportedException("buffer_range buffer size is %d" % self._memory_size)
 
-            buffer_data = []
-            # if number of samples is less than or equal to 100, all data can be fetched in one operation
-            if sample_count < 100:
-                buffer_data = self._ask("trace%d:data? %s" % (index, type_string))
+        buffer_data = []
+        for m in measurement_type:
+            buffer_data_temp = []
+            measurement_scpi_string = BufferDataTypeMapping[m][0]
+            parse_buffer_data = BufferDataTypeMapping[m][1]
+
+            # If no buffer_range was supplied, return all measurement data
+            if buffer_range is None:
+                buffer_data_temp = self._ask("trace:data? \"%s\"" % measurement_scpi_string).split(',')
+
+            # return only requested buffer_range
             else:
-                # if number of samples is more than 100, fetch in chunks of 100 samples
-                for i in range(sample_count // 100):
-                    buffer_data.append(self._ask("trace:data:select? %d,%d,%s" % (100*i-99,i*100, type_string)))
-                j = i + sample_count % 100
-                buffer_data.append(self._ask("trace:data:select? %d,%d,%s" % (100*j-99,j*100, type_string)))
+                buffer_data_temp = self._ask("trace:data:sel? %d, %d, \"%s\"" %
+                                             (buffer_range[0], buffer_range[1], measurement_scpi_string)).split(',')
+            buffer_data_temp = [parse_buffer_data(data) for data in buffer_data_temp]
 
-            return buffer_data.split(',')
+            # If multiple data types where requested, return a list of measurement sequences
+            if len(measurement_type) > 1:
+                buffer_data.append(buffer_data_temp)
+            else:
+                return buffer_data_temp
 
+        return buffer_data
 
     def _system_query_power_line_frequency(self):
         if not self._driver_operation_simulate:
