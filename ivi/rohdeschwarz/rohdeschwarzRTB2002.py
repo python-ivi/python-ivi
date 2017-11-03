@@ -2,9 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2017 Alex Forencich
-
-Modified by Jeff Wurzbach 2014
+Copyright (c) 2017 Jonas Långbacka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,36 +24,20 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope",
-        "dmm",
-        "fgen",
-        "dcpwr",
-        "swtch",
-        "pwrmeter",
-        "specan",
-        "rfsiggen",
-        "counter",
-        # Extra IVI base classes
-        "extra",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent",
-        "dicon",
-        "chroma",
-        "colby",
-        "ics",
-        "jdsu",
-        "lecroy",
-        "rigol",
-        "rohdeschwarz",
-        "tektronix",
-        "testequity"]
+from .rohdeschwarzBaseScope import *
 
-from .ivi import *
-from . import *
+class rohdeschwarzRTB2002(rohdeschwarzBaseScope):
+    "Rohde&Schwarz RTB2002 IVI oscilloscope driver"
+    
+    def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', 'RTB2002')
+        
+        super(rohdeschwarzRTB2002, self).__init__(*args, **kwargs)
+        
+        self._analog_channel_count = 2
+        self._digital_channel_count = 16
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
+        self._bandwidth = 70e6
+        
+        self._init_channels()
 
