@@ -32,7 +32,7 @@ class agilentE4435B(agilentBaseESGD):
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', 'ESG-D4000B')
 
-        super(agilentE4434B, self).__init__(*args, **kwargs)
+        super(agilentE4435B, self).__init__(*args, **kwargs)
 
         self._frequency_low = 250e3
         self._frequency_high = 2e9
