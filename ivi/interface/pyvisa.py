@@ -37,6 +37,9 @@ try:
     except AttributeError:
         # Old style PyVISA
         visa_instrument_opener = visa.instrument
+    except OSError:
+        visa_rm = visa.ResourceManager('@py')
+        visa_instrument_opener = visa_rm.open_resource
 except ImportError:
     # PyVISA not installed, pass it up
     raise ImportError
