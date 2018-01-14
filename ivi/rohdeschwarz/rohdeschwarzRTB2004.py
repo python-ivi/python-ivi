@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2017 Jonas Långbacka
+Copyright (c) 2017-2018 Jonas Långbacka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,5 +42,8 @@ class rohdeschwarzRTB2004(rohdeschwarzBaseScope):
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 70e6
+        self._horizontal_divisions = 12
+        self._vertical_divisions = 10
+        self._trigger_holdoff_min_time = 51.2e-9
         
         self._init_channels()

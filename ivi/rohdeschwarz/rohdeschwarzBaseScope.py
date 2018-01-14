@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2017 Jonas Långbacka
+Copyright (c) 2017-2018 Jonas Långbacka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,10 @@ BandwidthMapping = {
         800e6: 'b800',
         200e6: 'b200',
         20e6:  'b20'}
-VerticalCoupling = set(['ac', 'dc'])
+VerticalCouplingMapping = {
+        'dc':   'dcl',
+        'ac': 'acl',
+        'gnd': 'gnd'}
 TriggerTypeMapping = {
         'edge': 'edge',
         'width': 'glit',
@@ -62,17 +65,15 @@ TriggerTypeMapping = {
         'uart': 'uart',
         'usb': 'usb',
         'flexray': 'flex'}
+# TriggerCouplingMapping = 'coupling': ('coupling', 5 kHz LPF, 100 MHz LPF)
 TriggerCouplingMapping = {
         'ac': ('ac', 0, 0),
         'dc': ('dc', 0, 0),
-        'hf_reject': ('dc', 0, 1),
         'lf_reject': ('lfr', 0, 0),
-        'noise_reject': ('dc', 1, 0),
-        'hf_reject_ac': ('ac', 0, 1),
-        'noise_reject_ac': ('ac', 1, 0),
-        'hf_noise_reject': ('dc', 1, 1),
-        'hf_noise_reject_ac': ('ac', 1, 1),
-        'lf_noise_reject': ('lfr', 1, 0)}
+        'hf_reject_dc': ('dc', 1, 0),
+        'hf_reject_ac': ('ac', 1, 0),
+        'noise_reject_dc': ('dc', 0, 1),
+        'noise_reject_ac': ('ac', 0, 1)}
 TVTriggerEventMapping = {'field1': 'fie1',
         'field2': 'fie2',
         'any_field': 'afi',
@@ -162,9 +163,9 @@ TimebaseReferenceMapping = {
         'right': 91.67}
 TriggerModifierMapping = {'none': 'normal', 'auto': 'auto'}
 
-class rohdeschwarzBaseScope(scope.Base,
+class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
+                            scope.Base,
                             ivi.Driver):
-#                       scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
 #                       scpi.common.SelfTest, scpi.common.Memory,
 #                       scope.Base, scope.TVTrigger,
 #                       scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
@@ -183,27 +184,30 @@ class rohdeschwarzBaseScope(scope.Base,
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._channel_label = list()
-        self._channel_probe_skew = list()
-        self._channel_scale = list()
-        self._channel_trigger_level = list()
-        self._channel_invert = list()
-        self._channel_probe_id = list()
-        self._channel_bw_limit = list()
+        
+        self._vertical_divisions = 10
+        
+        # self._channel_probe_skew = list()
+        # self._channel_scale = list()
+        # self._channel_trigger_level = list()
+        # self._channel_invert = list()imp
+        # self._channel_bw_limit = list()
         
         super(rohdeschwarzBaseScope, self).__init__(*args, **kwargs)
         
-        self._self_test_delay = 40
         self._memory_size = 10
-        
+
         self._analog_channel_name = list()
         self._analog_channel_count = 4
         self._digital_channel_name = list()
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count
+        
         self._bandwidth = 1e9
+        
+        self._trigger_holdoff_min_time = 51.2e-9
 
         self._horizontal_divisions = 12
-        self._vertical_divisions = 10
 
         self._acquisition_segmented_count = 2
         self._acquisition_segmented_index = 1
@@ -310,13 +314,50 @@ class rohdeschwarzBaseScope(scope.Base,
                         Enables or disables the automatic record length. The instrument sets a value that fits to the selected timebase.
                         """))
 
+        self._add_property('channels[].invert',
+                        self._get_channel_invert,
+                        self._set_channel_invert,
+                        None,
+                        ivi.Doc("""
+                        Selects whether or not to invert the channel.
+                        """))
 
-        self._init_channels()
+        self._add_property('channels[].label',
+                        self._get_channel_label,
+                        self._set_channel_label,
+                        None,
+                        ivi.Doc("""
+                        Sets the channel label.  Setting a channel label also adds the label to
+                        the nonvolatile label list.
+                        """))
+
+        self._add_property('channels[].probe_skew',
+                        self._get_channel_probe_skew,
+                        self._set_channel_probe_skew,
+                        None,
+                        ivi.Doc("""
+                        Specifies the channel-to-channel skew factor for the channel.  Each analog
+                        channel can be adjusted + or - 100 ns for a total of 200 ns difference
+                        between channels.  This can be used to compensate for differences in cable
+                        delay.  Units are seconds.
+                        """))
+
+        self._add_property('channels[].scale',
+                        self._get_channel_scale,
+                        self._set_channel_scale,
+                        None,
+                        ivi.Doc("""
+                        Specifies the vertical scale, or units per division, of the channel.  Units
+                        are volts.
+                        """))
+
+
+        self._init_channels() # Remove from base class?
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
 
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
+        #self._channel_count = self._analog_channel_count + self._digital_channel_count
 
         super(rohdeschwarzBaseScope, self)._initialize(resource, id_query, reset, **keywargs)
 
@@ -336,7 +377,6 @@ class rohdeschwarzBaseScope(scope.Base,
         if reset:
             self.utility.reset()
 
-
     def _utility_disable(self):
         pass
 
@@ -344,6 +384,9 @@ class rohdeschwarzBaseScope(scope.Base,
         pass
 
     def _utility_unlock_object(self):
+        pass
+
+    def _utility_self_test(self):
         pass
 
     def _init_channels(self):
@@ -354,40 +397,46 @@ class rohdeschwarzBaseScope(scope.Base,
 
         self._channel_name = list()
         self._channel_label = list()
+
+        # analog channels
+        #self._analog_channel_name = list()
         self._channel_probe_skew = list()
         self._channel_invert = list()
-        self._channel_probe_id = list()
+        self._channel_coupling = list()
+        self._channel_input_impedance = list()
+        self._channel_input_frequency_max = list()
+        self._channel_probe_attenuation = list()
         self._channel_scale = list()
+        self._channel_range = list()
+        self._channel_offset = list()
         self._channel_trigger_level = list()
         self._channel_bw_limit = list()
 
-        self._analog_channel_name = list()
+        #self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
             self._channel_name.append("channel%d" % (i+1))
             self._channel_label.append("%d" % (i+1))
             self._analog_channel_name.append("C%d" % (i+1))
+
             self._channel_probe_skew.append(0)
-            self._channel_scale.append(1.0)
-            self._channel_trigger_level.append(0.0)
             self._channel_invert.append(False)
-            self._channel_probe_id.append("NONE")
+            self._channel_coupling.append('dc')
+            self._channel_input_impedance.append(1e9)
+            self._channel_input_frequency_max.append(1e9)
+            self._channel_probe_attenuation.append(1)
+            self._channel_scale.append(50e-3)
+            self._channel_range.append(self._vertical_divisions * self._channel_scale[i])
+            self._channel_offset.append(0)
+            self._channel_trigger_level.append(0.0)
             self._channel_bw_limit.append(False)
 
         # digital channels
-        self._digital_channel_name = list()
+        #self._digital_channel_name = list()
         if (self._digital_channel_count > 0):
             for i in range(self._digital_channel_count):
                 self._channel_name.append("digital%d" % i)
                 self._channel_label.append("D%d" % i)
                 self._digital_channel_name.append("digital%d" % i)
-            
-            for i in range(self._analog_channel_count, self._channel_count):
-                self._channel_input_impedance[i] = 100000
-                self._channel_input_frequency_max[i] = 1e9
-                self._channel_probe_attenuation[i] = 1
-                self._channel_coupling[i] = 'dc'
-                self._channel_offset[i] = 0
-                self._channel_range[i] = 1
         
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
@@ -429,7 +478,6 @@ class rohdeschwarzBaseScope(scope.Base,
     def _get_timebase_reference(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = float(self._ask("timebase:reference?"))
-            print(value)
             self._timebase_reference = [k for k,v in TimebaseReferenceMapping.items() if v==value][0] # What to do for arbitrary reference values?
             self._set_cache_valid()
         return self._timebase_reference
@@ -494,7 +542,7 @@ class rohdeschwarzBaseScope(scope.Base,
     def _get_acquisition_type(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = [self._ask("channel:type?").lower()]
-            value.append(self._ask("channel:arithmetics?").lower())
+            value.append(self._ask("channel:arithmetics?"))
             self._acquisition_type = [k for k,v in AcquisitionTypeMapping.items() if v==value]
             self._set_cache_valid()
         return self._acquisition_type
@@ -577,9 +625,17 @@ class rohdeschwarzBaseScope(scope.Base,
         value = bool(value)
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate:
+            print(("%s:state %d" % (self._channel_name[index], int(value))))
             self._write("%s:state %d" % (self._channel_name[index], int(value)))
         self._channel_enabled[index] = value
         self._set_cache_valid(index=index)
+
+    def _get_channel_input_impedance(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        return self._channel_input_impedance[index]
+    
+    def _set_channel_input_impedance(self, index, value):
+        raise ivi.ValueNotSupportedException('Input impedance of all BNC inputs is fixed to 1 MOhm')
 
     def _get_channel_input_frequency_max(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
@@ -596,8 +652,191 @@ class rohdeschwarzBaseScope(scope.Base,
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate:
             if value in BandwidthMapping.keys():
-                self._write("%s:bwlimit %s" % (self._channel_name[index], bandwidth[str(1e-6*value)]))
+                self._write("%s:bandwidth %s" % (self._analog_channel_name[index], str(1e-6*value)))
             else:
-                raise ivi.ValueNotSupportedException("Supported bandwidth limits are %d" % BandwidthMapping.keys()
+                raise ivi.ValueNotSupportedException("Supported bandwidth limits are %d" % BandwidthMapping.keys())
         self._channel_bw_limit[index] = value
         self._set_cache_valid(index=index)
+
+    def _get_channel_probe_attenuation(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_probe_attenuation[index] = float(self._ask("probe%s:setup:attenuation:manual?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
+        return self._channel_probe_attenuation[index]
+    
+    def _set_channel_probe_attenuation(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = float(value)
+        if 0.001 > value > 10000:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            print("probe%s:setup:attenuation:manual %f" % (self._channel_name[index], value))
+            self._write("probe%s:setup:attenuation:manual %e" % (self._analog_channel_name[index], value))
+        self._channel_probe_attenuation[index] = value
+        self._set_cache_valid(index=index)
+        self._set_cache_valid(False, 'channel_offset', index)
+        self._set_cache_valid(False, 'channel_scale', index)
+        self._set_cache_valid(False, 'channel_range', index)
+        self._set_cache_valid(False, 'channel_trigger_level', index)
+        self._set_cache_valid(False, 'trigger_level')
+
+    def _get_channel_probe_skew(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_probe_skew[index] = float(self._ask("%s:skew?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
+        return self._channel_probe_skew[index]
+    
+    def _set_channel_probe_skew(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write("%s:skew %e" % (self._channel_name[index], value))
+        self._channel_probe_skew[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_channel_invert(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            value = self._ask("%s:polarity?" % self._channel_name[index]).lower()
+            if value == 'norm':
+                self._channel_invert[index] = False
+            elif value == 'inv':
+                self._channel_invert[index] = True
+            self._set_cache_valid(index=index)
+        return self._channel_invert[index]
+    
+    def _set_channel_invert(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate:
+            self._write("%s:polarity %s" % (self._channel_name[index], ('norm', 'inv')[value]))
+        self._channel_invert[index] = value
+
+    def _get_channel_coupling(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            value = self._ask("%s:coupling?" % self._channel_name[index]).lower()
+            self._channel_coupling[index] = [k for k,v in VerticalCouplingMapping.items() if v==value][0]
+            self._set_cache_valid(index=index)
+        return self._channel_coupling[index]
+    
+    def _set_channel_coupling(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if value not in VerticalCouplingMapping.keys():
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("%s:coupling %s" % (self._channel_name[index], VerticalCouplingMapping[value]))
+        self._channel_coupling[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_channel_offset(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_offset[index] = float(self._ask("%s:offset?" % self._channel_name[index]))
+            self._set_cache_valid(index=index)
+        return self._channel_offset[index]
+    
+    def _set_channel_offset(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = float(value)
+        if abs(value) > 1.2:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("%s:offset %e" % (self._channel_name[index], value))
+        self._channel_offset[index] = value
+        self._set_cache_valid(index=index)
+    
+    def _get_channel_range(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_range[index] = float(self._ask("%s:range?" % self._channel_name[index]))
+            self._channel_scale[index] = self._channel_range[index] / self._vertical_divisions
+            self._set_cache_valid(index=index)
+            self._set_cache_valid(True, "channel_scale", index)
+        return self._channel_range[index]
+    
+    def _set_channel_range(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = float(value)
+        # Instrument can handle 5 V/division with 1:1 probe compensation
+        if 1e-3 * self._channel_scale[index] * self._channel_probe_attenuation[index] > value > 5 * self._channel_scale[index] * self._channel_probe_attenuation[index]:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("%s:range %e" % (self._channel_name[index], value))
+        self._channel_range[index] = value
+        self._channel_scale[index] = value / self._vertical_divisions
+        self._set_cache_valid(index=index)
+        self._set_cache_valid(True, "channel_scale", index)
+        self._set_cache_valid(False, "channel_offset", index)
+    
+    def _get_channel_scale(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_scale[index] = float(self._ask("%s:scale?" % self._channel_name[index]))
+            self._channel_range[index] = self._channel_scale[index] * self._vertical_divisions
+            self._set_cache_valid(index=index)
+            self._set_cache_valid(True, "channel_range", index)
+        return self._channel_scale[index]
+    
+    def _set_channel_scale(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        value = float(value)
+        # Instrument can handle 5 V/division with 1:1 probe compensation
+        if 1e-3 * self._channel_probe_attenuation[index] > value > 5 * self._channel_probe_attenuation[index]:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("%s:scale %e" % (self._channel_name[index], value))
+        self._channel_scale[index] = value
+        self._channel_range[index] = value * self._vertical_divisions
+        self._set_cache_valid(index=index)
+        self._set_cache_valid(True, "channel_range", index)
+        self._set_cache_valid(False, "channel_offset", index)
+
+
+    # Trigger functions
+    def _get_trigger_coupling(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            coupling = self._ask("trigger:a:edge:coupling?").lower()
+            hf_reject = int(self._ask("trigger:a:edge:filter:hfreject?"))
+            noise_reject = int(self._ask("trigger:a:edge:filter:nreject?"))
+            for k in TriggerCouplingMapping:
+                if (coupling, hf_reject, noise_reject) == TriggerCouplingMapping[k]:
+                    self._trigger_coupling = k
+                    break
+        return self._trigger_coupling
+
+    def _set_trigger_coupling(self, value):
+        if value not in TriggerCouplingMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("trigger:a:edge:coupling %s" % TriggerCouplingMapping[value][0])
+            self._write("trigger:a:edge:filter:hfreject %d" % TriggerCouplingMapping[value][1])
+            self._write("trigger:a:edge:filter:nreject %d" % TriggerCouplingMapping[value][2])
+        self._trigger_coupling = value
+        self._set_cache_valid()
+
+    def _get_trigger_holdoff(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            # First check if trigger holdoff is enabled. One can set a value but it won't apply before enabled.
+            if self._ask("trigger:a:holdoff:mode?").lower() == 'off':
+                self._trigger_holdoff = 0.0
+                print('hej1')
+            elif self._ask("trigger:a:holdoff:mode?").lower() == 'time':
+                self._trigger_holdoff = float(self._ask("trigger:a:holdoff:time?"))
+                print('hej2')
+            self._set_cache_valid()
+        return self._trigger_holdoff
+    
+    def _set_trigger_holdoff(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            if float(value) == 0.0:
+                self._write("trigger:a:holdoff:mode off")
+            elif value < self._trigger_holdoff_min_time:
+                raise ivi.ValueNotSupportedException("Minimum trigger hold off time is %e" % self._trigger_holdoff_min_time)
+            else:
+                self._write("trigger:a:holdoff:time %e" % value)
+                self._write("trigger:a:holdoff:mode time")
+        self._trigger_holdoff = value
+        self._set_cache_valid()
