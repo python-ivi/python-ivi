@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2017-2018 Jonas Långbacka
+Copyright (c) 2017-2018 Acconeer AB
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,9 +42,13 @@ BandwidthMapping = {
         200e6: 'b200',
         20e6:  'b20'}
 VerticalCouplingMapping = {
-        'dc':   'dcl',
-        'ac': 'acl',
+        'dc':  'dcl',
+        'ac':  'acl',
         'gnd': 'gnd'}
+TriggerModifierMapping = {
+        'none': 'norm', # according to IVI standardization, oscilloscope normal triggde mode is called 'none'
+        'normal': 'norm',
+        'auto': 'auto'}
 TriggerTypeMapping = {
         'edge': 'edge',
         'width': 'glit',
@@ -113,8 +117,7 @@ SampleModeMapping = {'real_time': 'rtim',
 SlopeMapping = {
         'positive': 'pos',
         'negative': 'neg',
-        'either': 'eith',
-        'alternating': 'alt'}
+        'either': 'eith'}
 MeasurementFunctionMapping = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -161,17 +164,18 @@ TimebaseReferenceMapping = {
         'left': 8.33,
         'center': 50.0,
         'right': 91.67}
-TriggerModifierMapping = {'none': 'normal', 'auto': 'auto'}
 
 class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
                             scope.Base,
+                            scope.ContinuousAcquisition,
+                            scope.TriggerModifier,
                             ivi.Driver):
 #                       scpi.common.SelfTest, scpi.common.Memory,
-#                       scope.Base, scope.TVTrigger,
+#                       scope.TVTrigger,
 #                       scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
 #                       scope.WaveformMeasurement, scope.MinMaxWaveform,
-#                       scope.ContinuousAcquisition, scope.AverageAcquisition,
-#                       scope.SampleMode, scope.TriggerModifier, scope.AutoSetup,
+#                       scope.AverageAcquisition,
+#                       scope.SampleMode, scope.AutoSetup,
 #                       extra.common.SystemSetup, extra.common.Screenshot,
 #                       ivi.Driver):
     "Rohde&Schwarz generic IVI oscilloscope driver"
@@ -197,15 +201,16 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         
         self._memory_size = 10
 
-        self._analog_channel_name = list()
-        self._analog_channel_count = 4
-        self._digital_channel_name = list()
-        self._digital_channel_count = 16
-        self._channel_count = self._analog_channel_count + self._digital_channel_count
+        # self._analog_channel_name = list()
+        # self._analog_channel_count = 4
+        # self._digital_channel_name = list()
+        # self._digital_channel_count = 16
+        # self._channel_count = self._analog_channel_count + self._digital_channel_count
         
         self._bandwidth = 1e9
         
-        self._trigger_holdoff_min_time = 51.2e-9
+        self._trigger_holdoff_min = 51.2e-9
+        self._channel_offset_max = 1.2
 
         self._horizontal_divisions = 12
 
@@ -223,6 +228,11 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._timebase_window_position = 0.0
         self._timebase_window_range = 600e-6
         self._timebase_window_scale = 50e-6
+
+        self._trigger_mode = 'auto'
+        self._trigger_type = 'edge'
+        self._trigger_continuous = True
+
         self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
         self._display_vectors = True
         self._display_labels = True
@@ -351,6 +361,13 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                         are volts.
                         """))
 
+        self._add_property('channels[].trigger_level',
+                        self._get_channel_trigger_level,
+                        self._set_channel_trigger_level,
+                        None,
+                        ivi.Doc("""
+                        Specifies the trigger level of the channel.  Units are volts.
+                        """))
 
         self._init_channels() # Remove from base class?
 
@@ -399,7 +416,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._channel_label = list()
 
         # analog channels
-        #self._analog_channel_name = list()
+        self._analog_channel_name = list()
         self._channel_probe_skew = list()
         self._channel_invert = list()
         self._channel_coupling = list()
@@ -669,7 +686,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
         if 0.001 > value > 10000:
-            raise ivi.ValueNotSupportedException()
+            raise ivi.OutOfRangeException
         if not self._driver_operation_simulate:
             print("probe%s:setup:attenuation:manual %f" % (self._channel_name[index], value))
             self._write("probe%s:setup:attenuation:manual %e" % (self._analog_channel_name[index], value))
@@ -740,8 +757,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
     def _set_channel_offset(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
-        if abs(value) > 1.2:
-            raise ivi.ValueNotSupportedException()
+        if abs(value) > self._channel_offset_max:
+            raise ivi.OutOfRangeException
         if not self._driver_operation_simulate:
             self._write("%s:offset %e" % (self._channel_name[index], value))
         self._channel_offset[index] = value
@@ -761,7 +778,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         value = float(value)
         # Instrument can handle 5 V/division with 1:1 probe compensation
         if 1e-3 * self._channel_scale[index] * self._channel_probe_attenuation[index] > value > 5 * self._channel_scale[index] * self._channel_probe_attenuation[index]:
-            raise ivi.ValueNotSupportedException()
+            raise ivi.OutOfRangeException
         if not self._driver_operation_simulate:
             self._write("%s:range %e" % (self._channel_name[index], value))
         self._channel_range[index] = value
@@ -784,7 +801,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         value = float(value)
         # Instrument can handle 5 V/division with 1:1 probe compensation
         if 1e-3 * self._channel_probe_attenuation[index] > value > 5 * self._channel_probe_attenuation[index]:
-            raise ivi.ValueNotSupportedException()
+            raise ivi.OutOfRangeException
         if not self._driver_operation_simulate:
             self._write("%s:scale %e" % (self._channel_name[index], value))
         self._channel_scale[index] = value
@@ -833,10 +850,118 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         if not self._driver_operation_simulate:
             if float(value) == 0.0:
                 self._write("trigger:a:holdoff:mode off")
-            elif value < self._trigger_holdoff_min_time:
-                raise ivi.ValueNotSupportedException("Minimum trigger hold off time is %e" % self._trigger_holdoff_min_time)
+            elif value < self._trigger_holdoff_min:
+                raise ivi.OutOfRangeException("Minimum trigger hold off time is %e" % self._trigger_holdoff_min)
             else:
                 self._write("trigger:a:holdoff:time %e" % value)
                 self._write("trigger:a:holdoff:mode time")
         self._trigger_holdoff = value
+        self._set_cache_valid()
+
+    def _get_channel_trigger_level(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_trigger_level[index] = float(self._ask("trigger:a:level%d?" % (index+1)))
+            self._set_cache_valid(index=index)
+        return self._channel_trigger_level[index]
+
+    def _set_channel_trigger_level(self, index, value):
+        index = ivi.get_index(self._channel_name, index)
+        value = float(value)
+        if not self._driver_operation_simulate:
+            if value > self._channel_range[index]:
+                raise ivi.OutOfRangeException("Trigger level cannot be outside vertical range")
+        self._write("trigger:a:level%d %e" % (index+1, value))
+        self._channel_trigger_level[index] = value
+        self._set_cache_valid(index=index)
+        self._set_cache_valid(False, "trigger_level")
+
+    def _get_trigger_level(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            ch = self._get_trigger_source()
+            self._trigger_level = self._get_channel_trigger_level(ch)
+            self._set_cache_valid()
+        return self._trigger_level
+
+    def _set_trigger_level(self, value):
+        value = float(value)
+        if not self._driver_operation_simulate:
+            ch = self._get_trigger_source()
+            self._set_channel_trigger_level(ch, value)
+        self._trigger_level = value
+        self._set_cache_valid()
+
+    def _get_trigger_edge_slope(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:a:edge:slope?").lower()
+            self._trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._trigger_edge_slope
+    
+    def _set_trigger_edge_slope(self, value):
+        if value not in SlopeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("trigger:a:edge:slope %s" % SlopeMapping[value])
+        self._trigger_edge_slope = value
+        self._set_cache_valid()
+
+    def _get_trigger_source(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:a:source?").lower()
+            if value[0:2] == 'ch':
+                self._trigger_source = 'channel' + value[-1]
+            elif value[0] == 'd':
+                self._trigger_source == 'digital' + value[-1]
+            else:
+                self._trigger_source = value
+            self._set_cache_valid()
+        return self._trigger_source
+    
+    def _set_trigger_source(self, value):
+        if hasattr(value, 'name'):
+            value = value.name
+        value = str(value)
+        if value not in self._channel_name + ['line']:
+            raise ivi.UnknownPhysicalNameException()
+        if not self._driver_operation_simulate:
+            if value[0:2] == 'ch':
+                scpi_string = 'ch' + value[-1]
+            elif value[0].lower() == 'd':
+                scpi_string = 'd' + value[-1]
+            else:
+                scpi_string = value
+            self._write("trigger:a:source %s" % scpi_string)
+        self._trigger_source = value
+        self._set_cache_valid()
+
+    def _get_trigger_continuous(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._trigger_continuous = self._ask("acquire:state?").lower() == 'run'
+            self._set_cache_valid()
+        return self._trigger_continuous
+    
+    def _set_trigger_continuous(self, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            scpi_string = 'stop'
+            if value:
+                scpi_string = 'run'
+            self._write("acquire:state %s" % scpi_string)
+        self._trigger_continuous = value
+        self._set_cache_valid()
+
+    def _get_trigger_modifier(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:a:mode?").lower()
+            self._trigger_modifier = [k for k,v in TriggerModifierMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._trigger_modifier
+
+    def _set_trigger_modifier(self, value):
+        if value not in TriggerModifierMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("trigger:a:mode %s" % TriggerModifierMapping[value])
+        self._trigger_modifier = value
         self._set_cache_valid()

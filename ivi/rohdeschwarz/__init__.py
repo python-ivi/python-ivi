@@ -2,7 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2017 Jonas Långbacka, Acconeer Ab
+Copyright (c) 2017-2018 Acconeer AB
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,3 @@ THE SOFTWARE.
 # RTB2000 series
 from .rohdeschwarzRTB2002 import rohdeschwarzRTB2002
 from .rohdeschwarzRTB2004 import rohdeschwarzRTB2004
-
-# RTO2000 series
-#from .rohdeschwarzRTO2044 import rohdeschwarzRTO2044
