@@ -149,6 +149,11 @@ MeasurementFunctionMappingDigital = {
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
         'duty_cycle_positive': 'dutycycle'}
+MeasurementStatusMapping = {
+        'complete': 'comp',
+        'in_progress': 'stop',
+        'running': 'run',
+        'break': 'bre'}
 ScreenshotImageFormatMapping = {
         'bmp': 'bmp',
         'bmp24': 'bmp',
@@ -169,15 +174,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                             scope.Base,
                             scope.ContinuousAcquisition,
                             scope.TriggerModifier,
+                            scope.WaveformMeasurement,
                             ivi.Driver):
-#                       scpi.common.SelfTest, scpi.common.Memory,
-#                       scope.TVTrigger,
-#                       scope.GlitchTrigger, scope.WidthTrigger, scope.AcLineTrigger,
-#                       scope.WaveformMeasurement, scope.MinMaxWaveform,
-#                       scope.AverageAcquisition,
-#                       scope.SampleMode, scope.AutoSetup,
-#                       extra.common.SystemSetup, extra.common.Screenshot,
-#                       ivi.Driver):
     "Rohde&Schwarz generic IVI oscilloscope driver"
     
     def __init__(self, *args, **kwargs):
@@ -965,3 +963,24 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._write("trigger:a:mode %s" % TriggerModifierMapping[value])
         self._trigger_modifier = value
         self._set_cache_valid()
+
+    def _measurement_abort(self):
+        if not self._driver_operation_simulate:
+            self._write("stop")
+        self._set_cache_valid(False, 'trigger_continuous')
+
+    def _measurement_initiate(self):
+        if not self._driver_operation_simulate:
+            self._write("trigger:a:mode normal")
+            self._write("runsingle")
+        self._set_cache_valid(False, 'trigger_continuous')
+
+    def _get_measurement_status(self):
+        if not self._driver_operation_simulate:
+            value = self._ask("acquire:state?").lower()
+            self._measurement_status = [k for k,v in MeasurementStatusMapping.items() if v==value][0]
+            if value == 'stop' or value == 'comp':
+                self._set_cache_valid(False, 'trigger_continuous')
+        return self._measurement_status
+
+    # Measurement functions
