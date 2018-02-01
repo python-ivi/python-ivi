@@ -48,3 +48,4 @@ class rohdeschwarzRTB2004(rohdeschwarzBaseScope):
         self._channel_offset_max = 1.2
         
         self._init_channels()
+

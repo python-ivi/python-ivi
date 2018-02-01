@@ -29,6 +29,10 @@ from .. import scope
 from .. import scpi
 from .. import extra
 
+AcquisitionInterpolationMapping = {
+        'linear': 'lin',
+        'sinex': 'sinx',
+        'sample_and_hold': 'smhd'}
 AcquisitionTypeMapping = {
         'normal': ['samp', 'off'],
         'peak_detect': ['pdet', 'off'],
@@ -69,7 +73,6 @@ TriggerTypeMapping = {
         'uart': 'uart',
         'usb': 'usb',
         'flexray': 'flex'}
-# TriggerCouplingMapping = 'coupling': ('coupling', 5 kHz LPF, 100 MHz LPF)
 TriggerCouplingMapping = {
         'ac': ('ac', 0, 0),
         'dc': ('dc', 0, 0),
@@ -78,34 +81,6 @@ TriggerCouplingMapping = {
         'hf_reject_ac': ('ac', 1, 0),
         'noise_reject_dc': ('dc', 0, 1),
         'noise_reject_ac': ('ac', 0, 1)}
-TVTriggerEventMapping = {'field1': 'fie1',
-        'field2': 'fie2',
-        'any_field': 'afi',
-        'any_line': 'alin',
-        'line_number': 'lfi1',
-        'vertical': 'vert',
-        'line_field1': 'lfi1',
-        'line_field2': 'lfi2',
-        'line': 'line',
-        'line_alternate': 'lalt',
-        'lvertical': 'lver'}
-TVTriggerFormatMapping = {'generic': 'gen',
-        'ntsc': 'ntsc',
-        'pal': 'pal',
-        'palm': 'palm',
-        'secam': 'sec',
-        'p480l60hz': 'p480',
-        'p480': 'p480',
-        'p720l60hz': 'p720',
-        'p720': 'p720',
-        'p1080l24hz': 'p1080',
-        'p1080': 'p1080',
-        'p1080l25hz': 'p1080l25hz',
-        'p1080l50hz': 'p1080l50hz',
-        'p1080l60hz': 'p1080l60hz',
-        'i1080l50hz': 'i1080l50hz',
-        'i1080': 'i1080l50hz',
-        'i1080l60hz': 'i1080l60hz'}
 PolarityMapping = {'positive': 'pos',
         'negative': 'neg'}
 GlitchConditionMapping = {'less_than': 'less',
@@ -156,10 +131,7 @@ MeasurementStatusMapping = {
         'break': 'bre'}
 ScreenshotImageFormatMapping = {
         'bmp': 'bmp',
-        'bmp24': 'bmp',
-        'bmp8': 'bmp8bit',
-        'png': 'png',
-        'png24': 'png'}
+        'png': 'png'}
 TimebaseModeMapping = {
         'main': 'main',
         'window': 'wind',
@@ -171,10 +143,9 @@ TimebaseReferenceMapping = {
         'right': 91.67}
 
 class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common.Reset,
-                            scope.Base,
-                            scope.ContinuousAcquisition,
-                            scope.TriggerModifier,
+                            scope.Base, scope.ContinuousAcquisition, scope.TriggerModifier, scope.Interpolation,
                             scope.WaveformMeasurement,
+                            extra.common.Screenshot,
                             ivi.Driver):
     "Rohde&Schwarz generic IVI oscilloscope driver"
     
@@ -217,6 +188,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._acquisition_number_of_points_minimum = 10e3
         self._acquisition_record_length = 20e3
         self._acquisition_record_length_automatic = True
+        self._acquisition_type = 'normal'
+        self._acquisition_interpolation = 'sinex'
 
         self._timebase_mode = 'main'
         self._timebase_scale = 100e-6
@@ -456,7 +429,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
 
-
+    # scope.Base
     def _get_timebase_scale(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._timebase_scale = float(self._ask("timebase:scale?"))
@@ -557,8 +530,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
     def _get_acquisition_type(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = [self._ask("channel:type?").lower()]
-            value.append(self._ask("channel:arithmetics?"))
-            self._acquisition_type = [k for k,v in AcquisitionTypeMapping.items() if v==value]
+            value.append(self._ask("channel:arithmetics?").lower())
+            self._acquisition_type = [k for k,v in AcquisitionTypeMapping.items() if v==value][0]
             self._set_cache_valid()
         return self._acquisition_type
 
@@ -575,8 +548,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         return self._get_acquisition_record_length()
 
     def _set_acquisition_number_of_points_minimum(self, value):
-        if value < 20e3:
-            value = 20e3 # Minimum number of points is 20 kSa
+        if value < 10e3:
+            value = 10e3 # Minimum number of points is 10 kSa
         if not self._driver_operation_simulate:
             self._acquisition_record_length = int(value)
             self._acquisition_number_of_points_minimum = self._acquisition_record_length
@@ -613,7 +586,21 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         value = float(value)
         self._set_timebase_range(value)
 
+    # scope.Interpolation
+    def _get_acquisition_interpolation(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("acquire:interpolate?").lower()
+            self._acquisition_interpolation = [k for k,v in AcquisitionInterpolationMapping.items() if v==value][0]
+        return self._acquisition_interpolation
+    
+    def _set_acquisition_interpolation(self, value):
+        if value not in AcquisitionInterpolationMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("acquire:interpolate %s" % AcquisitionInterpolationMapping[value])
+        self._acquisition_interpolation = value
 
+    # scope.Base, continued
     def _get_channel_label(self, index):
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -983,4 +970,88 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 self._set_cache_valid(False, 'trigger_continuous')
         return self._measurement_status
 
-    # Measurement functions
+    def _measurement_fetch_waveform(self, index):
+        index = ivi.get_index(self._channel_name, index)
+
+        if self._driver_operation_simulate:
+            return list()
+
+        data_header = self._ask("%s:data:header?" % self._channel_name[index]).split(',') # x0, xN, record length, values/sample interval
+        x0 = float(data_header[0])
+        xN = float(data_header[1])
+        N = int(data_header[2])
+        dx = (xN - x0) / N
+        x = [(x0 + i * dx) for i in range(0, N)]
+        y = self._ask("%s:data?" % self._channel_name[index]).split(',')
+        y = [float(yi) for yi in y]
+        return list(zip(x, y))
+
+    def _measurement_read_waveform(self, index, maximum_time=None):
+        # Add functionaly according to Python-IVI scope specification
+        return self._measurement_fetch_waveform(index)
+
+    # extra.common
+    def _display_fetch_screenshot(self, format='png', invert=False):
+        if self._driver_operation_simulate:
+            return b''
+
+        if format not in self._display_screenshot_image_format_mapping:
+            raise ivi.ValueNotSupportedException()
+
+        self._write("hcopy:format %s" % format)
+        self._write("hcopy:color:scheme %s" % ('color' if not invert else 'inverted'))
+
+        screenshot = self._ask_for_ieee_block("hcopy:data?")
+        self._read_raw() # flush buffer
+
+        return screenshot
+
+    # scope.WaveformMeasurement
+    def _get_reference_level_high(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._reference_level_high = float(self._ask("reflevel:relative:upper?"))
+            self._set_cache_valid()
+        return self._reference_level_high
+
+    def _set_reference_level_high(self, value):
+        value = float(value)
+        if value < 0: value = 0
+        if value > 100: value = 100
+        if not self._driver_operation_simulate:
+            self._write("reflevel:relative:mode user")
+            self._write("reflevel:relative:upper %e" % value)
+        self._reference_level_high = value
+        self._set_cache_valid()
+
+    def _get_reference_level_low(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._reference_level_low = float(self._ask(":measurement:reflevel:percent:low?"))
+            self._set_cache_valid()
+        return self._reference_level_low
+
+    def _set_reference_level_low(self, value):
+        value = float(value)
+        if value < 0: value = 0
+        if value > 100: value = 100
+        if not self._driver_operation_simulate:
+            self._write("reflevel:relative:mode user")
+            self._write("reflevel:relative:lower %e" % value)
+        self._reference_level_low = value
+        self._set_cache_valid()
+
+    def _get_reference_level_middle(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._reference_level_middle = float(self._ask("reflevel:relative:middle?"))
+            self._set_cache_valid()
+        return self._reference_level_middle
+
+    def _set_reference_level_middle(self, value):
+        value = float(value)
+        if value < 0: value = 0
+        if value > 100: value = 100
+        if not self._driver_operation_simulate:
+            self._write("reflevel:relative:mode user")
+            self._write("reflevel:relative:middle %e" % value)
+        self._reference_level_middle = value
+        self._set_cache_valid()
+
