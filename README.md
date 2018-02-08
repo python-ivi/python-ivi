@@ -55,6 +55,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 8340/1 A/B
     * Agilent 8642 A/B
     * Agilent ESG E4400B series
+    * Rohde and Schwarz SMC100A
   * Other
     * Agilent 8156A optical attenuator
     * Agilent 85644/5A tracking source
