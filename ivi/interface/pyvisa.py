@@ -34,6 +34,9 @@ try:
         # New style PyVISA
         visa_rm = visa.ResourceManager()
         visa_instrument_opener = visa_rm.open_resource
+    except OSError:
+        visa_rm = visa.ResourceManager('@py')
+        visa_instrument_opener = visa_rm.open_resource
     except AttributeError:
         # Old style PyVISA
         visa_instrument_opener = visa.instrument
