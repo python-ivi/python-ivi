@@ -404,6 +404,8 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
     def _set_output_trace_points(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
+            if value > 2500:
+                raise ivi.OutOfRangeException()
             self._write("trace%d:points %d" % (index+1, int(value)))
         self._output_trace_points[index] = int(value)
         self._set_cache_valid()
@@ -675,31 +677,30 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         if buffer_range is not None:
             if type(buffer_range) not in (tuple, list):
                 raise ivi.ValueNotSupportedException("buffer_range must be tuple or list of length 2")
-            if buffer_range[0] > self._memory_size[index]:
+            if buffer_range[1] > self._memory_size:
                 raise ivi.ValueNotSupportedException("buffer_range buffer size is %d" % self._memory_size)
 
-        buffer_data = []
+        scpi_string = ''
         for m in measurement_type:
-            buffer_data_temp = []
-            measurement_scpi_string = BufferDataTypeMapping[m][0]
-            parse_buffer_data = BufferDataTypeMapping[m][1]
+            scpi_string += BufferDataTypeMapping[m][0] + ','
+        if buffer_range is None:
+            scpi_string = "trace:data? \"%s\"" % scpi_string[:-1] # Add scpi command and remove last comma
+        else:
+            scpi_string = "trace:data:sel? %d, %d, \"%s\"" % (buffer_range[0], buffer_range[1], scpi_string[-1])
 
-            # If no buffer_range was supplied, return all measurement data
-            if buffer_range is None:
-                buffer_data_temp = self._ask("trace:data? \"%s\"" % measurement_scpi_string).split(',')
+        buffer_data = []
 
-            # return only requested buffer_range
-            else:
-                buffer_data_temp = self._ask("trace:data:sel? %d, %d, \"%s\"" %
-                                             (buffer_range[0], buffer_range[1], measurement_scpi_string)).split(',')
-            buffer_data_temp = [parse_buffer_data(data) for data in buffer_data_temp]
-
+        # Fetch data
+        buffer_raw_data = self._ask(scpi_string).split(',')
+        i = 0
+        for m in measurement_type:
+            buffer_data_i = [BufferDataTypeMapping[m][1](value) for value in buffer_raw_data[i::len(measurement_type)]]
+            i += 1
             # If multiple data types where requested, return a list of measurement sequences
             if len(measurement_type) > 1:
-                buffer_data.append(buffer_data_temp)
+                buffer_data.append(buffer_data_i)
             else:
-                return buffer_data_temp
-
+                return buffer_data_i
         return buffer_data
 
     def _system_query_power_line_frequency(self):
