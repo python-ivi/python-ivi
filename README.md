@@ -43,6 +43,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Chroma 62000P series
     * Rigol DP800 series
     * Rigol DP1000 series
+    * Keithley (Tektronix) 2280S series
     * Tektronix PS2520G/PS2521G
   * RF Power Meters (pwrmeter):
     * Agilent 436A

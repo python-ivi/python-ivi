@@ -2,9 +2,7 @@
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2012-2017 Alex Forencich
-
-Modified by Jeff Wurzbach 2014
+Copyright (c) 2017 Jonas Långbacka, Acconeer Ab
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,37 +24,6 @@ THE SOFTWARE.
 
 """
 
-__all__ = [
-        # Base IVI class
-        "ivi",
-        # IVI abstract classes
-        "scope",
-        "dmm",
-        "fgen",
-        "dcpwr",
-        "swtch",
-        "pwrmeter",
-        "specan",
-        "rfsiggen",
-        "counter",
-        # Extra IVI base classes
-        "extra",
-        # Generic IVI drivers
-        "scpi",
-        # IVI drivers
-        "agilent",
-        "dicon",
-        "chroma",
-        "colby",
-        "ics",
-        "jdsu",
-        "keithley",
-        "lecroy",
-        "rigol",
-        "rohdeschwarz",
-        "tektronix",
-        "testequity"]
-
-from .ivi import *
-from . import *
-
+# DC Power Supplies
+from .keithley2280S import keithley2280S
+#from .keithley2280S import keithley2280S_60_3
