@@ -1,8 +1,9 @@
+# coding=utf-8
 """
 
 Python Interchangeable Virtual Instrument Library
 
-Copyright (c) 2017-2018 Acconeer AB
+Copyright (c) Acconeer AB, 2018
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +25,25 @@ THE SOFTWARE.
 
 """
 
-# Oscilloscopes
-# RTB2000 series
-from .rohdeschwarzRTB2002 import rohdeschwarzRTB2002
-from .rohdeschwarzRTB2004 import rohdeschwarzRTB2004
+from .rohdeschwarzBaseRFSigGen import *
+
+
+class rohdeschwarzSMC100A(rohdeschwarzBaseRFSigGen):
+    "Rohde&Schwarz SMC 100A RF Signal Generator"
+    
+    def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', 'SMC100A')
+        
+        super(rohdeschwarzSMC100A, self).__init__(*args, **kwargs)
+
+        # frequency limit in Hertz
+        self._frequency_low = 9e3
+        self._frequency_high = 1100e6        
+        # rf level limit in dBm
+        self._rf_level_low = -120.0
+        self._rf_level_high = 19
+        # rf rms voltage level limit in Volt
+        self._rf_rms_voltage_level_low = 223.61e-9
+        self._rf_rms_voltage_level_high = 1.993
+
+        self._initialize(*args, **kwargs)
