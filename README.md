@@ -44,6 +44,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Chroma 62000P series
     * Rigol DP800 series
     * Rigol DP1000 series
+    * Keithley (Tektronix) 2280S series
     * Tektronix PS2520G/PS2521G
   * RF Power Meters (pwrmeter):
     * Agilent 436A
@@ -56,6 +57,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent 8340/1 A/B
     * Agilent 8642 A/B
     * Agilent ESG E4400B series
+    * Rohde and Schwarz SMC100A
   * Other
     * Agilent 8156A optical attenuator
     * Agilent 85644/5A tracking source
