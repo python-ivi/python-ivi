@@ -53,26 +53,6 @@ TriggerModifierMapping = {
         'none': 'norm', # according to IVI standardization, oscilloscope normal triggde mode is called 'none'
         'normal': 'norm',
         'auto': 'auto'}
-TriggerTypeMapping = {
-        'edge': 'edge',
-        'width': 'glit',
-        'glitch': 'glit',
-        'tv': 'tv',
-        #'immediate': '',
-        'ac_line': 'edge',
-        'pattern': 'patt',
-        'can': 'can',
-        'duration': 'dur',
-        'i2s': 'i2s',
-        'iic': 'iic',
-        'eburst': 'ebur',
-        'lin': 'lin',
-        'm1553': 'm1553',
-        'sequence': 'seq',
-        'spi': 'spi',
-        'uart': 'uart',
-        'usb': 'usb',
-        'flexray': 'flex'}
 TriggerCouplingMapping = {
         'ac': ('ac', 0, 0),
         'dc': ('dc', 0, 0),
@@ -160,27 +140,12 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         
         self._vertical_divisions = 10
         
-        # self._channel_probe_skew = list()
-        # self._channel_scale = list()
-        # self._channel_trigger_level = list()
-        # self._channel_invert = list()imp
-        # self._channel_bw_limit = list()
-        
         super(rohdeschwarzBaseScope, self).__init__(*args, **kwargs)
         
         self._memory_size = 10
-
-        # self._analog_channel_name = list()
-        # self._analog_channel_count = 4
-        # self._digital_channel_name = list()
-        # self._digital_channel_count = 16
-        # self._channel_count = self._analog_channel_count + self._digital_channel_count
-        
         self._bandwidth = 1e9
-        
         self._trigger_holdoff_min = 51.2e-9
         self._channel_offset_max = 1.2
-
         self._horizontal_divisions = 12
 
         self._acquisition_segmented_count = 2
@@ -206,7 +171,6 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
         self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
         self._display_vectors = True
-        self._display_labels = True
 
         self._identity_description = "Rohde&Schwarz generic IVI oscilloscope driver"
         self._identity_identifier = ""
@@ -340,12 +304,18 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                         Specifies the trigger level of the channel.  Units are volts.
                         """))
 
+        self._add_property('channels[].show_label',
+                        self._get_channel_show_label,
+                        self._set_channel_show_label,
+                        None,
+                        ivi.Doc("""
+                        Turns the analog and digital channel labels on and off.
+                        """))
+
         self._init_channels() # Remove from base class?
 
     def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
         "Opens an I/O session to the instrument."
-
-        #self._channel_count = self._analog_channel_count + self._digital_channel_count
 
         super(rohdeschwarzBaseScope, self)._initialize(resource, id_query, reset, **keywargs)
 
@@ -385,6 +355,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
         self._channel_name = list()
         self._channel_label = list()
+        self._channel_show_label = list()
 
         # analog channels
         self._analog_channel_name = list()
@@ -400,10 +371,10 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._channel_trigger_level = list()
         self._channel_bw_limit = list()
 
-        #self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
             self._channel_name.append("channel%d" % (i+1))
-            self._channel_label.append("%d" % (i+1))
+            self._channel_label.append("C%d" % (i+1))
+            self._channel_show_label.append(False)
             self._analog_channel_name.append("C%d" % (i+1))
 
             self._channel_probe_skew.append(0)
@@ -419,11 +390,11 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._channel_bw_limit.append(False)
 
         # digital channels
-        #self._digital_channel_name = list()
         if (self._digital_channel_count > 0):
             for i in range(self._digital_channel_count):
                 self._channel_name.append("digital%d" % i)
                 self._channel_label.append("D%d" % i)
+                self._channel_show_label.append(False)
                 self._digital_channel_name.append("digital%d" % i)
         
         self._channel_count = self._analog_channel_count + self._digital_channel_count
@@ -607,27 +578,42 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._channel_label[index] = self._ask("%s:label?" % self._channel_name[index]).strip('"')
             self._set_cache_valid(index=index)
         return self._channel_label[index]
-    
+
     def _set_channel_label(self, index, value):
         value = str(value)
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate:
             self._write("%s:label '%s'" % (self._channel_name[index], value))
+            # If self._channel_show_label == True, then also display label on the screen
+            if self._channel_show_label[index] == True:
+                self._write("%s:label:state on" % self._channel_name[index])
         self._channel_label[index] = value
         self._set_cache_valid(index=index)
+
+    def _get_channel_show_label(self, index):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._channel_show_label[index] = bool(int(self._ask("%s:label:state?" % self._channel_name[index])))
+            self._set_cache_valid()
+        return self._channel_show_label[index]
     
+    def _set_channel_show_label(self, index, value):
+        value = bool(value)
+        if not self._driver_operation_simulate:
+            self._write("%s:label:state %s" % (self._channel_name[index], ('off', 'on')[int(value)]))
+        self._channel_show_label[index] = value
+        self._set_cache_valid()
+
     def _get_channel_enabled(self, index):
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_enabled[index] = bool(int(self._ask("%s:state?" % self._channel_name[index])))
             self._set_cache_valid(index=index)
         return self._channel_enabled[index]
-    
+
     def _set_channel_enabled(self, index, value):
         value = bool(value)
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate:
-            print(("%s:state %d" % (self._channel_name[index], int(value))))
             self._write("%s:state %d" % (self._channel_name[index], int(value)))
         self._channel_enabled[index] = value
         self._set_cache_valid(index=index)
@@ -635,7 +621,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
     def _get_channel_input_impedance(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         return self._channel_input_impedance[index]
-    
+
     def _set_channel_input_impedance(self, index, value):
         raise ivi.ValueNotSupportedException('Input impedance of all BNC inputs is fixed to 1 MOhm')
 
@@ -666,7 +652,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._channel_probe_attenuation[index] = float(self._ask("probe%s:setup:attenuation:manual?" % self._channel_name[index]))
             self._set_cache_valid(index=index)
         return self._channel_probe_attenuation[index]
-    
+
     def _set_channel_probe_attenuation(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
@@ -689,7 +675,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._channel_probe_skew[index] = float(self._ask("%s:skew?" % self._channel_name[index]))
             self._set_cache_valid(index=index)
         return self._channel_probe_skew[index]
-    
+
     def _set_channel_probe_skew(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
@@ -708,7 +694,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 self._channel_invert[index] = True
             self._set_cache_valid(index=index)
         return self._channel_invert[index]
-    
+
     def _set_channel_invert(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate:
@@ -722,7 +708,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._channel_coupling[index] = [k for k,v in VerticalCouplingMapping.items() if v==value][0]
             self._set_cache_valid(index=index)
         return self._channel_coupling[index]
-    
+
     def _set_channel_coupling(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         if value not in VerticalCouplingMapping.keys():
@@ -731,14 +717,14 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._write("%s:coupling %s" % (self._channel_name[index], VerticalCouplingMapping[value]))
         self._channel_coupling[index] = value
         self._set_cache_valid(index=index)
-    
+
     def _get_channel_offset(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._channel_offset[index] = float(self._ask("%s:offset?" % self._channel_name[index]))
             self._set_cache_valid(index=index)
         return self._channel_offset[index]
-    
+
     def _set_channel_offset(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
@@ -748,7 +734,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._write("%s:offset %e" % (self._channel_name[index], value))
         self._channel_offset[index] = value
         self._set_cache_valid(index=index)
-    
+
     def _get_channel_range(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -757,7 +743,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._set_cache_valid(index=index)
             self._set_cache_valid(True, "channel_scale", index)
         return self._channel_range[index]
-    
+
     def _set_channel_range(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
@@ -771,7 +757,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._set_cache_valid(index=index)
         self._set_cache_valid(True, "channel_scale", index)
         self._set_cache_valid(False, "channel_offset", index)
-    
+
     def _get_channel_scale(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -780,7 +766,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._set_cache_valid(index=index)
             self._set_cache_valid(True, "channel_range", index)
         return self._channel_scale[index]
-    
+
     def _set_channel_scale(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         value = float(value)
@@ -829,7 +815,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 print('hej2')
             self._set_cache_valid()
         return self._trigger_holdoff
-    
+
     def _set_trigger_holdoff(self, value):
         value = float(value)
         if not self._driver_operation_simulate:
@@ -902,7 +888,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 self._trigger_source = value
             self._set_cache_valid()
         return self._trigger_source
-    
+
     def _set_trigger_source(self, value):
         if hasattr(value, 'name'):
             value = value.name
@@ -925,7 +911,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._trigger_continuous = self._ask("acquire:state?").lower() == 'run'
             self._set_cache_valid()
         return self._trigger_continuous
-    
+
     def _set_trigger_continuous(self, value):
         value = bool(value)
         if not self._driver_operation_simulate:
