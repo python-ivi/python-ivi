@@ -24,7 +24,23 @@ THE SOFTWARE.
 
 """
 
-# Oscilloscopes
-# RTB2000 series
-from .rohdeschwarzRTB2002 import rohdeschwarzRTB2002
-from .rohdeschwarzRTB2004 import rohdeschwarzRTB2004
+from .rohdeschwarzBaseScope import *
+
+class rohdeschwarzRTB2002(rohdeschwarzBaseScope):
+    "Rohde&Schwarz RTB2002 IVI oscilloscope driver"
+    
+    def __init__(self, *args, **kwargs):
+        self.__dict__.setdefault('_instrument_id', 'RTB2002')
+        
+        super(rohdeschwarzRTB2002, self).__init__(*args, **kwargs)
+
+        self._analog_channel_count = 2
+        self._digital_channel_count = 16
+        self._channel_count = self._analog_channel_count + self._digital_channel_count
+        self._bandwidth = 70e6
+        self._horizontal_divisions = 12
+        self._vertical_divisions = 10
+        self._trigger_holdoff_min = 51.2e-9
+        self._channel_offset_max = 1.2
+
+        self._init_channels()

@@ -24,6 +24,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Agilent InfiniiVision 7000A/B series
     * Agilent Infiniium 90000A/90000X series
     * LeCroy WaveRunner Xi-A series
+    * Rohde&Schwarz RTB2000 series
     * Tektronix MDO3000 series
     * Tektronix DPO4000 series
     * Tektronix MDO4000 series
