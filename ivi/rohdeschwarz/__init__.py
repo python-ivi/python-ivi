@@ -28,3 +28,5 @@ THE SOFTWARE.
 # RTB2000 series
 from .rohdeschwarzRTB2002 import rohdeschwarzRTB2002
 from .rohdeschwarzRTB2004 import rohdeschwarzRTB2004
+# RF Signal Generators
+from .rohdeschwarzSMC100A import rohdeschwarzSMC100A

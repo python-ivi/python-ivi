@@ -61,6 +61,16 @@ TriggerCouplingMapping = {
         'hf_reject_ac': ('ac', 1, 0),
         'noise_reject_dc': ('dc', 0, 1),
         'noise_reject_ac': ('ac', 0, 1)}
+TriggerTypeMapping = {
+        'edge': 'edge',
+        'width': 'width',
+        'tv': 'tv',
+        # commented fields are to be supported in future
+        # 'immediate': '',
+        'line': 'line',
+        # 'pattern': 'patt', # called logic trigger
+        # 'bus': 'bus'
+        }
 PolarityMapping = {'positive': 'pos',
         'negative': 'neg'}
 GlitchConditionMapping = {'less_than': 'less',
@@ -78,13 +88,15 @@ MeasurementFunctionMapping = {
         'fall_time': 'falltime',
         'frequency': 'frequency',
         'period': 'period',
+        'standard_deviation': 'stddev',
         'voltage_rms': 'vrms display',
-        'voltage_peak_to_peak': 'vpp',
+        'voltage_peak_to_peak': 'peak',
         'voltage_max': 'vmax',
         'voltage_min': 'vmin',
         'voltage_high': 'vtop',
         'voltage_low': 'vbase',
         'voltage_average': 'vaverage display',
+        'voltage_mean': 'mean',
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
         'duty_cycle_positive': 'dutycycle',
@@ -128,7 +140,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                             extra.common.Screenshot,
                             ivi.Driver):
     "Rohde&Schwarz generic IVI oscilloscope driver"
-    
+
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
         self._analog_channel_name = list()
@@ -137,11 +149,11 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._channel_label = list()
-        
+
         self._vertical_divisions = 10
-        
+
         super(rohdeschwarzBaseScope, self).__init__(*args, **kwargs)
-        
+
         self._memory_size = 10
         self._bandwidth = 1e9
         self._trigger_holdoff_min = 51.2e-9
@@ -211,7 +223,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                         If you modify the time scale, the reference point remains fixed on the screen, and the scale is stretched or compressed to
                         both sides of the reference point. The reference point defines which part of the waveform is shown. By default, the reference
                         point is displayed in the center of the window, and you can move it to the left or right.
-                        
+
                         Values:
                         * 'left'
                         * 'center'
@@ -396,7 +408,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 self._channel_label.append("D%d" % i)
                 self._channel_show_label.append(False)
                 self._digital_channel_name.append("digital%d" % i)
-        
+                self._channel_trigger_level.append(0.0)
+
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
 
@@ -440,7 +453,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._timebase_reference = [k for k,v in TimebaseReferenceMapping.items() if v==value][0] # What to do for arbitrary reference values?
             self._set_cache_valid()
         return self._timebase_reference
-    
+
     def _set_timebase_reference(self, value):
         if value not in TimebaseReferenceMapping:
             raise ivi.ValueNotSupportedException()
@@ -526,7 +539,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._acquisition_number_of_points_minimum = self._acquisition_record_length
             self._acquisition_record_length_automatic = False
             self._set_cache_valid()
-            self._write("acquire:points %d" % self._acquisition_record_length)            
+            self._write("acquire:points %d" % self._acquisition_record_length)
 
     def _get_acquisition_record_length_automatic(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -548,7 +561,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
     def _get_acquisition_sample_rate(self):
         return float(self._ask("acquire:srate?"))
-        #return self._get_acquisition_record_length() / self._get_timebase_real_acquisition_time() # Observe that the real acquisition time is longer than acquisition time 
+        #return self._get_acquisition_record_length() / self._get_timebase_real_acquisition_time() # Observe that the real acquisition time is longer than acquisition time
 
     def _get_acquisition_time_per_record(self):
         return self._get_timebase_range()
@@ -563,7 +576,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             value = self._ask("acquire:interpolate?").lower()
             self._acquisition_interpolation = [k for k,v in AcquisitionInterpolationMapping.items() if v==value][0]
         return self._acquisition_interpolation
-    
+
     def _set_acquisition_interpolation(self, value):
         if value not in AcquisitionInterpolationMapping:
             raise ivi.ValueNotSupportedException()
@@ -595,7 +608,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._channel_show_label[index] = bool(int(self._ask("%s:label:state?" % self._channel_name[index])))
             self._set_cache_valid()
         return self._channel_show_label[index]
-    
+
     def _set_channel_show_label(self, index, value):
         value = bool(value)
         if not self._driver_operation_simulate:
@@ -606,15 +619,23 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
     def _get_channel_enabled(self, index):
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_enabled[index] = bool(int(self._ask("%s:state?" % self._channel_name[index])))
-            self._set_cache_valid(index=index)
+            if index < self._analog_channel_count:
+                self._channel_enabled[index] = bool(int(self._ask("%s:state?" % self._channel_name[index])))
+                self._set_cache_valid(index=index)
+            else:
+                self._channel_enabled[index] = bool(int(self._ask("%s:display?" % self._channel_name[index])))
+                self._set_cache_valid(index=index)
         return self._channel_enabled[index]
 
     def _set_channel_enabled(self, index, value):
         value = bool(value)
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate:
-            self._write("%s:state %d" % (self._channel_name[index], int(value)))
+            if index < self._analog_channel_count:
+                self._write("%s:state %d" % (self._channel_name[index], int(value)))
+            else:
+                state = ['off', 'on']
+                self._write("%s:display %s" % (self._channel_name[index], state[int(value)]))
         self._channel_enabled[index] = value
         self._set_cache_valid(index=index)
 
@@ -635,7 +656,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 self._channel_bw_limit[index] = int(bandwidth_limit[1:])
             self._set_cache_valid(index=index)
         return self._channel_bw_limit[index]
-    
+
     def _set_channel_input_frequency_max(self, index, value):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate:
@@ -683,7 +704,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._write("%s:skew %e" % (self._channel_name[index], value))
         self._channel_probe_skew[index] = value
         self._set_cache_valid(index=index)
-    
+
     def _get_channel_invert(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -809,10 +830,8 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             # First check if trigger holdoff is enabled. One can set a value but it won't apply before enabled.
             if self._ask("trigger:a:holdoff:mode?").lower() == 'off':
                 self._trigger_holdoff = 0.0
-                print('hej1')
             elif self._ask("trigger:a:holdoff:mode?").lower() == 'time':
                 self._trigger_holdoff = float(self._ask("trigger:a:holdoff:time?"))
-                print('hej2')
             self._set_cache_valid()
         return self._trigger_holdoff
 
@@ -840,9 +859,12 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         index = ivi.get_index(self._channel_name, index)
         value = float(value)
         if not self._driver_operation_simulate:
-            if value > self._channel_range[index]:
-                raise ivi.OutOfRangeException("Trigger level cannot be outside vertical range")
-        self._write("trigger:a:level%d %e" % (index+1, value))
+            if index < self._analog_channel_count:
+                if value > self._channel_range[index]:
+                    raise ivi.OutOfRangeException("Trigger level cannot be outside vertical range")
+                self._write("trigger:a:level%d %e" % (index+1, value))
+            else:
+                self._write("%s:THRESHOLD %e" % (self._channel_name[index], value))
         self._channel_trigger_level[index] = value
         self._set_cache_valid(index=index)
         self._set_cache_valid(False, "trigger_level")
@@ -868,7 +890,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             self._trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
             self._set_cache_valid()
         return self._trigger_edge_slope
-    
+
     def _set_trigger_edge_slope(self, value):
         if value not in SlopeMapping:
             raise ivi.ValueNotSupportedException()
@@ -937,6 +959,21 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._trigger_modifier = value
         self._set_cache_valid()
 
+    def _get_trigger_type(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:a:type?").lower()
+            self._trigger_type = [k for k,v in TriggerTypeMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._trigger_type
+
+    def _set_trigger_type(self, value):
+        if value not in TriggerTypeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("trigger:a:type %s" % TriggerTypeMapping[value])
+        self._trigger_type = value
+        self._set_cache_valid()
+
     def _measurement_abort(self):
         if not self._driver_operation_simulate:
             self._write("stop")
@@ -972,9 +1009,51 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         y = [float(yi) for yi in y]
         return list(zip(x, y))
 
+    def _measurement_fetch_waveform_measurement(self, index, measurement_function, ref_channel=None):
+        index = ivi.get_index(self._channel_name, index)
+        meas_source1 = None
+        meas_source2 = None
+        ref_channel_state = None
+        channel_state = self._get_channel_enabled(index)
+        if index < self._analog_channel_count:
+            if measurement_function not in MeasurementFunctionMapping:
+                raise ivi.ValueNotSupportedException()
+            func = MeasurementFunctionMapping[measurement_function]
+            meas_source1 = "CH%d" %(index+1)
+        else:
+            if measurement_function not in MeasurementFunctionMappingDigital:
+                raise ivi.ValueNotSupportedException()
+            func = MeasurementFunctionMappingDigital[measurement_function]
+            meas_source1 = "D%d" %(ref_index - self._analog_channel_count)
+        if not self._driver_operation_simulate:
+            self._set_channel_enabled(index, True)
+            self._write("measurement1:enable on")
+            self._write("measurement1:main %s" % func)
+            self._write("measurement1:source %s" %meas_source1)
+            if measurement_function in ['ratio', 'phase', 'delay']:
+                if hasattr(ref_channel, 'name'):
+                    ref_channel = ref_channel.name
+                ref_index = ivi.get_index(self._channel_name, ref_channel)
+                ref_channel_state = self._get_channel_enabled(ref_index)
+                self._set_channel_enabled(ref_index, True)
+                if ref_index < self._analog_channel_count:
+                    meas_source2 = "CH%d" %(ref_index+1)
+                else:
+                    meas_source2 = "D%d" %(ref_index - self._analog_channel_count)
+                self._write("measurement1:source %s, %s"  %(meas_source1, meas_source2))
+            result = float(self._ask("measurement1:result?"))
+            if ref_channel_state is not None:
+                self._set_channel_enabled(ref_index, ref_channel_state)
+            self._set_channel_enabled(index, channel_state)
+            return result
+        return 0
+
     def _measurement_read_waveform(self, index, maximum_time=None):
         # Add functionaly according to Python-IVI scope specification
         return self._measurement_fetch_waveform(index)
+
+    def _measurement_read_waveform_measurement(self, index, measurement_function, maximum_time):
+        return self._measurement_fetch_waveform_measurement(index, measurement_function)
 
     # extra.common
     def _display_fetch_screenshot(self, format='png', invert=False):
