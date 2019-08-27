@@ -27,6 +27,7 @@ THE SOFTWARE.
 from .. import ivi
 from .. import dcpwr
 from .. import scpi
+from .. import extra
 
 CurrentLimitBehavior = set([None, 'trip'])
 TrackingType = set(['floating'])
@@ -37,23 +38,35 @@ MeasurementTypeMapping = {
         'voltage': "VOLT",
         'current': "CURR",
         'none': "NONE"}
+BufferDataTypeMapping = {
+        'current': ['read', float],
+        'voltage': ['sour', float],
+        'relative_time_seconds': ['rel', float]}
+TriggerDirection = {
+        'rise': 'POS',
+        'fall': 'NEG'}
 
 
-class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigger,
-                scpi.dcpwr.Measurement,
-                scpi.common.Memory):
+class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
+                   scpi.dcpwr.SoftwareTrigger,
+                   scpi.dcpwr.Measurement,
+                   scpi.common.Memory,
+                   extra.dcpwr.OCP):
     "Keysight N6700 series IVI modular power supply driver"
-    
+
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', 'E3600A')
-        
+        self.__dict__.setdefault('_instrument_id', 'agilentN6700')
+
         # don't do standard SCPI init routine
         self._do_scpi_init = False
-        
-        super(agilentN6700, self).__init__(*args, **kwargs)
-        
+
+        try:
+            super(agilentN6700, self).__init__(*args, **kwargs)
+        except AttributeError:
+            pass
+
         self._output_count = 4
-        
+
         self._output_spec = [
             {
                 'range': {
@@ -88,21 +101,21 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
                 },
                 'voltage_max': 50.0,
                 'ovp_max': 50.0,
-                'current_max': 1.0,
-                'ocp_max': 1
+                'current_max': 1.5,
+                'ocp_max': 1.5
             }
         ]
-        
+
         self._memory_size = 3
         self._memory_offset = 1
         self._power_modules = []
-        
+
         self._output_trigger_delay = list()
-        
+
         self._couple_tracking_enabled = False
         self._couple_tracking_type = 'floating'
         self._couple_trigger = False
-        
+
         self._identity_description = "Keysight N6700 series IVI modular power supply driver"
         self._identity_identifier = ""
         self._identity_revision = ""
@@ -112,39 +125,108 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 3
         self._identity_specification_minor_version = 0
-        self._identity_supported_instrument_models = ['N6700','N6700C']
-
-        self._add_property('outputs[].trace_points',
-                        self._get_output_trace_points,
-                        self._set_output_trace_points)
-
-        self._add_method('trigger.initiate',
-                        self._trigger_initiate)
-
-        self._add_method('trigger.abort',
-                        self._trigger_abort)
+        self._identity_supported_instrument_models = ['N6700', 'N6700C']
 
         self._add_property('outputs[].measurement_type',
-                        self._get_output_measurement_type,
-                        self._set_output_measurement_type)
-        
+                           self._get_output_measurement_type,
+                           self._set_output_measurement_type)
+
+        self._add_property('outputs[].measurement_range',
+                           self._get_output_measurement_range,
+                           self._set_output_measurement_range)
+
+        self._add_property('outputs[].trace_points',
+                           self._get_output_trace_points,
+                           self._set_output_trace_points)
+
+        self._add_property('outputs[].sweep_interval',
+                           self._get_output_sweep_interval,
+                           self._set_output_sweep_interval)
+
+        self._add_property('outputs[].trigger_count',
+                           self._get_output_trigger_count,
+                           self._set_output_trigger_count)
+
+        self._add_property('outputs[].trigger_current_level',
+                           self._get_output_trigger_current_level,
+                           self._set_output_trigger_current_level)
+
+        self._add_property('outputs[].trigger_voltage_level',
+                           self._get_output_trigger_voltage_level,
+                           self._set_output_trigger_voltage_level)
+
+        self._add_property('outputs[].trigger_current_direction',
+                           self._get_output_trigger_current_direction,
+                           self._set_output_trigger_current_direction)
+
+        self._add_property('outputs[].trigger_voltage_direction',
+                           self._get_output_trigger_voltage_direction,
+                           self._set_output_trigger_voltage_direction)
+
+        self._add_property('outputs[].trigger_current_state',
+                           self._get_output_trigger_current_state,
+                           self._set_output_trigger_current_state)
+
+        self._add_property('outputs[].trigger_voltage_state',
+                           self._get_output_trigger_voltage_state,
+                           self._set_output_trigger_voltage_state)
+
+        self._add_property('outputs[].trigger_sample_count',
+                           self._get_output_trigger_sample_count,
+                           self._set_output_trigger_sample_count)
+
+        self._add_property('outputs[].trigger_continuous',
+                           self._get_output_trigger_continuous,
+                           self._set_output_trigger_continuous)
+
+        self._add_property('outputs[].current_compensate',
+                           self._get_output_current_compensate,
+                           self._set_output_current_compensate)
+
+        self._add_method('outputs[].configure_measurement',
+                         self._output_configure_measurement,
+                         ivi.Doc("""
+                         Configure measurement parameters such as measurement type (e.g. source voltage,
+                         current, time stamp, ...) number of samples, resolution, sampling interval in
+                         terms of number of power line cycles (NPLC), measurement range, trigger options.
+                         """))
+
+        self._add_method('outputs[].fetch_measurement',
+                         self._output_fetch_measurement,
+                         ivi.Doc("""
+                         Fetch measurement data from buffer memory. Either fetch all measurement data or
+                         a specific interval.
+                         """))
+
+        self._add_method('outputs[].trigger_initiate',
+                         self._output_trigger_initiate)
+
+        self._add_method('outputs[].clear_buffer',
+                         self._output_clear_buffer)
+
+        self._add_method('trigger.initiate',
+                         self._trigger_initiate)
+
+        self._add_method('trigger.abort',
+                         self._trigger_abort)
+
         self._init_outputs()
-    
-    def _initialize(self, resource = None, id_query = False, reset = False, **keywargs):
+
+    def _initialize(self, resource=None, id_query=False, reset=False, **keywargs):
         "Opens an I/O session to the instrument."
-        
+
         super(agilentN6700, self)._initialize(resource, id_query, reset, **keywargs)
-        
+
         # configure interface
         if self._interface is not None:
             if 'dsrdtr' in self._interface.__dict__:
                 self._interface.dsrdtr = True
                 self._interface.update_settings()
-        
+
         # interface clear
         if not self._driver_operation_simulate:
             self._clear()
-        
+
         # check ID
         if id_query and not self._driver_operation_simulate:
             id = self.identity.instrument_model
@@ -152,7 +234,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
             id_short = id[:len(id_check)]
             if id_short != id_check:
                 raise Exception("Instrument ID mismatch, expecting %s, got %s", id_check, id_short)
-        
+
         # reset
         if reset:
             self.utility_reset()
@@ -167,10 +249,36 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
         except AttributeError:
             pass
 
+        self._output_current_compensate = list()
+        self._output_sweep_interval = list()
         self._output_trace_points = list()
+        self._output_trigger_continuous = list()
+        self._output_trigger_count = list()
+        self._output_trigger_current_level = list()
+        self._output_trigger_current_direction = list()
+        self._output_trigger_current_state = list()
+        self._output_trigger_source = list()
+        self._output_trigger_voltage_level = list()
+        self._output_trigger_voltage_direction = list()
+        self._output_trigger_voltage_state = list()
+        self._output_trigger_sample_count = list()
+        self._output_measurement_range = list()
         self._output_measurement_type = list()
         for i in range(self._output_count):
+            self._output_current_compensate.append(False)
+            self._output_sweep_interval.append(0.00002048)
             self._output_trace_points.append(1024)
+            self._output_trigger_continuous.append(True)
+            self._output_trigger_count.append(1)
+            self._output_trigger_current_level.append(0.0)
+            self._output_trigger_current_direction.append('rise')
+            self._output_trigger_current_state.append(False)
+            self._output_trigger_source.append('bus')
+            self._output_trigger_voltage_level.append(0.0)
+            self._output_trigger_voltage_direction.append('rise')
+            self._output_trigger_voltage_state.append(False)
+            self._output_trigger_sample_count.append(1)
+            self._output_measurement_range.append(0.01)
             self._output_measurement_type.append('voltage')
 
     def _get_number_of_channels(self):
@@ -191,7 +299,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
             self._output_current_limit[index] = float(self._ask("source:current:level? (@%s)" % (index+1)))
             self._set_cache_valid(index=index)
         return self._output_current_limit[index]
-    
+
     def _set_output_current_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
@@ -201,7 +309,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
             self._write("source:current:level %f, (@%s)" % (value, index+1))
         self._output_current_limit[index] = value
         self._set_cache_valid(index=index)
-    
+
     def _get_output_current_limit_behavior(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -212,44 +320,44 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
                 self._output_current_limit_behavior[index] = None
             self._set_cache_valid(index=index)
         return self._output_current_limit_behavior[index]
-    
+
     def _set_output_current_limit_behavior(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if value not in dcpwr.CurrentLimitBehavior:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write("source:current:protection:state %s, (@%s)" % (int(value=='trip'), index+1))
+            self._write("source:current:protection:state %s, (@%s)" % (int(value == 'trip'), index + 1))
         self._output_current_limit_behavior[index] = value
         self._set_cache_valid(index=index)
-    
+
     def _get_output_enabled(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._output_enabled[index] = bool(int(self._ask("output? (@%s)" % (index+1))))
             self._set_cache_valid(index=index)
         return self._output_enabled[index]
-    
+
     def _set_output_enabled(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("output %s, (@%s)" % (int(value), index+1))
         self._output_enabled[index] = value
         self._set_cache_valid(index=index)
-    
+
     def _get_output_ovp_enabled(self, index):
         # Output voltage protection is always enabled and at least limited by the maximum output voltage
         return True
 
     def _set_output_ovp_enabled(self, index, value):
         raise ivi.InvalidOptionValueException("Output voltage protection always enabled, and at least limited by the maximum output voltage")
-    
+
     def _get_output_ovp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
             self._output_ovp_limit[index] = float(self._ask("source:voltage:protection:level? (@%s)" % (index+1)))
             self._set_cache_valid(index=index)
         return self._output_ovp_limit[index]
-    
+
     def _set_output_ovp_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
@@ -267,7 +375,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
     def _get_output_ocp_limit(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._output_ocp_limit[index] = float(self._ask("source:current:protection:level? (@%s)" % (index+1)))
+            self._output_ocp_limit[index] = float(self._get_output_trigger_current_level(index))
             self._set_cache_valid(index=index)
         return self._output_ocp_limit[index]
 
@@ -277,7 +385,11 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
         if abs(value) > self._output_spec[index]['ocp_max']:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
-            self._write("source:current:protection:level %s, (@%s)" % (value, index+1))
+            self._set_output_trigger_current_level(index, value)
+            if value == 0:
+                self._write("source:current:protection:state OFF, (@%s)" % (index+1))
+            else:
+                self._write("source:current:protection:state ON, (@%s)" % (index+1))
         self._output_ocp_limit[index] = value
         self._set_cache_valid(index=index)
 
@@ -287,7 +399,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
             self._output_voltage_level[index] = float(self._ask("source:voltage:level? (@%s)" % (index+1)))
             self._set_cache_valid(index=index)
         return self._output_voltage_level[index]
-    
+
     def _set_output_voltage_level(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
@@ -307,15 +419,30 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
     def _get_output_measurement_range(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            self._output_measurement_range[index] = float(self._ask("sense:%s:range? (@%s)" % (self._output_measurement_type[index], index+1))) #TODO: add auto range
+            self._output_measurement_range[index] = float(self._ask("sense:%s:range? (@%s)" % (self._output_measurement_type[index], index+1)))
         self._set_cache_valid(index=index)
         return self._output_measurement_range[index]
 
     def _set_output_measurement_range(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            self._write("sense%d:%s:range %s, (@%s)" % (self._output_measurement_type[index], value, index+1))
+            self._write("sense:%s:range %s, (@%s)" % (self._output_measurement_type[index], value, index+1))
         self._output_measurement_range[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_measurement_type(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            value = self._ask("sense:function? (@%s)" % (index+1))[1:-1]
+            self._output_measurement_type[index] = [k for k, v in MeasurementTypeMapping.items() if v == value][0]
+            self._set_cache_valid(index=index)
+        return self._output_measurement_type[index]
+
+    def _set_output_measurement_type(self, index, type):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense:function \"%s\", (@%s)" % (type, index+1))
+        self._output_measurement_type[index] = type
         self._set_cache_valid(index=index)
 
     def _get_output_trace_points(self, index):
@@ -334,47 +461,267 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger, scpi.dcpwr.SoftwareTrigg
         self._output_trace_points[index] = int(value)
         self._set_cache_valid(index=index)
 
-    def _get_output_measurement_type(self, index):
+    def _get_output_sweep_interval(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            # Find which measurement types are selected, if any
-            types = []
-            if self._ask("sense:function:voltage? (@%s)" % (index+1)) == '1':
-                types.append('voltage')
-            if self._ask("sense:function:current? (@%s)" % (index+1)) == '1':
-                types.append('current')
-            elif self._ask("sense:function? (@%s)" % (index+1)) == '"NONE"':
-                types = None
-            self._set_cache_valid(index=index)
-        self._output_measurement_type[index] = types
-        return self._output_measurement_type[index]
+            self._output_sweep_interval[index] = float(self._ask("sense:sweep:tinterval? (@%s)" % (index+1)))
+        self._get_cache_valid(index=index)
+        return self._output_sweep_interval[index]
 
-    def _set_output_measurement_type(self, index, types):
+    def _set_output_sweep_interval(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            # Reset measurement types
-            self._write("sense:function \"NONE\", (@%s)" % (index+1))
-            # If we want to set multiple measurement types, i.e. both voltage and current
-            if not isinstance(types, str):
-                for type in types:
-                    if type not in MeasurementTypeMapping:
-                        raise ivi.ValueNotSupportedException()
-                    self._write("sense:function:%s 1, (@%s)" % (type, index+1))
-            # If we want to set only one measurement type, e.g. current
-            else:
-                if types not in MeasurementTypeMapping:
-                    raise ivi.ValueNotSupportedException()
-                self._write("sense:function:%s 1, (@%s)" % (types, index+1))
-
-        self._output_measurement_type[index] = types
+            self._write("sense:sweep:tinterval %f, (@%s)" % (float(value), index+1))
+        self._output_sweep_interval[index] = float(value)
         self._set_cache_valid(index=index)
 
-    # Trigger functions
+    def _get_output_trigger_count(self, index):
+        index = ivi.get_index(self._output_name, index)
+        # Not supported, do nothing
+        self._set_cache_valid()
+        return self._output_trigger_count[index]
 
+    def _set_output_trigger_count(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if (value < 0) or (value > 2500):
+            raise ivi.OutOfRangeException()
+        # Not supported, do nothing
+        self._output_trigger_count[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_trigger_current_level(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_current_level[index] = float(self._ask("trigger:acquire:current:level? (@%s)" % (index+1)))
+        self._get_cache_valid()
+        return self._output_trigger_current_level[index]
+
+    def _set_output_trigger_current_level(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trigger:acquire:current:level %f, (@%s)" % (float(value), index+1))
+        self._output_trigger_current_level[index] = float(value)
+        self._set_cache_valid()
+
+    def _get_output_trigger_voltage_level(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_voltage_level[index] = float(self._ask("trigger:acquire:voltage:level? (@%s)" % (index+1)))
+        self._get_cache_valid()
+        return self._output_trigger_voltage_level[index]
+
+    def _set_output_trigger_voltage_level(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trigger:acquire:voltage:level %f, (@%s)" % (float(value), index+1))
+        self._output_trigger_voltage_level[index] = float(value)
+        self._set_cache_valid()
+
+    def _get_output_trigger_current_direction(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            value = self._ask("trigger:acquire:current:slope? (@%s)" % (index+1))
+            self._output_trigger_current_direction[index] = [k for k, v in TriggerDirection.items() if v == value][0]
+        self._get_cache_valid()
+        return self._output_trigger_current_direction[index]
+
+    def _set_output_trigger_current_direction(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if value not in TriggerDirection:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            new_value = [v for k, v in TriggerDirection.items() if k == value][0]
+            self._write("trigger:acquire:current:slope %s, (@%s)" % (new_value, index+1))
+        self._output_trigger_current_direction[index] = new_value.lower()
+        self._set_cache_valid()
+
+    def _get_output_trigger_voltage_direction(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            value = self._ask("trigger:acquire:voltage:slope? (@%s)" % (index+1))
+            self._output_trigger_voltage_direction[index] = [k for k, v in TriggerDirection.items() if v == value][0]
+        self._get_cache_valid()
+        return self._output_trigger_voltage_direction[index]
+
+    def _set_output_trigger_voltage_direction(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if value not in TriggerDirection:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            new_value = [v for k, v in TriggerDirection.items() if k == value][0]
+            self._write("trigger:acquire:voltage:slope %s, (@%s)" % (new_value, index+1))
+        self._output_trigger_voltage_level[index] = new_value.lower()
+        self._set_cache_valid()
+
+    def _get_output_trigger_current_state(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_current_state[index] = bool(float(self._ask("trigger:acquire:current:level? (@%s)" % (index+1))))
+        self._get_cache_valid()
+        return self._output_trigger_current_state[index]
+
+    def _set_output_trigger_current_state(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        # Set through current trigger level, do nothing
+
+    def _get_output_trigger_source(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:acquire:source? (@%s)" % (index+1)).lower()
+            self._output_trigger_source[index] = [k for k, v in TriggerSourceMapping.items() if v == value][0]
+        return self._output_trigger_source[index]
+
+    def _set_output_trigger_source(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = str(value)
+        if value not in TriggerSourceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("trigger:acquire:source %s, (@%s)" % (TriggerSourceMapping[value], index + 1))
+        self._output_trigger_source = value
+        self._set_cache_valid()
+
+    def _get_output_trigger_voltage_state(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_voltage_state[index] = bool(float(self._ask("trigger:acquire:voltage:level? (@%s)" % (index + 1))))
+        self._get_cache_valid()
+        return self._output_trigger_voltage_state[index]
+
+    def _set_output_trigger_voltage_state(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        # Set through voltage trigger level, do nothing
+
+    def _get_output_trigger_sample_count(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_sample_count[index] = int(self._ask("sense:sweep:points? (@%s)" % (index + 1)))
+            self._set_cache_valid(index=index)
+        return self._output_trigger_sample_count[index]
+
+    def _set_output_trigger_sample_count(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            if value > 524288 or value < 0:
+                raise ivi.OutOfRangeException()
+            self._write("sense:sweep:points %s, (@%s)" % (int(value), index + 1))
+        self._output_trigger_sample_count[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_trigger_continuous(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_trigger_continuous[index] = bool(int(self._ask("initiate:continuous:transient? (@%s)" % (index + 1))))
+        self._set_cache_valid()
+        return self._output_trigger_continuous[index]
+
+    def _set_output_trigger_continuous(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("initiate:continuous:transient %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
+        self._output_trigger_continuous[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_current_compensate(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_current_compensate[index] = self._ask("sense:current:ccompensate? (@%s)" % (index + 1)) == '1'
+        self._set_cache_valid()
+        return self._output_current_compensate[index]
+
+    def _set_output_current_compensate(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense:current:ccompensate %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
+        self._output_current_compensate[index] = value
+        self._set_cache_valid(index=index)
+
+    # Legacy function not really suited for this instrument
+    def _output_configure_measurement(self, index, type, sample_count=None, trigger_continuous=None, NPLC=None,
+                                      measurement_digits=None, measurement_range=None, adc_autozero=None, auto_clear_buffer=None):
+        index = ivi.get_index(self._output_name, index)
+        if type not in MeasurementTypeMapping.keys():
+            raise ivi.ValueNotSupportedException()
+        self._set_output_measurement_type(index, type)
+
+        self._set_output_measurement_type(index, type)
+
+        if sample_count is not None:
+            self._set_output_trace_points(index, sample_count)
+        if trigger_continuous is not None:
+            self._set_output_trigger_continuous(index, trigger_continuous)
+        if NPLC is not None:
+            self._set_output_sweep_interval(index, (1 / 60) * NPLC)
+        if measurement_range is not None:
+            self._set_output_measurement_range(index, measurement_range)
+
+    def _output_fetch_measurement(self, index, measurement_type, buffer_range=None):
+        index = ivi.get_index(self._output_name, index)
+        # type can be multiple elements so need to check that all are valid
+        if type(measurement_type) in (tuple, list):
+            for t in measurement_type:
+                if t not in BufferDataTypeMapping:
+                    raise ivi.ValueNotSupportedException()
+        elif type(measurement_type) is str:
+            if measurement_type not in BufferDataTypeMapping:
+                raise ivi.ValueNotSupportedException()
+            # make measurement_type a list so that we do not loop through the characters
+            measurement_type = [measurement_type]
+        else:
+            raise ivi.InvalidOptionValueException()
+
+        # Check that buffer_range is a valid tuple or list
+        if buffer_range is not None:
+            if type(buffer_range) not in (tuple, list):
+                raise ivi.ValueNotSupportedException("buffer_range must be tuple or list of length 2")
+            if buffer_range[1] > self._memory_size:
+                raise ivi.ValueNotSupportedException("buffer_range buffer size is %d" % self._memory_size)
+
+        for m in measurement_type:
+            if m == 'current':
+                buffer_raw_data = self._ask("fetch:array:current? (@%s)" % (index + 1)).split(',')
+            if m == 'voltage':
+                buffer_raw_data = self._ask("fetch:array:voltage? (@%s)" % (index + 1)).split(',')
+
+        buffer_data = []
+
+        # Fetch data
+        for m in measurement_type:
+            if m == 'current' or m == 'voltage':
+                buffer_data_i = [float(k) for k in buffer_raw_data]
+            else:
+                buffer_data_i = [0 + x * len(buffer_raw_data)*self._output_sweep_interval[index]/len(buffer_raw_data) for x in range(len(buffer_raw_data))]
+            # If multiple data types where requested, return a list of measurement sequences
+            if len(measurement_type) > 1:
+                buffer_data.append(buffer_data_i)
+            else:
+                return buffer_data_i
+
+        return buffer_data
+
+    def _output_clear_buffer(self, index):
+        index = ivi.get_index(self._output_name, index)
+        # Not supported, do nothing
+
+    def _output_trigger_initiate(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("initiate:immediate:acquire (@%s)" % (index + 1))
+            # Wait until WTG_meas (bit 3) bit is set to know when the instrument is
+            # ready to receive a trigger after initiating, or maximum 10 times
+            # to not block indefinitely
+            for loop_count in range(10):
+                operation = int(self._ask("stat:oper? (@%s)" % (index+1)))
+                if (operation & 8) == 8:
+                    break;
+            self._write("trigger:acquire:immediate (@%s)" % (index + 1))
+
+    # Trigger functions
     def _trigger_abort(self):
         if not self._driver_operation_simulate:
             self._write("abort")
 
     def _trigger_initiate(self):
         if not self._driver_operation_simulate:
-            self._write("initiate")
+            self._write("initiate:immediate:acquire (@3,4)")
+            self._write("trigger:acquire:immediate (@3,4)")
