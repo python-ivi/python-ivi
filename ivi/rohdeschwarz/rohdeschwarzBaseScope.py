@@ -83,6 +83,15 @@ SlopeMapping = {
         'positive': 'pos',
         'negative': 'neg',
         'either': 'eith'}
+SearchConditionMapping = {
+        'edge': 'edge',
+        'width': 'widt',
+        'peak': 'peak',
+        'runt': 'runt',
+        'rtime': 'rtim',
+        'datatoclock': 'dat',
+        'pattern': 'patt',
+        'protocol': 'prot'}
 MeasurementFunctionMapping = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -180,6 +189,11 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._trigger_mode = 'auto'
         self._trigger_type = 'edge'
         self._trigger_continuous = True
+
+        self._search_state = 'off'
+        self._search_condition = 'edge'
+        self._search_trigger_edge_slope = 'positive'
+        self._search_trigger_edge_level = '0.5'
 
         self._display_screenshot_image_format_mapping = ScreenshotImageFormatMapping
         self._display_vectors = True
@@ -322,6 +336,74 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                         None,
                         ivi.Doc("""
                         Turns the analog and digital channel labels on and off.
+                        """))
+
+        self._add_property('search.state',
+                        self._get_search_state,
+                        self._set_search_state,
+                        None,
+                        ivi.Doc("""
+                        Specifies the state of the search functionality. It is either on or off.
+                        """))
+
+        self._add_property('search.source',
+                        self._get_search_source,
+                        self._set_search_source,
+                        None,
+                        ivi.Doc("""
+                        Specifies the source the oscilloscope monitors for the search function. The
+                        value can be a channel name alias, a driver-specific channel string, or
+                        one of the values below.
+                        """))
+
+        self._add_property('search.trigger.edge.level',
+                        self._get_search_trigger_edge_level,
+                        self._set_search_trigger_edge_level,
+                        None,
+                        ivi.Doc("""
+                        Specifies the voltage threshold for the search function. The units are
+                        volts.
+                        """))
+
+        self._add_property('search.trigger.edge.slope',
+                        self._get_search_trigger_edge_slope,
+                        self._set_search_trigger_edge_slope,
+                        None,
+                        ivi.Doc("""
+                        Specifies whether a rising or a falling edge triggers the oscilloscope.
+
+                        This attribute affects instrument operation only when the Trigger Type
+                        attribute is set to Edge Trigger.
+
+                        Values:
+                         * 'positive'
+                         * 'negative'
+                         * 'either'
+                        """))
+
+        self._add_property('search.condition',
+                        self._get_search_condition,
+                        self._set_search_condition,
+                        None,
+                        ivi.Doc("""
+                        Specifies the event that triggers the oscilloscope.
+
+                        Values:
+
+                        * 'edge'
+                        * 'width'
+                        * 'peak'
+                        * 'runt'
+                        * 'rtime'
+                        * 'datatoclock'
+                        * 'pattern'
+                        * 'protocol'
+                        """))
+
+        self._add_method('search.get_result',
+                        self._search_get_result,
+                        ivi.Doc("""
+                        Get result of search function.
                         """))
 
         self._init_channels() # Remove from base class?
@@ -1120,3 +1202,100 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         self._reference_level_middle = value
         self._set_cache_valid()
 
+    def _get_search_state(self):
+        if not self._driver_operation_simulate:
+            self._search_state = self._ask("search:state?")
+
+        self._set_cache_valid()
+        return self._search_state
+
+    def _set_search_state(self, value):
+        value = str(value)
+        if not self._driver_operation_simulate:
+            self._write("search:state %s" % value)
+
+        self._search_state = value
+        self._set_cache_valid()
+
+    def _get_search_source(self):
+        if not self._driver_operation_simulate:
+            value = self._ask("search:source?").lower()
+            if value[0:2] == 'ch':
+                self.search_source = 'channel' + value[-1]
+            elif value[0] == 'd':
+                self.search_source == 'digital' + value[-1]
+            else:
+                self.search_source = value
+        self._set_cache_valid()
+        return self.search_source
+
+    def _set_search_source(self, value):
+        if hasattr(value, 'name'):
+            value = value.name
+        value = str(value)
+        if value not in self._channel_name + ['line']:
+            raise ivi.UnknownPhysicalNameException()
+        if not self._driver_operation_simulate:
+            if value[0:2] == 'ch':
+                scpi_string = 'ch' + value[-1]
+            elif value[0].lower() == 'd':
+                scpi_string = 'd' + value[-1]
+            else:
+                scpi_string = value
+            self._write("search:source %s" % scpi_string)
+
+        self._search_source = value
+        self._set_cache_valid()
+
+    def _get_search_trigger_edge_level(self):
+        if not self._driver_operation_simulate:
+            self._search_trigger_edge_level = self._ask("search:trigger:edge:level?")
+
+        self._set_cache_valid()
+        return vaself._search_trigger_edge_levellue
+
+    def _set_search_trigger_edge_level(self, value):
+        value = float(value)
+
+        if not self._driver_operation_simulate:
+            self._write("search:trigger:edge:level %f" % value)
+
+        self._search_trigger_edge_level = value
+        self._set_cache_valid()
+
+    def _get_search_trigger_edge_slope(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("search:edge:slope?").lower()
+            self._search_trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._search_trigger_edge_slope
+
+    def _set_search_trigger_edge_slope(self, value):
+        if value not in SlopeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("search:edge:slope %s" % SlopeMapping[value])
+        self._search_trigger_edge_slope = SlopeMapping[value]
+        self._set_cache_valid()
+
+    def _get_search_condition(self):
+        if not self._driver_operation_simulate:
+            value = self._ask("search:condition?")
+            self._search_condition = [k for k,v in SearchConditionMapping.items() if v==value][0]
+            self._set_cache_valid()
+        return self._search_condition
+
+    def _set_search_condition(self, value):
+        if value not in SearchConditionMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("search:condition %s" % SearchConditionMapping[value])
+        self._search_condition = SearchConditionMapping[value]
+        self._set_cache_valid()
+
+    def _search_get_result(self):
+        result_str = ""
+        if self._search_state == 'on':
+            result_str = self._ask("search:result:all?")
+
+        return result_str
