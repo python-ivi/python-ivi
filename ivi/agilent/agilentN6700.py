@@ -183,14 +183,6 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                            self._get_output_current_compensate,
                            self._set_output_current_compensate)
 
-        self._add_method('outputs[].configure_measurement',
-                         self._output_configure_measurement,
-                         ivi.Doc("""
-                         Configure measurement parameters such as measurement type (e.g. source voltage,
-                         current, time stamp, ...) number of samples, resolution, sampling interval in
-                         terms of number of power line cycles (NPLC), measurement range, trigger options.
-                         """))
-
         self._add_method('outputs[].fetch_measurement',
                          self._output_fetch_measurement,
                          ivi.Doc("""
@@ -629,31 +621,14 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._set_cache_valid()
         return self._output_current_compensate[index]
 
+    # Enables/disables the capacitive current compensation. (not on N678xA SMU, N679xA)
+    # On Models N676xA this command only applies in the High current range
     def _set_output_current_compensate(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("sense:current:ccompensate %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
         self._output_current_compensate[index] = value
         self._set_cache_valid(index=index)
-
-    # Legacy function not really suited for this instrument
-    def _output_configure_measurement(self, index, type, sample_count=None, trigger_continuous=None, NPLC=None,
-                                      measurement_digits=None, measurement_range=None, adc_autozero=None, auto_clear_buffer=None):
-        index = ivi.get_index(self._output_name, index)
-        if type not in MeasurementTypeMapping.keys():
-            raise ivi.ValueNotSupportedException()
-        self._set_output_measurement_type(index, type)
-
-        self._set_output_measurement_type(index, type)
-
-        if sample_count is not None:
-            self._set_output_trace_points(index, sample_count)
-        if trigger_continuous is not None:
-            self._set_output_trigger_continuous(index, trigger_continuous)
-        if NPLC is not None:
-            self._set_output_sweep_interval(index, (1 / 60) * NPLC)
-        if measurement_range is not None:
-            self._set_output_measurement_range(index, measurement_range)
 
     def _output_fetch_measurement(self, index, measurement_type, buffer_range=None):
         index = ivi.get_index(self._output_name, index)
@@ -723,5 +698,5 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
 
     def _trigger_initiate(self):
         if not self._driver_operation_simulate:
-            self._write("initiate:immediate:acquire (@3,4)")
-            self._write("trigger:acquire:immediate (@3,4)")
+            self._write("initiate:immediate:acquire (@1:%s)" % (self._output_count))
+            self._write("trigger:acquire:immediate (@1:%s)" % (self._output_count))
