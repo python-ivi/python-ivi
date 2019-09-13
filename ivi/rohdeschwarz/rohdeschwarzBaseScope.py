@@ -995,14 +995,14 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
     def _set_trigger_source(self, value):
         if hasattr(value, 'name'):
-            value = value.name
+            value = value.name.lower()
         value = str(value)
         if value not in self._channel_name + ['line']:
             raise ivi.UnknownPhysicalNameException()
         if not self._driver_operation_simulate:
             if value[0:2] == 'ch':
                 scpi_string = 'ch' + value[-1]
-            elif value[0].lower() == 'd':
+            elif value[0] == 'd':
                 scpi_string = 'd' + value[-1]
             else:
                 scpi_string = value
@@ -1223,7 +1223,11 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             if value[0:2] == 'ch':
                 self.search_source = 'channel' + value[-1]
             elif value[0] == 'd':
-                self.search_source == 'digital' + value[-1]
+                self.search_source == 'digital'
+                if value[-2].isdigit():
+                    self.search_source = self.search_source + value[-2:]
+                else:
+                    self.search_source = self.search_source + value[-1]
             else:
                 self.search_source = value
         self._set_cache_valid()
@@ -1231,15 +1235,19 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
     def _set_search_source(self, value):
         if hasattr(value, 'name'):
-            value = value.name
+            value = value.name.lower()
         value = str(value)
         if value not in self._channel_name + ['line']:
             raise ivi.UnknownPhysicalNameException()
         if not self._driver_operation_simulate:
             if value[0:2] == 'ch':
                 scpi_string = 'ch' + value[-1]
-            elif value[0].lower() == 'd':
+            elif value[0] == 'd':
                 scpi_string = 'd' + value[-1]
+                if value[-2].isdigit():
+                    scpi_string = scpi_string + value[-2:]
+                else:
+                    scpi_string = scpi_string + value[-1]
             else:
                 scpi_string = value
             self._write("search:source %s" % scpi_string)
@@ -1251,8 +1259,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         if not self._driver_operation_simulate:
             self._search_trigger_edge_level = self._ask("search:trigger:edge:level?")
 
-        self._set_cache_valid()
-        return vaself._search_trigger_edge_levellue
+        return self._search_trigger_edge_level
 
     def _set_search_trigger_edge_level(self, value):
         value = float(value)
@@ -1265,7 +1272,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
     def _get_search_trigger_edge_slope(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            value = self._ask("search:edge:slope?").lower()
+            value = self._ask("search:trigger:edge:slope?").lower()
             self._search_trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
             self._set_cache_valid()
         return self._search_trigger_edge_slope
@@ -1274,13 +1281,13 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         if value not in SlopeMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write("search:edge:slope %s" % SlopeMapping[value])
+            self._write("search:trigger:edge:slope %s" % SlopeMapping[value])
         self._search_trigger_edge_slope = SlopeMapping[value]
         self._set_cache_valid()
 
     def _get_search_condition(self):
         if not self._driver_operation_simulate:
-            value = self._ask("search:condition?")
+            value = self._ask("search:condition?").lower()
             self._search_condition = [k for k,v in SearchConditionMapping.items() if v==value][0]
             self._set_cache_valid()
         return self._search_condition
