@@ -32,8 +32,27 @@ from .. import extra
 CurrentLimitBehavior = set([None, 'trip'])
 TrackingType = set(['floating'])
 TriggerSourceMapping = {
-        'immediate': 'imm',
-        'bus': 'bus'}
+        'bus': 'bus',
+        'current1': 'curr1',
+        'current2': 'curr2',
+        'current3': 'curr3',
+        'current4': 'curr4',
+        'external': 'ext',
+        'pin1': 'pin1',
+        'pin2': 'pin2',
+        'pin3': 'pin3',
+        'pin4': 'pin4',
+        'pin5': 'pin5',
+        'pin6': 'pin6',
+        'pin7': 'pin7',
+        'transient1': 'tran1',
+        'transient2': 'tran2',
+        'transient3': 'tran3',
+        'transient4': 'tran4',
+        'voltage1': 'volt1',
+        'voltage2': 'volt2',
+        'voltage3': 'volt3',
+        'voltage4': 'volt4'}
 MeasurementTypeMapping = {
         'voltage': "VOLT",
         'current': "CURR",
@@ -143,6 +162,10 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                            self._get_output_sweep_interval,
                            self._set_output_sweep_interval)
 
+        self._add_property('outputs[].sweep_offset_points',
+                           self._get_output_sweep_offset_points,
+                           self._set_output_sweep_offset_points)
+
         self._add_property('outputs[].trigger_count',
                            self._get_output_trigger_count,
                            self._set_output_trigger_count)
@@ -193,11 +216,17 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._add_method('outputs[].trigger_initiate',
                          self._output_trigger_initiate)
 
+        self._add_method('outputs[].trigger_acquire_immediate',
+                         self._output_trigger_acquire_immediate)
+
         self._add_method('outputs[].clear_buffer',
                          self._output_clear_buffer)
 
         self._add_method('trigger.initiate',
                          self._trigger_initiate)
+
+        self._add_method('trigger.acquire_immediate',
+                         self._trigger_acquire_immediate)
 
         self._add_method('trigger.abort',
                          self._trigger_abort)
@@ -244,6 +273,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._output_current_compensate = list()
         self._output_sweep_interval = list()
         self._output_trace_points = list()
+        self._output_sweep_offset_points = list()
         self._output_trigger_continuous = list()
         self._output_trigger_count = list()
         self._output_trigger_current_level = list()
@@ -260,6 +290,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             self._output_current_compensate.append(False)
             self._output_sweep_interval.append(0.00002048)
             self._output_trace_points.append(1024)
+            self._output_sweep_offset_points.append(0)
             self._output_trigger_continuous.append(True)
             self._output_trigger_count.append(1)
             self._output_trigger_current_level.append(0.0)
@@ -467,6 +498,22 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._output_sweep_interval[index] = float(value)
         self._set_cache_valid(index=index)
 
+    def _get_output_sweep_offset_points(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_sweep_offset_points[index] = int(self._ask("sense:sweep:offset:points? (@%s)" % (index+1)))
+        self._get_cache_valid(index=index)
+        return self._output_sweep_offset_points[index]
+
+    def _set_output_sweep_offset_points(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            if value > 2e9 or value < -524287:
+                raise ivi.OutOfRangeException()
+            self._write("sense:sweep:offset:points %s, (@%s)" % (int(value), index+1))
+        self._output_sweep_offset_points[index] = int(value)
+        self._set_cache_valid(index=index)
+
     def _get_output_trigger_count(self, index):
         index = ivi.get_index(self._output_name, index)
         # Not supported, do nothing
@@ -611,7 +658,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("initiate:continuous:transient %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
-        self._output_trigger_continuous[index] = value
+        self._output_trigger_continuous[index] = bool(value)
         self._set_cache_valid(index=index)
 
     def _get_output_current_compensate(self, index):
@@ -627,7 +674,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("sense:current:ccompensate %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
-        self._output_current_compensate[index] = value
+        self._output_current_compensate[index] = bool(value)
         self._set_cache_valid(index=index)
 
     def _output_fetch_measurement(self, index, measurement_type, buffer_range=None):
@@ -678,7 +725,13 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         index = ivi.get_index(self._output_name, index)
         # Not supported, do nothing
 
+    # Trigger functions
     def _output_trigger_initiate(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("initiate:acquire (@%s)" % (index + 1))
+
+    def _output_trigger_acquire_immediate(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("initiate:immediate:acquire (@%s)" % (index + 1))
@@ -691,12 +744,15 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                     break;
             self._write("trigger:acquire:immediate (@%s)" % (index + 1))
 
-    # Trigger functions
     def _trigger_abort(self):
         if not self._driver_operation_simulate:
             self._write("abort")
 
     def _trigger_initiate(self):
+        if not self._driver_operation_simulate:
+            self._write("initiate:acquire (@1:%s)" % (self._output_count))
+
+    def _trigger_acquire_immediate(self):
         if not self._driver_operation_simulate:
             self._write("initiate:immediate:acquire (@1:%s)" % (self._output_count))
             self._write("trigger:acquire:immediate (@1:%s)" % (self._output_count))
