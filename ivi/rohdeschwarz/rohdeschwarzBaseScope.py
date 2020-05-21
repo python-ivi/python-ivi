@@ -45,6 +45,9 @@ BandwidthMapping = {
         800e6: 'b800',
         200e6: 'b200',
         20e6:  'b20'}
+DelaySlopeMapping = {
+        'positive': 'pos',
+        'negative': 'neg'}
 VerticalCouplingMapping = {
         'dc':  'dcl',
         'ac':  'acl',
@@ -124,7 +127,16 @@ MeasurementFunctionMappingDigital = {
         'period': 'period',
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
-        'duty_cycle_positive': 'dutycycle'}
+        'duty_cycle_positive': 'dutycycle',
+        'phase': 'phase',
+        'delay': 'delay'}
+MeasurementResultTypeMapping = {
+        'mean': 'avg',
+        'avg': 'avg',
+        'std': 'stddev',
+        'count': 'wfmcount',
+        'min': 'npeak',
+        'max': 'ppeak'}
 MeasurementStatusMapping = {
         'complete': 'comp',
         'in_progress': 'stop',
@@ -404,6 +416,67 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                         self._search_get_result,
                         ivi.Doc("""
                         Get result of search function.
+                        """))
+
+        self._add_method('measurement.statistics.reset',
+                        self._reset_measurement_statistics,
+                        ivi.Doc("""
+                        Reset measurement staistics .
+                        """))
+
+        self._add_property('measurement.enable',
+                        self._get_measurement_enable,
+                        self._set_measurement_enable,
+                        None,
+                        ivi.Doc("""
+                        Enable or disable measurement.
+                        Values:
+                         * 'on'
+                         * 'off'
+                        """))
+
+        self._add_property('measurement.function',
+                        self._get_measurement_function,
+                        self._set_measurement_function,
+                        None,
+                        ivi.Doc("""
+                        Specifies the measurement function used.
+
+                        Values: specified in MeasurementFunctionMapping
+                        """))
+
+        self._add_method('measurement.source',
+                        self._set_measurement_source,
+                        ivi.Doc("""
+                        Specifies measurement source, both source 1 and source 2(optional, based on measurement function).
+                        """))
+
+        self._add_property('measurement.statistics.enable',
+                        self._get_measurement_statistics_enable,
+                        self._set_measurement_statistics_enable,
+                        None,
+                        ivi.Doc("""
+                        Enable or disable statistics for measurement.
+                        Values:
+                         * 'on'
+                         * 'off'
+                        """))
+
+        self._add_method('measurement.set_delay_slope',
+                        self._measurement_set_delay_slope,
+                        ivi.Doc("""
+                        Specifies whether a rising or a falling edge is used for delay measurements.
+                        Values:
+                         * 'positive'
+                         * 'negative'
+                        """))
+
+        self._add_property('acquisition.number_of_waveforms',
+                        self._get_acquisition_number_of_waveforms,
+                        self._set_acquisition_number_of_waveforms,
+                        None,
+                        ivi.Doc("""
+                        The number of waveforms that are acquired with a [Single] acquisition.
                         """))
 
         self._init_channels() # Remove from base class?
@@ -1091,7 +1164,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         y = [float(yi) for yi in y]
         return list(zip(x, y))
 
-    def _measurement_fetch_waveform_measurement(self, index, measurement_function, ref_channel=None):
+    def _measurement_fetch_waveform_measurement(self, index, measurement_function, result_type=None, ref_channel=None):
         index = ivi.get_index(self._channel_name, index)
         meas_source1 = None
         meas_source2 = None
@@ -1106,7 +1179,7 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             if measurement_function not in MeasurementFunctionMappingDigital:
                 raise ivi.ValueNotSupportedException()
             func = MeasurementFunctionMappingDigital[measurement_function]
-            meas_source1 = "D%d" %(ref_index - self._analog_channel_count)
+            meas_source1 = "D%d" %(index - self._analog_channel_count)
         if not self._driver_operation_simulate:
             self._set_channel_enabled(index, True)
             self._write("measurement1:enable on")
@@ -1123,7 +1196,12 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
                 else:
                     meas_source2 = "D%d" %(ref_index - self._analog_channel_count)
                 self._write("measurement1:source %s, %s"  %(meas_source1, meas_source2))
-            result = float(self._ask("measurement1:result?"))
+            if result_type is None:
+                result = float(self._ask("measurement1:result?"))
+            else:
+                if result_type.lower() not in MeasurementResultTypeMapping:
+                    raise ivi.ValueNotSupportedException()
+                result = float(self._ask("measurement1:result:%s?" % MeasurementResultTypeMapping[result_type.lower()]))
             if ref_channel_state is not None:
                 self._set_channel_enabled(ref_index, ref_channel_state)
             self._set_channel_enabled(index, channel_state)
@@ -1136,6 +1214,20 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
 
     def _measurement_read_waveform_measurement(self, index, measurement_function, maximum_time):
         return self._measurement_fetch_waveform_measurement(index, measurement_function)
+
+    def _get_acquisition_number_of_waveforms(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_number_of_waveforms = int(self._ask("acquire:nsingle:count?"))
+            self._set_cache_valid()
+        return self._acquisition_number_of_waveforms
+
+    def _set_acquisition_number_of_waveforms(self, value):
+        if value < 1:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("acquire:nsingle:count %d" % value)
+        self._acquisition_number_of_waveforms = value
+        self._set_cache_valid()
 
     # extra.common
     def _display_fetch_screenshot(self, format='png', invert=False):
@@ -1306,3 +1398,82 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
             result_str = self._ask("search:result:all?")
 
         return result_str
+
+    def _get_measurement_enable(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._measurement_enable = self._ask("measurement1:enable?").lower()
+            self._set_cache_valid()
+        return self._measurement_enable
+
+    def _set_measurement_enable(self, value):
+        if not isinstance(value, str) or value.lower() not in ['on', 'off']:
+            raise ivi.ValueNotSupportedException()
+
+        if not self._driver_operation_simulate:
+            self._write("measurement1:enable %s" % value.lower())
+        self._measurement_enable = value.lower()
+        self._set_cache_valid()
+
+    def _get_measurement_function(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._measurement_function = self._ask("measurement1:main?").lower()
+            self._set_cache_valid()
+        return self._measurement_function
+
+    def _set_measurement_function(self, measurement_function):
+        if measurement_function not in MeasurementFunctionMapping:
+            raise ivi.ValueNotSupportedException()
+        func = MeasurementFunctionMapping[measurement_function]
+        if not self._driver_operation_simulate:
+            self._write("measurement1:main %s" % func)
+        self._measurement_function = func
+        self._set_cache_valid()
+
+    def _set_measurement_source(self, source1, source2=None):
+        scpi_source1_string = self._get_channel_name_string(source1)
+        if source2 is not None:
+            scpi_source2_string = self._get_channel_name_string(source2)
+            self._write("measurement1:source %s, %s" % (scpi_source1_string, scpi_source2_string))
+        else:
+            self._write("measurement1:source %s" % scpi_source1_string)
+        self._set_cache_valid()
+
+    def _get_channel_name_string(self, value):
+        if hasattr(value, 'name'):
+            value = value.name.lower()
+        value = str(value)
+        if value not in self._channel_name + ['line']:
+            raise ivi.UnknownPhysicalNameException()
+        if not self._driver_operation_simulate:
+            if value[0:2] == 'ch':
+                scpi_string = 'ch' + value[-1]
+            elif value[0] == 'd':
+                scpi_string = 'd' + value[-1]
+            else:
+                scpi_string = value
+        return scpi_string
+
+    def _reset_measurement_statistics(self):
+        if not self._driver_operation_simulate:
+            self._write("measurement1:statistics:reset")
+
+    def _get_measurement_statistics_enable(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._measurement_statistic_enable = self._ask("measurement1:statistics:enable?").lower()
+            self._set_cache_valid()
+        return self._measurement_statistic_enable
+
+    def _set_measurement_statistics_enable(self, value):
+        if not isinstance(value, str) or value.lower() not in ['on', 'off']:
+            raise ivi.ValueNotSupportedException()
+
+        if not self._driver_operation_simulate:
+            self._write("measurement1:statistics:enable %s" % value)
+        self._measurement_statistic_enable = value.lower()
+        self._set_cache_valid()
+
+    def _measurement_set_delay_slope(self, signal_slope, reference_slope):
+        if signal_slope not in DelaySlopeMapping or reference_slope not in DelaySlopeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("measurement1:delay:slope %s,%s" % (DelaySlopeMapping[signal_slope], DelaySlopeMapping[reference_slope]))
