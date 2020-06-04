@@ -28,6 +28,8 @@ from .. import ivi
 from .. import scope
 from .. import scpi
 from .. import extra
+import re
+channel_re = re.compile(r'[digital|channel](\d+)')
 
 AcquisitionInterpolationMapping = {
         'linear': 'lin',
@@ -1057,10 +1059,12 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
     def _get_trigger_source(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask("trigger:a:source?").lower()
-            if value[0:2] == 'ch':
-                self._trigger_source = 'channel' + value[-1]
-            elif value[0] == 'd':
-                self._trigger_source == 'digital' + value[-1]
+            channel_number = str(re.findall(channel_re, value)[0])
+
+            if value.startswith('ch'):
+                self._trigger_source = 'channel' + channel_number
+            elif value.startswith('d'):
+                self._trigger_source == 'digital' + channel_number
             else:
                 self._trigger_source = value
             self._set_cache_valid()
@@ -1073,10 +1077,12 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
         if value not in self._channel_name + ['line']:
             raise ivi.UnknownPhysicalNameException()
         if not self._driver_operation_simulate:
-            if value[0:2] == 'ch':
-                scpi_string = 'ch' + value[-1]
-            elif value[0] == 'd':
-                scpi_string = 'd' + value[-1]
+            channel_number = str(re.findall(channel_re, value)[0])
+
+            if value.startswith('ch'):
+                scpi_string = 'ch' + channel_number
+            elif value.startswith('d'):
+                scpi_string = 'd' + channel_number
             else:
                 scpi_string = value
             self._write("trigger:a:source %s" % scpi_string)
