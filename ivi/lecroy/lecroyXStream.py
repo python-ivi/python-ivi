@@ -76,7 +76,7 @@ class lecroyXStream(lecroyBaseScope):
 
         self._identity_description = "LeCroy X-Stream IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['WR204MXI-A', 'WR204XI-A', 'WR104MXI-A', 'WR104XI-A', 'WR64MXI-A',
-                                                      'WR64XI-A', 'WR62XI-A', 'WR44MXI-A', 'WR44XI-A', 'WRHRO66Zi']
+                                                      'WR64XI-A', 'WR62XI-A', 'WR44MXI-A', 'WR44XI-A']
 
         ivi.add_property(self, 'channels[].noise_filter',
                          self._get_channel_noise_filter,
