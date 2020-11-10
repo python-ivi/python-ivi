@@ -24,9 +24,9 @@ THE SOFTWARE.
 
 """
 
-from .lecroyWRXIA import *
+from .lecroyXStream import *
 
-class lecroyWR204MXIA(lecroyWRXIA):
+class lecroyWR204MXIA(lecroyXStream):
     "Lecroy WaveRunner 204MXi-A IVI oscilloscope driver"
 
     def __init__(self, *args, **kwargs):
