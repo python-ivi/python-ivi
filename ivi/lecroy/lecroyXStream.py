@@ -54,13 +54,13 @@ TriggerTypes = set(['dropout', 'edge', 'glitch', 'interval', 'logic', 'qualify',
 ExtTriggerSetting = set(["Ext", "ExtDivide10", "Line"])
 VerticalCoupling = set(['ac', 'dc', 'gnd'])
 
-class lecroyWRXIA(lecroyBaseScope):
-    """LeCroy WaveRunner Xi-A / MXi-A series IVI oscilloscope driver"""
+class lecroyXStream(lecroyBaseScope):
+    """LeCroy X-Stream IVI oscilloscope driver"""
 
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', '')
 
-        super(lecroyWRXIA, self).__init__(*args, **kwargs)
+        super(lecroyXStream, self).__init__(*args, **kwargs)
 
         self._channel_interpolation = list()
         self._analog_channel_name = list()
@@ -74,7 +74,7 @@ class lecroyWRXIA(lecroyBaseScope):
 
         self._memory_size = 5
 
-        self._identity_description = "LeCroy WaveRunner Xi-A / MXi-A series IVI oscilloscope driver"
+        self._identity_description = "LeCroy X-Stream IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['WR204MXI-A', 'WR204XI-A', 'WR104MXI-A', 'WR104XI-A', 'WR64MXI-A',
                                                       'WR64XI-A', 'WR62XI-A', 'WR44MXI-A', 'WR44XI-A']
 
