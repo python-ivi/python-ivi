@@ -738,10 +738,16 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             # Wait until WTG_meas (bit 3) bit is set to know when the instrument is
             # ready to receive a trigger after initiating, or maximum 10 times
             # to not block indefinitely
-            for loop_count in range(10):
+            wtg_meas_set = False
+            for loop_count in range(20):
                 operation = int(self._ask("stat:oper? (@%s)" % (index+1)))
                 if (operation & 8) == 8:
+                    wtg_meas_set = True
                     break;
+
+            if not wtg_meas_set:
+                print("WTG_meas bit not set in status register")
+
             self._write("trigger:acquire:immediate (@%s)" % (index + 1))
 
     def _trigger_abort(self):
