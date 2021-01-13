@@ -514,6 +514,11 @@ class rohdeschwarzBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi
     def _utility_self_test(self):
         pass
 
+    def _utility_reset(self):
+        # Reset and wait for completion
+        self._ask("*RST; *OPC?")
+        self._clear()
+
     def _init_channels(self):
         try:
             super(rohdeschwarzBaseScope, self)._init_channels()
