@@ -195,6 +195,18 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
                         Get power line frequency (either 50 Hz or 60 Hz).  
                         """))
 
+        self._add_property('outputs[].filter_average_count',
+                        self._get_filter_average_count,
+                        self._set_filter_average_count)
+
+        self._add_property('outputs[].filter_window_size',
+                        self._get_filter_window_size,
+                        self._set_filter_window_size)
+
+        self._add_property('outputs[].filter_enabled',
+                        self._get_filter_enabled,
+                        self._set_filter_enabled)
+
         self._init_outputs()
 
     def _initialize(self, resource=None, id_query=False, reset=False, **keywargs):
@@ -258,6 +270,9 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         self._output_measurement_range = list()
         self._output_adc_autozero = list()
         self._output_auto_clear_buffer = list()
+        self._output_filter_average_count = list()
+        self._output_filter_window_size = list()
+        self._output_filter_enabled = list()
         for i in range(self._output_count):
             self._output_current_limit.append(0)
             self._output_current_limit_behavior.append('regulate')
@@ -283,20 +298,23 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._output_measurement_range.append(0.01)
             self._output_adc_autozero.append(True)
             self._output_auto_clear_buffer.append(True)
+            self._output_filter_average_count.append(10)
+            self._output_filter_window_size.append(1.0)
+            self._output_filter_enabled.append(True)
 
     def _get_output_adc_autozero(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
-            self._output_adc_autozero = (self._ask("system:azero%d:state?" % (index+1)) == '1')
+            self._output_adc_autozero[index] = (self._ask("system:azero%d:state?" % (index+1)) == '1')
             self._set_cache_valid(index=index)
-        return self._output_auto_zero
+        return self._output_adc_autozero[index]
 
     def _set_output_adc_autozero(self, index, value):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("system:azero%d:state %s" % (index+1,('off', 'on')[value]))
             self._set_cache_valid(index=index)
-        self._output_adc_autozero = value
+        self._output_adc_autozero[index] = value
 
     def _get_output_number_of_power_line_cycles(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -612,6 +630,52 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         self._output_auto_clear_buffer[index] = value
         self._set_cache_valid(index=index)
 
+    def _get_filter_average_count(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_filter_average_count[index] = self._ask("sense%d:%s:aver:coun?" % (index+1, self._output_measurement_type[index]))
+            self._set_cache_valid(index=index)
+        return self._output_filter_average_count[index]
+
+    def _set_filter_average_count(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if value < 2 or value > 100:
+            raise ivi.OutOfRangeException(f'Filter average count {value} is invalid, should be in 2-100 range!')
+        if not self._driver_operation_simulate:
+            self._write("sense%d:%s:aver:coun %d" % (index+1, self._output_measurement_type[index], value))
+            self._set_cache_valid(index=index)
+        self._output_filter_average_count[index] = value
+
+    def _get_filter_window_size(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_filter_window_size[index] = float(self._ask("sense%d:%s:aver:wind?" % (index+1, self._output_measurement_type[index])))
+            self._set_cache_valid(index=index)
+        return self._output_filter_window_size[index]
+
+    def _set_filter_window_size(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if float(value) < 0.01 or float(value) > 100.0:
+            raise ivi.OutOfRangeException(f'Filter window size {value} is invalid, should be in0.01%-100% range!')
+        if not self._driver_operation_simulate:
+            self._write("sense%d:%s:aver:wind %f" % (index+1, self._output_measurement_type[index], float(value)))
+            self._set_cache_valid(index=index)
+        self._output_filter_window_size[index] = value
+
+    def _get_filter_enabled(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_filter_enabled[index] = self._ask("sense%d:%s:aver:stat?" % (index+1, self._output_measurement_type[index]))
+            self._set_cache_valid(index=index)
+        return self._output_filter_enabled[index]
+
+    def _set_filter_enabled(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense%d:%s:aver:stat %s" % (index+1, self._output_measurement_type[index], ('off', 'on')[value]))
+            self._set_cache_valid(index=index)
+        self._output_filter_enabled[index] = value
+
     def _output_clear_buffer(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
@@ -631,7 +695,8 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
         return 0
     
     def _output_configure_measurement(self, index, type, sample_count=None, trigger_continuous=None, NPLC=None,
-                                      measurement_digits=None, measurement_range=None, adc_autozero=None, auto_clear_buffer=None):
+                                      measurement_digits=None, measurement_range=None, adc_autozero=None, auto_clear_buffer=None, 
+                                      filter_average_count=None, filter_window_size=None, filter_enabled=None):
         index = ivi.get_index(self._output_name, index)
         if type not in MeasurementTypeMapping.keys():
             raise ivi.ValueNotSupportedException()
@@ -651,6 +716,12 @@ class keithley2280S(scpi.dcpwr.Base, scpi.dcpwr.SoftwareTrigger,
             self._set_output_adc_autozero(index, adc_autozero)
         if auto_clear_buffer is not None:
             self._set_output_auto_clear_buffer(index, auto_clear_buffer)
+        if filter_average_count is not None:
+            self._set_filter_average_count(index, filter_average_count)
+        if filter_window_size is not None:
+            self._set_filter_window_size(index, filter_window_size)
+        if filter_enabled is not None:
+            self._set_filter_enabled(index, filter_enabled)
 
         if not self._driver_operation_simulate:
             # extend buffer memory size if sample_count exceeds configured buffer size
