@@ -53,6 +53,17 @@ TriggerSourceMapping = {
         'voltage2': 'volt2',
         'voltage3': 'volt3',
         'voltage4': 'volt4'}
+ElogTriggerSourceMapping = {
+        'bus': 'bus',
+        'external': 'ext',
+        'immediate': 'imm',
+        'pin1': 'pin1',
+        'pin2': 'pin2',
+        'pin3': 'pin3',
+        'pin4': 'pin4',
+        'pin5': 'pin5',
+        'pin6': 'pin6',
+        'pin7': 'pin7'}
 MeasurementTypeMapping = {
         'voltage': "VOLT",
         'current': "CURR",
@@ -146,6 +157,14 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['N6700', 'N6700C']
 
+        self._add_property('outputs[].voltage_range',
+                           self._get_output_voltage_range,
+                           self._set_output_voltage_range)
+
+        self._add_property('outputs[].current_range',
+                           self._get_output_current_range,
+                           self._set_output_current_range)
+
         self._add_property('outputs[].measurement_type',
                            self._get_output_measurement_type,
                            self._set_output_measurement_type)
@@ -202,9 +221,37 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                            self._get_output_trigger_continuous,
                            self._set_output_trigger_continuous)
 
+        self._add_property('outputs[].elog_current_measurement',
+                           self._get_output_elog_current_measurement,
+                           self._set_output_elog_current_measurement)
+
+        self._add_property('outputs[].elog_current_measurement_range',
+                           self._get_output_elog_current_measurement_range,
+                           self._set_output_elog_current_measurement_range)
+
+        self._add_property('outputs[].elog_measurement_period',
+                           self._get_output_elog_measurement_period,
+                           self._set_output_elog_measurement_period)
+
+        self._add_property('outputs[].elog_trigger_source',
+                           self._get_output_elog_trigger_source,
+                           self._set_output_elog_trigger_source)
+
         self._add_property('outputs[].current_compensate',
                            self._get_output_current_compensate,
                            self._set_output_current_compensate)
+
+        self._add_method('outputs[].elog_initiate',
+                         self._output_elog_initiate)
+
+        self._add_method('outputs[].elog_abort',
+                         self._output_elog_abort)
+
+        self._add_method('outputs[].fetch_elog_measurement',
+                         self._output_fetch_elog_measurement,
+                         ivi.Doc("""
+                         Fetch ELOG measurement data from buffer memory. Number of data points to read is specified by max_records
+                         """))
 
         self._add_method('outputs[].fetch_measurement',
                          self._output_fetch_measurement,
@@ -218,6 +265,9 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
 
         self._add_method('outputs[].trigger_acquire_immediate',
                          self._output_trigger_acquire_immediate)
+
+        self._add_method('outputs[].elog_trigger_initiate',
+                         self._output_elog_trigger_initiate)
 
         self._add_method('outputs[].clear_buffer',
                          self._output_clear_buffer)
@@ -270,6 +320,8 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         except AttributeError:
             pass
 
+        self._output_voltage_range = list()
+        self._output_current_range = list()
         self._output_current_compensate = list()
         self._output_sweep_interval = list()
         self._output_trace_points = list()
@@ -284,9 +336,15 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._output_trigger_voltage_direction = list()
         self._output_trigger_voltage_state = list()
         self._output_trigger_sample_count = list()
+        self._output_elog_current_measurement = list()
+        self._output_elog_current_measurement_range = list()
+        self._output_elog_measurement_period = list()
+        self._output_elog_trigger_source = list()
         self._output_measurement_range = list()
         self._output_measurement_type = list()
         for i in range(self._output_count):
+            self._output_voltage_range.append(0.0)
+            self._output_current_range.append(0.0)
             self._output_current_compensate.append(False)
             self._output_sweep_interval.append(0.00002048)
             self._output_trace_points.append(1024)
@@ -301,6 +359,10 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             self._output_trigger_voltage_direction.append('rise')
             self._output_trigger_voltage_state.append(False)
             self._output_trigger_sample_count.append(1)
+            self._output_elog_current_measurement.append(True)
+            self._output_elog_current_measurement_range.append(0.0)
+            self._output_elog_measurement_period.append(0.0)
+            self._output_elog_trigger_source.append('bus')
             self._output_measurement_range.append(0.01)
             self._output_measurement_type.append('voltage')
 
@@ -435,6 +497,48 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         if not self._driver_operation_simulate:
             self._write("source:voltage:level %s, (@%s)" % (value, index+1))
         self._output_voltage_level[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_voltage_range(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._output_voltage_range[index] = float(self._ask("source:voltage:range? (@%s)" % (index+1)))
+            self._set_cache_valid(index=index)
+        return self._output_voltage_range[index]
+
+    def _set_output_voltage_range(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        if self._output_spec[index]['voltage_max'] >= 0:
+            if value < 0 or value > self._output_spec[index]['voltage_max']:
+                raise ivi.OutOfRangeException()
+        else:
+            if value > 0 or value < self._output_spec[index]['voltage_max']:
+                raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("source:voltage:range %s, (@%s)" % (value, index+1))
+        self._output_voltage_range[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_current_range(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._output_current_range[index] = float(self._ask("source:current:range? (@%s)" % (index+1)))
+            self._set_cache_valid(index=index)
+        return self._output_current_range[index]
+
+    def _set_output_current_range(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = float(value)
+        if self._output_spec[index]['current_max'] >= 0:
+            if value < 0 or value > self._output_spec[index]['current_max']:
+                raise ivi.OutOfRangeException()
+        else:
+            if value > 0 or value < self._output_spec[index]['current_max']:
+                raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write("source:current:range %s, (@%s)" % (value, index+1))
+        self._output_current_range[index] = value
         self._set_cache_valid(index=index)
 
     # Measurement settings
@@ -617,7 +721,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
             self._write("trigger:acquire:source %s, (@%s)" % (TriggerSourceMapping[value], index + 1))
-        self._output_trigger_source = value
+        self._output_trigger_source[index] = value
         self._set_cache_valid()
 
     def _get_output_trigger_voltage_state(self, index):
@@ -660,6 +764,72 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             self._write("initiate:continuous:transient %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
         self._output_trigger_continuous[index] = bool(value)
         self._set_cache_valid(index=index)
+
+    def _get_output_elog_current_measurement(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_elog_current_measurement[index] = bool(int(self._ask("sense:elog:function:current? (@%s)" % (index + 1))))
+            self._set_cache_valid(index=index)
+        return self._output_elog_current_measurement[index]
+
+    def _set_output_elog_current_measurement(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense:elog:function:current %s, (@%s)" % (('OFF', 'ON')[value], index + 1))
+        self._output_elog_current_measurement[index] = bool(value)
+        self._set_cache_valid(index=index)
+
+    def _get_output_elog_current_measurement_range(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_elog_current_measurement_range[index] = float(self._ask("sense:elog:current:range? (@%s)" % (index+1)))
+        self._set_cache_valid(index=index)
+        return self._output_elog_current_measurement_range[index]
+
+    def _set_output_elog_current_measurement_range(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense:elog:current:range %s, (@%s)" % (value, index+1))
+        self._output_elog_current_measurement_range[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_elog_measurement_period(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_elog_measurement_period[index] = float(self._ask("sense:elog:period? (@%s)" % (index+1)))
+        self._set_cache_valid(index=index)
+        return self._output_elog_measurement_period[index]
+
+    def _set_output_elog_measurement_period(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("sense:elog:period %s, (@%s)" % (value, index+1))
+        self._output_elog_measurement_period[index] = value
+        self._set_cache_valid(index=index)
+
+    def _get_output_elog_trigger_source(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask("trigger:elog:source? (@%s)" % (index+1)).lower()
+            self._output_elog_trigger_source[index] = [k for k, v in ElogTriggerSourceMapping.items() if v == value][0]
+        return self._output_elog_trigger_source[index]
+
+    def _set_output_elog_trigger_source(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = str(value)
+        if value not in ElogTriggerSourceMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write("trigger:elog:source %s, (@%s)" % (ElogTriggerSourceMapping[value], index + 1))
+        self._output_elog_trigger_source[index] = value
+        self._set_cache_valid()
+
+    def _output_fetch_elog_measurement(self, index, max_records):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            if max_records > 16384 or max_records < 1:
+                raise ivi.OutOfRangeException()
+            return [float(value) for value in self._ask(f'fetch:elog? {max_records},(@{index+1})').split(',')]
 
     def _get_output_current_compensate(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -725,7 +895,22 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         index = ivi.get_index(self._output_name, index)
         # Not supported, do nothing
 
+    def _output_elog_initiate(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("initiate:elog (@%s)" % (index + 1))
+
+    def _output_elog_abort(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("abort:elog (@%s)" % (index + 1))
+
     # Trigger functions
+    def _output_elog_trigger_initiate(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trigger:elog:immediate (@%s)" % (index + 1))
+
     def _output_trigger_initiate(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
