@@ -181,6 +181,10 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                            self._get_output_sweep_interval,
                            self._set_output_sweep_interval)
 
+        self._add_property('outputs[].sweep_interval_resolution',
+                           self._get_output_sweep_interval_resolution,
+                           self._set_output_sweep_interval_resolution)
+
         self._add_property('outputs[].sweep_offset_points',
                            self._get_output_sweep_offset_points,
                            self._set_output_sweep_offset_points)
@@ -244,8 +248,14 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._add_method('outputs[].elog_initiate',
                          self._output_elog_initiate)
 
+        self._add_method('elog_initiate',
+                         self._elog_initiate)
+
         self._add_method('outputs[].elog_abort',
                          self._output_elog_abort)
+
+        self._add_method('elog_abort',
+                         self._elog_abort)
 
         self._add_method('outputs[].fetch_elog_measurement',
                          self._output_fetch_elog_measurement,
@@ -266,8 +276,8 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._add_method('outputs[].trigger_acquire_immediate',
                          self._output_trigger_acquire_immediate)
 
-        self._add_method('outputs[].elog_trigger_initiate',
-                         self._output_elog_trigger_initiate)
+        self._add_method('outputs[].trigger_elog_immediate',
+                         self._output_trigger_elog_immediate)
 
         self._add_method('outputs[].clear_buffer',
                          self._output_clear_buffer)
@@ -277,6 +287,9 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
 
         self._add_method('trigger.acquire_immediate',
                          self._trigger_acquire_immediate)
+
+        self._add_method('trigger.elog_immediate',
+                         self._trigger_elog_immediate)
 
         self._add_method('trigger.abort',
                          self._trigger_abort)
@@ -324,6 +337,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._output_current_range = list()
         self._output_current_compensate = list()
         self._output_sweep_interval = list()
+        self._output_sweep_interval_resolution = list()
         self._output_trace_points = list()
         self._output_sweep_offset_points = list()
         self._output_trigger_continuous = list()
@@ -347,6 +361,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             self._output_current_range.append(0.0)
             self._output_current_compensate.append(False)
             self._output_sweep_interval.append(0.00002048)
+            self._output_sweep_interval_resolution.append('res20')
             self._output_trace_points.append(1024)
             self._output_sweep_offset_points.append(0)
             self._output_trigger_continuous.append(True)
@@ -600,6 +615,23 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         if not self._driver_operation_simulate:
             self._write("sense:sweep:tinterval %f, (@%s)" % (float(value), index+1))
         self._output_sweep_interval[index] = float(value)
+        self._set_cache_valid(index=index)
+
+    def _get_output_sweep_interval_resolution(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._output_sweep_interval_resolution[index] = self._ask("sense:sweep:tinterval:res? (@%s)" % (index+1)).lower()
+        self._get_cache_valid(index=index)
+        return self._output_sweep_interval_resolution[index]
+
+    def _set_output_sweep_interval_resolution(self, index, value):
+        index = ivi.get_index(self._output_name, index)
+        value = str(value)
+        if not self._driver_operation_simulate:
+            if value.lower() not in ['res20', 'res40']:
+                raise ivi.OutOfRangeException()
+            self._write("sense:sweep:tinterval:res %s, (@%s)" % (value.upper(), index+1))
+        self._output_sweep_interval_resolution[index] = value.lower()
         self._set_cache_valid(index=index)
 
     def _get_output_sweep_offset_points(self, index):
@@ -900,21 +932,29 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         if not self._driver_operation_simulate:
             self._write("initiate:elog (@%s)" % (index + 1))
 
+    def _elog_initiate(self):
+        if not self._driver_operation_simulate:
+            self._write("initiate:elog (@1:%s)" % (self._output_count))
+
     def _output_elog_abort(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("abort:elog (@%s)" % (index + 1))
 
-    # Trigger functions
-    def _output_elog_trigger_initiate(self, index):
-        index = ivi.get_index(self._output_name, index)
+    def _elog_abort(self):
         if not self._driver_operation_simulate:
-            self._write("trigger:elog:immediate (@%s)" % (index + 1))
+            self._write("abort:elog (@1:%s)" % (self._output_count))
 
+    # Trigger functions
     def _output_trigger_initiate(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
             self._write("initiate:acquire (@%s)" % (index + 1))
+
+    def _output_trigger_elog_immediate(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("trigger:elog:immediate (@%s)" % (index + 1))
 
     def _output_trigger_acquire_immediate(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -960,3 +1000,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                 print("WTG_meas bit not set in status register")
 
             self._write("trigger:acquire:immediate (@1:%s)" % (self._output_count))
+
+    def _trigger_elog_immediate(self):
+        if not self._driver_operation_simulate:
+            self._write("trigger:elog:immediate (@1:%s)" % (self._output_count))
