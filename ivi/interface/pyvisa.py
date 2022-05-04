@@ -29,7 +29,7 @@ import sys
 from distutils.version import StrictVersion
 
 try:
-    import visa
+    import pyvisa as visa
     try:
         # New style PyVISA
         visa_rm = visa.ResourceManager()
