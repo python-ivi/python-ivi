@@ -45,6 +45,7 @@ Instrument standard from the [IVI foundation](http://www.ivifoundation.org/).
     * Rigol DP800 series
     * Rigol DP1000 series
     * Keithley (Tektronix) 2280S series
+    * Keysight  E36312A
     * Tektronix PS2520G/PS2521G
   * RF Power Meters (pwrmeter):
     * Agilent 436A
@@ -78,7 +79,7 @@ Python VXI-11. If it starts with USB, it attempts to use Python USBTMC.  If it
 starts with GPIB, it will attempt to use linux-gpib's python interface.  If it
 starts with ASRL, it attemps to use pySerial.  Python IVI will fall back on
 PyVISA if it is detected.  It is also possible to configure IVI to prefer
-PyVISA over the other supported interfaces.  
+PyVISA over the other supported interfaces.
 
 ## A note on standards compliance
 
@@ -96,7 +97,7 @@ the corresponding COM specifications.  There are some major deviations from
 the specification in order to be consistent with the spirit of the other IVI
 specifications.  The fgen class is the most obvious example of this, using
 properties instead of the getters and setters as required by the IVI
-specification.  
+specification.
 
 ## Requirements
 
@@ -119,7 +120,7 @@ with an instrument, you must install one or more of the following drivers:
 
 Python VXI11 provides a pure python TCP/IP driver for LAN based instruments
 that support the VXI11 protocol.  This includes most LXI instruments and also
-devices like the Agilent E2050 GPIB to LAN converter.  
+devices like the Agilent E2050 GPIB to LAN converter.
 
 Home page:
 http://www.alexforencich.com/wiki/en/python-vxi11/start
@@ -170,7 +171,7 @@ Second, the prefer_pyvisa option can be set globally:
 Python IVI provides an interface wrapper for the Linux GPIB driver.  If the
 Linux GPIB driver and its included Python interface available, Python IVI can
 use it to communicate with instruments via any GPIB interface supported by
-Linux GPIB.  
+Linux GPIB.
 
 Home page:
 http://linux-gpib.sourceforge.net/
@@ -179,7 +180,7 @@ http://linux-gpib.sourceforge.net/
 
 Python IVI provides an interface wrapper for the pySerial library.  If
 pySerial is installed, Python IVI can use it to communicate with instruments
-via the serial port.  
+via the serial port.
 
 Home page:
 http://pyserial.sourceforge.net/
@@ -279,7 +280,7 @@ and read it out of the instrument.
     scope.system.load_setup(setup)
 
 This sample Python code will use Python IVI to connect to a Tektronix AWG2021,
-generate a sinewave with numpy, and transfer it to channel 1.  
+generate a sinewave with numpy, and transfer it to channel 1.
 
     # import Python IVI
     import ivi
