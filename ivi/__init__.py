@@ -51,6 +51,7 @@ __all__ = [
         "ics",
         "jdsu",
         "keithley",
+        "keysight",
         "lecroy",
         "rigol",
         "rohdeschwarz",
