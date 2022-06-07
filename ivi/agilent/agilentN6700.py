@@ -157,6 +157,10 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._identity_specification_minor_version = 0
         self._identity_supported_instrument_models = ['N6700', 'N6700C']
 
+        self._add_property('sweep_interval_resolution',
+                           self._get_sweep_interval_resolution,
+                           self._set_sweep_interval_resolution)
+
         self._add_property('outputs[].voltage_range',
                            self._get_output_voltage_range,
                            self._set_output_voltage_range)
@@ -180,10 +184,6 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._add_property('outputs[].sweep_interval',
                            self._get_output_sweep_interval,
                            self._set_output_sweep_interval)
-
-        self._add_property('outputs[].sweep_interval_resolution',
-                           self._get_output_sweep_interval_resolution,
-                           self._set_output_sweep_interval_resolution)
 
         self._add_property('outputs[].sweep_offset_points',
                            self._get_output_sweep_offset_points,
@@ -333,11 +333,12 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         except AttributeError:
             pass
 
+        self._sweep_interval_resolution = 'res20'
+
         self._output_voltage_range = list()
         self._output_current_range = list()
         self._output_current_compensate = list()
         self._output_sweep_interval = list()
-        self._output_sweep_interval_resolution = list()
         self._output_trace_points = list()
         self._output_sweep_offset_points = list()
         self._output_trigger_continuous = list()
@@ -361,7 +362,6 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
             self._output_current_range.append(0.0)
             self._output_current_compensate.append(False)
             self._output_sweep_interval.append(0.00002048)
-            self._output_sweep_interval_resolution.append('res20')
             self._output_trace_points.append(1024)
             self._output_sweep_offset_points.append(0)
             self._output_trigger_continuous.append(True)
@@ -558,6 +558,19 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
 
     # Measurement settings
 
+    def _get_sweep_interval_resolution(self):
+        if not self._driver_operation_simulate:
+            self._sweep_interval_resolution = self._ask("sense:sweep:tinterval:res?")
+        return self._sweep_interval_resolution
+
+    def _set_sweep_interval_resolution(self, value):
+        value = str(value)
+        if not self._driver_operation_simulate:
+            if value.lower() not in ['res20', 'res40']:
+                raise ivi.OutOfRangeException()
+            self._write("sense:sweep:tinterval:res %s" % (value.upper()))
+        self._sweep_interval_resolution = value.lower()
+
     def _get_output_measurement_range(self, index):
         index = ivi.get_index(self._output_name, index)
         if not self._driver_operation_simulate:
@@ -615,23 +628,6 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         if not self._driver_operation_simulate:
             self._write("sense:sweep:tinterval %f, (@%s)" % (float(value), index+1))
         self._output_sweep_interval[index] = float(value)
-        self._set_cache_valid(index=index)
-
-    def _get_output_sweep_interval_resolution(self, index):
-        index = ivi.get_index(self._output_name, index)
-        if not self._driver_operation_simulate:
-            self._output_sweep_interval_resolution[index] = self._ask("sense:sweep:tinterval:res? (@%s)" % (index+1)).lower()
-        self._get_cache_valid(index=index)
-        return self._output_sweep_interval_resolution[index]
-
-    def _set_output_sweep_interval_resolution(self, index, value):
-        index = ivi.get_index(self._output_name, index)
-        value = str(value)
-        if not self._driver_operation_simulate:
-            if value.lower() not in ['res20', 'res40']:
-                raise ivi.OutOfRangeException()
-            self._write("sense:sweep:tinterval:res %s, (@%s)" % (value.upper(), index+1))
-        self._output_sweep_interval_resolution[index] = value.lower()
         self._set_cache_valid(index=index)
 
     def _get_output_sweep_offset_points(self, index):
