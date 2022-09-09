@@ -97,48 +97,39 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
 
         self._output_count = 4
 
-        self._output_spec = [
-            {
-                'range': {
-                    'N6731B': (5, 10.0)
-                },
+        self._output_spec = {
+            'N6731B': {
+                'range': (5, 10.0),
                 'voltage_max': 5.0,
                 'ovp_max': 5.0,
                 'current_max': 10.0,
                 'ocp_max': 10
             },
-            {
-                'range': {
-                    'N6732B': (8, 6.25)
-                },
+            'N6732B': {
+                'range': (8, 6.25),
                 'voltage_max': 8.0,
                 'ovp_max': 8.0,
                 'current_max': 6.25,
                 'ocp_max': 6.25
             },
-            {
-                'range': {
-                    'N6733B': (20, 2.5)
-                },
+            'N6733B': {
+                'range': (20, 2.5),
                 'voltage_max': 20.0,
                 'ovp_max': 20.0,
                 'current_max': 2.5,
                 'ocp_max': 2.5
             },
-            {
-                'range': {
-                    'N6761A': (50, 1.0)
-                },
+            'N6761A': {
+                'range': (50, 1.0),
                 'voltage_max': 50.0,
                 'ovp_max': 50.0,
                 'current_max': 1.5,
                 'ocp_max': 1.5
             }
-        ]
+        }
 
         self._memory_size = 3
         self._memory_offset = 1
-        self._power_modules = []
 
         self._output_trigger_delay = list()
 
@@ -403,7 +394,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
     def _set_output_current_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if value < 0 or value > self._output_spec[index]['current_max']:
+        if value < 0 or value > self._output_spec[self._power_modules[index]]['current_max']:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("source:current:level %f, (@%s)" % (value, index+1))
@@ -461,11 +452,11 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
     def _set_output_ovp_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if self._output_spec[index]['ovp_max'] >= 0:
-            if value < 0 or value > self._output_spec[index]['ovp_max']:
+        if self._output_spec[self._power_modules[index]]['ovp_max'] >= 0:
+            if value < 0 or value > self._output_spec[self._power_modules[index]]['ovp_max']:
                 raise ivi.OutOfRangeException()
         else:
-            if value > 0 or value < self._output_spec[index]['ovp_max']:
+            if value > 0 or value < self._output_spec[self._power_modules[index]]['ovp_max']:
                 raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("source:voltage:protection:level %s , (@%s)" % (value, index+1))
@@ -482,7 +473,7 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
     def _set_output_ocp_limit(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if abs(value) > self._output_spec[index]['ocp_max']:
+        if abs(value) > self._output_spec[self._power_modules[index]]['ocp_max']:
             raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._set_output_trigger_current_level(index, value)
@@ -503,11 +494,11 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
     def _set_output_voltage_level(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if self._output_spec[index]['voltage_max'] >= 0:
-            if value < 0 or value > self._output_spec[index]['voltage_max']:
+        if self._output_spec[self._power_modules[index]]['voltage_max'] >= 0:
+            if value < 0 or value > self._output_spec[self._power_modules[index]]['voltage_max']:
                 raise ivi.OutOfRangeException()
         else:
-            if value > 0 or value < self._output_spec[index]['voltage_max']:
+            if value > 0 or value < self._output_spec[self._power_modules[index]]['voltage_max']:
                 raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("source:voltage:level %s, (@%s)" % (value, index+1))
@@ -524,11 +515,11 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
     def _set_output_voltage_range(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if self._output_spec[index]['voltage_max'] >= 0:
-            if value < 0 or value > self._output_spec[index]['voltage_max']:
+        if self._output_spec[self._power_modules[index]]['voltage_max'] >= 0:
+            if value < 0 or value > self._output_spec[self._power_modules[index]]['voltage_max']:
                 raise ivi.OutOfRangeException()
         else:
-            if value > 0 or value < self._output_spec[index]['voltage_max']:
+            if value > 0 or value < self._output_spec[self._power_modules[index]]['voltage_max']:
                 raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("source:voltage:range %s, (@%s)" % (value, index+1))
@@ -545,11 +536,11 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
     def _set_output_current_range(self, index, value):
         index = ivi.get_index(self._output_name, index)
         value = float(value)
-        if self._output_spec[index]['current_max'] >= 0:
-            if value < 0 or value > self._output_spec[index]['current_max']:
+        if self._output_spec[self._power_modules[index]]['current_max'] >= 0:
+            if value < 0 or value > self._output_spec[self._power_modules[index]]['current_max']:
                 raise ivi.OutOfRangeException()
         else:
-            if value > 0 or value < self._output_spec[index]['current_max']:
+            if value > 0 or value < self._output_spec[self._power_modules[index]]['current_max']:
                 raise ivi.OutOfRangeException()
         if not self._driver_operation_simulate:
             self._write("source:current:range %s, (@%s)" % (value, index+1))
