@@ -252,6 +252,12 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         self._add_method('elog_abort',
                          self._elog_abort)
 
+        self._add_method('outputs[].acquire_abort',
+                         self._output_acquire_abort)
+
+        self._add_method('acquire_abort',
+                         self._acquire_abort)
+
         self._add_method('outputs[].fetch_elog_measurement',
                          self._output_fetch_elog_measurement,
                          ivi.Doc("""
@@ -285,9 +291,6 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
 
         self._add_method('trigger.elog_immediate',
                          self._trigger_elog_immediate)
-
-        self._add_method('trigger.abort',
-                         self._trigger_abort)
 
         self._init_outputs()
 
@@ -936,6 +939,15 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
         if not self._driver_operation_simulate:
             self._write("abort:elog (@1:%s)" % (self._output_count))
 
+    def _output_acquire_abort(self, index):
+        index = ivi.get_index(self._output_name, index)
+        if not self._driver_operation_simulate:
+            self._write("abort:acquire (@%s)" % (index + 1))
+
+    def _acquire_abort(self):
+        if not self._driver_operation_simulate:
+            self._write("abort:acquire (@1:%s)" % (self._output_count))
+
     # Trigger functions
     def _output_trigger_initiate(self, index):
         index = ivi.get_index(self._output_name, index)
@@ -965,10 +977,6 @@ class agilentN6700(scpi.dcpwr.Base, scpi.dcpwr.Trigger,
                 _logger.warning("WTG_meas bit not set in status register")
 
             self._write("trigger:acquire:immediate (@%s)" % (index + 1))
-
-    def _trigger_abort(self):
-        if not self._driver_operation_simulate:
-            self._write("abort")
 
     def _trigger_initiate(self):
         if not self._driver_operation_simulate:
